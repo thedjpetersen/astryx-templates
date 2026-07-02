@@ -426,7 +426,9 @@ export default function MessagingShellPage() {
     <Stack direction="vertical" style={styles.sidebar}>
       <HStack gap={2} style={styles.sidebarHeader}>
         <StackItem size="fill">
-          <Heading level={5}>Astryx HQ</Heading>
+          <Heading level={5} accessibilityLevel={2}>
+            Astryx HQ
+          </Heading>
         </StackItem>
         <IconButton
           label="New message"
@@ -523,7 +525,9 @@ export default function MessagingShellPage() {
     <Stack direction="vertical" style={styles.streamColumn}>
       <HStack gap={3} style={styles.streamHeader}>
         <Icon icon={HashtagIcon} size="sm" color="secondary" />
-        <Heading level={5}>{selectedChannel.name}</Heading>
+        <Heading level={5} accessibilityLevel={1}>
+          {selectedChannel.name}
+        </Heading>
         <StackItem size="fill" style={styles.streamTopic}>
           <Text type="supporting" color="secondary" maxLines={1}>
             {selectedChannel.topic}
@@ -580,7 +584,9 @@ export default function MessagingShellPage() {
       <HStack gap={2} style={styles.threadHeader}>
         <StackItem size="fill">
           <HStack gap={2} style={{alignItems: 'baseline'}}>
-            <Text weight="semibold">Thread</Text>
+            <Heading level={5} accessibilityLevel={2} display="inline">
+              Thread
+            </Heading>
             <Text type="supporting" color="secondary">
               #{selectedChannel.name}
             </Text>

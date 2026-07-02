@@ -451,9 +451,9 @@ export default function AiChatArtifactTemplate() {
       <HStack gap={2} style={styles.artifactHeader}>
         <StackItem size="fill" style={styles.artifactTitle}>
           <HStack gap={2} vAlign="center">
-            <Text weight="semibold" maxLines={1}>
+            <Heading level={3} maxLines={1}>
               {ARTIFACT_FILE}
-            </Text>
+            </Heading>
             <Badge label="SQL" variant="neutral" />
           </HStack>
         </StackItem>

@@ -58,10 +58,6 @@ const styles: Record<string, CSSProperties> = {
   },
   detailBlock: {
     margin: 0,
-    fontFamily: 'var(--font-family-code)',
-    fontSize: 'var(--font-size-sm)',
-    lineHeight: 1.7,
-    color: 'var(--color-text-secondary)',
     whiteSpace: 'pre-wrap',
   },
   streamFooter: {
@@ -78,7 +74,13 @@ const LEVELS: LogStreamLevel[] = ['info', 'warn', 'error', 'debug'];
 const SERVICES = ['api-gateway', 'billing', 'auth', 'worker'] as const;
 
 function detail(lines: string): React.ReactNode {
-  return <pre style={styles.detailBlock}>{lines}</pre>;
+  return (
+    <pre style={styles.detailBlock}>
+      <Text type="code" size="sm" color="secondary">
+        {lines}
+      </Text>
+    </pre>
+  );
 }
 
 const BASE_ENTRIES: LogEntry[] = [

@@ -75,7 +75,7 @@ const styles: Record<string, CSSProperties> = {
     color: 'inherit',
     borderRadius: 2,
     padding: '0 1px',
-    fontWeight: 500,
+    fontWeight: 'var(--font-weight-medium)',
   },
 };
 

@@ -373,7 +373,7 @@ const TICKET_COLUMNS: TableColumn<TicketRow>[] = [
     header: 'Last update',
     width: pixel(130),
     renderCell: (item: TicketRow) => (
-      <Text type="supporting" color="secondary">
+      <Text type="supporting" color="secondary" hasTabularNumbers>
         {item.updated}
       </Text>
     ),

@@ -86,7 +86,8 @@ const styles: Record<string, CSSProperties> = {
     width: 28,
     flexShrink: 0,
   },
-  // Numeric cells use tabular numerals so size digits stay column-aligned.
+  // Numeric cells use tabular numerals so size and date digits stay
+  // column-aligned.
   numericCell: {fontVariantNumeric: 'tabular-nums'},
   emptyResults: {padding: 'var(--spacing-8) 0'},
 };
@@ -614,9 +615,11 @@ export default function TableTreeTemplate() {
         header: 'Updated',
         width: pixel(120),
         renderCell: row => (
-          <Text type="supporting" color="secondary">
-            {row.node.updated}
-          </Text>
+          <span style={styles.numericCell}>
+            <Text type="supporting" color="secondary">
+              {row.node.updated}
+            </Text>
+          </span>
         ),
       },
     ],

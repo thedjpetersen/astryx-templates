@@ -13,6 +13,7 @@ const template = {
     'Heading',
     'Layout',
     'Stack',
+    'Stat',
     'Text',
   ],
 } satisfies AstryxPageTemplate;

@@ -5,7 +5,7 @@ const template = {
   name: 'KPI Strip',
   description: 'Compact metric cards for operational dashboards.',
   category: 'Operations',
-  componentsUsed: ['Badge', 'Card', 'Grid', 'Heading', 'Stack', 'Text'],
+  componentsUsed: ['Badge', 'Card', 'Grid', 'Stack', 'Text'],
 } satisfies AstryxBlockTemplate;
 
 export default template;

@@ -109,7 +109,7 @@ const styles: Record<string, CSSProperties> = {
     margin: 0,
     fontFamily: 'var(--font-family-code)',
     fontSize: 'var(--font-size-sm)',
-    lineHeight: 1.6,
+    lineHeight: 'var(--text-supporting-leading)',
     whiteSpace: 'pre',
   },
   // Run provenance footer under a runnable block.

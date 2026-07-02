@@ -383,7 +383,10 @@ function EventRow({
             <StackItem size="fill">
               <VStack gap={0.5}>
                 <Text type="body">
-                  <strong>{event.actor}</strong> {event.action}
+                  <Text weight="semibold" color="inherit">
+                    {event.actor}
+                  </Text>{' '}
+                  {event.action}
                 </Text>
                 {isNarrow && timestamp}
               </VStack>

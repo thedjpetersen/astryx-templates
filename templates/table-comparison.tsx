@@ -455,7 +455,13 @@ function FeatureValueCell({value}: {value: FeatureValue}) {
   if (typeof value === 'boolean') {
     return value ? <CheckGlyph /> : <DashGlyph />;
   }
-  return <Text type="body">{value}</Text>;
+  // Tabular numerals keep digit widths equal so comparable values
+  // ("1,000" vs "250,000") align across plan columns.
+  return (
+    <Text type="body" hasTabularNumbers>
+      {value}
+    </Text>
+  );
 }
 
 // ============= PAGE =============
@@ -584,7 +590,7 @@ export default function TableComparisonTemplate() {
                               <Badge variant="info" label="Recommended" />
                             ) : null}
                             <Text type="label">{plan.name}</Text>
-                            <Text type="large" weight="semibold">
+                            <Text type="large" hasTabularNumbers>
                               {amount}
                             </Text>
                             <Text type="supporting" color="secondary">

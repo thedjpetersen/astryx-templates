@@ -4,7 +4,7 @@ import {Badge} from '@astryxdesign/core/Badge';
 import {Card} from '@astryxdesign/core/Card';
 import {Grid} from '@astryxdesign/core/Grid';
 import {Stack} from '@astryxdesign/core/Layout';
-import {Heading, Text} from '@astryxdesign/core/Text';
+import {Text} from '@astryxdesign/core/Text';
 
 const metrics = [
   {
@@ -43,8 +43,10 @@ export default function KpiStrip() {
               <Badge label={metric.status} variant={metric.variant} />
             </Stack>
             <Stack direction="vertical" gap={1}>
-              <Heading level={3}>{metric.value}</Heading>
-              <Text type="body" color="secondary">
+              <Text type="display-2" hasTabularNumbers>
+                {metric.value}
+              </Text>
+              <Text type="body" color="secondary" hasTabularNumbers>
                 {metric.detail}
               </Text>
             </Stack>

@@ -22,8 +22,9 @@
  *   stays pinned right of the card title via StackItem fill.
  * - Stat rail: cards are always a single vertical stack, so nothing inside
  *   the right pane reflows — the pane simply moves below the chart.
- * - Breakdown rows: plan names truncate to one line; amounts use tabular
- *   numerals so the right-aligned figures stay in a steady column.
+ * - Breakdown rows: plan names truncate to one line; share percentages and
+ *   amounts use tabular numerals so the right-aligned figures stay in a
+ *   steady column.
  */
 
 import {useState, type CSSProperties} from 'react';
@@ -57,7 +58,7 @@ import {ArrowPathIcon} from '@heroicons/react/24/outline';
 const styles: Record<string, CSSProperties> = {
   // Keep the chart SVG from forcing overflow when its pane narrows.
   chartBody: {minWidth: 0, paddingTop: 'var(--spacing-2)'},
-  // Right-aligned money figures stay in a steady column across rows.
+  // Right-aligned share and money figures stay in a steady column across rows.
   numeric: {fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap'},
 };
 
@@ -246,9 +247,11 @@ function PlanShareRow({row}: {row: PlanShare}) {
             {row.plan}
           </Text>
         </StackItem>
-        <Text type="supporting" color="secondary">
-          {row.share}%
-        </Text>
+        <span style={styles.numeric}>
+          <Text type="supporting" color="secondary">
+            {row.share}%
+          </Text>
+        </span>
         <span style={styles.numeric}>
           <Text type="body">{row.amount}</Text>
         </span>

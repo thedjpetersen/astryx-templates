@@ -91,8 +91,6 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  // Compare-at price in sale rows.
-  strike: {textDecoration: 'line-through'},
   // Right-hand price/rating rail in list rows keeps its width.
   listRail: {flexShrink: 0},
 };
@@ -396,33 +394,58 @@ function FilterRail({
 
 // ============= PRODUCT TILES =============
 
-/** Rating + review count pair, shared by both views. */
-function RatingBadge({product}: {product: Product}) {
+/**
+ * Rating + review count pair, shared by both views. List rows pass
+ * `hasTabularNumbers` so the right-aligned counts line up digit-for-digit.
+ */
+function RatingBadge({
+  product,
+  hasTabularNumbers = false,
+}: {
+  product: Product;
+  hasTabularNumbers?: boolean;
+}) {
   return (
     <HStack gap={1.5} vAlign="center">
       <Badge
         variant={ratingVariant(product.rating)}
         label={`★ ${product.rating.toFixed(1)}`}
       />
-      <Text type="supporting" color="secondary">
+      <Text
+        type="supporting"
+        color="secondary"
+        hasTabularNumbers={hasTabularNumbers}>
         ({formatCount(product.reviews)})
       </Text>
     </HStack>
   );
 }
 
-/** Price with sale strikethrough + Sale badge when compareAt is set. */
-function PriceLine({product}: {product: Product}) {
+/**
+ * Price with sale strikethrough + Sale badge when compareAt is set. List
+ * rows pass `hasTabularNumbers` so the price column aligns across rows.
+ */
+function PriceLine({
+  product,
+  hasTabularNumbers = false,
+}: {
+  product: Product;
+  hasTabularNumbers?: boolean;
+}) {
   return (
     <HStack gap={2} vAlign="center">
-      <Text type="label">{formatPrice(product.price)}</Text>
+      <Text type="label" hasTabularNumbers={hasTabularNumbers}>
+        {formatPrice(product.price)}
+      </Text>
       {product.compareAt != null ? (
         <>
-          <span style={styles.strike}>
-            <Text type="supporting" color="secondary">
-              {formatPrice(product.compareAt)}
-            </Text>
-          </span>
+          <Text
+            type="supporting"
+            color="secondary"
+            hasStrikethrough
+            hasTabularNumbers={hasTabularNumbers}>
+            {formatPrice(product.compareAt)}
+          </Text>
           <Badge variant="red" label="Sale" />
         </>
       ) : null}
@@ -491,8 +514,8 @@ function ProductListRow({
         </StackItem>
         <div style={styles.listRail}>
           <VStack gap={1} hAlign="end">
-            <PriceLine product={product} />
-            <RatingBadge product={product} />
+            <PriceLine product={product} hasTabularNumbers />
+            <RatingBadge product={product} hasTabularNumbers />
             {!product.inStock ? (
               <Badge variant="neutral" label="Backordered" />
             ) : null}

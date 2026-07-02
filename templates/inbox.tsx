@@ -116,8 +116,10 @@ const styles: Record<string, CSSProperties> = {
   listEmpty: {
     paddingTop: 'var(--spacing-6)',
   },
+  // Tabular numerals so stacked times digit-align down the list.
   rowTimestamp: {
     flexShrink: 0,
+    fontVariantNumeric: 'tabular-nums',
   },
   readingColumn: {
     height: '100%',

@@ -368,7 +368,9 @@ function JobsTable({
                   <Timestamp value={job.scheduledAt} format="date_time" />
                 </TableCell>
               )}
-              <TableCell style={styles.numericCell}>{job.quoted}</TableCell>
+              <TableCell style={styles.numericCell}>
+                <Text type="body">{job.quoted}</Text>
+              </TableCell>
             </TableRow>
           );
         })}

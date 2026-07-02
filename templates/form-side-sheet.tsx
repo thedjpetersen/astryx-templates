@@ -632,7 +632,9 @@ export default function FormSideSheetTemplate() {
         header: 'Value',
         width: pixel(120),
         renderCell: (row: DiscountRow) => (
-          <Text type="body">{formatValue(row)}</Text>
+          <span style={styles.numericCell}>
+            <Text type="body">{formatValue(row)}</Text>
+          </span>
         ),
       },
       {
@@ -654,9 +656,11 @@ export default function FormSideSheetTemplate() {
         header: 'Schedule',
         width: pixel(140),
         renderCell: (row: DiscountRow) => (
-          <Text type="body" color="secondary">
-            {formatDate(row.startsAt)} → {formatDate(row.endsAt)}
-          </Text>
+          <span style={styles.numericCell}>
+            <Text type="body" color="secondary">
+              {formatDate(row.startsAt)} → {formatDate(row.endsAt)}
+            </Text>
+          </span>
         ),
       },
       {

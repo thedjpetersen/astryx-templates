@@ -31,13 +31,29 @@ import {
   Stack,
   StackItem,
 } from '@astryxdesign/core/Layout';
+import {Stat} from '@astryxdesign/core/Stat';
 import {Heading, Text} from '@astryxdesign/core/Text';
 
 const metrics = [
-  {label: 'Revenue', value: '$428K', change: '+12.4%', status: 'Healthy'},
-  {label: 'Active deals', value: '184', change: '+8', status: 'Queued'},
-  {label: 'At risk', value: '7', change: '-3', status: 'Review'},
-];
+  {
+    label: 'Revenue',
+    value: '$428K',
+    delta: {value: '+12.4%', direction: 'up'},
+    status: 'Healthy',
+  },
+  {
+    label: 'Active deals',
+    value: '184',
+    delta: {value: '+8', direction: 'up'},
+    status: 'Queued',
+  },
+  {
+    label: 'At risk',
+    value: '7',
+    delta: {value: '-3', direction: 'down', sentiment: 'positive'},
+    status: 'Review',
+  },
+] as const;
 
 const queue = [
   {name: 'Enterprise renewal', owner: 'Avery', age: '2h', status: 'Ready'},
@@ -56,12 +72,12 @@ export default function OperationsDashboard() {
               <Text type="supporting" color="secondary">
                 Operations
               </Text>
-              <Heading level={1}>Command Center</Heading>
+              <Heading level={1}>Command center</Heading>
             </Stack>
             <StackItem>
               <Stack direction="horizontal" gap={2}>
                 <Button label="Export" variant="secondary" />
-                <Button label="New Review" variant="primary" />
+                <Button label="New review" variant="primary" />
               </Stack>
             </StackItem>
           </Stack>
@@ -73,19 +89,14 @@ export default function OperationsDashboard() {
             <Grid columns={{minWidth: 220, repeat: 'fit'}} gap={3}>
               {metrics.map(metric => (
                 <Card key={metric.label} padding={3}>
-                  <Stack direction="vertical" gap={3}>
-                    <Stack direction="horizontal" hAlign="between" gap={3}>
-                      <Text type="supporting" color="secondary">
-                        {metric.label}
-                      </Text>
-                      <Badge label={metric.status} variant="neutral" />
-                    </Stack>
-                    <Stack direction="vertical" gap={1}>
-                      <Heading level={3}>{metric.value}</Heading>
-                      <Text type="body" color="secondary">
-                        {metric.change} from previous period
-                      </Text>
-                    </Stack>
+                  <Stack direction="horizontal" hAlign="between" gap={3}>
+                    <Stat
+                      label={metric.label}
+                      value={metric.value}
+                      delta={metric.delta}
+                      description="from previous period"
+                    />
+                    <Badge label={metric.status} variant="neutral" />
                   </Stack>
                 </Card>
               ))}
@@ -96,8 +107,8 @@ export default function OperationsDashboard() {
                 <Stack direction="vertical" gap={4}>
                   <Stack direction="horizontal" hAlign="between" gap={3}>
                     <Stack direction="vertical" gap={1}>
-                      <Heading level={3}>Review Queue</Heading>
-                      <Text type="body" color="secondary">
+                      <Heading level={3}>Review queue</Heading>
+                      <Text type="supporting" color="secondary">
                         Items that need a decision before the next handoff.
                       </Text>
                     </Stack>
@@ -132,8 +143,8 @@ export default function OperationsDashboard() {
               <Card padding={4}>
                 <Stack direction="vertical" gap={4}>
                   <Stack direction="vertical" gap={1}>
-                    <Heading level={3}>Next Actions</Heading>
-                    <Text type="body" color="secondary">
+                    <Heading level={3}>Next actions</Heading>
+                    <Text type="supporting" color="secondary">
                       Keep the working set small and clear.
                     </Text>
                   </Stack>

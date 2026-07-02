@@ -109,8 +109,8 @@ const styles: Record<string, CSSProperties> = {
     height: 28,
     borderRadius: '50%',
     boxSizing: 'border-box',
-    fontSize: 13,
-    fontWeight: 600,
+    fontSize: 'var(--font-size-sm)',
+    fontWeight: 'var(--font-weight-semibold)',
     flexShrink: 0,
   },
   circleDone: {

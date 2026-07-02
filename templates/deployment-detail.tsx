@@ -53,9 +53,6 @@ const styles: Record<string, CSSProperties> = {
   },
   detailBlock: {
     margin: 0,
-    fontFamily: 'var(--font-family-code)',
-    fontSize: 'var(--font-size-sm)',
-    lineHeight: 1.7,
     whiteSpace: 'pre-wrap',
   },
 };
@@ -158,9 +155,11 @@ const BUILD_SCRIPT: LogEntry[] = [
     message: 'Compiled with warnings (1)',
     detail: (
       <pre style={styles.detailBlock}>
-        {
-          './app/logs/page.tsx\n42:9  Warning: "range" is assigned a value but never used.  @typescript-eslint/no-unused-vars'
-        }
+        <Text type="code" size="sm" color="secondary">
+          {
+            './app/logs/page.tsx\n42:9  Warning: "range" is assigned a value but never used.  @typescript-eslint/no-unused-vars'
+          }
+        </Text>
       </pre>
     ),
   },
