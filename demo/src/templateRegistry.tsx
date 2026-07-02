@@ -34,6 +34,10 @@ import DashboardTabbed from '../../templates/dashboard-tabbed';
 import dashboardTabbedSource from '../../templates/dashboard-tabbed.tsx?raw';
 import DashboardWidgetGrid from '../../templates/dashboard-widget-grid';
 import dashboardWidgetGridSource from '../../templates/dashboard-widget-grid.tsx?raw';
+import DeckReviewComments from '../../templates/deck-review-comments';
+import deckReviewCommentsSource from '../../templates/deck-review-comments.tsx?raw';
+import DeckThemeDesigner from '../../templates/deck-theme-designer';
+import deckThemeDesignerSource from '../../templates/deck-theme-designer.tsx?raw';
 import DeploymentDetail from '../../templates/deployment-detail';
 import deploymentDetailSource from '../../templates/deployment-detail.tsx?raw';
 import DiffViewer from '../../templates/diff-viewer';
@@ -124,6 +128,14 @@ import SkillPackageDetail from '../../templates/skill-package-detail';
 import skillPackageDetailSource from '../../templates/skill-package-detail.tsx?raw';
 import SlideDeckViewer from '../../templates/slide-deck-viewer';
 import slideDeckViewerSource from '../../templates/slide-deck-viewer.tsx?raw';
+import SlideEditorCanvas from '../../templates/slide-editor-canvas';
+import slideEditorCanvasSource from '../../templates/slide-editor-canvas.tsx?raw';
+import SlideOutlineEditor from '../../templates/slide-outline-editor';
+import slideOutlineEditorSource from '../../templates/slide-outline-editor.tsx?raw';
+import SlidePresenterView from '../../templates/slide-presenter-view';
+import slidePresenterViewSource from '../../templates/slide-presenter-view.tsx?raw';
+import SlideSorter from '../../templates/slide-sorter';
+import slideSorterSource from '../../templates/slide-sorter.tsx?raw';
 import SpamQuarantineConsole from '../../templates/spam-quarantine-console';
 import spamQuarantineConsoleSource from '../../templates/spam-quarantine-console.tsx?raw';
 import StreamingBrowseHome from '../../templates/streaming-browse-home';
@@ -758,6 +770,66 @@ export const templates: TemplateEntry[] = [
       'PPTX-style viewer: header pager, 112px thumbnail rail, centered 4:3 slide stage from shape fixtures.',
     component: SlideDeckViewer,
     source: slideDeckViewerSource,
+  },
+  {
+    id: 'slide-editor-canvas',
+    name: 'Slide Editor Canvas',
+    kind: 'page',
+    category: 'Content',
+    description:
+      'PPTX-style editor: thumbnail rail, selectable-shape 4:3 canvas with selection ring, and a live format panel.',
+    component: SlideEditorCanvas,
+    source: slideEditorCanvasSource,
+  },
+  {
+    id: 'slide-outline-editor',
+    name: 'Slide Outline Editor',
+    kind: 'page',
+    category: 'Content',
+    description:
+      'Text-first outline editor: hierarchical slide/bullet rows with inline editing and a live 4:3 mini preview panel.',
+    component: SlideOutlineEditor,
+    source: slideOutlineEditorSource,
+  },
+  {
+    id: 'slide-presenter-view',
+    name: 'Slide Presenter View',
+    kind: 'page',
+    category: 'Content',
+    description:
+      'Speaker console: dark stage with current slide, next preview, zoomable speaker notes, timer chip, and a slide-jump grid.',
+    component: SlidePresenterView,
+    source: slidePresenterViewSource,
+  },
+  {
+    id: 'slide-sorter',
+    name: 'Slide Sorter',
+    kind: 'page',
+    category: 'Content',
+    description:
+      'Deck light-table: sectioned thumbnail grid with zoom, reorder, skip, duplicate, and delete.',
+    component: SlideSorter,
+    source: slideSorterSource,
+  },
+  {
+    id: 'deck-review-comments',
+    name: 'Deck Review Comments',
+    kind: 'page',
+    category: 'Content',
+    description:
+      'Slide deck review: thumbnail rail, marker-annotated 4:3 stage, and a resolvable comment-thread panel.',
+    component: DeckReviewComments,
+    source: deckReviewCommentsSource,
+  },
+  {
+    id: 'deck-theme-designer',
+    name: 'Deck Theme Designer',
+    kind: 'page',
+    category: 'Content',
+    description:
+      'Deck-wide theme controls (palette, fonts, type scale, masters) driving live slide-master previews.',
+    component: DeckThemeDesigner,
+    source: deckThemeDesignerSource,
   },
   {
     id: 'skill-package-detail',
