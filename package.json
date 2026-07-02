@@ -1,0 +1,49 @@
+{
+  "name": "astryx-templates",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Custom Astryx templates for this project.",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "astryx.integration.mjs",
+    "astryx.legacy.integration.mjs",
+    "blocks",
+    "docs",
+    "templates",
+    "README.md"
+  ],
+  "scripts": {
+    "validate": "node scripts/validate-templates.mjs",
+    "typecheck": "tsc --noEmit",
+    "check": "pnpm validate && pnpm typecheck",
+    "demo": "vite --host 127.0.0.1",
+    "build:demo": "vite build",
+    "template:list": "astryx template --list --type block"
+  },
+  "astryx": {
+    "integration": "./astryx.legacy.integration.mjs",
+    "docs": "./docs",
+    "category": "Project Templates",
+    "blocks": "./blocks"
+  },
+  "peerDependencies": {
+    "@astryxdesign/cli": "^0.1.2",
+    "@astryxdesign/core": "^0.1.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@astryxdesign/cli": "^0.1.2",
+    "@astryxdesign/core": "^0.1.2",
+    "@types/node": "^25.9.3",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "typescript": "^6.0.3",
+    "vite": "^8.1.3"
+  },
+  "packageManager": "pnpm@10.34.1"
+}

@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "@astryxdesign/core/Stat": ["demo/src/compat/Stat.tsx"],
+      "@astryxdesign/lab": ["demo/src/compat/lab.tsx"],
+      "@heroicons/react/24/outline": ["demo/src/compat/heroicons-outline.tsx"],
+      "@heroicons/react/24/solid": ["demo/src/compat/heroicons-solid.tsx"]
+    },
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ES2022",
+    "types": ["node", "react", "react-dom"]
+  },
+  "include": [
+    "astryx.integration.mjs",
+    "astryx.legacy.integration.mjs",
+    "blocks/**/*.tsx",
+    "demo/src/**/*.ts",
+    "demo/src/**/*.tsx",
+    "templates/**/*.ts",
+    "templates/**/*.tsx",
+    "types/**/*.d.ts",
+    "vite.config.ts"
+  ]
+}
