@@ -14,10 +14,14 @@
  *   All/Processing/Ready/Failed SegmentedControl, and a primary Upload
  *   Button; a 240px left rail with a folder TreeList (All assets, Raw
  *   uploads, Renditions, Archive) above a storage Card ('1.4 TB of 2 TB'
- *   ProgressBar); a center asset Table with Thumbnail placeholder art,
- *   filename, type Badge (video/audio/image), duration, size, and a
- *   pipeline-state column mixing an in-flight upload ProgressBar, a Queued
- *   Badge, a Spinner 'Transcoding 68%', a green Ready check, and a red
+ *   ProgressBar); a center asset Table with deterministic type-tinted 16:9
+ *   thumbnail tiles (cool film glyph for video, warm audio-lines for audio,
+ *   green image glyph for stills), an ellipsized filename with tooltip,
+ *   type Badge (video/audio/image), duration, size, and a
+ *   pipeline-state column where the in-flight upload (42%) and transcode
+ *   (68%) rows pair an icon + label line with a consistent-width accent
+ *   ProgressBar and percent readout, beside a Queued Badge, a green Ready
+ *   check, and a red
  *   Failed state whose Tooltip carries the transcode error; selecting a row
  *   opens a 360px right detail LayoutPanel with a 16:9 preview placeholder
  *   (gradient stage, deterministic waveform bars for audio), a renditions
@@ -51,7 +55,7 @@
  * sum_04d2aa) are obviously fake and never credential-shaped.
  */
 
-import {useState, type CSSProperties} from 'react';
+import {useState, type CSSProperties, type ReactNode} from 'react';
 
 import {
   HStack,
@@ -84,7 +88,6 @@ import {StatusDot} from '@astryxdesign/core/StatusDot';
 import {Table, pixel, proportional} from '@astryxdesign/core/Table';
 import type {TableColumn, TablePlugin} from '@astryxdesign/core/Table';
 import {TextInput} from '@astryxdesign/core/TextInput';
-import {Thumbnail} from '@astryxdesign/core/Thumbnail';
 import {Toolbar} from '@astryxdesign/core/Toolbar';
 import {Tooltip} from '@astryxdesign/core/Tooltip';
 import {TreeList} from '@astryxdesign/core/TreeList';
@@ -93,7 +96,9 @@ import {useMediaQuery} from '@astryxdesign/core/hooks';
 
 import {
   ArchiveIcon,
+  AudioLinesIcon,
   DownloadIcon,
+  FilmIcon,
   FolderIcon,
   HardDriveIcon,
   ImageIcon,
@@ -150,8 +155,24 @@ const styles: Record<string, CSSProperties> = {
     boxShadow: 'var(--shadow-high)',
   },
   headerSearch: {width: 220},
-  thumbBox: {width: 40, height: 40, flexShrink: 0},
-  pipelineCell: {maxWidth: 220},
+  // 16:9 thumbnail tile: per-type gradient tint + glyph, deterministic.
+  // Literal tints (like the preview stage) so the art reads the same in
+  // both themes.
+  thumbTile: {
+    width: 48,
+    height: 27,
+    flexShrink: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 'var(--radius-inner)',
+  },
+  // The name block must be allowed to shrink inside the flex row so the
+  // filename ellipsizes instead of hard-clipping mid-character.
+  assetName: {flex: 1, minWidth: 0},
+  // In-flight rows (uploading/transcoding): icon + label line over a
+  // consistent-width accent bar with a trailing percent readout.
+  pipelineProgress: {width: 112},
   // Detail pane: header row fixed, body scrolls.
   detailPane: {
     display: 'flex',
@@ -437,6 +458,29 @@ const TYPE_BADGE: Record<AssetType, {label: string; variant: 'info' | 'neutral' 
   image: {label: 'image', variant: 'success'},
 };
 
+// Deterministic thumbnail art per media type: a subtle gradient tint plus a
+// type glyph — cool for video, warm for audio, green for image bundles.
+const TYPE_TILE: Record<
+  AssetType,
+  {icon: typeof FilmIcon; background: string; color: string}
+> = {
+  video: {
+    icon: FilmIcon,
+    background: 'linear-gradient(135deg, #DFE9F8 0%, #C2D4EE 100%)',
+    color: '#44618C',
+  },
+  audio: {
+    icon: AudioLinesIcon,
+    background: 'linear-gradient(135deg, #FAEEDC 0%, #F0DAB5 100%)',
+    color: '#8A6428',
+  },
+  image: {
+    icon: ImageIcon,
+    background: 'linear-gradient(135deg, #E2F1E7 0%, #C6E2D0 100%)',
+    color: '#417C59',
+  },
+};
+
 // Deterministic waveform silhouette for audio previews (fixed heights in
 // percent — no Math.random).
 const WAVEFORM = [
@@ -463,32 +507,67 @@ function matchesStatusFilter(state: PipelineState, filter: StatusFilter): boolea
 // ============= PIPELINE STATE CELL =============
 
 /**
+ * A 16px-icon + label line over a consistent-width accent ProgressBar with
+ * a trailing percent — shared by the uploading and transcoding states so
+ * the two in-flight rows read identically.
+ */
+function PipelineProgress({
+  lead,
+  label,
+  progress,
+}: {
+  lead: ReactNode;
+  label: string;
+  progress: number;
+}) {
+  return (
+    <VStack gap={1} style={styles.pipelineProgress}>
+      <HStack gap={2} vAlign="center">
+        {lead}
+        <Text type="body">{label}</Text>
+      </HStack>
+      <HStack gap={1} vAlign="center">
+        <StackItem size="fill">
+          <ProgressBar
+            label={`${label} progress`}
+            isLabelHidden
+            value={progress}
+            variant="accent"
+          />
+        </StackItem>
+        <Text type="supporting" color="secondary" hasTabularNumbers>
+          {progress}%
+        </Text>
+      </HStack>
+    </VStack>
+  );
+}
+
+/**
  * The pipeline-state column: one cell renderer covering all five states —
- * in-flight upload ProgressBar, Queued Badge, Spinner + percent while
- * transcoding, green Ready check, red Failed with the error in a Tooltip.
+ * in-flight upload/transcode accent ProgressBar rows, Queued Badge, green
+ * Ready check, red Failed with the error in a Tooltip. Every state leads
+ * with a 16px icon slot so the column scans as icon + label.
  */
 function PipelineCell({asset}: {asset: AssetRow}) {
   switch (asset.state) {
     case 'uploading':
       return (
-        <div style={styles.pipelineCell}>
-          <ProgressBar
-            label="Uploading"
-            value={asset.progress ?? 0}
-            hasValueLabel
-          />
-        </div>
+        <PipelineProgress
+          lead={<Icon icon={UploadIcon} size="sm" color="accent" />}
+          label="Uploading"
+          progress={asset.progress ?? 0}
+        />
       );
     case 'queued':
       return <Badge label="Queued" variant="neutral" />;
     case 'transcoding':
       return (
-        <HStack gap={2} vAlign="center">
-          <Spinner size="sm" aria-label="Transcoding" />
-          <Text type="body" hasTabularNumbers>
-            Transcoding {asset.progress ?? 0}%
-          </Text>
-        </HStack>
+        <PipelineProgress
+          lead={<Spinner size="sm" aria-label="Transcoding" />}
+          label="Transcoding"
+          progress={asset.progress ?? 0}
+        />
       );
     case 'ready':
       return (
@@ -576,20 +655,22 @@ function RenditionStatusCell({rendition}: {rendition: Rendition}) {
 }
 
 // Mini-table columns fit the 360px panel: 120 + 72 + 64 + 44 + padding.
+// Single-line rows: name + codec inline keeps the ladder compact enough
+// that the whole panel (and the rail's storage card) stays above the fold.
 const RENDITION_COLUMNS: TableColumn<Rendition>[] = [
   {
     key: 'name',
     header: 'Rendition',
     width: proportional(1),
     renderCell: rendition => (
-      <VStack gap={0}>
+      <HStack gap={2} vAlign="center">
         <Text type="label" maxLines={1}>
           {rendition.name}
         </Text>
         <Text type="supporting" color="secondary" maxLines={1}>
           {rendition.codec}
         </Text>
-      </VStack>
+      </HStack>
     ),
   },
   {
@@ -665,7 +746,7 @@ function AssetDetailPane({
       </div>
       <Divider />
       <div style={styles.detailBody}>
-        <VStack gap={4}>
+        <VStack gap={3}>
           <PreviewPlaceholder asset={asset} />
 
           <HStack gap={2} vAlign="center">
@@ -878,7 +959,7 @@ export default function MediaAssetPipelineTemplate() {
           onChange={toggleAllChecked}
         />
       ),
-      width: pixel(44),
+      width: pixel(40),
       resizable: false,
       renderCell: item => (
         <CheckboxInput
@@ -893,27 +974,39 @@ export default function MediaAssetPipelineTemplate() {
     {
       key: 'filename',
       header: 'Asset',
-      width: proportional(2),
-      renderCell: item => (
-        <HStack gap={2} vAlign="center">
-          <div style={styles.thumbBox}>
-            <Thumbnail label={item.filename} />
-          </div>
-          <VStack gap={0}>
-            <Text type="label" maxLines={1}>
-              {item.filename}
-            </Text>
-            <Text type="supporting" color="secondary" maxLines={1}>
-              <span style={styles.mono}>{item.assetId}</span>
-            </Text>
-          </VStack>
-        </HStack>
-      ),
+      // Proportions mirror the minWidth ratio so the Table's derived
+      // min-width stays within the narrowest desktop content region.
+      width: proportional(1.62, {minWidth: 210}),
+      renderCell: item => {
+        const tile = TYPE_TILE[item.type];
+        return (
+          <HStack gap={2} vAlign="center">
+            <div
+              style={{
+                ...styles.thumbTile,
+                background: tile.background,
+                color: tile.color,
+              }}>
+              <Icon icon={tile.icon} size="sm" color="inherit" />
+            </div>
+            <div style={styles.assetName} title={item.filename}>
+              <VStack gap={0}>
+                <Text type="label" maxLines={1} hasTruncateTooltip={false}>
+                  {item.filename}
+                </Text>
+                <Text type="supporting" color="secondary" maxLines={1}>
+                  <span style={styles.mono}>{item.assetId}</span>
+                </Text>
+              </VStack>
+            </div>
+          </HStack>
+        );
+      },
     },
     {
       key: 'type',
       header: 'Type',
-      width: pixel(90),
+      width: pixel(68),
       renderCell: item => (
         <Badge
           label={TYPE_BADGE[item.type].label}
@@ -923,8 +1016,8 @@ export default function MediaAssetPipelineTemplate() {
     },
     {
       key: 'duration',
-      header: 'Duration',
-      width: pixel(96),
+      header: 'Length',
+      width: pixel(72),
       align: 'end',
       renderCell: item => (
         <Text type="body" color="secondary" hasTabularNumbers>
@@ -935,7 +1028,7 @@ export default function MediaAssetPipelineTemplate() {
     {
       key: 'size',
       header: 'Size',
-      width: pixel(88),
+      width: pixel(78),
       align: 'end',
       renderCell: item => (
         <Text type="body" color="secondary" hasTabularNumbers>
@@ -946,7 +1039,7 @@ export default function MediaAssetPipelineTemplate() {
     {
       key: 'state',
       header: 'Pipeline',
-      width: proportional(1.4),
+      width: proportional(1, {minWidth: 132}),
       renderCell: item => <PipelineCell asset={item} />,
     },
   ];

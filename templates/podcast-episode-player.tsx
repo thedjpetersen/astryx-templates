@@ -17,8 +17,8 @@
  *   name, mm:ss cue time, and paragraph text; the cue containing the
  *   playhead gets the primary-tinted 'blue' Card variant and a Playing
  *   Badge. A right 320px LayoutPanel holds a Chapters | Show notes TabList
- *   (chapter rows with start times and per-chapter ProgressBars, Markdown
- *   notes), and a persistent bottom player bar carries cover thumb, title,
+ *   (chapter rows with start times and slim per-chapter progress meters,
+ *   Markdown notes), and a persistent bottom player bar carries cover thumb, title,
  *   SkipBack/Play/SkipForward transport, a scrub Slider with elapsed/total,
  *   a 1x/1.25x/1.5x/2x speed SegmentedControl, and a Volume2/VolumeX mute
  *   toggle
@@ -89,7 +89,6 @@ import {IconButton} from '@astryxdesign/core/IconButton';
 import {Link} from '@astryxdesign/core/Link';
 import {List, ListItem} from '@astryxdesign/core/List';
 import {Markdown} from '@astryxdesign/core/Markdown';
-import {ProgressBar} from '@astryxdesign/core/ProgressBar';
 import {
   SegmentedControl,
   SegmentedControlItem,
@@ -131,6 +130,23 @@ const styles: Record<string, CSSProperties> = {
   cueBody: {minWidth: 0},
   // Fixed-width mm:ss gutter so chapter rows align.
   chapterTime: {width: 44, textAlign: 'right'},
+  // Slim per-chapter listening meter: muted track, tinted fill (blue for
+  // the current chapter, soft neutral for played ones).
+  chapterTrack: {
+    height: 4,
+    marginTop: 4,
+    borderRadius: 'var(--radius-full)',
+    backgroundColor: 'var(--color-background-muted)',
+    overflow: 'hidden',
+  },
+  chapterFill: {
+    height: '100%',
+    borderRadius: 'var(--radius-full)',
+  },
+  // Current chapter row: same blue tint family as the active transcript cue.
+  chapterRowActive: {
+    backgroundColor: 'var(--color-background-blue)',
+  },
   // Player bar: title cluster keeps a stable width on wide screens so the
   // scrub Slider doesn't jump as titles change.
   barTitle: {width: 224, minWidth: 0},
@@ -468,7 +484,7 @@ function TranscriptCueCard({
               <Text type="supporting" color="secondary" hasTabularNumbers>
                 {formatTime(cue.startSec)}
               </Text>
-              {isActive && <Badge label="Playing" variant="info" />}
+              {isActive && <Badge label="Playing" variant="blue" />}
             </HStack>
             <Text type="body">{cue.text}</Text>
           </VStack>
@@ -499,12 +515,23 @@ function ChapterList({
             key={chapter.id}
             label={chapter.title}
             description={
-              <ProgressBar
-                value={progress}
-                max={100}
-                label={`${chapter.title} progress`}
-                isLabelHidden
-              />
+              <div
+                role="progressbar"
+                aria-label={`${chapter.title} progress`}
+                aria-valuenow={progress}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                style={styles.chapterTrack}>
+                <div
+                  style={{
+                    ...styles.chapterFill,
+                    width: `${progress}%`,
+                    backgroundColor: isActive
+                      ? 'var(--color-icon-blue)'
+                      : 'var(--color-track)',
+                  }}
+                />
+              </div>
             }
             startContent={
               <div style={styles.chapterTime}>
@@ -515,7 +542,7 @@ function ChapterList({
             }
             endContent={
               isActive ? (
-                <Badge label="Now" variant="info" />
+                <Badge label="Now" variant="blue" />
               ) : progress === 100 ? (
                 <Icon
                   icon={CheckIcon}
@@ -527,6 +554,7 @@ function ChapterList({
             }
             onClick={() => onSeek(chapter.startSec)}
             isSelected={isActive}
+            style={isActive ? styles.chapterRowActive : undefined}
           />
         );
       })}
@@ -776,7 +804,7 @@ export default function PodcastEpisodePlayerTemplate() {
             {!isNarrow && (
               <Badge
                 label={isPlaying ? `Playing · ${speed}x` : 'Paused'}
-                variant={isPlaying ? 'info' : 'neutral'}
+                variant={isPlaying ? 'blue' : 'neutral'}
               />
             )}
             <Button

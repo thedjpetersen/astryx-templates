@@ -61,6 +61,7 @@ import {
   BellIcon,
   BellRingIcon,
   CheckIcon,
+  ClockIcon,
   EyeIcon,
   GiftIcon,
   HeartIcon,
@@ -200,7 +201,8 @@ const styles: Record<string, CSSProperties> = {
   liveAvatarRing: {
     borderRadius: '50%',
     padding: 2,
-    border: `2px solid ${LIVE_RING}`,
+    border: `1.5px solid ${LIVE_RING}`,
+    flexShrink: 0,
   },
   // Chat panel plumbing: pinned Banner / scrolling body / fixed composer.
   chatRoot: {
@@ -222,7 +224,23 @@ const styles: Record<string, CSSProperties> = {
     overflowY: 'auto',
     padding: 'var(--spacing-1) var(--spacing-2)',
   },
-  chatLine: {overflowWrap: 'anywhere'},
+  chatLine: {overflowWrap: 'anywhere', padding: '2px 0'},
+  // Mod/sub badge sits inline before the username, centered at text size.
+  roleBadge: {
+    display: 'inline-flex',
+    verticalAlign: '-0.125em',
+    marginRight: 4,
+  },
+  // Gifted-subs / slow-mode lines: tinted system rows, not plain text.
+  systemLine: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 'var(--spacing-1-5)',
+    padding: 'var(--spacing-1) var(--spacing-2)',
+    margin: '2px 0',
+    borderRadius: 'var(--radius-element)',
+    backgroundColor: 'var(--color-background-muted)',
+  },
   resumeOverlay: {
     position: 'absolute',
     bottom: 'var(--spacing-2)',
@@ -277,17 +295,18 @@ interface ChatAuthor {
 }
 
 // Role-colored usernames: mods green, subs purple-family, viewers a fixed
-// per-author palette, "you" the accent color.
+// per-author palette, "you" the accent color. Shades are darkened for
+// AA-ish contrast against the light chat surface.
 const AUTHORS: Record<string, ChatAuthor> = {
-  nova_kestrel: {color: '#3BA55D', role: 'mod'},
-  gridline_sam: {color: '#A970FF', role: 'sub', months: 14},
-  apex_andy: {color: '#C084FC', role: 'sub', months: 3},
-  quasar_dot: {color: '#9F7AEA', role: 'sub', months: 7},
-  boost_bunny: {color: '#B794F4', role: 'sub', months: 2},
-  pit_lane_pia: {color: '#4FC3F7', role: 'viewer'},
-  turn9_tessa: {color: '#FFB74D', role: 'viewer'},
-  drs_dan: {color: '#F06292', role: 'viewer'},
-  slipstream_ko: {color: '#AED581', role: 'viewer'},
+  nova_kestrel: {color: '#1F8A4C', role: 'mod'},
+  gridline_sam: {color: '#7C3AED', role: 'sub', months: 14},
+  apex_andy: {color: '#9333EA', role: 'sub', months: 3},
+  quasar_dot: {color: '#6D28D9', role: 'sub', months: 7},
+  boost_bunny: {color: '#8250DF', role: 'sub', months: 2},
+  pit_lane_pia: {color: '#0E7DB8', role: 'viewer'},
+  turn9_tessa: {color: '#B45309', role: 'viewer'},
+  drs_dan: {color: '#D03C74', role: 'viewer'},
+  slipstream_ko: {color: '#4D7C0F', role: 'viewer'},
   you: {color: 'var(--color-accent)', role: 'you'},
 };
 
@@ -328,19 +347,28 @@ const CHAT_FIXTURE: ChatMessage[] = [
 
 // ============= CHAT PIECES =============
 
-/** Mod shield / sub star badge, colored to match the role. */
+/**
+ * Mod shield / sub star badge, colored to match the role. The inline-flex
+ * span keeps the badge on the same line as the username (Tooltip's
+ * display:contents wrapper would otherwise let the raw svg break the line)
+ * and centers it at text size.
+ */
 function RoleBadge({author}: {author: ChatAuthor}) {
   if (author.role === 'mod') {
     return (
       <Tooltip content="Moderator">
-        <Icon icon={ShieldIcon} size="xsm" color="success" />
+        <span style={styles.roleBadge}>
+          <Icon icon={ShieldIcon} size="xsm" color="success" />
+        </span>
       </Tooltip>
     );
   }
   if (author.role === 'sub' && author.months != null) {
     return (
       <Tooltip content={`Subscriber · ${author.months}-month badge`}>
-        <Icon icon={StarIcon} size="xsm" color="secondary" />
+        <span style={styles.roleBadge}>
+          <Icon icon={StarIcon} size="xsm" color="secondary" />
+        </span>
       </Tooltip>
     );
   }
@@ -350,17 +378,21 @@ function RoleBadge({author}: {author: ChatAuthor}) {
 /** One chat line: role badge, colored username, message text. */
 function ChatLine({message}: {message: ChatMessage}) {
   if (message.kind === 'system' || message.author == null) {
+    const isGift = message.text.includes('gifted');
     return (
-      <Text type="supporting" color="secondary" style={styles.chatLine}>
-        {message.text}
-      </Text>
+      <div style={styles.systemLine}>
+        <Icon icon={isGift ? GiftIcon : ClockIcon} size="xsm" color="secondary" />
+        <Text type="supporting" color="secondary" size="xsm">
+          {message.text}
+        </Text>
+      </div>
     );
   }
   const author = AUTHORS[message.author];
   return (
     <div style={styles.chatLine}>
       <Text type="supporting">
-        <RoleBadge author={author} />{' '}
+        <RoleBadge author={author} />
         <span style={{color: author.color, fontWeight: 600}}>
           {message.author === 'you' ? 'you' : message.author}
         </span>
@@ -637,7 +669,7 @@ function StreamerInfo({
     <VStack gap={3}>
       <HStack gap={3} vAlign="center" wrap="wrap">
         <div style={styles.liveAvatarRing}>
-          <Avatar name="Orbit Pilot" size="large" />
+          <Avatar name="Orbit Pilot" size={72} />
         </div>
         <StackItem size="fill">
           <VStack gap={0.5}>

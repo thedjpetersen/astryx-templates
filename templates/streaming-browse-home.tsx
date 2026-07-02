@@ -9,8 +9,10 @@
  *   percentages and minutes-left labels, 8 ranked Trending titles, 8 New
  *   Releases with 'New' / 'Recently added' badges, and 6 'Because you
  *   watched' recommendations with fixed match scores; every piece of artwork
- *   is a two-color CSS gradient pair picked by a deterministic title hash
- *   with an inline-SVG initial — no image assets, no randomness)
+ *   is a two-color CSS gradient pair picked by a deterministic title hash,
+ *   layered with a radial key light, a faint corner-cropped inline-SVG
+ *   initial watermark, and a bottom title scrim — no image assets, no
+ *   randomness)
  * @output Streaming-service browse home on a dark full-bleed surface: a
  *   sticky 64px nav row (clapperboard brand mark, Home/Shows/Movies/My List
  *   TabList, SearchIcon + BellIcon IconButtons, Avatar), a 420px hero
@@ -241,6 +243,32 @@ const styles: Record<string, CSSProperties> = {
     overflow: 'hidden',
   },
   artInitial: {position: 'absolute', inset: 0},
+  // Bottom scrim inside every tile: dissolves the art into a dark band so
+  // the in-tile caption reads like a real streaming poster title.
+  artScrim: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingTop: 34,
+    paddingInline: 10,
+    paddingBottom: 8,
+    background:
+      'linear-gradient(180deg, transparent 0%, rgba(7, 8, 12, 0.55) 48%, rgba(7, 8, 12, 0.92) 100%)',
+    pointerEvents: 'none',
+  },
+  artCaption: {
+    display: '-webkit-box',
+    WebkitBoxOrient: 'vertical',
+    WebkitLineClamp: 2,
+    overflow: 'hidden',
+    fontSize: 12,
+    fontWeight: 600,
+    lineHeight: 1.3,
+    letterSpacing: '0.01em',
+    color: PAGE_TEXT,
+    textShadow: '0 1px 2px rgba(0, 0, 0, 0.65)',
+  },
   listToggleOverlay: {position: 'absolute', top: 6, right: 6, zIndex: 3},
   posterBadgeOverlay: {position: 'absolute', top: 6, left: 6, zIndex: 3},
   caption: {paddingTop: 'var(--spacing-1)', color: PAGE_TEXT_DIM},
@@ -374,37 +402,56 @@ const NAV_TABS = [
 // ============= ART PIECES =============
 
 /**
- * Deterministic poster/still art: a two-color gradient keyed to the title
- * plus an inline-SVG initial. Stands in for every piece of artwork — the
- * template ships zero image assets.
+ * Deterministic poster/still art: a two-color gradient keyed to the title,
+ * layered with a soft radial key light and a faint initial watermark cropped
+ * off the top-right corner, then a bottom scrim that can carry the title in
+ * small type like a real streaming tile. Stands in for every piece of
+ * artwork — the template ships zero image assets.
  */
-function TitleArt({title, ratio}: {title: string; ratio: number}) {
+function TitleArt({
+  title,
+  ratio,
+  caption,
+}: {
+  title: string;
+  ratio: number;
+  caption?: string;
+}) {
   const [from, to] = gradientFor(title);
+  // viewBox matches the tile's aspect so the watermark crop is stable.
+  const viewH = Math.round(1000 / ratio) / 10;
   return (
     <div
-      aria-hidden
       style={{
         ...styles.art,
         width: '100%',
         paddingTop: `${(100 / ratio).toFixed(3)}%`,
-        background: `linear-gradient(135deg, ${from} 0%, ${to} 100%)`,
+        background: [
+          'radial-gradient(90% 70% at 18% 10%, rgba(255, 255, 255, 0.16), transparent 58%)',
+          `radial-gradient(120% 85% at 85% 30%, ${to}B8, transparent 62%)`,
+          `linear-gradient(160deg, ${from} 0%, ${to} 130%)`,
+        ].join(', '),
       }}>
       <svg
-        viewBox="0 0 100 100"
-        preserveAspectRatio="xMidYMid meet"
+        aria-hidden
+        viewBox={`0 0 100 ${viewH}`}
+        preserveAspectRatio="xMidYMid slice"
         style={styles.artInitial}>
         <text
-          x="50"
-          y="54"
+          x="97"
+          y="12"
           textAnchor="middle"
           dominantBaseline="central"
-          fontSize="46"
-          fontWeight="700"
-          fill="rgba(255, 255, 255, 0.30)"
+          fontSize="44"
+          fontWeight="800"
+          fill="rgba(255, 255, 255, 0.13)"
           fontFamily="inherit">
           {title.charAt(0)}
         </text>
       </svg>
+      <div style={styles.artScrim}>
+        {caption != null && <span style={styles.artCaption}>{caption}</span>}
+      </div>
     </div>
   );
 }
@@ -516,13 +563,17 @@ function ContinueCard({
       }}
       onMouseEnter={() => onHover(entry.id)}
       onMouseLeave={() => onHover(null)}>
-      <TitleArt title={entry.title} ratio={16 / 9} />
+      <TitleArt title={entry.title} ratio={16 / 9} caption={entry.title} />
       <div style={styles.continueFooter}>
         <VStack gap={1}>
           <HStack gap={1} vAlign="center">
             <StackItem size="fill" style={{minWidth: 0}}>
-              <Text type="label" color="inherit" maxLines={1}>
-                {entry.title}
+              <Text
+                type="supporting"
+                color="inherit"
+                maxLines={1}
+                style={{color: PAGE_TEXT_DIM}}>
+                {entry.label}
               </Text>
             </StackItem>
             <MoreMenu
@@ -540,13 +591,6 @@ function ContinueCard({
               ]}
             />
           </HStack>
-          <Text
-            type="supporting"
-            color="inherit"
-            maxLines={1}
-            style={{color: PAGE_TEXT_DIM}}>
-            {entry.label}
-          </Text>
           <ProgressBar
             value={entry.progress}
             label={`${entry.title} progress`}
@@ -594,7 +638,7 @@ function PosterCard({
       onMouseEnter={() => onHover(entry.id)}
       onMouseLeave={() => onHover(null)}>
       <div style={{position: 'relative'}}>
-        <TitleArt title={entry.title} ratio={2 / 3} />
+        <TitleArt title={entry.title} ratio={2 / 3} caption={entry.title} />
         {entry.badge != null && (
           <div style={styles.posterBadgeOverlay}>
             <Badge
@@ -613,11 +657,8 @@ function PosterCard({
           </div>
         )}
       </div>
-      <div style={styles.caption}>
-        <Text type="supporting" color="inherit" maxLines={1}>
-          {entry.title}
-        </Text>
-        {entry.match != null && (
+      {entry.match != null && (
+        <div style={styles.caption}>
           <Text
             type="supporting"
             color="inherit"
@@ -625,8 +666,8 @@ function PosterCard({
             style={styles.matchCaption}>
             {entry.match}
           </Text>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

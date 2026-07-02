@@ -12,8 +12,9 @@
  *   stage (CSS gradient "footage", scene note, timecode chip) rendering the
  *   active cue as a real caption overlay — black scrim pill, two-line max —
  *   with a transport row (prev/play/next, rate SegmentedControl, mute and
- *   caption toggles) and a scrub Slider whose track carries a tick per cue
- *   in/out; top-right, a cue inspector Card with In/Out timecode TextInputs,
+ *   caption toggles), a cue strip that maps every cue as a colored block
+ *   (accent normal, amber CPS, red overlap) under a playhead line, and a
+ *   scrub Slider; top-right, a cue inspector Card with In/Out timecode TextInputs,
  *   ±100ms nudge IconButtons, duration + CPS readouts, a character-count
  *   FieldStatus that flips to error past 42 chars/line, and the cue text
  *   TextArea; bottom, a full-width scrolling cue Table (#, in, out, dur,
@@ -26,18 +27,20 @@
  * Frame: Layout height="fill", no page scroll. LayoutHeader carries the
  * track chrome ('interview-cut-02 · captions' title, language Selector,
  * issues Badge, ghost Preview + primary 'Export .srt' Buttons). LayoutContent
- * (padding 0) splits vertically: an upper region (player stage flexible left,
- * inspector 380px right), a lower cue-table region fixed at ~45% height with
- * its own scroll, and a 48px footer operations Toolbar. Choose over
+ * (padding 0) splits vertically: an upper content-height region (player stage
+ * capped at 700px wide on the left, inspector 380px right), a lower cue-table
+ * region that fills the remaining height with its own scroll, and a 48px
+ * footer operations Toolbar. Choose over
  * transcript-annotator when the user edits timing/text of caption cues
  * against a playhead, and over video-clip-timeline when the timeline is a
  * cue table, not multi-track lanes.
  *
  * Responsive contract:
- * - >1100px: header | (stage fill + inspector 380 fixed) | table 45% | 48px
- *   toolbar. Only the table region and the upper region scroll internally.
+ * - >1100px: header | (stage ≤700px + inspector 380 fixed) content-height |
+ *   table fills remaining height | 48px toolbar. Only the table region
+ *   scrolls internally.
  * - <=1100px: the inspector stacks below the stage; the upper region scrolls
- *   vertically as one column. Table region and footer keep their heights.
+ *   vertically as one column and the table region keeps a fixed 45% height.
  * - <=768px: the header drops the ghost Preview button; the transport keeps
  *   28px "sm" hit targets at every width.
  * - The caption overlay sizes with the stage via container-query units, so
@@ -109,14 +112,18 @@ import {useMediaQuery} from '@astryxdesign/core/hooks';
 
 const styles: Record<string, CSSProperties> = {
   fill: {height: '100%', minHeight: 0},
-  // Upper region: stage + inspector; scrolls internally when short or when
-  // the inspector stacks below the stage (<=1100px).
+  // Upper region: stage + inspector. Content-height on desktop so the cue
+  // table below gets the remaining space; scrolls internally when the
+  // inspector stacks below the stage (<=1100px).
   upperScroll: {
     minHeight: 0,
     overflowY: 'auto',
     padding: 'var(--spacing-4)',
   },
   stageColumn: {minWidth: 0},
+  // Cap the stage so a wide viewport doesn't let the 16:9 player swallow the
+  // vertical budget that belongs to the cue table.
+  stageColumnCapped: {minWidth: 0, width: '100%', maxWidth: 700},
   inspectorColumn: {width: 380, flexShrink: 0},
   // Mock player surface: CSS gradients only — no <video>, no network media.
   // containerType makes cqw units track the rendered stage width so the
@@ -180,9 +187,29 @@ const styles: Record<string, CSSProperties> = {
     WebkitBoxOrient: 'vertical',
     overflow: 'hidden',
   },
-  // Lower region: fixed ~45% height, table scrolls inside it.
+  // Cue strip: one colored block per cue over a muted rail, playhead line on
+  // top — the legible companion to the scrub Slider below it.
+  cueStrip: {
+    position: 'relative',
+    height: 34,
+    borderRadius: 6,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-muted)',
+    overflow: 'hidden',
+    cursor: 'pointer',
+  },
+  cueBlock: {position: 'absolute', top: 7, bottom: 7, borderRadius: 3},
+  stripPlayhead: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    width: 2,
+    marginLeft: -1,
+    backgroundColor: 'var(--color-accent)',
+  },
+  // Lower region: fills the height left by the content-height upper region on
+  // desktop (fixed ~45% when stacked); table scrolls inside it.
   tableRegion: {
-    flex: '0 0 45%',
     minHeight: 0,
     display: 'flex',
     flexDirection: 'column',
@@ -589,6 +616,7 @@ export default function SubtitleCueEditorTemplate() {
       key: 'num',
       header: '#',
       width: pixel(48),
+      align: 'end',
       renderCell: row => (
         <Text type="supporting" color="secondary" hasTabularNumbers>
           {row.index + 1}
@@ -598,9 +626,9 @@ export default function SubtitleCueEditorTemplate() {
     {
       key: 'in',
       header: 'In',
-      width: pixel(116),
+      width: pixel(132),
       renderCell: row => (
-        <Text type="code" hasTabularNumbers>
+        <Text type="code" hasTabularNumbers style={{whiteSpace: 'nowrap'}}>
           {formatTimecode(row.inMs)}
         </Text>
       ),
@@ -608,9 +636,9 @@ export default function SubtitleCueEditorTemplate() {
     {
       key: 'out',
       header: 'Out',
-      width: pixel(116),
+      width: pixel(132),
       renderCell: row => (
-        <Text type="code" hasTabularNumbers>
+        <Text type="code" hasTabularNumbers style={{whiteSpace: 'nowrap'}}>
           {formatTimecode(row.outMs)}
         </Text>
       ),
@@ -799,7 +827,9 @@ export default function SubtitleCueEditorTemplate() {
 
   // ---- stage ----
   const stage = (
-    <VStack gap={2} style={styles.stageColumn}>
+    <VStack
+      gap={2}
+      style={isStacked ? styles.stageColumn : styles.stageColumnCapped}>
       <Card padding={0} style={styles.stageCard}>
         <AspectRatio ratio={16 / 9}>
           <div style={styles.stage}>
@@ -895,24 +925,73 @@ export default function SubtitleCueEditorTemplate() {
         />
       </HStack>
 
-      {/* Scrub slider: one tick per cue in/out on the track. */}
-      <Slider
-        label="Playhead"
-        isLabelHidden
-        min={0}
-        max={DURATION_MS}
-        step={100}
-        value={playheadMs}
-        onChange={seekTo}
-        formatValue={formatTimecode}
-        marks={cues.flatMap(cue => [{value: cue.inMs}, {value: cue.outMs}])}
-        width="100%"
-      />
+      {/* Cue strip (visual affordance, click to seek) + accessible scrub
+          Slider. Blocks tint amber/red when the cue carries an issue. */}
+      <VStack gap={1}>
+        <div
+          style={styles.cueStrip}
+          aria-hidden
+          onClick={event => {
+            const rect = event.currentTarget.getBoundingClientRect();
+            const ratio = (event.clientX - rect.left) / rect.width;
+            seekTo(Math.round((ratio * DURATION_MS) / 100) * 100);
+          }}>
+          {rows.map(row => {
+            const hasError = row.issues.some(
+              issue => issue.variant === 'error',
+            );
+            const hasWarning = row.issues.some(
+              issue => issue.variant === 'warning',
+            );
+            const isActive = activeCue != null && row.id === activeCue.id;
+            return (
+              <div
+                key={row.id}
+                title={`Cue ${row.index + 1} · ${formatTimecode(row.inMs)}`}
+                style={{
+                  ...styles.cueBlock,
+                  left: `${(row.inMs / DURATION_MS) * 100}%`,
+                  width: `max(${((row.outMs - row.inMs) / DURATION_MS) * 100}%, 3px)`,
+                  backgroundColor: hasError
+                    ? 'var(--color-error)'
+                    : hasWarning
+                      ? 'var(--color-warning)'
+                      : 'var(--color-accent)',
+                  opacity: isActive ? 1 : 0.55,
+                }}
+              />
+            );
+          })}
+          <div
+            style={{
+              ...styles.stripPlayhead,
+              left: `${(playheadMs / DURATION_MS) * 100}%`,
+            }}
+          />
+        </div>
+        <Slider
+          label="Playhead"
+          isLabelHidden
+          min={0}
+          max={DURATION_MS}
+          step={100}
+          value={playheadMs}
+          onChange={seekTo}
+          formatValue={formatTimecode}
+          width="100%"
+        />
+      </VStack>
     </VStack>
   );
 
   const upperRegion = (
-    <div style={{...styles.upperScroll, flex: '1 1 auto'}}>
+    <div
+      style={{
+        ...styles.upperScroll,
+        // Desktop: content-height so the cue table owns the leftover space.
+        // Stacked: flexible with internal scroll above the fixed-height table.
+        flex: isStacked ? '1 1 auto' : '0 0 auto',
+      }}>
       {isStacked ? (
         <VStack gap={4}>
           {stage}
@@ -930,7 +1009,11 @@ export default function SubtitleCueEditorTemplate() {
   );
 
   const tableRegion = (
-    <div style={styles.tableRegion}>
+    <div
+      style={{
+        ...styles.tableRegion,
+        flex: isStacked ? '0 0 45%' : '1 1 auto',
+      }}>
       <div style={styles.tableHeaderRow}>
         <HStack gap={3} vAlign="center">
           <Heading level={2}>Cues</Heading>

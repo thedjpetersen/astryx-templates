@@ -13,7 +13,7 @@
  *   56px left tool rail of vertical IconButtons with Tooltip+Kbd shortcuts
  *   (select, razor SplitIcon, text TypeIcon, zoom), a center program monitor
  *   (16:9 gradient stage labeled 'Program: spring-launch-cut_v4', transport
- *   with StepBack/Play/StepForward and a mono 00:00:12:08 timecode, scrub
+ *   with StepBack/Play/StepForward and a mono 00:00:14:06 timecode, scrub
  *   Slider), a 300px collapsible properties panel bound to the selected clip
  *   (source in/out, opacity Slider, speed NumberInput, gain Slider, LockIcon
  *   toggle) — and the defining region: a fixed 280px bottom timeline dock
@@ -110,7 +110,7 @@ import {useMediaQuery} from '@astryxdesign/core/hooks';
 const PROJECT_NAME = 'spring-launch-cut_v4';
 const FPS = 24;
 const DURATION_SEC = 92; // 00:01:32:00 at 24fps
-const INITIAL_PLAYHEAD_SEC = 12.33; // 00:00:12:08
+const INITIAL_PLAYHEAD_SEC = 14.25; // 00:00:14:06
 const INITIAL_SELECTED_CLIP = 'v1-2'; // B-roll_office_pan.mp4
 
 type ZoomPreset = '50' | '100' | '200';
@@ -316,9 +316,11 @@ const styles: Record<string, CSSProperties> = {
     letterSpacing: '0.06em',
     color: 'rgba(226, 232, 240, 0.75)',
   },
+  // Fixed-pixel inset keeps the dashed frame's margins even on all sides
+  // (percentage insets resolve against width and height separately).
   stageSafeArea: {
     position: 'absolute',
-    inset: '7%',
+    inset: 24,
     border: '1px dashed rgba(148, 163, 184, 0.25)',
     borderRadius: 4,
     pointerEvents: 'none',
@@ -344,16 +346,20 @@ const styles: Record<string, CSSProperties> = {
     fontSize: 11,
     color: 'rgba(148, 163, 184, 0.8)',
   },
+  // Inset pill progress bar — never touches the stage's rounded corners.
   stageProgressRail: {
     position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
+    left: 14,
+    right: 14,
+    bottom: 10,
     height: 3,
+    borderRadius: 999,
+    overflow: 'hidden',
     backgroundColor: 'rgba(148, 163, 184, 0.25)',
   },
   stageProgressFill: {
     height: '100%',
+    borderRadius: 999,
     backgroundColor: '#EF4444',
   },
   timecode: {
@@ -382,7 +388,8 @@ const styles: Record<string, CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     gap: 4,
-    paddingInline: 'var(--spacing-1)',
+    // Matches laneHeaderTop so track labels align with the px/s readout.
+    paddingInline: 'var(--spacing-2)',
     borderTop: 'var(--border-width) solid var(--color-border)',
   },
   laneCanvasScroll: {flex: 1, minWidth: 0, overflowX: 'auto', overflowY: 'hidden'},
@@ -419,6 +426,8 @@ const styles: Record<string, CSSProperties> = {
     position: 'absolute',
     top: 5,
     bottom: 5,
+    // Short title clips keep enough width for a recognizable label.
+    minWidth: 64,
     borderRadius: 4,
     borderWidth: 1,
     borderStyle: 'solid',
@@ -431,8 +440,8 @@ const styles: Record<string, CSSProperties> = {
   clipName: {
     position: 'absolute',
     top: 2,
-    left: 6,
-    right: 6,
+    left: 8,
+    right: 8,
     fontFamily: MONO,
     fontSize: 10,
     lineHeight: '14px',
@@ -441,6 +450,8 @@ const styles: Record<string, CSSProperties> = {
     textOverflow: 'ellipsis',
     color: 'var(--color-text-primary)',
     pointerEvents: 'none',
+    // Above the playhead line so labels stay legible when it crosses them.
+    zIndex: 3,
   },
   waveRow: {
     position: 'absolute',
@@ -524,13 +535,21 @@ function ClipBlock({
   onSelect: (clipId: string) => void;
 }) {
   const {clip: c, track} = entry;
+  // Blocks show the name without its "Title:"/"Lower third:" role prefix so
+  // narrow title clips still surface a recognizable word; the properties
+  // panel and aria-label keep the full fixture name.
+  const displayName = c.name.includes(': ')
+    ? c.name.slice(c.name.indexOf(': ') + 2)
+    : c.name;
   const blockStyle: CSSProperties = {
     ...styles.clipBlock,
     left: c.start * pxPerSec,
     width: (c.end - c.start) * pxPerSec,
     backgroundColor: track.blockBg,
     borderColor: isSelected ? 'var(--color-accent)' : track.blockBorder,
-    boxShadow: isSelected ? '0 0 0 2px var(--color-accent)' : undefined,
+    // Inset ring keeps the selection outline inside the block so it never
+    // overlaps adjacent clips or clips its own label.
+    boxShadow: isSelected ? 'inset 0 0 0 1px var(--color-accent)' : undefined,
     cursor: isTrackLocked ? 'not-allowed' : 'pointer',
   };
   return (
@@ -543,7 +562,7 @@ function ClipBlock({
       )} to ${formatTimecode(c.end)}`}
       aria-pressed={isSelected}
       onClick={() => onSelect(c.id)}>
-      <span style={styles.clipName}>{c.name}</span>
+      <span style={styles.clipName}>{displayName}</span>
       {track.wave != null && (
         <span style={styles.waveRow} aria-hidden>
           {track.wave.map((v, i) => (
@@ -737,6 +756,8 @@ function PropertiesPanel({
             </VStack>
           </Collapsible>
         )}
+
+        {!isAudio && <Divider />}
 
         <Collapsible
           trigger={

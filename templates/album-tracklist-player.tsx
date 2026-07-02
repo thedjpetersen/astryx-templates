@@ -16,7 +16,7 @@
  *   circular play/pause Button, ShuffleIcon + HeartIcon ToggleButtons, a
  *   MoreMenu), a track Table (# / title+artist / plays / heart / duration)
  *   where the playing row swaps its number for an AudioLinesIcon and gets a
- *   primary background tint, and an 'About the artist' Card. A fixed 80px
+ *   soft rounded cover-tinted highlight, and an 'About the artist' Card. A fixed 80px
  *   bottom dock shows the current track's thumb + title, a
  *   shuffle/skip/play-pause/skip/repeat transport, a scrub Slider between
  *   1:47 / 4:23 timecodes, and a mute-toggle volume Slider
@@ -109,6 +109,14 @@ const COVER_GRADIENT =
 const COVER_LINE = 'rgba(242, 247, 250, 0.4)';
 const COVER_TEXT = '#F2F7FA';
 
+// Cover-derived tints (the gradient's mid tone at low alpha). The hero wash
+// and the now-playing highlight follow the album art, not the app accent —
+// like the cover itself, they read identically in both themes.
+const HERO_TINT =
+  'linear-gradient(180deg, rgba(31, 93, 122, 0.16) 0%, ' +
+  'rgba(31, 93, 122, 0.07) 55%, rgba(31, 93, 122, 0) 100%)';
+const NOW_PLAYING_TINT = 'rgba(31, 93, 122, 0.09)';
+
 // ============= STYLES =============
 
 const styles: Record<string, CSSProperties> = {
@@ -119,11 +127,10 @@ const styles: Record<string, CSSProperties> = {
     marginInline: 'auto',
     paddingInline: 'var(--spacing-6)',
   },
-  // Gradient hero band the content scrolls under; fades into the page
-  // background so both themes read correctly.
+  // Gradient hero band the content scrolls under: an even, full-width
+  // cover-derived wash that fades vertically into the page background.
   heroBand: {
-    background:
-      'linear-gradient(180deg, var(--color-accent-muted) 0%, transparent 100%)',
+    background: HERO_TINT,
     paddingTop: 'var(--spacing-4)',
     paddingBottom: 'var(--spacing-6)',
   },
@@ -172,6 +179,9 @@ const styles: Record<string, CSSProperties> = {
     height: 40,
     borderRadius: '50%',
   },
+  // Lucide's play triangle sits left-of-center in its viewBox; nudge it
+  // right so it looks optically centered inside the round buttons.
+  playGlyphNudge: {display: 'inline-flex', transform: 'translateX(1.5px)'},
   truncate: {minWidth: 0},
 };
 
@@ -477,23 +487,46 @@ export default function AlbumTracklistPlayerTemplate() {
     },
   ];
 
-  // Row plugin: every row plays on click; the playing row gets the primary
-  // background tint to pair with its AudioLines number swap.
+  // Row plugin: every row plays on click; the playing row gets a soft
+  // cover-tinted highlight to pair with its AudioLines number swap. The
+  // tint lives on the cells (a <tr> can't round its corners) so the
+  // highlight reads as a rounded pill, not a hard-edged slab.
   const nowPlayingPlugin: TablePlugin<TrackRow> = {
     transformBodyRow: (props, item) => ({
       ...props,
       htmlProps: {
         ...props.htmlProps,
         onClick: () => handleRowClick(item),
-        style: {
-          ...props.htmlProps.style,
-          cursor: 'pointer',
-          ...(item.id === currentTrack.id
-            ? {backgroundColor: 'var(--color-accent-muted)'}
-            : null),
-        },
+        style: {...props.htmlProps.style, cursor: 'pointer'},
       },
     }),
+    transformBodyCell: (props, _column, item, columnIndex, allColumns) => {
+      if (item.id !== currentTrack.id) {
+        return props;
+      }
+      return {
+        ...props,
+        htmlProps: {
+          ...props.htmlProps,
+          style: {
+            ...props.htmlProps.style,
+            backgroundColor: NOW_PLAYING_TINT,
+            ...(columnIndex === 0
+              ? {
+                  borderTopLeftRadius: 'var(--radius-element)',
+                  borderBottomLeftRadius: 'var(--radius-element)',
+                }
+              : null),
+            ...(columnIndex === allColumns.length - 1
+              ? {
+                  borderTopRightRadius: 'var(--radius-element)',
+                  borderBottomRightRadius: 'var(--radius-element)',
+                }
+              : null),
+          },
+        },
+      };
+    },
   };
 
   // ============= HERO + BODY =============
@@ -551,7 +584,13 @@ export default function AlbumTracklistPlayerTemplate() {
         size="lg"
         isIconOnly
         icon={
-          <Icon icon={isPlaying ? PauseIcon : PlayIcon} size="md" color="inherit" />
+          isPlaying ? (
+            <Icon icon={PauseIcon} size="lg" color="inherit" />
+          ) : (
+            <span style={styles.playGlyphNudge}>
+              <Icon icon={PlayIcon} size="lg" color="inherit" />
+            </span>
+          )
         }
         style={styles.heroPlayButton}
         onClick={() => setIsPlaying(prev => !prev)}
@@ -689,11 +728,13 @@ export default function AlbumTracklistPlayerTemplate() {
                   : `Play · ${currentTrack.title}`
               }
               icon={
-                <Icon
-                  icon={isPlaying ? PauseIcon : PlayIcon}
-                  size="sm"
-                  color="inherit"
-                />
+                isPlaying ? (
+                  <Icon icon={PauseIcon} size="sm" color="inherit" />
+                ) : (
+                  <span style={styles.playGlyphNudge}>
+                    <Icon icon={PlayIcon} size="sm" color="inherit" />
+                  </span>
+                )
               }
               variant="primary"
               style={styles.dockPlayButton}

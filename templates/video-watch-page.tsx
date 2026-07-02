@@ -191,7 +191,11 @@ const styles: Record<string, CSSProperties> = {
     color: '#FFFFFF',
     cursor: 'default',
   },
-  timecode: {whiteSpace: 'nowrap', color: '#FFFFFF'},
+  timecode: {
+    whiteSpace: 'nowrap',
+    color: '#FFFFFF',
+    marginInlineStart: 'var(--spacing-2)',
+  },
   chapterLabel: {whiteSpace: 'nowrap', color: 'rgba(255, 255, 255, 0.72)'},
   // Up-next art: 168px 16:9 gradient tiles with overlay chips.
   upNextThumb: {
@@ -241,6 +245,9 @@ const styles: Record<string, CSSProperties> = {
   upNextBody: {minWidth: 0, flex: 1},
   gearStrip: {display: 'flex', gap: 'var(--spacing-2)', flexWrap: 'wrap'},
   commentBody: {minWidth: 0},
+  // Deepen the sort control's track a step so the unselected segment reads
+  // as part of one control against the page background.
+  commentSort: {backgroundColor: 'var(--color-background-gray)'},
 };
 
 // ============= DATA =============
@@ -757,8 +764,8 @@ function CommentRow({comment}: {comment: Comment}) {
             </Text>
             {comment.isHearted && (
               <Badge
-                label={`♥ by ${CHANNEL_NAME}`}
-                variant="error"
+                label={`by ${CHANNEL_NAME}`}
+                variant="red"
                 icon={<Icon icon={HeartIcon} size="xsm" color="inherit" />}
               />
             )}
@@ -811,7 +818,8 @@ function CommentsSection({
           value={sort}
           onChange={value => onSortChange(value as 'top' | 'newest')}
           label="Sort comments"
-          size="sm">
+          size="sm"
+          style={styles.commentSort}>
           <SegmentedControlItem value="top" label="Top" />
           <SegmentedControlItem value="newest" label="Newest" />
         </SegmentedControl>
