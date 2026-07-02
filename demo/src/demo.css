@@ -1,8 +1,14 @@
+/*
+ * Gallery chrome, styled to the Astryx brand layer (see astryxTheme.js):
+ * cream body, near-black ink accents, Figtree type, bumped radii, pill
+ * controls. Brand blue stays reserved for the logo mark via --color-brand.
+ */
+
 :root {
   color-scheme: light dark;
   font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
+    "Figtree", "Figtree Variable", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 body {
@@ -27,8 +33,8 @@ button {
   flex-direction: column;
   gap: 18px;
   border-right: 1px solid var(--color-border);
-  background: var(--color-background-card);
-  padding: 18px;
+  background: var(--color-background-body);
+  padding: 20px 18px;
 }
 
 .demo-brand {
@@ -40,17 +46,16 @@ button {
 .demo-brand-mark {
   width: 34px;
   height: 34px;
-  border-radius: 7px;
-  background:
-    linear-gradient(135deg, var(--color-accent), transparent 72%),
-    var(--color-background-muted);
-  border: 1px solid var(--color-border-emphasized);
+  flex-shrink: 0;
+  fill: var(--color-brand);
 }
 
 .demo-brand h1,
 .template-heading h2 {
   margin: 0;
   font-size: 18px;
+  font-weight: var(--font-weight-semibold, 600);
+  letter-spacing: -0.01em;
   line-height: 1.2;
 }
 
@@ -62,31 +67,36 @@ button {
   line-height: 1.4;
 }
 
+/* Pill segmented controls, matching the brand's pill buttons. */
 .segmented {
   display: inline-grid;
   grid-auto-flow: column;
   gap: 2px;
   padding: 3px;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: var(--color-background-muted);
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-background-card);
 }
 
 .segmented button {
   min-width: 72px;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--radius-full, 999px);
   background: transparent;
   color: var(--color-text-secondary);
   cursor: pointer;
-  padding: 7px 10px;
+  padding: 6px 12px;
+  font-weight: var(--font-weight-medium, 500);
   text-transform: capitalize;
 }
 
-.segmented button.is-active {
-  background: var(--color-background-card);
+.segmented button:hover {
   color: var(--color-text-primary);
-  box-shadow: 0 1px 2px var(--color-shadow);
+}
+
+.segmented button.is-active {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
 }
 
 .template-nav {
@@ -96,14 +106,15 @@ button {
 }
 
 .template-nav section + section {
-  margin-top: 18px;
+  margin-top: 20px;
 }
 
 .template-nav h2 {
   margin: 0 0 8px;
   color: var(--color-text-secondary);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold, 600);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
@@ -113,18 +124,22 @@ button {
   gap: 10px;
   width: 100%;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: var(--radius-element, 12px);
   background: transparent;
   color: inherit;
   cursor: pointer;
-  padding: 10px;
+  padding: 10px 12px;
   text-align: left;
 }
 
-.template-nav-item:hover,
+.template-nav-item:hover {
+  background: var(--color-accent-muted);
+}
+
 .template-nav-item.is-selected {
-  border-color: var(--color-border);
-  background: var(--color-background-muted);
+  border-color: var(--color-border-emphasized, var(--color-border));
+  background: var(--color-background-card);
+  box-shadow: 0 1px 2px var(--color-shadow);
 }
 
 .template-nav-item strong,
@@ -134,6 +149,7 @@ button {
 
 .template-nav-item strong {
   font-size: 14px;
+  font-weight: var(--font-weight-medium, 500);
 }
 
 .template-nav-item small {
@@ -145,12 +161,20 @@ button {
 
 .template-nav-item em {
   align-self: start;
-  border-radius: 999px;
-  background: var(--color-accent-muted);
-  color: var(--color-text-accent);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-background-card);
+  color: var(--color-text-secondary);
   font-size: 11px;
   font-style: normal;
-  padding: 2px 7px;
+  font-weight: var(--font-weight-medium, 500);
+  padding: 2px 8px;
+}
+
+.template-nav-item.is-selected em {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-on-accent);
 }
 
 .demo-main {
@@ -166,8 +190,8 @@ button {
   justify-content: space-between;
   gap: 20px;
   border-bottom: 1px solid var(--color-border);
-  background: var(--color-background-card);
-  padding: 16px 20px;
+  background: var(--color-background-body);
+  padding: 18px 24px;
 }
 
 .template-heading {
@@ -175,9 +199,10 @@ button {
 }
 
 .template-heading span {
-  color: var(--color-text-accent);
-  font-size: 12px;
-  font-weight: 700;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold, 600);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
@@ -194,16 +219,19 @@ button {
 .preview-wrap {
   min-height: 0;
   overflow: auto;
-  padding: 18px;
+  padding: 20px 24px 24px;
 }
 
+/* The stage is the one true "card" on the page: white surface, container
+   radius, subtle shadow — the framed artboard the template renders into. */
 .template-stage {
   min-width: 920px;
-  min-height: calc(100dvh - 118px);
+  min-height: calc(100dvh - 130px);
   overflow: auto;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: var(--color-background-body);
+  border-radius: var(--radius-container, 16px);
+  background: var(--color-background-card);
+  box-shadow: 0 1px 3px var(--color-shadow);
 }
 
 .template-stage-mobile {
@@ -213,17 +241,17 @@ button {
 }
 
 .source-panel {
-  min-height: calc(100dvh - 118px);
+  min-height: calc(100dvh - 130px);
   overflow: auto;
   margin: 0;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-container, 16px);
   background: var(--color-background-card);
   color: var(--color-text-primary);
   font-family: var(--font-family-code);
   font-size: 12px;
   line-height: 1.55;
-  padding: 18px;
+  padding: 20px;
   white-space: pre;
 }
 
@@ -255,4 +283,3 @@ button {
     min-width: 390px;
   }
 }
-

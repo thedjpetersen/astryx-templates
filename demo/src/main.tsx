@@ -1,5 +1,6 @@
 import '@astryxdesign/core/reset.css';
 import '@astryxdesign/core/astryx.css';
+import './astryxTheme.css';
 import './demo.css';
 
 import {StrictMode} from 'react';
