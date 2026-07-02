@@ -10,9 +10,10 @@ import {defineTheme} from '@astryxdesign/core/theme';
  *   2. BRAND_BLUE — the Astryx blue, reserved for the logo mark only. Exposed
  *      as the custom var --color-brand and never wired to a semantic token.
  *
- * Beyond that: cream body in light mode, Figtree typography, a +4px radius
- * bump, semibold display headings, and pill buttons. The neutral gray ramp
- * (surfaces, borders, secondary/disabled text) stays at the system defaults.
+ * Beyond that: a soft light-blue body in light mode, Figtree typography, a
+ * +4px radius bump, semibold display headings, and pill buttons. The neutral
+ * gray ramp (surfaces, borders, secondary/disabled text) stays at the system
+ * defaults.
  */
 
 const PRIMARY = 'light-dark(#15110C, #DFE2E5)';
@@ -32,7 +33,7 @@ export const astryxTheme = defineTheme({
     // On-accent ink must invert with the accent: near-black accent in light
     // mode gets white labels, near-white accent in dark mode gets near-black.
     '--color-on-accent': 'light-dark(#FFFFFF, #15110C)',
-    '--color-background-body': 'light-dark(#F8F4ED, #111112)',
+    '--color-background-body': 'light-dark(#EFF4FB, #111112)',
     '--color-text-primary': PRIMARY,
     '--color-icon-primary': PRIMARY,
     '--text-display-1-weight': 'var(--font-weight-semibold)',

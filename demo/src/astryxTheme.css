@@ -84,7 +84,7 @@
     --color-icon-accent: light-dark(#15110C, #DFE2E5);
     --color-accent-muted: light-dark(rgba(21, 17, 12, 0.08), rgba(223, 226, 229, 0.14));
     --color-on-accent: light-dark(#FFFFFF, #15110C);
-    --color-background-body: light-dark(#F8F4ED, #111112);
+    --color-background-body: light-dark(#EFF4FB, #111112);
     --color-text-primary: light-dark(#15110C, #DFE2E5);
     --color-icon-primary: light-dark(#15110C, #DFE2E5);
     --text-display-1-weight: var(--font-weight-semibold);
