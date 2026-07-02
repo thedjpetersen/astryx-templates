@@ -70,12 +70,20 @@ import LiveStreamViewer from '../../templates/live-stream-viewer';
 import liveStreamViewerSource from '../../templates/live-stream-viewer.tsx?raw';
 import LogsExplorer from '../../templates/logs-explorer';
 import logsExplorerSource from '../../templates/logs-explorer.tsx?raw';
+import MailCompose from '../../templates/mail-compose';
+import mailComposeSource from '../../templates/mail-compose.tsx?raw';
+import MailSearchBuilder from '../../templates/mail-search-builder';
+import mailSearchBuilderSource from '../../templates/mail-search-builder.tsx?raw';
+import MailThreadReader from '../../templates/mail-thread-reader';
+import mailThreadReaderSource from '../../templates/mail-thread-reader.tsx?raw';
 import MediaAssetPipeline from '../../templates/media-asset-pipeline';
 import mediaAssetPipelineSource from '../../templates/media-asset-pipeline.tsx?raw';
 import MemoryRelationExplorer from '../../templates/memory-relation-explorer';
 import memoryRelationExplorerSource from '../../templates/memory-relation-explorer.tsx?raw';
 import MessagingShell from '../../templates/messaging-shell';
 import messagingShellSource from '../../templates/messaging-shell.tsx?raw';
+import NewsletterComposer from '../../templates/newsletter-composer';
+import newsletterComposerSource from '../../templates/newsletter-composer.tsx?raw';
 import NotebookReport from '../../templates/notebook-report';
 import notebookReportSource from '../../templates/notebook-report.tsx?raw';
 import NotificationCenter from '../../templates/notification-center';
@@ -92,12 +100,18 @@ import ProfilePage from '../../templates/profile-page';
 import profilePageSource from '../../templates/profile-page.tsx?raw';
 import ScheduledJobsManager from '../../templates/scheduled-jobs-manager';
 import scheduledJobsManagerSource from '../../templates/scheduled-jobs-manager.tsx?raw';
+import ScheduledSendOutbox from '../../templates/scheduled-send-outbox';
+import scheduledSendOutboxSource from '../../templates/scheduled-send-outbox.tsx?raw';
 import SearchResults from '../../templates/search-results';
 import searchResultsSource from '../../templates/search-results.tsx?raw';
+import SenderProfileRail from '../../templates/sender-profile-rail';
+import senderProfileRailSource from '../../templates/sender-profile-rail.tsx?raw';
 import SettingsExtensionCatalog from '../../templates/settings-extension-catalog';
 import settingsExtensionCatalogSource from '../../templates/settings-extension-catalog.tsx?raw';
 import SettingsSecretsEnv from '../../templates/settings-secrets-env';
 import settingsSecretsEnvSource from '../../templates/settings-secrets-env.tsx?raw';
+import SharedTeamInbox from '../../templates/shared-team-inbox';
+import sharedTeamInboxSource from '../../templates/shared-team-inbox.tsx?raw';
 import ShellBreadcrumb from '../../templates/shell-breadcrumb';
 import shellBreadcrumbSource from '../../templates/shell-breadcrumb.tsx?raw';
 import ShellLeftSidebar from '../../templates/shell-left-sidebar';
@@ -110,6 +124,8 @@ import SkillPackageDetail from '../../templates/skill-package-detail';
 import skillPackageDetailSource from '../../templates/skill-package-detail.tsx?raw';
 import SlideDeckViewer from '../../templates/slide-deck-viewer';
 import slideDeckViewerSource from '../../templates/slide-deck-viewer.tsx?raw';
+import SpamQuarantineConsole from '../../templates/spam-quarantine-console';
+import spamQuarantineConsoleSource from '../../templates/spam-quarantine-console.tsx?raw';
 import StreamingBrowseHome from '../../templates/streaming-browse-home';
 import streamingBrowseHomeSource from '../../templates/streaming-browse-home.tsx?raw';
 import SubAgentMonitor from '../../templates/sub-agent-monitor';
@@ -551,6 +567,86 @@ export const templates: TemplateEntry[] = [
       'Session replay transcript with seven block renderers beside a sticky golden/failure/neutral labeling panel.',
     component: TranscriptAnnotator,
     source: transcriptAnnotatorSource,
+  },
+  {
+    id: 'mail-compose',
+    name: 'Email Compose Window',
+    kind: 'page',
+    category: 'Mail',
+    description:
+      'Docked compose window with recipient chips, formatting toolbar, attachments, and schedule-send.',
+    component: MailCompose,
+    source: mailComposeSource,
+  },
+  {
+    id: 'mail-thread-reader',
+    name: 'Conversation Thread Reader',
+    kind: 'page',
+    category: 'Mail',
+    description:
+      'Single-column email thread with collapsed history, trimmed quotes, attachments, and quick replies.',
+    component: MailThreadReader,
+    source: mailThreadReaderSource,
+  },
+  {
+    id: 'shared-team-inbox',
+    name: 'Shared Team Inbox',
+    kind: 'page',
+    category: 'Mail',
+    description:
+      'Multi-agent support mailbox with assignment, SLA chips, internal notes, and collision presence.',
+    component: SharedTeamInbox,
+    source: sharedTeamInboxSource,
+  },
+  {
+    id: 'scheduled-send-outbox',
+    name: 'Scheduled & Snoozed Mail',
+    kind: 'page',
+    category: 'Mail',
+    description:
+      'Time-grouped outbox of scheduled sends and snoozed threads with edit-schedule and send-now actions.',
+    component: ScheduledSendOutbox,
+    source: scheduledSendOutboxSource,
+  },
+  {
+    id: 'spam-quarantine-console',
+    name: 'Spam Quarantine Console',
+    kind: 'page',
+    category: 'Mail',
+    description:
+      'Admin quarantine table with spam-score breakdown panel and bulk release/block actions.',
+    component: SpamQuarantineConsole,
+    source: spamQuarantineConsoleSource,
+  },
+  {
+    id: 'mail-search-builder',
+    name: 'Advanced Mail Search',
+    kind: 'page',
+    category: 'Mail',
+    description:
+      'Operator-chip mail search with structured filter builder, saved searches, and grouped results.',
+    component: MailSearchBuilder,
+    source: mailSearchBuilderSource,
+  },
+  {
+    id: 'newsletter-composer',
+    name: 'Newsletter Block Composer',
+    kind: 'page',
+    category: 'Mail',
+    description:
+      'Block-based email builder with palette, live canvas, and per-block settings inspector.',
+    component: NewsletterComposer,
+    source: newsletterComposerSource,
+  },
+  {
+    id: 'sender-profile-rail',
+    name: 'Sender Profile Rail',
+    kind: 'page',
+    category: 'Mail',
+    description:
+      'Open email beside a contextual sender-intelligence rail with history, files, and notes.',
+    component: SenderProfileRail,
+    source: senderProfileRailSource,
   },
   {
     id: 'settings-extension-catalog',
