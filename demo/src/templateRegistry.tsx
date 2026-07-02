@@ -1,9 +1,21 @@
 import type {ComponentType} from 'react';
 
+import ActivationFunnelAnalytics from '../../templates/activation-funnel-analytics';
+import activationFunnelAnalyticsSource from '../../templates/activation-funnel-analytics.tsx?raw';
 import AiChatArtifact from '../../templates/ai-chat-artifact';
 import aiChatArtifactSource from '../../templates/ai-chat-artifact.tsx?raw';
+import AiChatToolStream from '../../templates/ai-chat-tool-stream';
+import aiChatToolStreamSource from '../../templates/ai-chat-tool-stream.tsx?raw';
+import AutomationRuleBuilder from '../../templates/automation-rule-builder';
+import automationRuleBuilderSource from '../../templates/automation-rule-builder.tsx?raw';
+import BrowserSessionReplay from '../../templates/browser-session-replay';
+import browserSessionReplaySource from '../../templates/browser-session-replay.tsx?raw';
 import CodeBlockTerminal from '../../templates/codeblock-terminal';
 import codeblockTerminalSource from '../../templates/codeblock-terminal.tsx?raw';
+import CommandPaletteLauncher from '../../templates/command-palette-launcher';
+import commandPaletteLauncherSource from '../../templates/command-palette-launcher.tsx?raw';
+import CompactionInspector from '../../templates/compaction-inspector';
+import compactionInspectorSource from '../../templates/compaction-inspector.tsx?raw';
 import DashboardExecutiveSummary from '../../templates/dashboard-executive-summary';
 import dashboardExecutiveSummarySource from '../../templates/dashboard-executive-summary.tsx?raw';
 import DashboardFilterable from '../../templates/dashboard-filterable';
@@ -18,6 +30,10 @@ import DeploymentDetail from '../../templates/deployment-detail';
 import deploymentDetailSource from '../../templates/deployment-detail.tsx?raw';
 import DiffViewer from '../../templates/diff-viewer';
 import diffViewerSource from '../../templates/diff-viewer.tsx?raw';
+import FileBrowserPreview from '../../templates/file-browser-preview';
+import fileBrowserPreviewSource from '../../templates/file-browser-preview.tsx?raw';
+import FleetNodeStatus from '../../templates/fleet-node-status';
+import fleetNodeStatusSource from '../../templates/fleet-node-status.tsx?raw';
 import FormInlineEdit from '../../templates/form-inline-edit';
 import formInlineEditSource from '../../templates/form-inline-edit.tsx?raw';
 import FormModal from '../../templates/form-modal';
@@ -42,18 +58,28 @@ import KpiStrip from '../../templates/kpi-strip';
 import kpiStripSource from '../../templates/kpi-strip.tsx?raw';
 import LogsExplorer from '../../templates/logs-explorer';
 import logsExplorerSource from '../../templates/logs-explorer.tsx?raw';
+import MemoryRelationExplorer from '../../templates/memory-relation-explorer';
+import memoryRelationExplorerSource from '../../templates/memory-relation-explorer.tsx?raw';
 import MessagingShell from '../../templates/messaging-shell';
 import messagingShellSource from '../../templates/messaging-shell.tsx?raw';
 import NotebookReport from '../../templates/notebook-report';
 import notebookReportSource from '../../templates/notebook-report.tsx?raw';
+import OnboardingGuidedInstall from '../../templates/onboarding-guided-install';
+import onboardingGuidedInstallSource from '../../templates/onboarding-guided-install.tsx?raw';
 import OperationsDashboard from '../../templates/operations-dashboard';
 import operationsDashboardSource from '../../templates/operations-dashboard.tsx?raw';
 import ProductList from '../../templates/product-list';
 import productListSource from '../../templates/product-list.tsx?raw';
 import ProfilePage from '../../templates/profile-page';
 import profilePageSource from '../../templates/profile-page.tsx?raw';
+import ScheduledJobsManager from '../../templates/scheduled-jobs-manager';
+import scheduledJobsManagerSource from '../../templates/scheduled-jobs-manager.tsx?raw';
 import SearchResults from '../../templates/search-results';
 import searchResultsSource from '../../templates/search-results.tsx?raw';
+import SettingsExtensionCatalog from '../../templates/settings-extension-catalog';
+import settingsExtensionCatalogSource from '../../templates/settings-extension-catalog.tsx?raw';
+import SettingsSecretsEnv from '../../templates/settings-secrets-env';
+import settingsSecretsEnvSource from '../../templates/settings-secrets-env.tsx?raw';
 import ShellBreadcrumb from '../../templates/shell-breadcrumb';
 import shellBreadcrumbSource from '../../templates/shell-breadcrumb.tsx?raw';
 import ShellLeftSidebar from '../../templates/shell-left-sidebar';
@@ -62,6 +88,8 @@ import ShellTopNav from '../../templates/shell-top-nav';
 import shellTopNavSource from '../../templates/shell-top-nav.tsx?raw';
 import ShellTopNavSidebar from '../../templates/shell-top-nav-sidebar';
 import shellTopNavSidebarSource from '../../templates/shell-top-nav-sidebar.tsx?raw';
+import SubAgentMonitor from '../../templates/sub-agent-monitor';
+import subAgentMonitorSource from '../../templates/sub-agent-monitor.tsx?raw';
 import TableBulkActions from '../../templates/table-bulk-actions';
 import tableBulkActionsSource from '../../templates/table-bulk-actions.tsx?raw';
 import TableChart from '../../templates/table-chart';
@@ -158,6 +186,26 @@ export const templates: TemplateEntry[] = [
     component: KpiDashboard,
     source: kpiDashboardSource,
     requires: 'Uses local demo shims until Stat and ChartV2 are released.',
+  },
+  {
+    id: 'fleet-node-status',
+    name: 'Fleet Node Status',
+    kind: 'page',
+    category: 'Dashboard',
+    description:
+      'Node fleet health: status-square density grid, detail table, and per-user rollup with stacked bars.',
+    component: FleetNodeStatus,
+    source: fleetNodeStatusSource,
+  },
+  {
+    id: 'activation-funnel-analytics',
+    name: 'Activation Funnel Analytics',
+    kind: 'page',
+    category: 'Dashboard',
+    description:
+      'Funnel analytics: stat cards, drop-off callouts, comparison funnel bars, cohort heatmap, velocity strip.',
+    component: ActivationFunnelAnalytics,
+    source: activationFunnelAnalyticsSource,
   },
   {
     id: 'table-inline-expansion',
@@ -291,6 +339,46 @@ export const templates: TemplateEntry[] = [
     source: aiChatArtifactSource,
   },
   {
+    id: 'ai-chat-tool-stream',
+    name: 'AI Chat with Tool Stream',
+    kind: 'page',
+    category: 'AI Chat',
+    description:
+      'Agent chat with collapsed tool-call piles expanding into per-call status rows.',
+    component: AiChatToolStream,
+    source: aiChatToolStreamSource,
+  },
+  {
+    id: 'compaction-inspector',
+    name: 'Context Compaction Inspector',
+    kind: 'page',
+    category: 'AI Chat',
+    description:
+      'Compaction event inspector with raw/summary comparison, context tree, and stats.',
+    component: CompactionInspector,
+    source: compactionInspectorSource,
+  },
+  {
+    id: 'browser-session-replay',
+    name: 'Browser Session Replay',
+    kind: 'page',
+    category: 'AI Chat',
+    description:
+      'Agent browser-session dock with play/scrub transport, frame counter, and a 12-step action timeline.',
+    component: BrowserSessionReplay,
+    source: browserSessionReplaySource,
+  },
+  {
+    id: 'sub-agent-monitor',
+    name: 'Sub-Agent Monitor',
+    kind: 'page',
+    category: 'AI Chat',
+    description:
+      'Docked sub-agent status tray with dismiss/restore management and a modal session transcript.',
+    component: SubAgentMonitor,
+    source: subAgentMonitorSource,
+  },
+  {
     id: 'inbox',
     name: 'Inbox',
     kind: 'page',
@@ -361,6 +449,86 @@ export const templates: TemplateEntry[] = [
     component: DeploymentDetail,
     source: deploymentDetailSource,
     requires: 'Uses a local LogStream shim until the lab component is released.',
+  },
+  {
+    id: 'command-palette-launcher',
+    name: 'Command Palette Launcher',
+    kind: 'page',
+    category: 'Tools',
+    description:
+      'Command palette over a dimmed workspace with fuzzy matching and grouped results.',
+    component: CommandPaletteLauncher,
+    source: commandPaletteLauncherSource,
+  },
+  {
+    id: 'file-browser-preview',
+    name: 'File Browser with Preview',
+    kind: 'page',
+    category: 'Tools',
+    description:
+      'TreeList file navigator beside a code/rendered preview with version history.',
+    component: FileBrowserPreview,
+    source: fileBrowserPreviewSource,
+  },
+  {
+    id: 'memory-relation-explorer',
+    name: 'Memory Relation Explorer',
+    kind: 'page',
+    category: 'Tools',
+    description:
+      'Faceted memory-graph browser: filter rail, relation table with weight bars, and a typed detail panel.',
+    component: MemoryRelationExplorer,
+    source: memoryRelationExplorerSource,
+  },
+  {
+    id: 'settings-extension-catalog',
+    name: 'Extension Catalog Settings',
+    kind: 'page',
+    category: 'Settings',
+    description:
+      'Marketplace grid and installed-extension list with scope badges and switches.',
+    component: SettingsExtensionCatalog,
+    source: settingsExtensionCatalogSource,
+  },
+  {
+    id: 'settings-secrets-env',
+    name: 'Secrets & Environment Settings',
+    kind: 'page',
+    category: 'Settings',
+    description:
+      'Collapsible sections for masked secrets, webhooks, and repos with confirm flows.',
+    component: SettingsSecretsEnv,
+    source: settingsSecretsEnvSource,
+  },
+  {
+    id: 'scheduled-jobs-manager',
+    name: 'Scheduled Jobs Manager',
+    kind: 'page',
+    category: 'Settings',
+    description:
+      'Cron job list with health badges plus a detail pane: execution history, autosave editor, version history.',
+    component: ScheduledJobsManager,
+    source: scheduledJobsManagerSource,
+  },
+  {
+    id: 'automation-rule-builder',
+    name: 'Automation Rule Builder',
+    kind: 'page',
+    category: 'Settings',
+    description:
+      'Hook list with mini switches and a six-color trigger condition editor plus script file tabs.',
+    component: AutomationRuleBuilder,
+    source: automationRuleBuilderSource,
+  },
+  {
+    id: 'onboarding-guided-install',
+    name: 'Guided Install Wizard',
+    kind: 'page',
+    category: 'Onboarding',
+    description:
+      'CLI-node setup stepper with copy commands, waiting/connected status strip, and troubleshooting accordions.',
+    component: OnboardingGuidedInstall,
+    source: onboardingGuidedInstallSource,
   },
   {
     id: 'product-list',
