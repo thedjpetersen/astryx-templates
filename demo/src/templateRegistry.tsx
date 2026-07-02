@@ -6,6 +6,8 @@ import AiChatArtifact from '../../templates/ai-chat-artifact';
 import aiChatArtifactSource from '../../templates/ai-chat-artifact.tsx?raw';
 import AiChatToolStream from '../../templates/ai-chat-tool-stream';
 import aiChatToolStreamSource from '../../templates/ai-chat-tool-stream.tsx?raw';
+import AlbumTracklistPlayer from '../../templates/album-tracklist-player';
+import albumTracklistPlayerSource from '../../templates/album-tracklist-player.tsx?raw';
 import ArtifactPinDock from '../../templates/artifact-pin-dock';
 import artifactPinDockSource from '../../templates/artifact-pin-dock.tsx?raw';
 import AutomationRuleBuilder from '../../templates/automation-rule-builder';
@@ -64,8 +66,12 @@ import KpiDashboard from '../../templates/kpi-dashboard';
 import kpiDashboardSource from '../../templates/kpi-dashboard.tsx?raw';
 import KpiStrip from '../../templates/kpi-strip';
 import kpiStripSource from '../../templates/kpi-strip.tsx?raw';
+import LiveStreamViewer from '../../templates/live-stream-viewer';
+import liveStreamViewerSource from '../../templates/live-stream-viewer.tsx?raw';
 import LogsExplorer from '../../templates/logs-explorer';
 import logsExplorerSource from '../../templates/logs-explorer.tsx?raw';
+import MediaAssetPipeline from '../../templates/media-asset-pipeline';
+import mediaAssetPipelineSource from '../../templates/media-asset-pipeline.tsx?raw';
 import MemoryRelationExplorer from '../../templates/memory-relation-explorer';
 import memoryRelationExplorerSource from '../../templates/memory-relation-explorer.tsx?raw';
 import MessagingShell from '../../templates/messaging-shell';
@@ -78,6 +84,8 @@ import OnboardingGuidedInstall from '../../templates/onboarding-guided-install';
 import onboardingGuidedInstallSource from '../../templates/onboarding-guided-install.tsx?raw';
 import OperationsDashboard from '../../templates/operations-dashboard';
 import operationsDashboardSource from '../../templates/operations-dashboard.tsx?raw';
+import PodcastEpisodePlayer from '../../templates/podcast-episode-player';
+import podcastEpisodePlayerSource from '../../templates/podcast-episode-player.tsx?raw';
 import ProductList from '../../templates/product-list';
 import productListSource from '../../templates/product-list.tsx?raw';
 import ProfilePage from '../../templates/profile-page';
@@ -102,8 +110,12 @@ import SkillPackageDetail from '../../templates/skill-package-detail';
 import skillPackageDetailSource from '../../templates/skill-package-detail.tsx?raw';
 import SlideDeckViewer from '../../templates/slide-deck-viewer';
 import slideDeckViewerSource from '../../templates/slide-deck-viewer.tsx?raw';
+import StreamingBrowseHome from '../../templates/streaming-browse-home';
+import streamingBrowseHomeSource from '../../templates/streaming-browse-home.tsx?raw';
 import SubAgentMonitor from '../../templates/sub-agent-monitor';
 import subAgentMonitorSource from '../../templates/sub-agent-monitor.tsx?raw';
+import SubtitleCueEditor from '../../templates/subtitle-cue-editor';
+import subtitleCueEditorSource from '../../templates/subtitle-cue-editor.tsx?raw';
 import TableBulkActions from '../../templates/table-bulk-actions';
 import tableBulkActionsSource from '../../templates/table-bulk-actions.tsx?raw';
 import TableChart from '../../templates/table-chart';
@@ -122,6 +134,10 @@ import Timeline from '../../templates/timeline';
 import timelineSource from '../../templates/timeline.tsx?raw';
 import TranscriptAnnotator from '../../templates/transcript-annotator';
 import transcriptAnnotatorSource from '../../templates/transcript-annotator.tsx?raw';
+import VideoClipTimeline from '../../templates/video-clip-timeline';
+import videoClipTimelineSource from '../../templates/video-clip-timeline.tsx?raw';
+import VideoWatchPage from '../../templates/video-watch-page';
+import videoWatchPageSource from '../../templates/video-watch-page.tsx?raw';
 
 export type TemplateKind = 'page' | 'block';
 
@@ -656,6 +672,86 @@ export const templates: TemplateEntry[] = [
       'Package detail: badge-cluster header, file-tab code browser, and version history with inline per-file diffs.',
     component: SkillPackageDetail,
     source: skillPackageDetailSource,
+  },
+  {
+    id: 'podcast-episode-player',
+    name: 'Podcast Episode Player',
+    kind: 'page',
+    category: 'Media',
+    description:
+      'Episode page with synced transcript, chapter rail, and docked audio player bar.',
+    component: PodcastEpisodePlayer,
+    source: podcastEpisodePlayerSource,
+  },
+  {
+    id: 'video-watch-page',
+    name: 'Video Watch Page',
+    kind: 'page',
+    category: 'Media',
+    description:
+      'Watch page with mock player chrome, up-next rail, description, and comments.',
+    component: VideoWatchPage,
+    source: videoWatchPageSource,
+  },
+  {
+    id: 'album-tracklist-player',
+    name: 'Album Tracklist Player',
+    kind: 'page',
+    category: 'Media',
+    description:
+      'Album page with hero, track table, and persistent now-playing bar.',
+    component: AlbumTracklistPlayer,
+    source: albumTracklistPlayerSource,
+  },
+  {
+    id: 'streaming-browse-home',
+    name: 'Streaming Browse Home',
+    kind: 'page',
+    category: 'Media',
+    description:
+      'Dark browse home with hero billboard and horizontal poster carousels.',
+    component: StreamingBrowseHome,
+    source: streamingBrowseHomeSource,
+  },
+  {
+    id: 'live-stream-viewer',
+    name: 'Live Stream Viewer',
+    kind: 'page',
+    category: 'Media',
+    description:
+      'Live player with chat rail, viewer stats, and follow/sub actions.',
+    component: LiveStreamViewer,
+    source: liveStreamViewerSource,
+  },
+  {
+    id: 'media-asset-pipeline',
+    name: 'Media Asset Pipeline',
+    kind: 'page',
+    category: 'Media',
+    description:
+      'Upload/transcode manager with folder tree, status table, and renditions panel.',
+    component: MediaAssetPipeline,
+    source: mediaAssetPipelineSource,
+  },
+  {
+    id: 'subtitle-cue-editor',
+    name: 'Subtitle Cue Editor',
+    kind: 'page',
+    category: 'Media',
+    description:
+      'Caption cue table synced to a mock player with timing validation.',
+    component: SubtitleCueEditor,
+    source: subtitleCueEditorSource,
+  },
+  {
+    id: 'video-clip-timeline',
+    name: 'Video Clip Timeline Editor',
+    kind: 'page',
+    category: 'Media',
+    description:
+      'NLE-style editor with tool rail, program monitor, and multi-track timeline dock.',
+    component: VideoClipTimeline,
+    source: videoClipTimelineSource,
   },
   {
     id: 'shell-left-sidebar',

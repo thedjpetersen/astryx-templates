@@ -1,6 +1,6 @@
 # Astryx Templates
 
-Astryx Templates is an open-source catalog of 61 production-shaped page templates and blocks built with [Astryx](https://astryx.atmeta.com/), React, and Vite, plus a themed gallery for browsing them.
+Astryx Templates is an open-source catalog of 69 production-shaped page templates and blocks built with [Astryx](https://astryx.atmeta.com/), React, and Vite, plus a themed gallery for browsing them.
 
 It is a sibling of [astryx-sheet](https://github.com/thedjpetersen/astryx-sheet) and [astryx-editor](https://github.com/thedjpetersen/astryx-editor): where those repos stress-test the design system with one deep interactive surface, this repo stress-tests its breadth — dashboards, dense tool consoles, AI-agent surfaces, settings, onboarding, and shells, each written the way a real product page would be.
 
@@ -105,6 +105,17 @@ The published `@astryxdesign/cli@0.1.2` discovers external block templates throu
 - `feature-gate-console` — Feature-flag ops console: KPI cards, batch rollout controls, CSS bar-chart telemetry, gate table with health dots and switches.
 - `transcript-annotator` — Session replay transcript with seven block renderers beside a sticky golden/failure/neutral labeling panel.
 
+**Media**
+
+- `podcast-episode-player` — Episode page with synced transcript, chapter rail, and docked audio player bar.
+- `video-watch-page` — Watch page with mock player chrome, up-next rail, description, and comments.
+- `album-tracklist-player` — Album page with hero, track table, and persistent now-playing bar.
+- `streaming-browse-home` — Dark browse home with hero billboard and horizontal poster carousels.
+- `live-stream-viewer` — Live player with chat rail, viewer stats, and follow/sub actions.
+- `media-asset-pipeline` — Upload/transcode manager with folder tree, status table, and renditions panel.
+- `subtitle-cue-editor` — Caption cue table synced to a mock player with timing validation.
+- `video-clip-timeline` — NLE-style editor with tool rail, program monitor, and multi-track timeline dock.
+
 **Settings**
 
 - `settings-extension-catalog` — Marketplace grid and installed-extension list with scope badges and switches.
@@ -198,7 +209,7 @@ TEMPLATE_GUIDE.md           # frame-first authoring pattern
 
 ## Why this exists
 
-Template catalogs are a good stress test for a design system's vocabulary: 61 surfaces force the primitives to cover dashboards, virtual-ops consoles, agent chat, document viewers, and terminal aesthetics without ad hoc CSS escaping the system. The newer batches are modeled on real product surfaces from a working AI-assistant app — sub-agent monitors, memory-graph explorers, eval-labeling consoles, feature-gate ops — so the catalog reflects the shapes modern tools actually take, not idealized demo pages.
+Template catalogs are a good stress test for a design system's vocabulary: 69 surfaces force the primitives to cover dashboards, virtual-ops consoles, agent chat, document viewers, and terminal aesthetics without ad hoc CSS escaping the system. The newer batches are modeled on real product surfaces from a working AI-assistant app — sub-agent monitors, memory-graph explorers, eval-labeling consoles, feature-gate ops — so the catalog reflects the shapes modern tools actually take, not idealized demo pages.
 
 The `.doc.ts` metadata layer doubles as a selection corpus: descriptions are written so an agent (or a teammate) can pick the right starting template from text alone.
 
