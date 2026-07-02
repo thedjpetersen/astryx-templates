@@ -58,7 +58,7 @@ import {
 import {Timestamp} from '@astryxdesign/core/Timestamp';
 import {Token} from '@astryxdesign/core/Token';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
-import {PlusIcon} from '@heroicons/react/24/outline';
+import {PlusIcon} from 'lucide-react';
 
 // ============= STYLES =============
 

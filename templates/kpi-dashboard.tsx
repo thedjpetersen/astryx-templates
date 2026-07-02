@@ -49,7 +49,7 @@ import {
   line,
   bar,
 } from '@astryxdesign/lab';
-import {ArrowPathIcon} from '@heroicons/react/24/outline';
+import {RefreshCwIcon} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -348,7 +348,7 @@ export default function KpiDashboardTemplate() {
             </SegmentedControl>
             <IconButton
               label="Refresh"
-              icon={<Icon icon={ArrowPathIcon} size="sm" />}
+              icon={<Icon icon={RefreshCwIcon} size="sm" />}
               variant="ghost"
             />
           </HStack>

@@ -67,12 +67,12 @@ import {Token} from '@astryxdesign/core/Token';
 import {Tooltip} from '@astryxdesign/core/Tooltip';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
-  Cog6ToothIcon,
-  MagnifyingGlassIcon,
-  PencilSquareIcon,
+  FileJsonIcon,
+  SearchIcon,
+  TerminalIcon,
   PlusIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline';
+  XIcon,
+} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -830,7 +830,7 @@ export default function AutomationRuleBuilderTemplate() {
               <IconButton
                 label="Cancel add condition"
                 tooltip="Cancel"
-                icon={<Icon icon={XMarkIcon} size="sm" color="inherit" />}
+                icon={<Icon icon={XIcon} size="sm" color="inherit" />}
                 variant="ghost"
                 size="sm"
                 onClick={() => setAddValue('')}
@@ -871,7 +871,7 @@ export default function AutomationRuleBuilderTemplate() {
                       : {display: 'inline-flex'}
                   }>
                   <Icon
-                    icon={script.isExec ? Cog6ToothIcon : PencilSquareIcon}
+                    icon={script.isExec ? TerminalIcon : FileJsonIcon}
                     size="sm"
                     color="inherit"
                   />
@@ -915,7 +915,7 @@ export default function AutomationRuleBuilderTemplate() {
                 isLabelHidden
                 size="sm"
                 placeholder="Search hooks…"
-                startIcon={<Icon icon={MagnifyingGlassIcon} size="sm" />}
+                startIcon={<Icon icon={SearchIcon} size="sm" />}
                 value={query}
                 onChange={setQuery}
               />

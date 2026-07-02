@@ -63,12 +63,12 @@ import {Divider} from '@astryxdesign/core/Divider';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
   HomeIcon,
-  UserGroupIcon,
-  MagnifyingGlassIcon,
+  UsersIcon,
+  SearchIcon,
   BellIcon,
-  PencilSquareIcon,
+  SquarePenIcon,
   PlusIcon,
-} from '@heroicons/react/24/outline';
+} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -369,13 +369,13 @@ export default function ShellBreadcrumbTemplate() {
           <HStack gap={3} vAlign="center">
             <StackItem size="fill">
               <HStack gap={2} vAlign="center">
-                <Icon icon={UserGroupIcon} size="md" />
+                <Icon icon={UsersIcon} size="md" />
                 <Text type="label">Halcyon Directory</Text>
               </HStack>
             </StackItem>
             <IconButton
               label="Search people and teams"
-              icon={<Icon icon={MagnifyingGlassIcon} size="sm" />}
+              icon={<Icon icon={SearchIcon} size="sm" />}
               variant="ghost"
             />
             <IconButton
@@ -470,7 +470,7 @@ export default function ShellBreadcrumbTemplate() {
                   <Button
                     label={isLeafTeam ? 'Edit team' : 'Edit group'}
                     variant="secondary"
-                    icon={<Icon icon={PencilSquareIcon} size="sm" />}
+                    icon={<Icon icon={SquarePenIcon} size="sm" />}
                   />
                   <Button
                     label={isLeafTeam ? 'Add member' : 'Add sub-team'}
@@ -516,7 +516,7 @@ export default function ShellBreadcrumbTemplate() {
                           key={childId}
                           label={child.name}
                           description={child.summary}
-                          startContent={<Icon icon={UserGroupIcon} size="md" />}
+                          startContent={<Icon icon={UsersIcon} size="md" />}
                           endContent={
                             <HStack gap={2} vAlign="center">
                               {childRoles > 0 && !isCompact && (

@@ -78,14 +78,13 @@ import {TextInput} from '@astryxdesign/core/TextInput';
 import {Timestamp} from '@astryxdesign/core/Timestamp';
 import {ToggleButton} from '@astryxdesign/core/ToggleButton';
 import {Tooltip} from '@astryxdesign/core/Tooltip';
-// Icon shim has no eye/clipboard/trash glyphs — MagnifyingGlass (inspect),
-// Bookmark (copy), and XMark (remove) are the closest stand-ins.
 import {
-  BookmarkIcon,
-  MagnifyingGlassIcon,
+  CopyIcon,
+  EyeIcon,
+  EyeOffIcon,
   PlusIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline';
+  Trash2Icon,
+} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -300,7 +299,7 @@ function RevealCopyActions({
           label={`Reveal ${subject}`}
           isIconOnly
           size="sm"
-          icon={<Icon icon={MagnifyingGlassIcon} size="sm" />}
+          icon={<Icon icon={isRevealed ? EyeOffIcon : EyeIcon} size="sm" />}
           isPressed={isRevealed}
           onPressedChange={onRevealChange}
         />
@@ -310,7 +309,7 @@ function RevealCopyActions({
           label={`Copy ${subject}`}
           size="sm"
           variant="ghost"
-          icon={<Icon icon={BookmarkIcon} size="sm" />}
+          icon={<Icon icon={CopyIcon} size="sm" />}
           onClick={() => {
             // Clipboard write is best-effort in the demo sandbox; the
             // Tooltip flip is the visible contract.
@@ -508,7 +507,7 @@ export default function SettingsSecretsEnvTemplate() {
                             label={`Delete ${envVar.key}`}
                             size="sm"
                             variant="ghost"
-                            icon={<Icon icon={XMarkIcon} size="sm" />}
+                            icon={<Icon icon={Trash2Icon} size="sm" />}
                             onClick={() => setDeleteTarget(envVar)}
                           />
                         </Tooltip>

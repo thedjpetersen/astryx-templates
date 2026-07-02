@@ -60,7 +60,7 @@ import {Selector} from '@astryxdesign/core/Selector';
 import {TextInput} from '@astryxdesign/core/TextInput';
 import {Token} from '@astryxdesign/core/Token';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
-import {MagnifyingGlassIcon} from '@heroicons/react/24/outline';
+import {SearchIcon} from 'lucide-react';
 
 // ============= STYLES =============
 // Plain inline styles using Astryx design-token CSS variables (declared at
@@ -520,7 +520,7 @@ export default function SearchResultsPage() {
       value={query}
       onChange={setQuery}
       placeholder="Search guides, API reference, and runbooks..."
-      startIcon={<Icon icon={MagnifyingGlassIcon} size="sm" />}
+      startIcon={<Icon icon={SearchIcon} size="sm" />}
       hasClear
       size="lg"
       width="100%"
@@ -594,7 +594,7 @@ export default function SearchResultsPage() {
             )}
             {pageResults.length === 0 ? (
               <EmptyState
-                icon={<Icon icon={MagnifyingGlassIcon} size="lg" />}
+                icon={<Icon icon={SearchIcon} size="lg" />}
                 title="No results match your filters"
                 description="Every document for this query is excluded by the current facet selection."
                 actions={

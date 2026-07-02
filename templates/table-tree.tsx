@@ -43,7 +43,6 @@ import {
   useMemo,
   useState,
   type CSSProperties,
-  type SVGProps,
 } from 'react';
 
 import {
@@ -64,7 +63,13 @@ import {TextInput} from '@astryxdesign/core/TextInput';
 import {Table, proportional, pixel} from '@astryxdesign/core/Table';
 import type {TableColumn} from '@astryxdesign/core/Table';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
-import {MagnifyingGlassIcon, PlusIcon} from '@heroicons/react/24/outline';
+import {
+  ChevronRightIcon,
+  FileTextIcon,
+  FolderIcon,
+  PlusIcon,
+  SearchIcon,
+} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -94,60 +99,6 @@ const styles: Record<string, CSSProperties> = {
 
 /** Per-level indent for the Name column, in pixels. */
 const INDENT_PER_LEVEL = 20;
-
-// ============= LOCAL GLYPHS =============
-// The heroicons set in this environment has no chevron/folder/document
-// glyphs, so the tree affordances are small local SVGs with the same
-// component signature Icon expects.
-
-function ChevronRightGlyph(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      {...props}>
-      <path d="M9 5.5l6.5 6.5L9 18.5" />
-    </svg>
-  );
-}
-
-function FolderGlyph(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.8}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      {...props}>
-      <path d="M3.5 6.5a2 2 0 012-2h4l2 2.5h7a2 2 0 012 2v8.5a2 2 0 01-2 2h-13a2 2 0 01-2-2v-11z" />
-    </svg>
-  );
-}
-
-function FileGlyph(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.8}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      {...props}>
-      <path d="M6.5 3.5h7l4 4v13h-11v-17z" />
-      <path d="M13.5 3.5v4h4" />
-    </svg>
-  );
-}
 
 // ============= DATA =============
 
@@ -551,7 +502,7 @@ export default function TableTreeTemplate() {
                       ...styles.chevron,
                       ...(row.isExpanded ? styles.chevronOpen : undefined),
                     }}>
-                    <Icon icon={ChevronRightGlyph} size="sm" />
+                    <Icon icon={ChevronRightIcon} size="sm" />
                   </span>
                 }
                 variant="ghost"
@@ -563,7 +514,7 @@ export default function TableTreeTemplate() {
               <span style={styles.chevronSpacer} />
             )}
             <Icon
-              icon={row.node.children ? FolderGlyph : FileGlyph}
+              icon={row.node.children ? FolderIcon : FileTextIcon}
               size="sm"
             />
             <Text type="body" maxLines={1}>
@@ -652,7 +603,7 @@ export default function TableTreeTemplate() {
                 hasClear
                 size="sm"
                 width={isNarrow ? '100%' : '260px'}
-                startIcon={<Icon icon={MagnifyingGlassIcon} size="sm" />}
+                startIcon={<Icon icon={SearchIcon} size="sm" />}
               />
             </StackItem>
             {isNarrow ? null : (
@@ -682,7 +633,7 @@ export default function TableTreeTemplate() {
           {rows.length === 0 ? (
             <div style={styles.emptyResults}>
               <EmptyState
-                icon={<Icon icon={MagnifyingGlassIcon} size="lg" />}
+                icon={<Icon icon={SearchIcon} size="lg" />}
                 title="No matches"
                 description={`Nothing in this drive matches “${query.trim()}”.`}
               />

@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "templates/browser-session-replay.tsx",
+    "templates/browser-session-replay.doc.ts",
+    "types/**/*.d.ts",
+    "demo/src/compat/**/*.tsx"
+  ]
+}

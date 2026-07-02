@@ -1,4 +1,4 @@
-import {useMemo, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 
 import {templates} from './templateRegistry';
 import type {TemplateEntry, TemplateKind} from './templateRegistry';
@@ -14,11 +14,32 @@ function groupTemplates(entries: TemplateEntry[]) {
   }, {});
 }
 
+function templateIdFromHash(): string | undefined {
+  const id = decodeURIComponent(window.location.hash.slice(1));
+  return templates.some(template => template.id === id) ? id : undefined;
+}
+
 export function DemoApp() {
-  const [selectedId, setSelectedId] = useState(templates[0]?.id);
+  const [selectedId, setSelectedId] = useState(
+    () => templateIdFromHash() ?? templates[0]?.id,
+  );
   const [kind, setKind] = useState<TemplateKind | 'all'>('all');
   const [mode, setMode] = useState<ViewMode>('preview');
   const [viewport, setViewport] = useState<Viewport>('desktop');
+
+  useEffect(() => {
+    const onHashChange = () => {
+      const id = templateIdFromHash();
+      if (id) setSelectedId(id);
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+
+  const selectTemplate = (id: string) => {
+    setSelectedId(id);
+    window.location.hash = id;
+  };
 
   const visibleTemplates = useMemo(
     () => templates.filter(template => kind === 'all' || template.kind === kind),
@@ -71,7 +92,7 @@ export function DemoApp() {
                       ? 'template-nav-item is-selected'
                       : 'template-nav-item'
                   }
-                  onClick={() => setSelectedId(template.id)}>
+                  onClick={() => selectTemplate(template.id)}>
                   <span>
                     <strong>{template.name}</strong>
                     <small>{template.description}</small>

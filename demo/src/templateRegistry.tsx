@@ -6,16 +6,22 @@ import AiChatArtifact from '../../templates/ai-chat-artifact';
 import aiChatArtifactSource from '../../templates/ai-chat-artifact.tsx?raw';
 import AiChatToolStream from '../../templates/ai-chat-tool-stream';
 import aiChatToolStreamSource from '../../templates/ai-chat-tool-stream.tsx?raw';
+import ArtifactPinDock from '../../templates/artifact-pin-dock';
+import artifactPinDockSource from '../../templates/artifact-pin-dock.tsx?raw';
 import AutomationRuleBuilder from '../../templates/automation-rule-builder';
 import automationRuleBuilderSource from '../../templates/automation-rule-builder.tsx?raw';
 import BrowserSessionReplay from '../../templates/browser-session-replay';
 import browserSessionReplaySource from '../../templates/browser-session-replay.tsx?raw';
+import CliPairingConsole from '../../templates/cli-pairing-console';
+import cliPairingConsoleSource from '../../templates/cli-pairing-console.tsx?raw';
 import CodeBlockTerminal from '../../templates/codeblock-terminal';
 import codeblockTerminalSource from '../../templates/codeblock-terminal.tsx?raw';
 import CommandPaletteLauncher from '../../templates/command-palette-launcher';
 import commandPaletteLauncherSource from '../../templates/command-palette-launcher.tsx?raw';
 import CompactionInspector from '../../templates/compaction-inspector';
 import compactionInspectorSource from '../../templates/compaction-inspector.tsx?raw';
+import ComposerStateGallery from '../../templates/composer-state-gallery';
+import composerStateGallerySource from '../../templates/composer-state-gallery.tsx?raw';
 import DashboardExecutiveSummary from '../../templates/dashboard-executive-summary';
 import dashboardExecutiveSummarySource from '../../templates/dashboard-executive-summary.tsx?raw';
 import DashboardFilterable from '../../templates/dashboard-filterable';
@@ -30,6 +36,8 @@ import DeploymentDetail from '../../templates/deployment-detail';
 import deploymentDetailSource from '../../templates/deployment-detail.tsx?raw';
 import DiffViewer from '../../templates/diff-viewer';
 import diffViewerSource from '../../templates/diff-viewer.tsx?raw';
+import FeatureGateConsole from '../../templates/feature-gate-console';
+import featureGateConsoleSource from '../../templates/feature-gate-console.tsx?raw';
 import FileBrowserPreview from '../../templates/file-browser-preview';
 import fileBrowserPreviewSource from '../../templates/file-browser-preview.tsx?raw';
 import FleetNodeStatus from '../../templates/fleet-node-status';
@@ -64,6 +72,8 @@ import MessagingShell from '../../templates/messaging-shell';
 import messagingShellSource from '../../templates/messaging-shell.tsx?raw';
 import NotebookReport from '../../templates/notebook-report';
 import notebookReportSource from '../../templates/notebook-report.tsx?raw';
+import NotificationCenter from '../../templates/notification-center';
+import notificationCenterSource from '../../templates/notification-center.tsx?raw';
 import OnboardingGuidedInstall from '../../templates/onboarding-guided-install';
 import onboardingGuidedInstallSource from '../../templates/onboarding-guided-install.tsx?raw';
 import OperationsDashboard from '../../templates/operations-dashboard';
@@ -88,6 +98,10 @@ import ShellTopNav from '../../templates/shell-top-nav';
 import shellTopNavSource from '../../templates/shell-top-nav.tsx?raw';
 import ShellTopNavSidebar from '../../templates/shell-top-nav-sidebar';
 import shellTopNavSidebarSource from '../../templates/shell-top-nav-sidebar.tsx?raw';
+import SkillPackageDetail from '../../templates/skill-package-detail';
+import skillPackageDetailSource from '../../templates/skill-package-detail.tsx?raw';
+import SlideDeckViewer from '../../templates/slide-deck-viewer';
+import slideDeckViewerSource from '../../templates/slide-deck-viewer.tsx?raw';
 import SubAgentMonitor from '../../templates/sub-agent-monitor';
 import subAgentMonitorSource from '../../templates/sub-agent-monitor.tsx?raw';
 import TableBulkActions from '../../templates/table-bulk-actions';
@@ -106,6 +120,8 @@ import TableTree from '../../templates/table-tree';
 import tableTreeSource from '../../templates/table-tree.tsx?raw';
 import Timeline from '../../templates/timeline';
 import timelineSource from '../../templates/timeline.tsx?raw';
+import TranscriptAnnotator from '../../templates/transcript-annotator';
+import transcriptAnnotatorSource from '../../templates/transcript-annotator.tsx?raw';
 
 export type TemplateKind = 'page' | 'block';
 
@@ -379,6 +395,26 @@ export const templates: TemplateEntry[] = [
     source: subAgentMonitorSource,
   },
   {
+    id: 'composer-state-gallery',
+    name: 'Composer State Gallery',
+    kind: 'page',
+    category: 'AI Chat',
+    description:
+      'Six frozen states of a power chat composer: slash chip, mentions, queued tray, drag-over, force-stop.',
+    component: ComposerStateGallery,
+    source: composerStateGallerySource,
+  },
+  {
+    id: 'artifact-pin-dock',
+    name: 'Artifact Pin Dock',
+    kind: 'page',
+    category: 'AI Chat',
+    description:
+      'Pill tab bar with CI status dots over an artifact viewer, GitHub PR card, and a data-sources run panel.',
+    component: ArtifactPinDock,
+    source: artifactPinDockSource,
+  },
+  {
     id: 'inbox',
     name: 'Inbox',
     kind: 'page',
@@ -481,6 +517,26 @@ export const templates: TemplateEntry[] = [
     source: memoryRelationExplorerSource,
   },
   {
+    id: 'feature-gate-console',
+    name: 'Feature Gate Console',
+    kind: 'page',
+    category: 'Tools',
+    description:
+      'Feature-flag ops console: KPI cards, batch rollout controls, CSS bar-chart telemetry, gate table with health dots and switches.',
+    component: FeatureGateConsole,
+    source: featureGateConsoleSource,
+  },
+  {
+    id: 'transcript-annotator',
+    name: 'Transcript Annotator',
+    kind: 'page',
+    category: 'Tools',
+    description:
+      'Session replay transcript with seven block renderers beside a sticky golden/failure/neutral labeling panel.',
+    component: TranscriptAnnotator,
+    source: transcriptAnnotatorSource,
+  },
+  {
     id: 'settings-extension-catalog',
     name: 'Extension Catalog Settings',
     kind: 'page',
@@ -531,6 +587,16 @@ export const templates: TemplateEntry[] = [
     source: onboardingGuidedInstallSource,
   },
   {
+    id: 'cli-pairing-console',
+    name: 'CLI Pairing Console',
+    kind: 'page',
+    category: 'Onboarding',
+    description:
+      'CLI daemon console with mascot header and status-line variants beside a four-state device-authorization card.',
+    component: CliPairingConsole,
+    source: cliPairingConsoleSource,
+  },
+  {
     id: 'product-list',
     name: 'Product List',
     kind: 'page',
@@ -570,6 +636,26 @@ export const templates: TemplateEntry[] = [
       'Filterable single-column post feed ending in a skeleton loading group.',
     component: InfiniteScrollFeed,
     source: infiniteScrollFeedSource,
+  },
+  {
+    id: 'slide-deck-viewer',
+    name: 'Slide Deck Viewer',
+    kind: 'page',
+    category: 'Content',
+    description:
+      'PPTX-style viewer: header pager, 112px thumbnail rail, centered 4:3 slide stage from shape fixtures.',
+    component: SlideDeckViewer,
+    source: slideDeckViewerSource,
+  },
+  {
+    id: 'skill-package-detail',
+    name: 'Skill Package Detail',
+    kind: 'page',
+    category: 'Content',
+    description:
+      'Package detail: badge-cluster header, file-tab code browser, and version history with inline per-file diffs.',
+    component: SkillPackageDetail,
+    source: skillPackageDetailSource,
   },
   {
     id: 'shell-left-sidebar',
@@ -620,6 +706,16 @@ export const templates: TemplateEntry[] = [
       'Four-column messaging frame with rail, channel list, stream, and thread panel.',
     component: MessagingShell,
     source: messagingShellSource,
+  },
+  {
+    id: 'notification-center',
+    name: 'Notification Center',
+    kind: 'page',
+    category: 'Shell',
+    description:
+      'Navbar bell with unread badge, pinned-open 320px notification popover, corner toast, and state variants.',
+    component: NotificationCenter,
+    source: notificationCenterSource,
   },
   {
     id: 'logs-explorer',

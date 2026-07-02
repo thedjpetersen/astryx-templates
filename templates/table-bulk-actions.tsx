@@ -68,10 +68,11 @@ import {
 import type {TableColumn} from '@astryxdesign/core/Table';
 import {Toolbar} from '@astryxdesign/core/Toolbar';
 import {
+  ArchiveIcon,
   InboxIcon,
-  UserGroupIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline';
+  UsersIcon,
+  XIcon,
+} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -491,7 +492,7 @@ export default function TableBulkActionsTemplate() {
                     <Button
                       label="Clear"
                       variant="ghost"
-                      icon={<Icon icon={XMarkIcon} size="sm" />}
+                      icon={<Icon icon={XIcon} size="sm" />}
                       onClick={clearSelection}
                     />
                   </HStack>
@@ -501,7 +502,7 @@ export default function TableBulkActionsTemplate() {
                     <Button
                       label="Archive"
                       variant="secondary"
-                      icon={<Icon icon={InboxIcon} size="sm" />}
+                      icon={<Icon icon={ArchiveIcon} size="sm" />}
                       onClick={archiveSelected}
                       isDisabled={view === 'archived'}
                     />
@@ -509,7 +510,7 @@ export default function TableBulkActionsTemplate() {
                       button={{
                         label: 'Assign',
                         variant: 'secondary',
-                        icon: <Icon icon={UserGroupIcon} size="sm" />,
+                        icon: <Icon icon={UsersIcon} size="sm" />,
                       }}
                       hasChevron
                       items={TEAMMATES.map(teammate => ({

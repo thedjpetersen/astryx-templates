@@ -57,16 +57,16 @@ import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
   BellIcon,
   BookmarkIcon,
-  ChatBubbleLeftRightIcon,
-  Cog6ToothIcon,
-  HashtagIcon,
+  MessagesSquareIcon,
+  SettingsIcon,
+  HashIcon,
   HomeIcon,
   InboxIcon,
-  MagnifyingGlassIcon,
-  PencilSquareIcon,
-  UserGroupIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline';
+  SearchIcon,
+  SquarePenIcon,
+  UsersIcon,
+  XIcon,
+} from 'lucide-react';
 
 // ---------------------------------------------------------------------------
 // Styles — plain CSS properties with semantic tokens only.
@@ -319,7 +319,7 @@ const THREAD_REPLIES: ThreadReply[] = [
 
 const RAIL_ITEMS = [
   {id: 'home', label: 'Home', icon: HomeIcon},
-  {id: 'dms', label: 'Direct messages', icon: ChatBubbleLeftRightIcon},
+  {id: 'dms', label: 'Direct messages', icon: MessagesSquareIcon},
   {id: 'activity', label: 'Activity', icon: BellIcon},
   {id: 'saved', label: 'Saved items', icon: BookmarkIcon},
 ];
@@ -410,7 +410,7 @@ export default function MessagingShellPage() {
       <IconButton
         label="Settings"
         tooltip="Settings"
-        icon={<Icon icon={Cog6ToothIcon} size="sm" color="inherit" />}
+        icon={<Icon icon={SettingsIcon} size="sm" color="inherit" />}
         variant="ghost"
         onClick={() => {}}
       />
@@ -433,7 +433,7 @@ export default function MessagingShellPage() {
         <IconButton
           label="New message"
           tooltip="New message"
-          icon={<Icon icon={PencilSquareIcon} size="sm" color="inherit" />}
+          icon={<Icon icon={SquarePenIcon} size="sm" color="inherit" />}
           variant="ghost"
           size="sm"
           onClick={() => {}}
@@ -445,7 +445,7 @@ export default function MessagingShellPage() {
           isLabelHidden
           size="sm"
           placeholder="Jump to..."
-          startIcon={MagnifyingGlassIcon}
+          startIcon={SearchIcon}
           value={searchQuery}
           onChange={setSearchQuery}
         />
@@ -471,7 +471,7 @@ export default function MessagingShellPage() {
                 setSelectedDmId(null);
               }}
               startContent={
-                <Icon icon={HashtagIcon} size="sm" color="secondary" />
+                <Icon icon={HashIcon} size="sm" color="secondary" />
               }
               endContent={
                 channel.unread > 0 ? (
@@ -524,7 +524,7 @@ export default function MessagingShellPage() {
   const messageStream = (
     <Stack direction="vertical" style={styles.streamColumn}>
       <HStack gap={3} style={styles.streamHeader}>
-        <Icon icon={HashtagIcon} size="sm" color="secondary" />
+        <Icon icon={HashIcon} size="sm" color="secondary" />
         <Heading level={5} accessibilityLevel={1}>
           {selectedChannel.name}
         </Heading>
@@ -537,7 +537,7 @@ export default function MessagingShellPage() {
         <IconButton
           label="Members"
           tooltip="Members"
-          icon={<Icon icon={UserGroupIcon} size="sm" color="inherit" />}
+          icon={<Icon icon={UsersIcon} size="sm" color="inherit" />}
           variant="ghost"
           size="sm"
           onClick={() => {}}
@@ -595,7 +595,7 @@ export default function MessagingShellPage() {
         <IconButton
           label="Close thread"
           tooltip="Close thread"
-          icon={<Icon icon={XMarkIcon} size="sm" color="inherit" />}
+          icon={<Icon icon={XIcon} size="sm" color="inherit" />}
           variant="ghost"
           size="sm"
           onClick={() => setIsThreadOpen(false)}

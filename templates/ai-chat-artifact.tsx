@@ -66,7 +66,7 @@ import {Selector} from '@astryxdesign/core/Selector';
 import {StatusDot} from '@astryxdesign/core/StatusDot';
 import {Timestamp} from '@astryxdesign/core/Timestamp';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
-import {ArrowPathIcon, PlusIcon} from '@heroicons/react/24/outline';
+import {RefreshCwIcon, PlusIcon} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -525,7 +525,7 @@ export default function AiChatArtifactTemplate() {
             <IconButton
               label="Regenerate response"
               tooltip="Regenerate response"
-              icon={<Icon icon={ArrowPathIcon} size="sm" color="inherit" />}
+              icon={<Icon icon={RefreshCwIcon} size="sm" color="inherit" />}
               variant="ghost"
               onClick={() => {}}
             />

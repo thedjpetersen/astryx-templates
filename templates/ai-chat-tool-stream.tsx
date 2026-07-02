@@ -74,14 +74,14 @@ import {Timestamp} from '@astryxdesign/core/Timestamp';
 import {Token} from '@astryxdesign/core/Token';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
-  ArrowPathIcon,
-  ChatBubbleLeftRightIcon,
-  Cog6ToothIcon,
-  MagnifyingGlassIcon,
-  PencilSquareIcon,
-  PlusIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline';
+  RefreshCwIcon,
+  SendIcon,
+  TerminalIcon,
+  SearchIcon,
+  SquarePenIcon,
+  PaperclipIcon,
+  XIcon,
+} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -212,10 +212,10 @@ interface ToolCall {
   output?: {language: string; code: string};
 }
 
-const TOOL_ICON: Record<ToolKind, typeof Cog6ToothIcon> = {
-  bash: Cog6ToothIcon,
-  edit: PencilSquareIcon,
-  search: MagnifyingGlassIcon,
+const TOOL_ICON: Record<ToolKind, typeof TerminalIcon> = {
+  bash: TerminalIcon,
+  edit: SquarePenIcon,
+  search: SearchIcon,
 };
 
 const TOOL_STATUS_DOT: Record<
@@ -547,7 +547,7 @@ function QueuedFollowUpPill({
         tooltip={isFailed ? 'Retry' : 'Send now'}
         icon={
           <Icon
-            icon={isFailed ? ArrowPathIcon : ChatBubbleLeftRightIcon}
+            icon={isFailed ? RefreshCwIcon : SendIcon}
             size="sm"
             color="inherit"
           />
@@ -559,7 +559,7 @@ function QueuedFollowUpPill({
       <IconButton
         label={`Remove from queue: ${item.text}`}
         tooltip="Remove"
-        icon={<Icon icon={XMarkIcon} size="sm" color="inherit" />}
+        icon={<Icon icon={XIcon} size="sm" color="inherit" />}
         variant="ghost"
         size="sm"
         onClick={() => onRemove(item.id)}
@@ -687,7 +687,7 @@ export default function AiChatToolStreamTemplate() {
             <IconButton
               label="Attach file"
               tooltip="Attach file"
-              icon={<Icon icon={PlusIcon} size="sm" color="inherit" />}
+              icon={<Icon icon={PaperclipIcon} size="sm" color="inherit" />}
               variant="ghost"
               size="sm"
               onClick={() => {}}

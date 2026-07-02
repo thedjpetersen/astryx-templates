@@ -78,11 +78,11 @@ import {Token} from '@astryxdesign/core/Token';
 import {Tooltip} from '@astryxdesign/core/Tooltip';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
-  Cog6ToothIcon,
-  HashtagIcon,
+  FilterIcon,
   InboxIcon,
-  MagnifyingGlassIcon,
-} from '@heroicons/react/24/outline';
+  SearchIcon,
+  WaypointsIcon,
+} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -463,7 +463,7 @@ function EntitiesTab({
         label="Filter entities"
         isLabelHidden
         size="sm"
-        startIcon={MagnifyingGlassIcon}
+        startIcon={SearchIcon}
         placeholder="Filter entities..."
         value={query}
         onChange={setQuery}
@@ -607,7 +607,7 @@ function RelationsTable({edges}: {edges: MemoryEdge[]}) {
       <EmptyState
         title="No relations match"
         description="Toggle more edge types on or lower the minimum weight."
-        icon={<Icon icon={HashtagIcon} size="lg" />}
+        icon={<Icon icon={WaypointsIcon} size="lg" />}
         isCompact
       />
     );
@@ -969,7 +969,7 @@ export default function MemoryRelationExplorerTemplate() {
                 <IconButton
                   label={isRailOpen ? 'Hide filters' : 'Show filters'}
                   tooltip={isRailOpen ? 'Hide filters' : 'Show filters'}
-                  icon={<Icon icon={Cog6ToothIcon} size="sm" color="inherit" />}
+                  icon={<Icon icon={FilterIcon} size="sm" color="inherit" />}
                   variant={isRailOpen ? 'secondary' : 'ghost'}
                   size="sm"
                   onClick={() => setIsRailOpen(prev => !prev)}
@@ -988,7 +988,7 @@ export default function MemoryRelationExplorerTemplate() {
                   label="Search nodes"
                   isLabelHidden
                   size="sm"
-                  startIcon={MagnifyingGlassIcon}
+                  startIcon={SearchIcon}
                   placeholder="Search nodes..."
                   value={nodeQuery}
                   onChange={setNodeQuery}

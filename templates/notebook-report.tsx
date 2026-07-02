@@ -58,7 +58,7 @@ import {
   ChartAxis,
   line,
 } from '@astryxdesign/lab';
-import {ArrowPathIcon, PencilSquareIcon} from '@heroicons/react/24/outline';
+import {PlayIcon, SquarePenIcon} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -426,7 +426,7 @@ export default function NotebookReportTemplate() {
   const runButton = (id: RunnableBlockId, label: string) => (
     <IconButton
       label={label}
-      icon={<Icon icon={ArrowPathIcon} size="sm" />}
+      icon={<Icon icon={PlayIcon} size="sm" />}
       variant="ghost"
       size="sm"
       onClick={() => runBlock(id)}
@@ -465,7 +465,7 @@ export default function NotebookReportTemplate() {
               )}
               <Button
                 label="Run all"
-                icon={<Icon icon={ArrowPathIcon} size="sm" />}
+                icon={<Icon icon={PlayIcon} size="sm" />}
                 onClick={runAll}
               />
               <MoreMenu
@@ -506,7 +506,7 @@ export default function NotebookReportTemplate() {
                 primaryAction={
                   <IconButton
                     label="Edit text"
-                    icon={<Icon icon={PencilSquareIcon} size="sm" />}
+                    icon={<Icon icon={SquarePenIcon} size="sm" />}
                     variant="ghost"
                     size="sm"
                   />

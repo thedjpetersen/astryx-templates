@@ -51,7 +51,7 @@ import {StatusDot} from '@astryxdesign/core/StatusDot';
 import {Timestamp} from '@astryxdesign/core/Timestamp';
 import {Token} from '@astryxdesign/core/Token';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
-import {BellAlertIcon, PlusIcon} from '@heroicons/react/24/outline';
+import {BellRingIcon, PlusIcon} from 'lucide-react';
 
 const styles: Record<string, CSSProperties> = {
   contentFill: {
@@ -327,7 +327,7 @@ function IncidentRows({
       <EmptyState
         title="No matching incidents"
         description="Adjust the status filter or clear search filters."
-        icon={<Icon icon={BellAlertIcon} size="lg" />}
+        icon={<Icon icon={BellRingIcon} size="lg" />}
       />
     );
   }
@@ -572,7 +572,7 @@ export default function IncidentConsolePage() {
                 <EmptyState
                   title="No incident selected"
                   description="Select an incident to see details and timeline."
-                  icon={<Icon icon={BellAlertIcon} size="lg" />}
+                  icon={<Icon icon={BellRingIcon} size="lg" />}
                   isCompact
                 />
               )}

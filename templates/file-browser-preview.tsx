@@ -69,20 +69,20 @@ import {TreeList} from '@astryxdesign/core/TreeList';
 import type {TreeListItemData} from '@astryxdesign/core/TreeList';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
 
-// Demo icon shim exports a fixed set; names picked for closest semantics
-// (folder → InboxIcon tray, code → HashtagIcon, share → UserGroupIcon, ...).
 import {
-  ArrowPathIcon,
-  BookmarkIcon,
-  Cog6ToothIcon,
-  HashtagIcon,
+  DownloadIcon,
+  FileCodeIcon,
+  FileCogIcon,
+  FileTextIcon,
+  FolderIcon,
+  HistoryIcon,
   InboxIcon,
-  MagnifyingGlassIcon,
-  PencilSquareIcon,
-  PlusIcon,
-  UserGroupIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline';
+  RotateCcwIcon,
+  SearchIcon,
+  Share2Icon,
+  UploadIcon,
+  XIcon,
+} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -497,10 +497,10 @@ const FILE_HISTORY: Record<string, FileVersion[]> = {
   ],
 };
 
-const FILE_KIND_ICON: Record<FileKind, typeof HashtagIcon> = {
-  code: HashtagIcon,
-  markdown: PencilSquareIcon,
-  config: Cog6ToothIcon,
+const FILE_KIND_ICON: Record<FileKind, typeof FileCodeIcon> = {
+  code: FileCodeIcon,
+  markdown: FileTextIcon,
+  config: FileCogIcon,
 };
 
 function fileName(path: string): string {
@@ -531,7 +531,7 @@ function buildTreeItems(
         id: spec.id,
         label: spec.label,
         isExpanded: spec.isExpanded,
-        startContent: <Icon icon={InboxIcon} size="sm" color="secondary" />,
+        startContent: <Icon icon={FolderIcon} size="sm" color="secondary" />,
         children: spec.isLoading
           ? buildLoadingRows(spec.id)
           : buildTreeItems(spec.children ?? [], selectedId, onSelect),
@@ -672,7 +672,7 @@ export default function FileBrowserPreviewTemplate() {
           isLabelHidden
           size="sm"
           placeholder="Search files..."
-          startIcon={MagnifyingGlassIcon}
+          startIcon={SearchIcon}
           hasClear
           value={query}
           onChange={setQuery}
@@ -683,7 +683,7 @@ export default function FileBrowserPreviewTemplate() {
           searchMatches.length === 0 ? (
             <EmptyState
               isCompact
-              icon={<Icon icon={MagnifyingGlassIcon} size="lg" />}
+              icon={<Icon icon={SearchIcon} size="lg" />}
               title="No matches"
               description={`Nothing in ${
                 scope === 'workspace' ? 'workspace files' : 'personal files'
@@ -790,7 +790,7 @@ export default function FileBrowserPreviewTemplate() {
       <IconButton
         label={`Share ${fileName(selectedFile.path)}`}
         tooltip="Share"
-        icon={<Icon icon={UserGroupIcon} size="sm" color="inherit" />}
+        icon={<Icon icon={Share2Icon} size="sm" color="inherit" />}
         variant="ghost"
         size="sm"
         onClick={() => {}}
@@ -798,7 +798,7 @@ export default function FileBrowserPreviewTemplate() {
       <IconButton
         label={`Download ${fileName(selectedFile.path)}`}
         tooltip="Download"
-        icon={<Icon icon={BookmarkIcon} size="sm" color="inherit" />}
+        icon={<Icon icon={DownloadIcon} size="sm" color="inherit" />}
         variant="ghost"
         size="sm"
         onClick={() => {}}
@@ -815,7 +815,7 @@ export default function FileBrowserPreviewTemplate() {
       ) : (
         <div style={styles.emptyStateFill}>
           <EmptyState
-            icon={<Icon icon={PencilSquareIcon} size="lg" />}
+            icon={<Icon icon={FileCodeIcon} size="lg" />}
             title="No rendered preview"
             description={`${fileName(
               selectedFile.path,
@@ -867,7 +867,7 @@ export default function FileBrowserPreviewTemplate() {
         <IconButton
           label="Close history"
           tooltip="Close history"
-          icon={<Icon icon={XMarkIcon} size="sm" color="inherit" />}
+          icon={<Icon icon={XIcon} size="sm" color="inherit" />}
           variant="ghost"
           size="sm"
           onClick={() => setView('code')}
@@ -878,7 +878,7 @@ export default function FileBrowserPreviewTemplate() {
         {versions.length === 0 ? (
           <EmptyState
             isCompact
-            icon={<Icon icon={ArrowPathIcon} size="lg" />}
+            icon={<Icon icon={HistoryIcon} size="lg" />}
             title="No earlier versions"
             description="This file has only been saved once — edits will appear here."
           />
@@ -910,7 +910,7 @@ export default function FileBrowserPreviewTemplate() {
                       label="Restore"
                       variant="ghost"
                       size="sm"
-                      icon={<Icon icon={ArrowPathIcon} size="sm" />}
+                      icon={<Icon icon={RotateCcwIcon} size="sm" />}
                       onClick={() => handleRestore(version)}
                     />
                   )
@@ -935,7 +935,7 @@ export default function FileBrowserPreviewTemplate() {
           <Button
             label="Upload files"
             variant="primary"
-            icon={<Icon icon={PlusIcon} size="sm" />}
+            icon={<Icon icon={UploadIcon} size="sm" />}
             onClick={() => {}}
           />
         }

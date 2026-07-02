@@ -54,10 +54,10 @@ import {Selector} from '@astryxdesign/core/Selector';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
   BookmarkIcon,
-  ChatBubbleLeftRightIcon,
+  MessagesSquareIcon,
   InboxIcon,
-  PencilSquareIcon,
-} from '@heroicons/react/24/outline';
+  SquarePenIcon,
+} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -309,7 +309,7 @@ function PostCard({
             label={`${post.comments} comments`}
             variant="ghost"
             size="sm"
-            icon={<Icon icon={ChatBubbleLeftRightIcon} size="sm" />}
+            icon={<Icon icon={MessagesSquareIcon} size="sm" />}
           />
           <StackItem size="fill" />
           <ToggleButton
@@ -449,7 +449,7 @@ export default function InfiniteScrollFeedTemplate() {
             />
             <Button
               label="New post"
-              icon={<Icon icon={PencilSquareIcon} size="sm" />}
+              icon={<Icon icon={SquarePenIcon} size="sm" />}
               isIconOnly={isNarrow}
             />
           </HStack>

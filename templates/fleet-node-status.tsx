@@ -66,13 +66,11 @@ import {ToggleButton} from '@astryxdesign/core/ToggleButton';
 import {Token} from '@astryxdesign/core/Token';
 import {Tooltip} from '@astryxdesign/core/Tooltip';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
-// Demo icon shim exports a fixed set — Inbox stands in for a server-stack
-// glyph; the SSE ✓/✗ marks render as colored text glyphs instead of icons.
 import {
-  ArrowPathIcon,
-  InboxIcon,
-  MagnifyingGlassIcon,
-} from '@heroicons/react/24/outline';
+  RefreshCwIcon,
+  SearchIcon,
+  ServerIcon,
+} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -750,7 +748,7 @@ export default function FleetNodeStatusTemplate() {
     <EmptyState
       title="No nodes match"
       description="Clear the search or relax the status, platform, and version filters."
-      icon={<Icon icon={InboxIcon} size="lg" />}
+      icon={<Icon icon={ServerIcon} size="lg" />}
     />
   );
 
@@ -783,7 +781,7 @@ export default function FleetNodeStatusTemplate() {
               label="Refresh"
               variant="secondary"
               size="sm"
-              icon={<Icon icon={ArrowPathIcon} size="sm" />}
+              icon={<Icon icon={RefreshCwIcon} size="sm" />}
               onClick={() => {}}
             />
           </HStack>
@@ -801,7 +799,7 @@ export default function FleetNodeStatusTemplate() {
                     isLabelHidden
                     size="sm"
                     placeholder="Search id, user, or version..."
-                    startIcon={MagnifyingGlassIcon}
+                    startIcon={SearchIcon}
                     value={query}
                     onChange={setQuery}
                   />

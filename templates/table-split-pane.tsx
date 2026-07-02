@@ -64,11 +64,12 @@ import {Timestamp} from '@astryxdesign/core/Timestamp';
 import {Token} from '@astryxdesign/core/Token';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
-  ChatBubbleLeftRightIcon,
   InboxIcon,
-  MagnifyingGlassIcon,
+  MessagesSquareIcon,
   PlusIcon,
-} from '@heroicons/react/24/outline';
+  SearchIcon,
+  SendIcon,
+} from 'lucide-react';
 
 // ---------------------------------------------------------------------------
 // STYLES
@@ -601,7 +602,7 @@ function TicketDetail({ticket, isNarrow}: {ticket: Ticket; isNarrow: boolean}) {
           <Button
             label="Send reply"
             size="sm"
-            icon={<Icon icon={ChatBubbleLeftRightIcon} size="sm" />}
+            icon={<Icon icon={SendIcon} size="sm" />}
             isDisabled={reply.trim().length === 0}
           />
         </HStack>
@@ -657,7 +658,7 @@ export default function TableSplitPaneTemplate() {
           size="sm"
           width="100%"
           placeholder="Search id, subject, requester..."
-          startIcon={<Icon icon={MagnifyingGlassIcon} size="sm" />}
+          startIcon={<Icon icon={SearchIcon} size="sm" />}
           value={query}
           onChange={setQuery}
           hasClear
@@ -736,7 +737,7 @@ export default function TableSplitPaneTemplate() {
             <EmptyState
               title="No ticket selected"
               description="Select a ticket from the list to read the conversation and reply."
-              icon={<Icon icon={ChatBubbleLeftRightIcon} size="lg" />}
+              icon={<Icon icon={MessagesSquareIcon} size="lg" />}
             />
           )}
         </LayoutContent>

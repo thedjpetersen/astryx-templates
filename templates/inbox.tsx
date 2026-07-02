@@ -38,10 +38,6 @@
  *   mark messages read.
  * - The message list and reading pane body scroll independently; the
  *   list header (search) and reading-pane toolbar stay pinned.
- *
- * Icon note: the demo heroicons shim exports a small fixed set, so
- * toolbar actions use the closest available names (BellIcon for
- * snooze, InboxIcon for archive, ChatBubbleLeftRightIcon for reply).
  */
 
 import {useMemo, useState, type CSSProperties} from 'react';
@@ -73,14 +69,16 @@ import {Tooltip} from '@astryxdesign/core/Tooltip';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
 
 import {
-  BellIcon,
-  BookmarkIcon,
-  ChatBubbleLeftRightIcon,
-  EllipsisHorizontalIcon,
+  ArchiveIcon,
+  ClockIcon,
+  EllipsisIcon,
   InboxIcon,
-  MagnifyingGlassIcon,
-  PencilSquareIcon,
-} from '@heroicons/react/24/outline';
+  ReplyIcon,
+  SearchIcon,
+  SendIcon,
+  SquarePenIcon,
+  StarIcon,
+} from 'lucide-react';
 
 // ---------------------------------------------------------------------------
 // STYLES — plain CSS properties with semantic tokens only.
@@ -151,9 +149,9 @@ type FolderId = 'inbox' | 'starred' | 'sent' | 'archive';
 
 const FOLDERS: Array<{id: FolderId; label: string; icon: typeof InboxIcon}> = [
   {id: 'inbox', label: 'Inbox', icon: InboxIcon},
-  {id: 'starred', label: 'Starred', icon: BookmarkIcon},
-  {id: 'sent', label: 'Sent', icon: PencilSquareIcon},
-  {id: 'archive', label: 'Archive', icon: ChatBubbleLeftRightIcon},
+  {id: 'starred', label: 'Starred', icon: StarIcon},
+  {id: 'sent', label: 'Sent', icon: SendIcon},
+  {id: 'archive', label: 'Archive', icon: ArchiveIcon},
 ];
 
 interface MailMessage {
@@ -658,7 +656,7 @@ export default function InboxTemplate() {
           isLabelHidden
           size="sm"
           placeholder={`Search ${selectedFolder.label.toLowerCase()}…`}
-          startIcon={MagnifyingGlassIcon}
+          startIcon={SearchIcon}
           value={searchQuery}
           onChange={setSearchQuery}
         />
@@ -709,7 +707,7 @@ export default function InboxTemplate() {
               label="Reply"
               size="sm"
               variant="secondary"
-              icon={<Icon icon={ChatBubbleLeftRightIcon} size="sm" />}
+              icon={<Icon icon={ReplyIcon} size="sm" />}
               isDisabled={openMessage === null}
               onClick={() => {}}
             />
@@ -717,7 +715,7 @@ export default function InboxTemplate() {
               label="Archive"
               size="sm"
               variant="ghost"
-              icon={<Icon icon={InboxIcon} size="sm" />}
+              icon={<Icon icon={ArchiveIcon} size="sm" />}
               isDisabled={
                 openMessage === null ||
                 folderById[openMessage.id] === 'archive'
@@ -728,7 +726,7 @@ export default function InboxTemplate() {
               label="Snooze"
               size="sm"
               variant="ghost"
-              icon={<Icon icon={BellIcon} size="sm" />}
+              icon={<Icon icon={ClockIcon} size="sm" />}
               isDisabled={openMessage === null}
               onClick={() => {}}
             />
@@ -740,7 +738,7 @@ export default function InboxTemplate() {
             tooltip="More actions"
             size="sm"
             variant="ghost"
-            icon={<Icon icon={EllipsisHorizontalIcon} size="sm" />}
+            icon={<Icon icon={EllipsisIcon} size="sm" />}
             onClick={() => {}}
           />
         }
@@ -778,7 +776,7 @@ export default function InboxTemplate() {
                   variant={
                     starredIds.has(openMessage.id) ? 'secondary' : 'ghost'
                   }
-                  icon={<Icon icon={BookmarkIcon} size="sm" />}
+                  icon={<Icon icon={StarIcon} size="sm" />}
                   onClick={() => toggleStar(openMessage.id)}
                 />
               </Tooltip>
@@ -834,7 +832,7 @@ export default function InboxTemplate() {
             </StackItem>
             <Button
               label="Compose"
-              icon={<Icon icon={PencilSquareIcon} size="sm" />}
+              icon={<Icon icon={SquarePenIcon} size="sm" />}
               onClick={() => {}}
             />
           </HStack>

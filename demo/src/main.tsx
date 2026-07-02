@@ -2,6 +2,7 @@ import '@astryxdesign/core/reset.css';
 import '@astryxdesign/core/astryx.css';
 import './astryxTheme.css';
 import './demo.css';
+import './lucideIcons';
 
 import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';

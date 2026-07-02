@@ -57,7 +57,7 @@ import type {TableColumn} from '@astryxdesign/core/Table';
 import {TextArea} from '@astryxdesign/core/TextArea';
 import {TextInput} from '@astryxdesign/core/TextInput';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
-import {InboxIcon, MagnifyingGlassIcon, PlusIcon} from '@heroicons/react/24/outline';
+import {InboxIcon, SearchIcon, PlusIcon} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -478,7 +478,7 @@ export default function FormModalTemplate() {
                 isLabelHidden
                 size="sm"
                 width={220}
-                startIcon={<Icon icon={MagnifyingGlassIcon} size="sm" />}
+                startIcon={<Icon icon={SearchIcon} size="sm" />}
                 value={query}
                 onChange={setQuery}
                 placeholder="Search projects or clients"

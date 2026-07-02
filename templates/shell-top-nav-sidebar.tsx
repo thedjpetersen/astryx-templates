@@ -49,14 +49,14 @@ import {DropdownMenu} from '@astryxdesign/core/DropdownMenu';
 import {List, ListItem} from '@astryxdesign/core/List';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
-  ArrowPathIcon,
   BellIcon,
-  ChatBubbleLeftRightIcon,
-  Cog6ToothIcon,
-  HomeIcon,
-  MagnifyingGlassIcon,
+  CircleHelpIcon,
+  CloudIcon,
   PlusIcon,
-} from '@heroicons/react/24/outline';
+  RefreshCwIcon,
+  SearchIcon,
+  SettingsIcon,
+} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -494,7 +494,7 @@ export default function ShellTopNavSidebarTemplate() {
       label="Global navigation"
       heading={
         <TopNavHeading
-          logo={<NavIcon icon={<Icon icon={HomeIcon} size="sm" />} />}
+          logo={<NavIcon icon={<Icon icon={CloudIcon} size="sm" />} />}
           superheading="Solstice Cloud"
           heading="Infrastructure"
           subheading="acme-prod"
@@ -523,7 +523,7 @@ export default function ShellTopNavSidebarTemplate() {
             <IconButton
               label="Search resources"
               tooltip="Search resources"
-              icon={<Icon icon={MagnifyingGlassIcon} size="sm" />}
+              icon={<Icon icon={SearchIcon} size="sm" />}
               variant="ghost"
               onClick={() => {}}
             />
@@ -534,7 +534,7 @@ export default function ShellTopNavSidebarTemplate() {
                 isLabelHidden
                 size="sm"
                 placeholder="Search resources, docs, IPs..."
-                startIcon={MagnifyingGlassIcon}
+                startIcon={SearchIcon}
                 value={searchQuery}
                 onChange={setSearchQuery}
               />
@@ -581,12 +581,12 @@ export default function ShellTopNavSidebarTemplate() {
         <VStack gap={0.5}>
           <SideNavItem
             label="Docs & support"
-            icon={ChatBubbleLeftRightIcon}
+            icon={CircleHelpIcon}
             onClick={() => {}}
           />
           <SideNavItem
             label="Console settings"
-            icon={Cog6ToothIcon}
+            icon={SettingsIcon}
             onClick={() => {}}
           />
         </VStack>
@@ -635,7 +635,7 @@ export default function ShellTopNavSidebarTemplate() {
                 <IconButton
                   label="Refresh"
                   tooltip="Refresh"
-                  icon={<Icon icon={ArrowPathIcon} size="sm" />}
+                  icon={<Icon icon={RefreshCwIcon} size="sm" />}
                   variant="ghost"
                   onClick={() => {}}
                 />

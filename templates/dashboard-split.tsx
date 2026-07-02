@@ -51,7 +51,7 @@ import {
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
 import {ChartV2 as Chart, ChartGrid, ChartAxis, line} from '@astryxdesign/lab';
-import {ArrowPathIcon} from '@heroicons/react/24/outline';
+import {RefreshCwIcon} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -289,7 +289,7 @@ export default function DashboardSplitTemplate() {
             <Button label="Export report" variant="secondary" />
             <IconButton
               label="Refresh data"
-              icon={<Icon icon={ArrowPathIcon} size="sm" />}
+              icon={<Icon icon={RefreshCwIcon} size="sm" />}
               variant="ghost"
             />
           </HStack>

@@ -66,15 +66,13 @@ import {StatusDot} from '@astryxdesign/core/StatusDot';
 import {Token} from '@astryxdesign/core/Token';
 import {Tooltip} from '@astryxdesign/core/Tooltip';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
-// Demo icon shim exports a fixed set; names picked for closest semantics
-// (laptop → HomeIcon, server rack → InboxIcon tray, CLI → HashtagIcon).
 // Check/copy/warning/back glyphs come from the Icon name registry instead.
 import {
-  ChatBubbleLeftRightIcon,
-  HashtagIcon,
-  HomeIcon,
-  InboxIcon,
-} from '@heroicons/react/24/outline';
+  LaptopIcon,
+  MessagesSquareIcon,
+  ServerIcon,
+  TerminalIcon,
+} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -188,13 +186,13 @@ const PLATFORMS: Platform[] = [
     id: 'mac',
     name: 'Mac / Laptop',
     caption: 'Direct internet',
-    icon: HomeIcon,
+    icon: LaptopIcon,
   },
   {
     id: 'devvm',
     name: 'DevVM / Server',
     caption: 'Needs proxy',
-    icon: InboxIcon,
+    icon: ServerIcon,
   },
 ];
 
@@ -278,14 +276,14 @@ const CHECKLIST: ChecklistRow[] = [
     label: 'CLI nodes',
     detail: '2 connected',
     state: 'done',
-    icon: HashtagIcon,
+    icon: TerminalIcon,
   },
   {
     id: 'cl-chat',
     label: 'Google Chat',
     detail: 'skipped',
     state: 'skipped',
-    icon: ChatBubbleLeftRightIcon,
+    icon: MessagesSquareIcon,
   },
 ];
 
@@ -529,7 +527,7 @@ export default function OnboardingGuidedInstallTemplate() {
         <LayoutHeader hasDivider>
           <HStack gap={3} vAlign="center">
             <div style={styles.brandTile}>
-              <Icon icon={HashtagIcon} size="sm" color="inherit" />
+              <Icon icon={TerminalIcon} size="sm" color="inherit" />
             </div>
             <StackItem size="fill">
               <HStack gap={2} vAlign="center">
@@ -557,7 +555,7 @@ export default function OnboardingGuidedInstallTemplate() {
                   {/* Header: icon tile + title left, step circles right. */}
                   <HStack gap={3} vAlign="center">
                     <div style={styles.brandTile}>
-                      <Icon icon={InboxIcon} size="sm" color="inherit" />
+                      <Icon icon={ServerIcon} size="sm" color="inherit" />
                     </div>
                     <StackItem size="fill">
                       <VStack gap={0}>

@@ -84,18 +84,19 @@ import {TabList, Tab} from '@astryxdesign/core/TabList';
 import {TextInput} from '@astryxdesign/core/TextInput';
 import {useToast} from '@astryxdesign/core/Toast';
 import {
-  ArrowPathIcon,
-  BellAlertIcon,
-  BookmarkIcon,
-  ChatBubbleLeftRightIcon,
-  Cog6ToothIcon,
-  HashtagIcon,
+  ArchiveIcon,
+  BellRingIcon,
+  DatabaseIcon,
+  FileTextIcon,
   InboxIcon,
-  MagnifyingGlassIcon,
-  PencilSquareIcon,
+  MessagesSquareIcon,
   PlusIcon,
-  UserGroupIcon,
-} from '@heroicons/react/24/outline';
+  RefreshCwIcon,
+  SearchIcon,
+  SettingsIcon,
+  SquarePenIcon,
+  UsersIcon,
+} from 'lucide-react';
 
 const styles: Record<string, CSSProperties> = {
   // Settings surfaces read best as a centered column, not full-bleed.
@@ -201,7 +202,7 @@ const CATALOG: CatalogSkill[] = [
     category: 'engineering',
     installsLabel: '4,812',
     version: '2.4.1',
-    icon: PencilSquareIcon,
+    icon: SquarePenIcon,
   },
   {
     slug: 'sql-runner',
@@ -212,7 +213,7 @@ const CATALOG: CatalogSkill[] = [
     category: 'data',
     installsLabel: '3,241',
     version: '1.8.0',
-    icon: HashtagIcon,
+    icon: DatabaseIcon,
   },
   {
     slug: 'calendar-sync',
@@ -223,7 +224,7 @@ const CATALOG: CatalogSkill[] = [
     category: 'productivity',
     installsLabel: '2,907',
     version: '0.9.3',
-    icon: ArrowPathIcon,
+    icon: RefreshCwIcon,
   },
   {
     slug: 'standup-summarizer',
@@ -234,7 +235,7 @@ const CATALOG: CatalogSkill[] = [
     category: 'productivity',
     installsLabel: '2,104',
     version: '1.2.0',
-    icon: ChatBubbleLeftRightIcon,
+    icon: MessagesSquareIcon,
   },
   {
     slug: 'release-notes-drafter',
@@ -245,7 +246,7 @@ const CATALOG: CatalogSkill[] = [
     category: 'engineering',
     installsLabel: '1,663',
     version: '1.0.4',
-    icon: BookmarkIcon,
+    icon: FileTextIcon,
   },
   {
     slug: 'ticket-triage',
@@ -267,7 +268,7 @@ const CATALOG: CatalogSkill[] = [
     category: 'productivity',
     installsLabel: '987',
     version: '2.1.0',
-    icon: UserGroupIcon,
+    icon: UsersIcon,
   },
   {
     slug: 'oncall-escalator',
@@ -278,7 +279,7 @@ const CATALOG: CatalogSkill[] = [
     category: 'operations',
     installsLabel: '742',
     version: '1.5.2',
-    icon: BellAlertIcon,
+    icon: BellRingIcon,
   },
 ];
 
@@ -313,7 +314,7 @@ const PUBLISHED: PublishedSkill[] = [
     version: '1.1.0',
     installsLabel: '236',
     updated: 'Jun 27',
-    icon: HashtagIcon,
+    icon: DatabaseIcon,
   },
   {
     slug: 'sprint-retro-bot',
@@ -324,7 +325,7 @@ const PUBLISHED: PublishedSkill[] = [
     version: '0.4.0',
     installsLabel: '0',
     updated: 'Jun 18',
-    icon: ChatBubbleLeftRightIcon,
+    icon: MessagesSquareIcon,
   },
 ];
 
@@ -552,7 +553,7 @@ export default function SettingsExtensionCatalogTemplate() {
                         label="Search skills"
                         isLabelHidden
                         placeholder="Search skills…"
-                        startIcon={<Icon icon={MagnifyingGlassIcon} size="sm" />}
+                        startIcon={<Icon icon={SearchIcon} size="sm" />}
                         value={query}
                         onChange={setQuery}
                       />
@@ -567,7 +568,7 @@ export default function SettingsExtensionCatalogTemplate() {
                   </HStack>
                   {discoverResults.length === 0 ? (
                     <EmptyState
-                      icon={<Icon icon={MagnifyingGlassIcon} size="lg" />}
+                      icon={<Icon icon={SearchIcon} size="lg" />}
                       title="No skills found"
                       description="Try a different search term or category."
                       actions={
@@ -678,7 +679,7 @@ export default function SettingsExtensionCatalogTemplate() {
                                   label={`${skill.name} options`}
                                   size="sm"
                                   items={[
-                                    {label: 'Configure', icon: Cog6ToothIcon},
+                                    {label: 'Configure', icon: SettingsIcon},
                                     {label: 'View source'},
                                     {type: 'divider'},
                                     {
@@ -723,7 +724,7 @@ export default function SettingsExtensionCatalogTemplate() {
                   </HStack>
                   {publishedResults.length === 0 ? (
                     <EmptyState
-                      icon={<Icon icon={BookmarkIcon} size="lg" />}
+                      icon={<Icon icon={ArchiveIcon} size="lg" />}
                       title="No archived skills"
                       description="Skills you retire from the marketplace will land here."
                       actions={
@@ -771,7 +772,7 @@ export default function SettingsExtensionCatalogTemplate() {
                                 size="sm"
                                 variant="secondary"
                                 icon={
-                                  <Icon icon={PencilSquareIcon} size="sm" />
+                                  <Icon icon={SquarePenIcon} size="sm" />
                                 }
                               />
                             </HStack>

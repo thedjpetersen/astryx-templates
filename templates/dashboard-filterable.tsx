@@ -68,10 +68,10 @@ import {
   bar,
 } from '@astryxdesign/lab';
 import {
-  ArrowPathIcon,
+  RefreshCwIcon,
   InboxIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline';
+  XIcon,
+} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -319,7 +319,7 @@ function FilterPanel({
         ) : null}
         <IconButton
           label="Hide filters"
-          icon={<Icon icon={XMarkIcon} size="sm" />}
+          icon={<Icon icon={XIcon} size="sm" />}
           variant="ghost"
           size="sm"
           onClick={onHide}
@@ -475,7 +475,7 @@ export default function FilterableDashboardTemplate() {
             ) : null}
             <IconButton
               label="Refresh dashboard"
-              icon={<Icon icon={ArrowPathIcon} size="sm" />}
+              icon={<Icon icon={RefreshCwIcon} size="sm" />}
               variant="ghost"
             />
           </HStack>

@@ -86,7 +86,7 @@ import {
   line,
   bar,
 } from '@astryxdesign/lab';
-import {ArrowPathIcon, XMarkIcon} from '@heroicons/react/24/outline';
+import {RefreshCwIcon, XIcon} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -389,7 +389,7 @@ export default function TableChartTemplate() {
             </SegmentedControl>
             <IconButton
               label="Refresh data"
-              icon={<Icon icon={ArrowPathIcon} size="sm" />}
+              icon={<Icon icon={RefreshCwIcon} size="sm" />}
               variant="ghost"
             />
           </HStack>
@@ -415,7 +415,7 @@ export default function TableChartTemplate() {
                       label="Clear selection"
                       variant="ghost"
                       size="sm"
-                      icon={<Icon icon={XMarkIcon} size="sm" />}
+                      icon={<Icon icon={XIcon} size="sm" />}
                       onClick={() => setSelectedId(null)}
                     />
                   )}

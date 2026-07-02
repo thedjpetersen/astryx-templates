@@ -68,8 +68,8 @@ import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
   PlusIcon,
   InboxIcon,
-  EllipsisHorizontalIcon,
-} from '@heroicons/react/24/outline';
+  EllipsisIcon,
+} from 'lucide-react';
 
 const styles: Record<string, CSSProperties> = {
   board: {
@@ -490,7 +490,7 @@ function BoardColumn({
           </StackItem>
           <IconButton
             label={`${title} column options`}
-            icon={<Icon icon={EllipsisHorizontalIcon} size="sm" />}
+            icon={<Icon icon={EllipsisIcon} size="sm" />}
             variant="ghost"
           />
         </HStack>

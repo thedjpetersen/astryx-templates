@@ -63,7 +63,7 @@ import {Table, pixel, useTableStickyColumns} from '@astryxdesign/core/Table';
 import type {TableColumn} from '@astryxdesign/core/Table';
 import {Tooltip} from '@astryxdesign/core/Tooltip';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
-import {ArrowPathIcon} from '@heroicons/react/24/outline';
+import {RefreshCwIcon} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -847,7 +847,7 @@ export default function ActivationFunnelAnalyticsTemplate() {
                     <EmptyState
                       title="All stages hidden"
                       description="Every milestone is excluded from the funnel. Reset to bring them back."
-                      icon={<Icon icon={ArrowPathIcon} size="lg" />}
+                      icon={<Icon icon={RefreshCwIcon} size="lg" />}
                       actions={
                         <Button
                           label="Reset stages"

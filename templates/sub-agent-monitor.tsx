@@ -75,11 +75,11 @@ import {Timestamp} from '@astryxdesign/core/Timestamp';
 import {Tooltip} from '@astryxdesign/core/Tooltip';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
-  ArrowPathIcon,
-  Cog6ToothIcon,
-  UserGroupIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline';
+  BotIcon,
+  RefreshCwIcon,
+  TerminalIcon,
+  XIcon,
+} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -387,7 +387,7 @@ function AgentRow({
         <IconButton
           label={`Dismiss: ${agent.title}`}
           tooltip="Dismiss"
-          icon={<Icon icon={XMarkIcon} size="sm" color="inherit" />}
+          icon={<Icon icon={XIcon} size="sm" color="inherit" />}
           variant="ghost"
           size="sm"
           isDisabled={agent.status === 'running'}
@@ -426,7 +426,7 @@ function TranscriptItems({agent}: {agent: SubAgent}) {
             return (
               <div key={key} style={styles.toolChip}>
                 <HStack gap={2} vAlign="center">
-                  <Icon icon={Cog6ToothIcon} size="sm" color="secondary" />
+                  <Icon icon={TerminalIcon} size="sm" color="secondary" />
                   <StackItem size="fill" style={styles.toolChipText}>
                     <Text type="code" size="sm" color="secondary" maxLines={1}>
                       {item.tool}: {item.command}
@@ -532,7 +532,7 @@ export default function SubAgentMonitorTemplate() {
   // inside the Collapsible trigger, so every cluster stays non-interactive.
   const summaryBar = (
     <HStack gap={3} vAlign="center">
-      <Icon icon={UserGroupIcon} size="sm" color="secondary" />
+      <Icon icon={BotIcon} size="sm" color="secondary" />
       <StackItem size="fill" style={styles.summaryCell}>
         <Text type="label" maxLines={1}>
           {agents.length} sub-agents
@@ -780,7 +780,7 @@ export default function SubAgentMonitorTemplate() {
                           tooltip="Refresh"
                           icon={
                             <Icon
-                              icon={ArrowPathIcon}
+                              icon={RefreshCwIcon}
                               size="sm"
                               color="inherit"
                             />

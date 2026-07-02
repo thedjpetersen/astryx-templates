@@ -52,14 +52,14 @@ import {Token} from '@astryxdesign/core/Token';
 import type {TokenColor} from '@astryxdesign/core/Token';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
-  ArrowPathIcon,
-  BellAlertIcon,
-  ChatBubbleLeftRightIcon,
-  Cog6ToothIcon,
+  BellRingIcon,
   InboxIcon,
-  PencilSquareIcon,
-  UserGroupIcon,
-} from '@heroicons/react/24/outline';
+  MessagesSquareIcon,
+  RocketIcon,
+  SettingsIcon,
+  SquarePenIcon,
+  UserPlusIcon,
+} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -165,7 +165,7 @@ const DAYS: ReadonlyArray<{
       {
         id: 'evt-1042',
         type: 'alert',
-        icon: BellAlertIcon,
+        icon: BellRingIcon,
         iconColor: 'error',
         actor: 'Orbit Monitor',
         action: 'triggered alert "Checkout API error rate above 2%"',
@@ -184,7 +184,7 @@ const DAYS: ReadonlyArray<{
       {
         id: 'evt-1041',
         type: 'deploy',
-        icon: ArrowPathIcon,
+        icon: RocketIcon,
         iconColor: 'success',
         actor: 'Maya Lindqvist',
         action: 'deployed checkout-api v2.14.3 to production',
@@ -200,7 +200,7 @@ const DAYS: ReadonlyArray<{
       {
         id: 'evt-1040',
         type: 'comment',
-        icon: ChatBubbleLeftRightIcon,
+        icon: MessagesSquareIcon,
         iconColor: 'accent',
         actor: 'Daniel Okafor',
         action: 'commented on incident INC-2291',
@@ -213,7 +213,7 @@ const DAYS: ReadonlyArray<{
       {
         id: 'evt-1039',
         type: 'change',
-        icon: Cog6ToothIcon,
+        icon: SettingsIcon,
         iconColor: 'secondary',
         actor: 'Maya Lindqvist',
         action: 'increased rollout flag checkout.express-pay from 25% to 50%',
@@ -228,7 +228,7 @@ const DAYS: ReadonlyArray<{
       {
         id: 'evt-1036',
         type: 'deploy',
-        icon: ArrowPathIcon,
+        icon: RocketIcon,
         iconColor: 'success',
         actor: 'Rachel Steinberg',
         action: 'deployed checkout-api v2.14.2 to production',
@@ -244,7 +244,7 @@ const DAYS: ReadonlyArray<{
       {
         id: 'evt-1035',
         type: 'change',
-        icon: UserGroupIcon,
+        icon: UserPlusIcon,
         iconColor: 'secondary',
         actor: 'Daniel Okafor',
         action: 'added Tomás Herrera to the checkout on-call rotation',
@@ -253,7 +253,7 @@ const DAYS: ReadonlyArray<{
       {
         id: 'evt-1034',
         type: 'comment',
-        icon: ChatBubbleLeftRightIcon,
+        icon: MessagesSquareIcon,
         iconColor: 'accent',
         actor: 'Tomás Herrera',
         action: 'commented on pull request #482',
@@ -272,7 +272,7 @@ const DAYS: ReadonlyArray<{
       {
         id: 'evt-1029',
         type: 'alert',
-        icon: BellAlertIcon,
+        icon: BellRingIcon,
         iconColor: 'warning',
         actor: 'Orbit Monitor',
         action: 'triggered alert "P95 latency above 800 ms" (auto-resolved)',
@@ -291,7 +291,7 @@ const DAYS: ReadonlyArray<{
       {
         id: 'evt-1027',
         type: 'change',
-        icon: PencilSquareIcon,
+        icon: SquarePenIcon,
         iconColor: 'secondary',
         actor: 'Rachel Steinberg',
         action: 'updated the runbook "Checkout rollback procedure"',
@@ -300,7 +300,7 @@ const DAYS: ReadonlyArray<{
       {
         id: 'evt-1025',
         type: 'deploy',
-        icon: ArrowPathIcon,
+        icon: RocketIcon,
         iconColor: 'success',
         actor: 'Maya Lindqvist',
         action: 'deployed checkout-worker v1.9.0 to production',

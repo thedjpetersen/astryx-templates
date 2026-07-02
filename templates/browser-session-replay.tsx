@@ -40,13 +40,21 @@
  *   the frame counter keeps tabular numbers so scrubbing never jitters.
  */
 
+import {useEffect, useState, type CSSProperties} from 'react';
+
 import {
-  useEffect,
-  useState,
-  type CSSProperties,
-  type ReactNode,
-  type SVGProps,
-} from 'react';
+  AppWindowIcon,
+  CameraIcon,
+  FileTextIcon,
+  GlobeIcon,
+  MousePointerClickIcon,
+  PauseIcon,
+  PencilIcon,
+  PlayIcon,
+  RadioIcon,
+  SkipBackIcon,
+  SkipForwardIcon,
+} from 'lucide-react';
 
 import {
   HStack,
@@ -73,100 +81,6 @@ import {ToggleButton} from '@astryxdesign/core/ToggleButton';
 import {Toolbar} from '@astryxdesign/core/Toolbar';
 import {Tooltip} from '@astryxdesign/core/Tooltip';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
-
-// ============= GLYPHS =============
-// Local heroicons-style SVG glyphs (24px grid, stroked, currentColor) for
-// the transport and browser-action icons; keeps the template self-contained
-// with no image assets. The success check uses the core semantic registry.
-
-type GlyphProps = SVGProps<SVGSVGElement>;
-
-function glyph(paths: ReactNode) {
-  function GlyphIcon(props: GlyphProps) {
-    return (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={1.8}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-        {...props}>
-        {paths}
-      </svg>
-    );
-  }
-  return GlyphIcon;
-}
-
-const BrowserWindowGlyph = glyph(
-  <>
-    <rect x="3" y="4.5" width="18" height="15" rx="2" />
-    <path d="M3 8.5h18" />
-    <path d="M6 6.6h.01M8.4 6.6h.01" />
-  </>,
-);
-
-const GlobeGlyph = glyph(
-  <>
-    <circle cx="12" cy="12" r="8.25" />
-    <path d="M3.75 12h16.5" />
-    <path d="M12 3.75c2.4 2.5 2.4 14 0 16.5c-2.4-2.5-2.4-14 0-16.5z" />
-  </>,
-);
-
-const CameraGlyph = glyph(
-  <>
-    <rect x="3.5" y="7.5" width="17" height="11.5" rx="2" />
-    <path d="M9 7.5l1.3-2.2h3.4L15 7.5" />
-    <circle cx="12" cy="13" r="3" />
-  </>,
-);
-
-const CursorClickGlyph = glyph(
-  <>
-    <path d="M9 9l10 3.7-4.3 1.6L13.1 19z" />
-    <path d="M4.5 4.5l1.8 1.8M9.75 3.25v2.1M3.25 9.75h2.1" />
-  </>,
-);
-
-const PencilGlyph = glyph(
-  <path d="M4 20l1.3-3.9L16.6 4.8a1.9 1.9 0 0 1 2.7 2.7L8 18.8 4 20z" />,
-);
-
-const DocumentGlyph = glyph(
-  <>
-    <rect x="5.5" y="3.5" width="13" height="17" rx="1.5" />
-    <path d="M8.5 8h7M8.5 12h7M8.5 16h4" />
-  </>,
-);
-
-const PlayGlyph = glyph(<path d="M8 5.5v13l10-6.5z" />);
-
-const PauseGlyph = glyph(<path d="M8.5 5.5v13M15.5 5.5v13" />);
-
-const SkipBackGlyph = glyph(
-  <>
-    <path d="M6.5 5.5v13" />
-    <path d="M18 5.5L9.5 12l8.5 6.5z" />
-  </>,
-);
-
-const SkipForwardGlyph = glyph(
-  <>
-    <path d="M17.5 5.5v13" />
-    <path d="M6 5.5l8.5 6.5L6 18.5z" />
-  </>,
-);
-
-const LiveSignalGlyph = glyph(
-  <>
-    <circle cx="12" cy="12" r="1.4" />
-    <path d="M8.7 15.3a4.7 4.7 0 0 1 0-6.6M15.3 8.7a4.7 4.7 0 0 1 0 6.6" />
-    <path d="M6.2 17.8a8.2 8.2 0 0 1 0-11.6M17.8 6.2a8.2 8.2 0 0 1 0 11.6" />
-  </>,
-);
 
 // ============= STYLES =============
 
@@ -232,12 +146,12 @@ interface SessionFrame {
   capture?: string;
 }
 
-const FRAME_KIND_ICON: Record<FrameKind, typeof GlobeGlyph> = {
-  navigate: GlobeGlyph,
-  screenshot: CameraGlyph,
-  click: CursorClickGlyph,
-  type: PencilGlyph,
-  read: DocumentGlyph,
+const FRAME_KIND_ICON: Record<FrameKind, typeof GlobeIcon> = {
+  navigate: GlobeIcon,
+  screenshot: CameraIcon,
+  click: MousePointerClickIcon,
+  type: PencilIcon,
+  read: FileTextIcon,
 };
 
 const FRAME_KIND_LABEL: Record<FrameKind, string> = {
@@ -414,7 +328,7 @@ function DockTriggerHeader({
 }) {
   return (
     <HStack gap={2} vAlign="center">
-      <Icon icon={BrowserWindowGlyph} size="sm" color="secondary" />
+      <Icon icon={AppWindowIcon} size="sm" color="secondary" />
       <Text type="body" weight="semibold">
         Browser
       </Text>
@@ -512,7 +426,7 @@ function TransportToolbar({
           <IconButton
             label="Previous frame"
             tooltip="Previous frame"
-            icon={<Icon icon={SkipBackGlyph} size="sm" color="inherit" />}
+            icon={<Icon icon={SkipBackIcon} size="sm" color="inherit" />}
             variant="ghost"
             size="sm"
             isDisabled={atStart || isLive}
@@ -531,7 +445,7 @@ function TransportToolbar({
               label={isPlaying ? 'Pause playback' : 'Play frames'}
               icon={
                 <Icon
-                  icon={isPlaying ? PauseGlyph : PlayGlyph}
+                  icon={isPlaying ? PauseIcon : PlayIcon}
                   size="sm"
                   color="inherit"
                 />
@@ -545,7 +459,7 @@ function TransportToolbar({
           <IconButton
             label="Next frame"
             tooltip="Next frame"
-            icon={<Icon icon={SkipForwardGlyph} size="sm" color="inherit" />}
+            icon={<Icon icon={SkipForwardIcon} size="sm" color="inherit" />}
             variant="ghost"
             size="sm"
             isDisabled={atEnd || isLive}
@@ -567,7 +481,7 @@ function TransportToolbar({
           <ToggleButton
             label="Live"
             size="sm"
-            icon={<Icon icon={LiveSignalGlyph} size="sm" color="inherit" />}
+            icon={<Icon icon={RadioIcon} size="sm" color="inherit" />}
             isPressed={isLive}
             onPressedChange={onLiveToggle}
             tooltip={isLive ? 'Tracking newest frame' : 'Jump to newest frame'}

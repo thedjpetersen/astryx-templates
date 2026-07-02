@@ -70,15 +70,15 @@ import {Timestamp} from '@astryxdesign/core/Timestamp';
 import {TopNav, TopNavHeading, TopNavItem} from '@astryxdesign/core/TopNav';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
-  ArrowPathIcon,
-  BookmarkIcon,
-  ChatBubbleLeftRightIcon,
-  Cog6ToothIcon,
-  HashtagIcon,
-  MagnifyingGlassIcon,
-  UserGroupIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline';
+  CommandIcon,
+  EraserIcon,
+  HashIcon,
+  KeyboardIcon,
+  RocketIcon,
+  SearchIcon,
+  SettingsIcon,
+  UsersIcon,
+} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -150,7 +150,7 @@ interface SlashCommand {
   id: string;
   name: string;
   description: string;
-  icon: typeof ArrowPathIcon;
+  icon: typeof RocketIcon;
   keys: string;
 }
 
@@ -158,7 +158,7 @@ interface HelpTopic {
   id: string;
   title: string;
   description: string;
-  icon: typeof BookmarkIcon;
+  icon: typeof KeyboardIcon;
 }
 
 const STATUS_DOT: Record<
@@ -241,28 +241,28 @@ const COMMANDS: SlashCommand[] = [
     id: 'cmd-deploy',
     name: '/deploy',
     description: 'Ship the active session branch to an environment',
-    icon: ArrowPathIcon,
+    icon: RocketIcon,
     keys: 'mod+shift+d',
   },
   {
     id: 'cmd-model',
     name: '/model',
     description: 'Switch the model for this session',
-    icon: Cog6ToothIcon,
+    icon: SettingsIcon,
     keys: 'mod+shift+m',
   },
   {
     id: 'cmd-clear',
     name: '/clear',
     description: 'Clear the session transcript and context window',
-    icon: XMarkIcon,
+    icon: EraserIcon,
     keys: 'mod+shift+x',
   },
   {
     id: 'cmd-share',
     name: '/share',
     description: 'Invite workspace members to this session',
-    icon: UserGroupIcon,
+    icon: UsersIcon,
     keys: 'mod+shift+s',
   },
 ];
@@ -272,13 +272,13 @@ const HELP_TOPICS: HelpTopic[] = [
     id: 'help-shortcuts',
     title: 'Keyboard shortcuts',
     description: 'Every palette and session hotkey',
-    icon: BookmarkIcon,
+    icon: KeyboardIcon,
   },
   {
     id: 'help-syntax',
     title: 'Search syntax',
     description: 'Prefixes, workspace filters, and fuzzy matching',
-    icon: HashtagIcon,
+    icon: HashIcon,
   },
 ];
 
@@ -629,7 +629,7 @@ export default function CommandPaletteLauncherPage() {
                   label="Search sessions and commands"
                   variant="secondary"
                   size="sm"
-                  icon={<Icon icon={MagnifyingGlassIcon} size="sm" />}
+                  icon={<Icon icon={SearchIcon} size="sm" />}
                   endContent={
                     <HStack gap={2} vAlign="center">
                       <Text type="inherit">Search</Text>
@@ -692,7 +692,7 @@ export default function CommandPaletteLauncherPage() {
               })}
             </Grid>
             <HStack gap={2} vAlign="center">
-              <Icon icon={ChatBubbleLeftRightIcon} size="sm" color="secondary" />
+              <Icon icon={CommandIcon} size="sm" color="secondary" />
               <Text type="supporting" color="secondary">
                 Press <Kbd keys="mod+k" /> to search sessions or run a command.
               </Text>

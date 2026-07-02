@@ -50,7 +50,7 @@ import {
 import {Switch} from '@astryxdesign/core/Switch';
 import {TextArea} from '@astryxdesign/core/TextArea';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
-import {ChatBubbleLeftRightIcon} from '@heroicons/react/24/outline';
+import {MessagesSquareIcon} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -364,7 +364,7 @@ function ThreadMarker() {
   return (
     <span style={styles.commentMarker} title="1 comment thread">
       {' '}
-      <Icon icon={ChatBubbleLeftRightIcon} size="xsm" />
+      <Icon icon={MessagesSquareIcon} size="xsm" />
     </span>
   );
 }

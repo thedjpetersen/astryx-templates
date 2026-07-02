@@ -65,7 +65,7 @@ import {Slider} from '@astryxdesign/core/Slider';
 import {Switch} from '@astryxdesign/core/Switch';
 import {Thumbnail} from '@astryxdesign/core/Thumbnail';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
-import {InboxIcon, XMarkIcon} from '@heroicons/react/24/outline';
+import {PackageSearchIcon, XIcon} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -341,7 +341,7 @@ function FilterRail({
         ) : null}
         <IconButton
           label="Hide filters"
-          icon={<Icon icon={XMarkIcon} size="sm" />}
+          icon={<Icon icon={XIcon} size="sm" />}
           variant="ghost"
           size="sm"
           onClick={onHide}
@@ -667,7 +667,7 @@ export default function ProductListTemplate() {
 
             {visibleProducts.length === 0 ? (
               <EmptyState
-                icon={<Icon icon={InboxIcon} size="lg" />}
+                icon={<Icon icon={PackageSearchIcon} size="lg" />}
                 title="No products match your filters"
                 description="Try widening the price range or adding categories back."
                 actions={

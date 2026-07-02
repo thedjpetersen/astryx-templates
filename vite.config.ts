@@ -11,8 +11,6 @@ export default defineConfig({
     alias: {
       '@astryxdesign/core/Stat': compat('Stat.tsx'),
       '@astryxdesign/lab': compat('lab.tsx'),
-      '@heroicons/react/24/outline': compat('heroicons-outline.tsx'),
-      '@heroicons/react/24/solid': compat('heroicons-solid.tsx'),
     },
   },
 });

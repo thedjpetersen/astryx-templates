@@ -60,14 +60,15 @@ import {EmptyState} from '@astryxdesign/core/EmptyState';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
   BellIcon,
-  Cog6ToothIcon,
-  HashtagIcon,
-  InboxIcon,
-  MagnifyingGlassIcon,
-  PencilSquareIcon,
+  ChartColumnIcon,
+  HashIcon,
+  LayoutDashboardIcon,
   PlusIcon,
-  UserGroupIcon,
-} from '@heroicons/react/24/outline';
+  ReceiptIcon,
+  SearchIcon,
+  SettingsIcon,
+  UsersIcon,
+} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -98,7 +99,7 @@ const styles: Record<string, CSSProperties> = {
 
 const CURRENT_USER = 'Dana Whitfield';
 
-type SectionIcon = typeof InboxIcon;
+type SectionIcon = typeof LayoutDashboardIcon;
 
 interface ShellSection {
   id: string;
@@ -122,7 +123,7 @@ const SECTIONS: ShellSection[] = [
     description:
       'Billing health across 3 workspaces · June 2026 close in 4 days',
     primaryAction: 'New invoice',
-    slotIcon: InboxIcon,
+    slotIcon: LayoutDashboardIcon,
     slotTitle: 'Overview content region',
     slotDescription:
       'Swap this slot for the revenue dashboard: MRR stat row, aging chart, and the collections queue.',
@@ -133,7 +134,7 @@ const SECTIONS: ShellSection[] = [
     title: 'Customers',
     description: '1,284 active accounts · 37 past due · 12 added this week',
     primaryAction: 'Add customer',
-    slotIcon: UserGroupIcon,
+    slotIcon: UsersIcon,
     slotTitle: 'Customers content region',
     slotDescription:
       'Swap this slot for the account directory: filterable table with plan, balance, and owner columns.',
@@ -144,7 +145,7 @@ const SECTIONS: ShellSection[] = [
     title: 'Invoices',
     description: '342 issued this cycle · $1.2M outstanding · 9 disputed',
     primaryAction: 'New invoice',
-    slotIcon: PencilSquareIcon,
+    slotIcon: ReceiptIcon,
     slotTitle: 'Invoices content region',
     slotDescription:
       'Swap this slot for the invoice ledger: status-grouped rows with bulk send and reminder actions.',
@@ -155,7 +156,7 @@ const SECTIONS: ShellSection[] = [
     title: 'Reports',
     description: 'Recognized revenue, churn, and collections — May 2026 final',
     primaryAction: 'New report',
-    slotIcon: HashtagIcon,
+    slotIcon: ChartColumnIcon,
     slotTitle: 'Reports content region',
     slotDescription:
       'Swap this slot for saved report cards and the scheduled-export list.',
@@ -166,7 +167,7 @@ const SECTIONS: ShellSection[] = [
     title: 'Workspace settings',
     description: 'Acme Corp workspace · Growth plan · 14 members',
     primaryAction: 'Invite member',
-    slotIcon: Cog6ToothIcon,
+    slotIcon: SettingsIcon,
     slotTitle: 'Settings content region',
     slotDescription:
       'Swap this slot for the settings form: billing profile, tax IDs, dunning schedule, and member roles.',
@@ -207,7 +208,7 @@ export default function ShellTopNavTemplate() {
               <TopNavHeading
                 logo={
                   <NavIcon
-                    icon={<HashtagIcon style={{width: 16, height: 16}} />}
+                    icon={<HashIcon style={{width: 16, height: 16}} />}
                   />
                 }
                 heading="Ledgerline"
@@ -235,7 +236,7 @@ export default function ShellTopNavTemplate() {
                 {isNarrow ? (
                   <IconButton
                     label="Search"
-                    icon={<Icon icon={MagnifyingGlassIcon} size="sm" />}
+                    icon={<Icon icon={SearchIcon} size="sm" />}
                     variant="ghost"
                   />
                 ) : (
@@ -245,7 +246,7 @@ export default function ShellTopNavTemplate() {
                     size="sm"
                     width={260}
                     placeholder="Search customers, invoices…"
-                    startIcon={<Icon icon={MagnifyingGlassIcon} size="sm" />}
+                    startIcon={<Icon icon={SearchIcon} size="sm" />}
                     value={query}
                     onChange={setQuery}
                   />

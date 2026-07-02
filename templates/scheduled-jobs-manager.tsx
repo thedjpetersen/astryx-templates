@@ -72,19 +72,15 @@ import {TextArea} from '@astryxdesign/core/TextArea';
 import {Timestamp} from '@astryxdesign/core/Timestamp';
 import {Tooltip} from '@astryxdesign/core/Tooltip';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
-// Icon shim has no clock/timer/calendar/megaphone/trash glyphs — Bell
-// (alarm clock), ArrowPath (repeating interval), Bookmark (dated one-shot),
-// ChatBubbleLeftRight (chat announcement), BellAlert (warning), and XMark
-// (remove) are the closest stand-ins.
 import {
-  ArrowPathIcon,
-  BellAlertIcon,
-  BellIcon,
-  BookmarkIcon,
-  ChatBubbleLeftRightIcon,
-  HomeIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline';
+  CalendarIcon,
+  ClockIcon,
+  LayoutDashboardIcon,
+  MessagesSquareIcon,
+  TimerIcon,
+  Trash2Icon,
+  TriangleAlertIcon,
+} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -313,10 +309,10 @@ const INITIAL_JOBS: ScheduledJob[] = [
   },
 ];
 
-const KIND_ICON: Record<ScheduleKind, typeof BellIcon> = {
-  cron: BellIcon, // clock stand-in
-  interval: ArrowPathIcon, // repeating timer stand-in
-  once: BookmarkIcon, // dated calendar stand-in
+const KIND_ICON: Record<ScheduleKind, typeof ClockIcon> = {
+  cron: ClockIcon,
+  interval: TimerIcon,
+  once: CalendarIcon,
 };
 
 const WORKSPACE_OPTIONS = [
@@ -413,7 +409,7 @@ function JobRow({
           <Tooltip
             content={`${job.consecutiveErrors} consecutive errors · ${job.lastRun.error}`}>
             <span style={styles.warningGlyph}>
-              <Icon icon={BellAlertIcon} size="sm" color="warning" />
+              <Icon icon={TriangleAlertIcon} size="sm" color="warning" />
             </span>
           </Tooltip>
         )}
@@ -427,7 +423,7 @@ function JobRow({
           <IconButton
             label={`Delete ${job.name}`}
             tooltip="Delete job"
-            icon={<Icon icon={XMarkIcon} size="sm" color="inherit" />}
+            icon={<Icon icon={Trash2Icon} size="sm" color="inherit" />}
             variant="ghost"
             size="sm"
             onClick={event => {
@@ -555,7 +551,7 @@ function JobDetail({
         <MetadataListItem label="Results">
           <HStack gap={1} vAlign="center">
             <Icon
-              icon={ChatBubbleLeftRightIcon}
+              icon={MessagesSquareIcon}
               size="sm"
               color="secondary"
             />
@@ -725,7 +721,7 @@ export default function ScheduledJobsManagerPage() {
         <EmptyState
           title="No scheduled jobs"
           description="Ask Navi to create a scheduled job in chat."
-          icon={<Icon icon={BellIcon} size="lg" />}
+          icon={<Icon icon={ClockIcon} size="lg" />}
         />
       ) : (
         visible.map(job => (
@@ -753,7 +749,7 @@ export default function ScheduledJobsManagerPage() {
     <EmptyState
       title="No job selected"
       description="Select a job to inspect its schedule, run history, and instructions."
-      icon={<Icon icon={BellIcon} size="lg" />}
+      icon={<Icon icon={ClockIcon} size="lg" />}
       isCompact
     />
   );
@@ -806,7 +802,7 @@ export default function ScheduledJobsManagerPage() {
                 label="Dashboard"
                 variant="secondary"
                 size="sm"
-                icon={<Icon icon={HomeIcon} size="sm" />}
+                icon={<Icon icon={LayoutDashboardIcon} size="sm" />}
               />
             </HStack>
           </LayoutHeader>

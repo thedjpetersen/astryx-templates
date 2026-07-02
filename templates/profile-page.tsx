@@ -70,13 +70,13 @@ import {Token} from '@astryxdesign/core/Token';
 import type {TokenColor} from '@astryxdesign/core/Token';
 import {
   PlusIcon,
-  ChatBubbleLeftRightIcon,
-  PencilSquareIcon,
+  MessagesSquareIcon,
+  SquarePenIcon,
   BookmarkIcon,
-  UserGroupIcon,
-  HashtagIcon,
-  BellIcon,
-} from '@heroicons/react/24/outline';
+  UsersIcon,
+  HashIcon,
+  MegaphoneIcon,
+} from 'lucide-react';
 import type {ComponentType, SVGProps} from 'react';
 
 // ============= STYLES =============
@@ -125,14 +125,14 @@ const ACTIVITY_FEED: ReadonlyArray<{
 }> = [
   {
     id: 'act-1',
-    icon: PencilSquareIcon,
+    icon: SquarePenIcon,
     label: 'Published “Motion guidelines v2”',
     description: 'Design system docs · 14 comments',
     date: 'Jun 30',
   },
   {
     id: 'act-2',
-    icon: ChatBubbleLeftRightIcon,
+    icon: MessagesSquareIcon,
     label: 'Replied to “Token naming for elevation”',
     description: '#design-systems · thread with Jonah Fields',
     date: 'Jun 28',
@@ -153,28 +153,28 @@ const ACTIVITY_FEED: ReadonlyArray<{
   },
   {
     id: 'act-5',
-    icon: UserGroupIcon,
+    icon: UsersIcon,
     label: 'Joined the Accessibility working group',
     description: 'Cross-functional guild · meets Thursdays',
     date: 'Jun 19',
   },
   {
     id: 'act-6',
-    icon: PencilSquareIcon,
+    icon: SquarePenIcon,
     label: 'Published “Focus ring specs for nested controls”',
     description: 'Design system docs · 9 comments',
     date: 'Jun 12',
   },
   {
     id: 'act-7',
-    icon: HashtagIcon,
+    icon: HashIcon,
     label: 'Started the #meridian-office-hours channel',
     description: 'Weekly drop-in help for component questions',
     date: 'Jun 9',
   },
   {
     id: 'act-8',
-    icon: BellIcon,
+    icon: MegaphoneIcon,
     label: 'Announced Meridian 4.0 release candidate',
     description: '#announcements · 48 reactions',
     date: 'Jun 3',
@@ -278,7 +278,7 @@ export default function ProfilePageTemplate() {
                 <Button
                   label="Message"
                   variant="secondary"
-                  icon={<Icon icon={ChatBubbleLeftRightIcon} size="sm" />}
+                  icon={<Icon icon={MessagesSquareIcon} size="sm" />}
                 />
               </HStack>
             </HStack>

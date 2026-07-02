@@ -66,7 +66,7 @@ import {Selector} from '@astryxdesign/core/Selector';
 import {TextArea} from '@astryxdesign/core/TextArea';
 import {TextInput} from '@astryxdesign/core/TextInput';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
-import {PencilSquareIcon} from '@heroicons/react/24/outline';
+import {SquarePenIcon} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -389,7 +389,7 @@ function SettingRow({
       label="Edit"
       variant="ghost"
       size="sm"
-      icon={<Icon icon={PencilSquareIcon} size="sm" />}
+      icon={<Icon icon={SquarePenIcon} size="sm" />}
       onClick={() => onStartEdit(field.id)}
     />
   );

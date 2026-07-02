@@ -63,13 +63,14 @@ import {
   bar,
 } from '@astryxdesign/lab';
 import {
-  ArrowPathIcon,
-  Cog6ToothIcon,
-  EllipsisHorizontalIcon,
-  PencilSquareIcon,
+  GripVerticalIcon,
+  Maximize2Icon,
+  Minimize2Icon,
   PlusIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline';
+  SettingsIcon,
+  SquarePenIcon,
+  XIcon,
+} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -591,7 +592,7 @@ function WidgetCard({
         <HStack gap={2} vAlign="center">
           {isEditing ? (
             <div style={styles.dragHandle} aria-hidden="true">
-              <Icon icon={EllipsisHorizontalIcon} size="sm" />
+              <Icon icon={GripVerticalIcon} size="sm" />
             </div>
           ) : null}
           <StackItem size="fill">
@@ -610,7 +611,7 @@ function WidgetCard({
             items={[
               {
                 label: 'Configure widget',
-                icon: <Icon icon={Cog6ToothIcon} size="sm" />,
+                icon: <Icon icon={SettingsIcon} size="sm" />,
                 // Settings dialog is out of scope for this template.
                 onClick: () => {},
               },
@@ -619,13 +620,18 @@ function WidgetCard({
                   size === 'lg'
                     ? 'Shrink to one column'
                     : 'Expand to two columns',
-                icon: <Icon icon={ArrowPathIcon} size="sm" />,
+                icon: (
+                  <Icon
+                    icon={size === 'lg' ? Minimize2Icon : Maximize2Icon}
+                    size="sm"
+                  />
+                ),
                 onClick: onResize,
               },
               {type: 'divider'},
               {
                 label: 'Remove widget',
-                icon: <Icon icon={XMarkIcon} size="sm" />,
+                icon: <Icon icon={XIcon} size="sm" />,
                 onClick: onRemove,
               },
             ]}
@@ -706,7 +712,7 @@ export default function DashboardWidgetGridTemplate() {
             ) : null}
             <ToggleButton
               label="Edit layout"
-              icon={<Icon icon={PencilSquareIcon} size="sm" />}
+              icon={<Icon icon={SquarePenIcon} size="sm" />}
               isPressed={isEditing}
               onPressedChange={setIsEditing}
             />

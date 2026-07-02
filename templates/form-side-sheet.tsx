@@ -68,11 +68,11 @@ import {TextArea} from '@astryxdesign/core/TextArea';
 import {TextInput} from '@astryxdesign/core/TextInput';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
-  MagnifyingGlassIcon,
-  PencilSquareIcon,
+  SearchIcon,
+  SquarePenIcon,
   PlusIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline';
+  XIcon,
+} from 'lucide-react';
 
 // ---------------------------------------------------------------------------
 // STYLES
@@ -388,7 +388,7 @@ function DiscountSheet({
           </StackItem>
           <IconButton
             label="Close discount editor"
-            icon={<Icon icon={XMarkIcon} size="sm" />}
+            icon={<Icon icon={XIcon} size="sm" />}
             variant="ghost"
             onClick={onCancel}
           />
@@ -679,7 +679,7 @@ export default function FormSideSheetTemplate() {
         renderCell: (row: DiscountRow) => (
           <IconButton
             label={`Edit ${row.code}`}
-            icon={<Icon icon={PencilSquareIcon} size="sm" />}
+            icon={<Icon icon={SquarePenIcon} size="sm" />}
             variant="ghost"
             size="sm"
             onClick={() => openForEdit(row)}
@@ -712,7 +712,7 @@ export default function FormSideSheetTemplate() {
               isLabelHidden
               size="sm"
               placeholder="Search code or name..."
-              startIcon={<Icon icon={MagnifyingGlassIcon} size="sm" />}
+              startIcon={<Icon icon={SearchIcon} size="sm" />}
               value={query}
               onChange={setQuery}
               hasClear
@@ -734,7 +734,7 @@ export default function FormSideSheetTemplate() {
           {visibleRows.length === 0 ? (
             <div style={styles.emptyWrap}>
               <EmptyState
-                icon={<Icon icon={MagnifyingGlassIcon} size="lg" />}
+                icon={<Icon icon={SearchIcon} size="lg" />}
                 title="No matching discounts"
                 description="Try a different code or name, or create a new discount."
                 actions={

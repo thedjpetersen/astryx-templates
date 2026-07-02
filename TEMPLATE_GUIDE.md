@@ -13,6 +13,10 @@ Start each page source with a short product/archetype comment:
 
 Use `Layout height="fill"` with `LayoutHeader`, `LayoutContent`, and `LayoutPanel` before reaching for ad hoc wrappers. Dense tool surfaces usually want rows and panels. Dashboards can use Cards for widgets and metrics, but the page chrome should still be frame-first.
 
+## Icons
+
+Icons come from `lucide-react` — import the `Icon`-suffixed aliases (`SearchIcon`, `XIcon`, `Trash2Icon`) so names never collide with fixture labels, and pass them to Astryx's `Icon` in component mode: `<Icon icon={SearchIcon} size="sm" />`. Pick the semantically correct glyph (eye for reveal, copy for copy, trash for delete); do not import from `@heroicons/*` — the old heroicons shims are gone.
+
 ## Metadata
 
 Use descriptions that teach selection:

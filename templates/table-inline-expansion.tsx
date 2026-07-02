@@ -25,9 +25,7 @@
  *   the set so React re-renders. Multiple rows may be open at once.
  * - Each row's first cell is an IconButton with aria-expanded and (when
  *   open) aria-controls pointing at the detail row's id. The icon swaps
- *   Plus (closed) / XMark (open); the local heroicons shim exports no
- *   chevrons — with the real package this pair would be
- *   ChevronRightIcon / ChevronDownIcon.
+ *   ChevronRightIcon (closed) / ChevronDownIcon (open).
  * - One row ships expanded (POST /v1/charges) so the detail region is
  *   visible on first render without interaction.
  *
@@ -73,11 +71,12 @@ import {
   TableRow,
 } from '@astryxdesign/core/Table';
 import {
-  BookmarkIcon,
-  MagnifyingGlassIcon,
+  BookOpenIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
   PlusIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline';
+  ScrollTextIcon,
+} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -400,13 +399,13 @@ function EndpointDetailRow({endpoint}: {endpoint: ApiEndpoint}) {
                 label="View logs"
                 size="sm"
                 variant="secondary"
-                icon={<Icon icon={MagnifyingGlassIcon} size="sm" />}
+                icon={<Icon icon={ScrollTextIcon} size="sm" />}
               />
               <Button
                 label="Open runbook"
                 size="sm"
                 variant="ghost"
-                icon={<Icon icon={BookmarkIcon} size="sm" />}
+                icon={<Icon icon={BookOpenIcon} size="sm" />}
               />
             </HStack>
           </VStack>
@@ -505,11 +504,9 @@ export default function TableInlineExpansionTemplate() {
                             ? `Collapse details for ${endpoint.method} ${endpoint.path}`
                             : `Expand details for ${endpoint.method} ${endpoint.path}`
                         }
-                        // Plus/XMark stand in for ChevronRight/ChevronDown,
-                        // which the local heroicons shim does not export.
                         icon={
                           <Icon
-                            icon={isExpanded ? XMarkIcon : PlusIcon}
+                            icon={isExpanded ? ChevronDownIcon : ChevronRightIcon}
                             size="sm"
                           />
                         }

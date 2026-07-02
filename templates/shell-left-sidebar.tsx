@@ -53,17 +53,18 @@ import {ClickableCard} from '@astryxdesign/core/ClickableCard';
 import {EmptyState} from '@astryxdesign/core/EmptyState';
 import {Grid} from '@astryxdesign/core/Grid';
 import {
-  ArrowPathIcon,
   BellIcon,
   BookmarkIcon,
-  ChatBubbleLeftRightIcon,
-  Cog6ToothIcon,
-  HashtagIcon,
+  HashIcon,
   HomeIcon,
   InboxIcon,
+  MessagesSquareIcon,
   PlusIcon,
-  UserGroupIcon,
-} from '@heroicons/react/24/outline';
+  RefreshCwIcon,
+  RouteIcon,
+  SettingsIcon,
+  UsersIcon,
+} from 'lucide-react';
 
 // ============= STYLES =============
 
@@ -119,7 +120,7 @@ const NAV_SECTIONS: Array<{title: string; entries: NavEntry[]}> = [
       {
         kind: 'group',
         label: 'Channels',
-        icon: HashtagIcon,
+        icon: HashIcon,
         startsCollapsed: false,
         children: [
           {id: 'queue-email', label: 'Email', count: 16},
@@ -130,7 +131,7 @@ const NAV_SECTIONS: Array<{title: string; entries: NavEntry[]}> = [
       {
         kind: 'group',
         label: 'Teams',
-        icon: UserGroupIcon,
+        icon: UsersIcon,
         startsCollapsed: true,
         children: [
           {id: 'team-billing', label: 'Billing'},
@@ -144,7 +145,7 @@ const NAV_SECTIONS: Array<{title: string; entries: NavEntry[]}> = [
     title: 'Admin',
     entries: [
       {kind: 'leaf', id: 'notifications', label: 'Notifications', icon: BellIcon},
-      {kind: 'leaf', id: 'settings', label: 'Settings', icon: Cog6ToothIcon},
+      {kind: 'leaf', id: 'settings', label: 'Settings', icon: SettingsIcon},
     ],
   },
 ];
@@ -213,14 +214,14 @@ const STARTER_CARDS = [
     title: 'Invite your team',
     description:
       'Bring agents into shared queues with roles and office hours.',
-    icon: UserGroupIcon,
+    icon: UsersIcon,
   },
   {
     id: 'assignment-rules',
     title: 'Set up assignment rules',
     description:
       'Auto-route conversations by channel, language, and agent workload.',
-    icon: ArrowPathIcon,
+    icon: RouteIcon,
   },
 ] as const;
 
@@ -237,7 +238,7 @@ export default function ShellLeftSidebarTemplate() {
     <SideNav
       header={
         <SideNavHeading
-          icon={<Icon icon={ChatBubbleLeftRightIcon} />}
+          icon={<Icon icon={MessagesSquareIcon} />}
           heading="Halcyon"
           subheading="Acme Cloud Support"
         />
@@ -263,7 +264,7 @@ export default function ShellLeftSidebarTemplate() {
           />
           <IconButton
             label="Workspace settings"
-            icon={<Icon icon={Cog6ToothIcon} size="sm" />}
+            icon={<Icon icon={SettingsIcon} size="sm" />}
             variant="ghost"
           />
           <Avatar name="Dana Whitfield" size="xsmall" />
@@ -329,7 +330,7 @@ export default function ShellLeftSidebarTemplate() {
             <Button
               label="Refresh"
               variant="ghost"
-              icon={<Icon icon={ArrowPathIcon} size="sm" />}
+              icon={<Icon icon={RefreshCwIcon} size="sm" />}
             />
             <Button
               label="New conversation"
@@ -370,7 +371,7 @@ export default function ShellLeftSidebarTemplate() {
               active nav item so section switching reads end to end. */}
           <Card padding={8}>
             <EmptyState
-              icon={<Icon icon={ChatBubbleLeftRightIcon} size="lg" />}
+              icon={<Icon icon={MessagesSquareIcon} size="lg" />}
               title={`${page.title} content region`}
               description="Swap this placeholder for the page's real body — a filterable conversation list for queues, a preferences form for settings — while the sidebar shell stays put."
               actions={<Button label="View setup guide" variant="secondary" />}
