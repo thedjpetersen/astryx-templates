@@ -21,10 +21,13 @@ button {
   font: inherit;
 }
 
+/* Lock the shell to the viewport: the sidebar and toolbar stay fixed while
+   the template nav and the preview pane scroll independently. */
 .demo-shell {
   display: grid;
   grid-template-columns: 340px minmax(0, 1fr);
-  min-height: 100dvh;
+  height: 100dvh;
+  overflow: hidden;
 }
 
 .demo-sidebar {
@@ -258,6 +261,7 @@ button {
 @media (max-width: 860px) {
   .demo-shell {
     grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
   }
 
   .demo-sidebar {
