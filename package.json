@@ -19,6 +19,7 @@
     "check": "pnpm validate && pnpm typecheck",
     "demo": "vite --host 127.0.0.1",
     "build:demo": "vite build",
+    "deploy:pages": "vite build --base=/astryx-templates/ && rm -rf docs && cp -R dist docs && touch docs/.nojekyll",
     "template:list": "astryx template --list --type block"
   },
   "astryx": {
