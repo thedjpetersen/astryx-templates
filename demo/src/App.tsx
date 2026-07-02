@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 
 import {templates} from './templateRegistry';
 import type {TemplateEntry, TemplateKind} from './templateRegistry';
@@ -19,6 +19,22 @@ function templateIdFromHash(): string | undefined {
   return templates.some(template => template.id === id) ? id : undefined;
 }
 
+function matchesQuery(template: TemplateEntry, query: string): boolean {
+  const haystack = [
+    template.name,
+    template.id,
+    template.category,
+    template.description,
+  ]
+    .join(' ')
+    .toLowerCase();
+  return query
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean)
+    .every(term => haystack.includes(term));
+}
+
 export function DemoApp() {
   const [selectedId, setSelectedId] = useState(
     () => templateIdFromHash() ?? templates[0]?.id,
@@ -26,6 +42,11 @@ export function DemoApp() {
   const [kind, setKind] = useState<TemplateKind | 'all'>('all');
   const [mode, setMode] = useState<ViewMode>('preview');
   const [viewport, setViewport] = useState<Viewport>('desktop');
+  const [query, setQuery] = useState(
+    () => new URLSearchParams(window.location.search).get('q') ?? '',
+  );
+  const [isNavOpen, setIsNavOpen] = useState(false);
+  const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const onHashChange = () => {
@@ -36,14 +57,37 @@ export function DemoApp() {
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      const isTyping =
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target?.isContentEditable;
+      if (event.key === '/' && !isTyping) {
+        event.preventDefault();
+        setIsNavOpen(true);
+        searchRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
   const selectTemplate = (id: string) => {
     setSelectedId(id);
+    setIsNavOpen(false);
     window.location.hash = id;
   };
 
   const visibleTemplates = useMemo(
-    () => templates.filter(template => kind === 'all' || template.kind === kind),
-    [kind],
+    () =>
+      templates.filter(
+        template =>
+          (kind === 'all' || template.kind === kind) &&
+          (query.trim() === '' || matchesQuery(template, query)),
+      ),
+    [kind, query],
   );
   const grouped = useMemo(() => groupTemplates(visibleTemplates), [visibleTemplates]);
   const selected =
@@ -65,44 +109,85 @@ export function DemoApp() {
             <h1>Astryx Templates</h1>
             <p>{templates.length} templates &amp; blocks</p>
           </div>
+          <button
+            type="button"
+            className="nav-toggle"
+            aria-expanded={isNavOpen}
+            aria-controls="template-browser"
+            onClick={() => setIsNavOpen(open => !open)}>
+            {isNavOpen ? 'Close' : 'Browse'}
+          </button>
         </div>
 
-        <div className="segmented" aria-label="Template type">
-          {(['all', 'page', 'block'] as const).map(nextKind => (
-            <button
-              key={nextKind}
-              type="button"
-              className={kind === nextKind ? 'is-active' : ''}
-              onClick={() => setKind(nextKind)}>
-              {nextKind}
-            </button>
-          ))}
-        </div>
+        <div
+          id="template-browser"
+          className={isNavOpen ? 'sidebar-body is-open' : 'sidebar-body'}>
+          <div className="template-search" role="search">
+            <input
+              ref={searchRef}
+              type="search"
+              value={query}
+              placeholder="Search templates…  ( / )"
+              aria-label="Search templates"
+              onChange={event => setQuery(event.target.value)}
+            />
+            {query !== '' ? (
+              <button
+                type="button"
+                className="search-clear"
+                aria-label="Clear search"
+                onClick={() => {
+                  setQuery('');
+                  searchRef.current?.focus();
+                }}>
+                ×
+              </button>
+            ) : null}
+          </div>
 
-        <nav className="template-nav">
-          {Object.entries(grouped).map(([category, entries]) => (
-            <section key={category}>
-              <h2>{category}</h2>
-              {entries.map(template => (
-                <button
-                  key={template.id}
-                  type="button"
-                  className={
-                    template.id === selected.id
-                      ? 'template-nav-item is-selected'
-                      : 'template-nav-item'
-                  }
-                  onClick={() => selectTemplate(template.id)}>
-                  <span>
-                    <strong>{template.name}</strong>
-                    <small>{template.description}</small>
-                  </span>
-                  <em>{template.kind}</em>
-                </button>
-              ))}
-            </section>
-          ))}
-        </nav>
+          <div className="segmented" aria-label="Template type">
+            {(['all', 'page', 'block'] as const).map(nextKind => (
+              <button
+                key={nextKind}
+                type="button"
+                className={kind === nextKind ? 'is-active' : ''}
+                onClick={() => setKind(nextKind)}>
+                {nextKind}
+              </button>
+            ))}
+          </div>
+
+          <nav className="template-nav" aria-label="Template list">
+            {visibleTemplates.length === 0 ? (
+              <p className="nav-empty">
+                No templates match &ldquo;{query.trim()}&rdquo;.
+              </p>
+            ) : (
+              Object.entries(grouped).map(([category, entries]) => (
+                <section key={category}>
+                  <h2>{category}</h2>
+                  {entries.map(template => (
+                    <button
+                      key={template.id}
+                      type="button"
+                      className={
+                        template.id === selected.id
+                          ? 'template-nav-item is-selected'
+                          : 'template-nav-item'
+                      }
+                      onClick={() => selectTemplate(template.id)}>
+                      <span>
+                        <strong>{template.name}</strong>
+                        <small>{template.description}</small>
+                      </span>
+                      <em>{template.kind}</em>
+                    </button>
+                  ))}
+                </section>
+              ))
+            )}
+          </nav>
+        </div>
       </aside>
 
       <section className="demo-main" aria-label="Template preview">

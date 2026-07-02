@@ -1,6 +1,6 @@
 # Astryx Templates
 
-Astryx Templates is an open-source catalog of 69 production-shaped page templates and blocks built with [Astryx](https://astryx.atmeta.com/), React, and Vite, plus a themed gallery for browsing them.
+Astryx Templates is an open-source catalog of 77 production-shaped page templates and blocks built with [Astryx](https://astryx.atmeta.com/), React, and Vite, plus a themed gallery for browsing them.
 
 It is a sibling of [astryx-sheet](https://github.com/thedjpetersen/astryx-sheet) and [astryx-editor](https://github.com/thedjpetersen/astryx-editor): where those repos stress-test the design system with one deep interactive surface, this repo stress-tests its breadth — dashboards, dense tool consoles, AI-agent surfaces, settings, onboarding, and shells, each written the way a real product page would be.
 
@@ -10,7 +10,7 @@ Live demo: https://thedjpetersen.github.io/astryx-templates/
 
 ![Astryx Templates screenshot](public/screenshot.png)
 
-Every template is deep-linkable — the gallery syncs selection to the URL hash, so `/#feature-gate-console` opens straight to that template with browser back/forward support. Each entry offers preview and source views at desktop and mobile widths.
+Every template is deep-linkable — the gallery syncs selection to the URL hash, so `/#feature-gate-console` opens straight to that template with browser back/forward support. The sidebar searches across names, ids, categories, and descriptions (press `/` to focus; `?q=mail` prefills a query), and each entry offers preview and source views at desktop and mobile widths. On phones the template list collapses into a Browse drawer so the preview gets the full screen.
 
 ## Using the templates
 
@@ -104,6 +104,17 @@ The published `@astryxdesign/cli@0.1.2` discovers external block templates throu
 - `memory-relation-explorer` — Faceted memory-graph browser: filter rail, relation table with weight bars, and a typed detail panel.
 - `feature-gate-console` — Feature-flag ops console: KPI cards, batch rollout controls, CSS bar-chart telemetry, gate table with health dots and switches.
 - `transcript-annotator` — Session replay transcript with seven block renderers beside a sticky golden/failure/neutral labeling panel.
+
+**Mail**
+
+- `mail-compose` — Docked compose window with recipient chips, formatting toolbar, attachments, and schedule-send.
+- `mail-thread-reader` — Single-column email thread with collapsed history, trimmed quotes, attachments, and quick replies.
+- `shared-team-inbox` — Multi-agent support mailbox with assignment, SLA chips, internal notes, and collision presence.
+- `scheduled-send-outbox` — Time-grouped outbox of scheduled sends and snoozed threads with edit-schedule and send-now actions.
+- `spam-quarantine-console` — Admin quarantine table with spam-score breakdown panel and bulk release/block actions.
+- `mail-search-builder` — Operator-chip mail search with structured filter builder, saved searches, and grouped results.
+- `newsletter-composer` — Block-based email builder with palette, live canvas, and per-block settings inspector.
+- `sender-profile-rail` — Open email beside a contextual sender-intelligence rail with history, files, and notes.
 
 **Media**
 
@@ -209,7 +220,7 @@ TEMPLATE_GUIDE.md           # frame-first authoring pattern
 
 ## Why this exists
 
-Template catalogs are a good stress test for a design system's vocabulary: 69 surfaces force the primitives to cover dashboards, virtual-ops consoles, agent chat, document viewers, and terminal aesthetics without ad hoc CSS escaping the system. The newer batches are modeled on real product surfaces from a working AI-assistant app — sub-agent monitors, memory-graph explorers, eval-labeling consoles, feature-gate ops — so the catalog reflects the shapes modern tools actually take, not idealized demo pages.
+Template catalogs are a good stress test for a design system's vocabulary: 77 surfaces force the primitives to cover dashboards, virtual-ops consoles, agent chat, document viewers, and terminal aesthetics without ad hoc CSS escaping the system. The newer batches are modeled on real product surfaces from a working AI-assistant app — sub-agent monitors, memory-graph explorers, eval-labeling consoles, feature-gate ops — so the catalog reflects the shapes modern tools actually take, not idealized demo pages.
 
 The `.doc.ts` metadata layer doubles as a selection corpus: descriptions are written so an agent (or a teammate) can pick the right starting template from text alone.
 
