@@ -187,7 +187,7 @@ const styles: Record<string, CSSProperties> = {
     position: 'relative',
     height: '100%',
     overflowY: 'auto',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     color: 'var(--color-text)',
   },
   // Centered document column; banner, navbar, and footer bleed outside it.
@@ -219,7 +219,7 @@ const styles: Record<string, CSSProperties> = {
     position: 'sticky',
     top: 0,
     zIndex: 30,
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     borderBottom: '1px solid var(--color-border)',
   },
   navInner: {
@@ -278,7 +278,7 @@ const styles: Record<string, CSSProperties> = {
     maxWidth: 'calc(100vw - 2 * var(--spacing-4))',
     borderRadius: 14,
     border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     boxShadow:
       'var(--shadow-high, 0 12px 32px light-dark(rgba(15, 23, 42, 0.18), rgba(0, 0, 0, 0.5)))',
     padding: 'var(--spacing-2)',
@@ -321,7 +321,7 @@ const styles: Record<string, CSSProperties> = {
     left: 'var(--spacing-4)',
     borderRadius: 14,
     border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     boxShadow:
       'var(--shadow-high, 0 12px 32px light-dark(rgba(15, 23, 42, 0.18), rgba(0, 0, 0, 0.5)))',
     padding: 'var(--spacing-3)',
@@ -518,7 +518,7 @@ const styles: Record<string, CSSProperties> = {
     border: '1px solid var(--color-border)',
     overflow: 'hidden',
     boxShadow: 'var(--shadow-med)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
   },
   mockChrome: {
     display: 'flex',
@@ -538,7 +538,7 @@ const styles: Record<string, CSSProperties> = {
     marginLeft: 8,
     height: 18,
     borderRadius: 9,
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     border: '1px solid var(--color-border)',
     display: 'flex',
     alignItems: 'center',
@@ -602,7 +602,7 @@ const styles: Record<string, CSSProperties> = {
   bentoCell: {
     borderRadius: 14,
     border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     padding: 'var(--spacing-4)',
     display: 'flex',
     flexDirection: 'column',

@@ -124,7 +124,7 @@ const styles: Record<string, CSSProperties> = {
     minHeight: 0,
   },
   pillWrap: {flexWrap: 'wrap'},
-  weightBar: {width: 56},
+  weightBar: {width: 40},
   entityWrap: {flexWrap: 'wrap'},
   dialogBody: {paddingBottom: 'var(--spacing-2)'},
   headerSearch: {width: 280},
@@ -594,15 +594,24 @@ function MemoryRows({
 
 // ============= RELATIONS TABLE =============
 
-function endpointCell(id: string) {
+// The center column can be as narrow as ~320px, so the endpoints stack in
+// one flexible "Relation" cell (from over "→ to", via entity as a
+// supporting line) instead of separate From/To/Via columns that would
+// force the table past its container and push the weight bars out of view.
+function relationCell(edge: MemoryEdge) {
   return (
     <VStack gap={0}>
       <Text size="sm" maxLines={1}>
-        {nodeLabel(id)}
+        {nodeLabel(edge.from)}
       </Text>
-      <Text type="supporting" color="secondary">
-        {id}
+      <Text size="sm" maxLines={1}>
+        → {nodeLabel(edge.to)}
       </Text>
+      {edge.via != null && (
+        <Text type="supporting" color="secondary" maxLines={1}>
+          via {edge.via}
+        </Text>
+      )}
     </VStack>
   );
 }
@@ -629,14 +638,14 @@ function RelationsTable({edges}: {edges: MemoryEdge[]}) {
       columns={[
         {
           key: 'from',
-          header: 'From',
+          header: 'Relation',
           width: proportional(1),
-          renderCell: edge => endpointCell(edge.from),
+          renderCell: edge => relationCell(edge),
         },
         {
           key: 'type',
           header: 'Type',
-          width: pixel(110),
+          width: pixel(96),
           renderCell: edge => (
             <Badge
               variant={EDGE_TYPE[edge.type].badge}
@@ -645,28 +654,9 @@ function RelationsTable({edges}: {edges: MemoryEdge[]}) {
           ),
         },
         {
-          key: 'to',
-          header: 'To',
-          width: proportional(1),
-          renderCell: edge => endpointCell(edge.to),
-        },
-        {
-          key: 'via',
-          header: 'Via',
-          width: pixel(130),
-          renderCell: edge =>
-            edge.via != null ? (
-              <Token label={edge.via} size="sm" />
-            ) : (
-              <Text type="supporting" color="secondary">
-                —
-              </Text>
-            ),
-        },
-        {
           key: 'weight',
           header: 'Weight',
-          width: pixel(130),
+          width: pixel(104),
           align: 'end',
           renderCell: edge => (
             <Tooltip content={`Relation strength ${edge.weight.toFixed(2)} of 1.00`}>

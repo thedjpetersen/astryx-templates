@@ -12,7 +12,9 @@
  *   selection to another row
  * @position Page template; emitted by `astryx template table-index-detail`
  *
- * Frame: header | jobs table (fill) | detail panel 400 (end).
+ * Frame: header | jobs table (fill) | detail panel 400 (end). A 100dvh root
+ * div gives Layout height="fill" a definite height in auto-height hosts, so
+ * the table region scrolls internally and the detail pane stays pinned.
  *
  * Selection contract: useState holds the selected job id, seeded with the
  * first fixture row so the detail pane is never empty. Rows are reachable
@@ -26,13 +28,24 @@
  *   underneath), per the index-on-top pattern for narrow viewports.
  * - <= 768px: the Technician and Scheduled columns are hidden so the
  *   remaining columns keep readable widths; all data stays reachable
- *   through the detail pane's MetadataList.
+ *   through the detail pane's MetadataList. The same two columns are also
+ *   hidden whenever the measured table region is under 900px (the 400px
+ *   end panel and any host chrome shrink it independently of the
+ *   viewport), so the full column set never runs out of room.
  * - <= 640px: the header "New job" button and the detail pane's action
  *   buttons keep size sm but grow to 40px tall so their tap targets meet
  *   the ~40px touch threshold; desktop keeps the 28px sm height.
  */
 
-import {useMemo, useState, type CSSProperties, type KeyboardEvent} from 'react';
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type RefObject,
+} from 'react';
 
 import {
   HStack,
@@ -66,6 +79,13 @@ import {PlusIcon} from 'lucide-react';
 // ============= STYLES =============
 
 const styles: Record<string, CSSProperties> = {
+  // Definite height so Layout height="fill" resolves even when the host
+  // container is auto-height; the table region scrolls internally while the
+  // detail pane stays pinned instead of the page stretching to table length.
+  root: {
+    height: '100dvh',
+    width: '100%',
+  },
   contentFill: {
     display: 'flex',
     flexDirection: 'column',
@@ -94,6 +114,20 @@ const styles: Record<string, CSSProperties> = {
   numericHeader: {
     textAlign: 'end',
   },
+  // Children-mode Table defaults to table-layout auto, where the cells'
+  // truncation styles (max-width: 0) collapse every column to its padding.
+  // Fixed layout sizes columns from the header row's widths — the flexible
+  // Job column takes the remaining width.
+  table: {
+    tableLayout: 'fixed',
+  },
+  // Fixed column widths. min-width beats the truncation max-width, so each
+  // fixed column sets both (matching the data-driven Table mode).
+  colCustomer: {width: 190, minWidth: 190},
+  colStatus: {width: 130, minWidth: 130},
+  colTechnician: {width: 150, minWidth: 150},
+  colScheduled: {width: 170, minWidth: 170},
+  colQuoted: {width: 90, minWidth: 90},
   detail: {
     padding: 'var(--spacing-4)',
   },
@@ -303,27 +337,33 @@ function JobsTable({
   };
 
   return (
-    <Table density="compact" dividers="rows" hasHover>
+    <Table
+      density="compact"
+      dividers="rows"
+      hasHover
+      tableProps={{style: styles.table}}>
       <TableHeader>
         <TableRow isHeaderRow>
           <TableHeaderCell scope="col">Job</TableHeaderCell>
-          <TableHeaderCell scope="col" style={{width: 190}}>
+          <TableHeaderCell scope="col" style={styles.colCustomer}>
             Customer
           </TableHeaderCell>
-          <TableHeaderCell scope="col" style={{width: 130}}>
+          <TableHeaderCell scope="col" style={styles.colStatus}>
             Status
           </TableHeaderCell>
           {!isCompact && (
-            <TableHeaderCell scope="col" style={{width: 150}}>
+            <TableHeaderCell scope="col" style={styles.colTechnician}>
               Technician
             </TableHeaderCell>
           )}
           {!isCompact && (
-            <TableHeaderCell scope="col" style={{width: 170}}>
+            <TableHeaderCell scope="col" style={styles.colScheduled}>
               Scheduled
             </TableHeaderCell>
           )}
-          <TableHeaderCell scope="col" style={{...styles.numericHeader, width: 90}}>
+          <TableHeaderCell
+            scope="col"
+            style={{...styles.numericHeader, ...styles.colQuoted}}>
             Quoted
           </TableHeaderCell>
         </TableRow>
@@ -490,6 +530,30 @@ function JobDetail({
 
 // ============= PAGE =============
 
+/**
+ * Observe the table region's real width. The end panel (400px) and any
+ * host chrome shrink the table independently of the viewport, so viewport
+ * media queries alone cannot tell when the full column set is out of room.
+ */
+function useElementWidth(ref: RefObject<HTMLDivElement | null>): number {
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    const element = ref.current;
+    if (element == null) {
+      return undefined;
+    }
+    const observer = new ResizeObserver(entries => {
+      const rect = entries[0]?.contentRect;
+      if (rect != null) {
+        setWidth(rect.width);
+      }
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref]);
+  return width;
+}
+
 export default function TableIndexDetailPage() {
   // First row selected by default so the detail pane is never empty.
   const [selectedId, setSelectedId] = useState(JOBS[0].id);
@@ -498,6 +562,13 @@ export default function TableIndexDetailPage() {
   // below the table; <=768px also hides two table columns.
   const isNarrow = useMediaQuery('(max-width: 1024px)');
   const isCompact = useMediaQuery('(max-width: 768px)');
+  // Under ~900px of measured table width the six-column set runs out of
+  // room (the fixed columns alone need 730px); drop Technician + Scheduled
+  // there too — the data stays reachable through the detail MetadataList.
+  const tableRegionRef = useRef<HTMLDivElement | null>(null);
+  const tableRegionWidth = useElementWidth(tableRegionRef);
+  const hidesSecondaryColumns =
+    isCompact || (tableRegionWidth > 0 && tableRegionWidth < 900);
   // <=640px: sm buttons (28px) are too short to tap; grow the primary
   // actions to ~40px touch targets while keeping the sm type scale.
   const isPhone = useMediaQuery('(max-width: 640px)');
@@ -528,55 +599,57 @@ export default function TableIndexDetailPage() {
   );
 
   return (
-    <Layout
-      height="fill"
-      header={
-        <LayoutHeader hasDivider>
-          <HStack gap={3} vAlign="center">
-            <StackItem size="fill">
-              <HStack gap={2} vAlign="center">
-                <Heading level={1}>Service jobs</Heading>
-                <Text type="supporting" color="secondary">
-                  {openCount} open
-                </Text>
-              </HStack>
-            </StackItem>
-            <Button
-              label="New job"
-              icon={<Icon icon={PlusIcon} size="sm" />}
-              size="sm"
-              style={tapTargetStyle}
-            />
-          </HStack>
-        </LayoutHeader>
-      }
-      content={
-        <LayoutContent padding={0}>
-          <div style={styles.contentFill}>
-            <div style={styles.scrollRegion}>
-              <JobsTable
-                jobs={JOBS}
-                selectedId={selected.id}
-                isCompact={isCompact}
-                onSelect={setSelectedId}
+    <div style={styles.root}>
+      <Layout
+        height="fill"
+        header={
+          <LayoutHeader hasDivider>
+            <HStack gap={3} vAlign="center">
+              <StackItem size="fill">
+                <HStack gap={2} vAlign="center">
+                  <Heading level={1}>Service jobs</Heading>
+                  <Text type="supporting" color="secondary">
+                    {openCount} open
+                  </Text>
+                </HStack>
+              </StackItem>
+              <Button
+                label="New job"
+                icon={<Icon icon={PlusIcon} size="sm" />}
+                size="sm"
+                style={tapTargetStyle}
               />
-              {isNarrow && (
-                <>
-                  <Divider />
-                  {detail}
-                </>
-              )}
+            </HStack>
+          </LayoutHeader>
+        }
+        content={
+          <LayoutContent padding={0}>
+            <div ref={tableRegionRef} style={styles.contentFill}>
+              <div style={styles.scrollRegion}>
+                <JobsTable
+                  jobs={JOBS}
+                  selectedId={selected.id}
+                  isCompact={hidesSecondaryColumns}
+                  onSelect={setSelectedId}
+                />
+                {isNarrow && (
+                  <>
+                    <Divider />
+                    {detail}
+                  </>
+                )}
+              </div>
             </div>
-          </div>
-        </LayoutContent>
-      }
-      end={
-        isNarrow ? undefined : (
-          <LayoutPanel width={400} padding={0} hasDivider label="Job details">
-            {detail}
-          </LayoutPanel>
-        )
-      }
-    />
+          </LayoutContent>
+        }
+        end={
+          isNarrow ? undefined : (
+            <LayoutPanel width={400} padding={0} hasDivider label="Job details">
+              {detail}
+            </LayoutPanel>
+          )
+        }
+      />
+    </div>
   );
 }

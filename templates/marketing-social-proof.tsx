@@ -134,7 +134,7 @@ import {
 // ============= STYLES =============
 
 const colors = {
-  surface: 'var(--color-background)',
+  surface: 'var(--color-background-body)',
   surfaceMuted: 'var(--color-background-muted)',
   accent: 'var(--color-accent)',
   accentMuted: 'var(--color-accent-muted)',

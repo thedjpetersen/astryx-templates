@@ -987,13 +987,17 @@ function DdlInspector({
       <Divider />
 
       <div style={styles.panelCode}>
+        {/* No isWrapped: wrapping break-alls mid-token ('NOT N/ULL'); long
+            DDL lines scroll horizontally instead. Title-cased "SQL" header
+            matches the "Relationships" heading below. */}
         <CodeBlock
           code={ddl}
           language="sql"
+          title="SQL"
+          hasLanguageLabel={false}
           size="sm"
           width="100%"
           hasCopyButton
-          isWrapped
         />
       </div>
 
@@ -1015,7 +1019,9 @@ function DdlInspector({
               return (
                 <ListItem
                   key={edge.id}
-                  label={describeEdge(edge)}
+                  // Non-string label opts out of single-line truncation so
+                  // the target column ("→ addresses.id") is never ellipsized.
+                  label={<>{describeEdge(edge)}</>}
                   description={isOutgoing ? 'outgoing' : 'incoming'}
                   startContent={
                     <span style={styles.fkIcon}>

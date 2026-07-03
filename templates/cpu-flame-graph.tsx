@@ -172,7 +172,7 @@ const styles: Record<string, CSSProperties> = {
     position: 'sticky',
     top: 0,
     zIndex: 4,
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
   },
   // Flame canvas: a positioned box the depth rows stack into. Percentage
   // layout means it never owns horizontal overflow at any width.

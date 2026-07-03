@@ -26,14 +26,15 @@
  * Frame: Layout height="fill". LayoutContent (padding 0) scrolls the whole
  * page as one column pair inside a centered maxWidth 1720 wrapper: the left
  * column is flexible (min 640) and stacks stage → meta → comments; the right
- * rail is fixed at 384px. Theater mode widens the stage to the full wrapper
+ * rail targets 384px but flexes down to 280 when the frame is narrow so it
+ * never clips at the page edge. Theater mode widens the stage to the full wrapper
  * width and drops the rail beside the meta/comments column instead. This is
  * on-demand playback with comments — choose live-stream-viewer for a live
  * chat rail, and browser-session-replay when the stage shows captured agent
  * frames rather than entertainment chrome.
  *
  * Responsive contract:
- * - >1152px: left column (min 640, fills) | rail 384 (fixed width). Theater
+ * - >1152px: left column (min 640, fills) | rail 384 (shrinks to 280 min). Theater
  *   mode reflows to stage full-width on top, meta/comments + rail below.
  * - <=1152px: one column — stage, meta, up-next rail, comments; the rail
  *   keeps its 168px thumbs and full-width rows. Theater toggle hides (the
@@ -132,7 +133,9 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'flex-start',
   },
   leftColumn: {flex: 1, minWidth: 640},
-  rail: {width: 384, flexShrink: 0},
+  // The rail targets 384 but may shrink (never below its 168px thumbs plus
+  // a readable text column) so it never overflows narrow desktop frames.
+  rail: {flex: '0 1 384px', minWidth: 280},
   stageCard: {overflow: 'hidden', boxShadow: 'var(--shadow-high)'},
   // The mock frame: layered gradients stand in for the video. Locked to
   // colorScheme dark so chrome tokens read correctly on the dark art.

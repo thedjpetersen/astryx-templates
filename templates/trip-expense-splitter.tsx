@@ -855,7 +855,7 @@ function BalanceDiagram({
               fontSize={13}
               fontWeight={600}
               fill={color}
-              stroke="var(--color-background)"
+              stroke="var(--color-background-body)"
               strokeWidth={4}
               paintOrder="stroke"
               style={{fontVariantNumeric: 'tabular-nums'}}>

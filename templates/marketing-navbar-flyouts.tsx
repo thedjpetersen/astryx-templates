@@ -193,7 +193,7 @@ const styles: Record<string, CSSProperties> = {
     minHeight: 460,
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     boxSizing: 'border-box',
   },
   // Phone preview: shrink the viewport to 375px between dashed gutters.
@@ -215,7 +215,7 @@ const styles: Record<string, CSSProperties> = {
   },
   barLight: {
     borderBottom: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
   },
   // The dark bar floats over the hero; background/border/shadow are
   // computed from the simulated-scroll percentage at render time.
@@ -333,7 +333,7 @@ const styles: Record<string, CSSProperties> = {
     width: 340,
     borderRadius: 14,
     border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     boxShadow:
       'var(--shadow-high, 0 18px 40px light-dark(rgba(15, 23, 42, 0.16), rgba(0, 0, 0, 0.5)))',
     padding: 'var(--spacing-2)',
@@ -544,7 +544,7 @@ const styles: Record<string, CSSProperties> = {
     width: 460,
     borderRadius: 14,
     border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     boxShadow:
       'var(--shadow-high, 0 18px 40px light-dark(rgba(15, 23, 42, 0.16), rgba(0, 0, 0, 0.5)))',
     overflow: 'hidden',
@@ -606,7 +606,7 @@ const styles: Record<string, CSSProperties> = {
     width: 'min(320px, 88%)',
     height: '100%',
     boxSizing: 'border-box',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     boxShadow: '-16px 0 40px light-dark(rgba(2, 6, 23, 0.3), rgba(0, 0, 0, 0.55))',
     display: 'flex',
     flexDirection: 'column',

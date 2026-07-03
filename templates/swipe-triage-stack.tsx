@@ -382,28 +382,28 @@ interface Candidate {
  */
 const GRADIENTS: Array<{from: string; to: string}> = [
   {
-    from: 'color-mix(in srgb, var(--color-accent) 85%, var(--color-background))',
-    to: 'color-mix(in srgb, var(--color-accent) 30%, var(--color-background))',
+    from: 'color-mix(in srgb, var(--color-accent) 85%, var(--color-background-body))',
+    to: 'color-mix(in srgb, var(--color-accent) 30%, var(--color-background-body))',
   },
   {
-    from: 'color-mix(in srgb, var(--color-success) 70%, var(--color-background))',
-    to: 'color-mix(in srgb, var(--color-accent) 45%, var(--color-background))',
+    from: 'color-mix(in srgb, var(--color-success) 70%, var(--color-background-body))',
+    to: 'color-mix(in srgb, var(--color-accent) 45%, var(--color-background-body))',
   },
   {
-    from: 'color-mix(in srgb, var(--color-warning) 75%, var(--color-background))',
-    to: 'color-mix(in srgb, var(--color-error) 40%, var(--color-background))',
+    from: 'color-mix(in srgb, var(--color-warning) 75%, var(--color-background-body))',
+    to: 'color-mix(in srgb, var(--color-error) 40%, var(--color-background-body))',
   },
   {
-    from: 'color-mix(in srgb, var(--color-error) 55%, var(--color-background))',
-    to: 'color-mix(in srgb, var(--color-accent) 55%, var(--color-background))',
+    from: 'color-mix(in srgb, var(--color-error) 55%, var(--color-background-body))',
+    to: 'color-mix(in srgb, var(--color-accent) 55%, var(--color-background-body))',
   },
   {
     from: 'color-mix(in srgb, var(--color-accent) 55%, var(--color-success))',
-    to: 'color-mix(in srgb, var(--color-background) 70%, var(--color-accent))',
+    to: 'color-mix(in srgb, var(--color-background-body) 70%, var(--color-accent))',
   },
   {
-    from: 'color-mix(in srgb, var(--color-warning) 60%, var(--color-background))',
-    to: 'color-mix(in srgb, var(--color-success) 45%, var(--color-background))',
+    from: 'color-mix(in srgb, var(--color-warning) 60%, var(--color-background-body))',
+    to: 'color-mix(in srgb, var(--color-success) 45%, var(--color-background-body))',
   },
 ];
 
@@ -766,7 +766,7 @@ const SCENE_ACCENT = 'color-mix(in srgb, var(--color-accent) 55%, var(--color-ba
 // Terminal panel stays dark in both schemes (a terminal is a scheme-locked
 // surface); the pair keeps it legible over either gradient.
 const SCENE_PANEL =
-  'light-dark(color-mix(in srgb, var(--color-text-primary) 88%, transparent), color-mix(in srgb, var(--color-background) 68%, transparent))';
+  'light-dark(color-mix(in srgb, var(--color-text-primary) 88%, transparent), color-mix(in srgb, var(--color-background-body) 68%, transparent))';
 const SCENE_PROMPT = 'color-mix(in srgb, var(--color-success) 85%, transparent)';
 
 function SceneShapes({scene}: {scene: SceneKind}) {

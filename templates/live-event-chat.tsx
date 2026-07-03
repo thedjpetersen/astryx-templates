@@ -197,7 +197,7 @@ const styles: Record<string, CSSProperties> = {
     gap: 2,
     padding: 2,
     borderRadius: 'var(--radius-element)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     boxShadow: 'var(--shadow-low)',
     zIndex: 1,
   },

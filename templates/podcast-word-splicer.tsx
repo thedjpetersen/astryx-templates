@@ -168,7 +168,7 @@ const styles: Record<string, CSSProperties> = {
     position: 'sticky',
     top: 0,
     zIndex: 5,
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     paddingBlock: 'var(--spacing-2)',
     borderBottom: 'var(--border-width) solid var(--color-border)',
   },

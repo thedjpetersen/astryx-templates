@@ -246,7 +246,7 @@ const styles: Record<string, CSSProperties> = {
   swatchCheck: {display: 'inline-flex', color: '#FFFFFF', colorScheme: 'dark'},
   swatchSelected: {
     borderColor: 'var(--color-accent)',
-    boxShadow: '0 0 0 2px var(--color-background), 0 0 0 4px var(--color-accent)',
+    boxShadow: '0 0 0 2px var(--color-background-body), 0 0 0 4px var(--color-accent)',
   },
   // Size chips: min 56x40 tap targets in a wrapping grid; out-of-stock
   // chips stay visible but disabled with a struck label.
@@ -257,7 +257,7 @@ const styles: Record<string, CSSProperties> = {
     paddingInline: 10,
     borderRadius: 'var(--radius-element)',
     border: '1px solid var(--color-border)',
-    background: 'var(--color-background)',
+    background: 'var(--color-background-body)',
     color: 'inherit',
     font: 'inherit',
     fontSize: 14,

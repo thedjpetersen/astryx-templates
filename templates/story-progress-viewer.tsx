@@ -61,7 +61,7 @@
  *
  * Color policy: token-pure. Every color is a var(--color-*) token, a
  * color-mix() over tokens, or an explicit light-dark() pair. The stage
- * overlay ink is light-dark(var(--color-background),
+ * overlay ink is light-dark(var(--color-background-body),
  * var(--color-text-primary)) — always-light ink that reads on the vivid
  * token gradients in both schemes — and the scrims invert the same pair
  * for an always-dark shade. Motion: the progress fill is a single
@@ -126,14 +126,14 @@ const CUBE_EASE = 'cubic-bezier(0.45, 0, 0.2, 1)';
 // swap — so each pair below picks the light (or dark) member every time.
 
 /** Always-light overlay ink (progress fills, names, captions). */
-const STORY_INK = 'light-dark(var(--color-background), var(--color-text-primary))';
+const STORY_INK = 'light-dark(var(--color-background-body), var(--color-text-primary))';
 /** Softer ink for secondary overlay text. */
 const STORY_INK_SOFT = `color-mix(in srgb, ${STORY_INK} 78%, transparent)`;
 /** Translucent ink for progress tracks and glass pills. */
 const STORY_INK_FAINT = `color-mix(in srgb, ${STORY_INK} 32%, transparent)`;
 /** Always-dark shade for the top/bottom legibility scrims. */
 const STORY_SHADE =
-  'light-dark(color-mix(in srgb, var(--color-text-primary) 55%, transparent), color-mix(in srgb, var(--color-background) 55%, transparent))';
+  'light-dark(color-mix(in srgb, var(--color-text-primary) 55%, transparent), color-mix(in srgb, var(--color-background-body) 55%, transparent))';
 
 /** Rail ring segments: unseen = accent, seen = muted border token. */
 const RING_UNSEEN = 'var(--color-accent)';
@@ -334,10 +334,13 @@ const styles: Record<string, CSSProperties> = {
     transition: `transform ${FADE_MS}ms ease`,
   },
   railRingActive: {transform: 'scale(1.12)'},
+  // Opaque inner disc: masks the conic pie down to a true outer ring
+  // (background-muted is translucent, so the wedges would bleed through
+  // the avatar).
   railRingInner: {
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     width: 46, height: 46, borderRadius: '50%',
-    backgroundColor: 'var(--color-background-muted)',
+    backgroundColor: 'var(--color-background-body)',
   },
   railName: {fontSize: 12, fontWeight: 600, lineHeight: 1.2},
   railStatus: {fontSize: 11, color: 'var(--color-text-secondary)'},
@@ -371,7 +374,7 @@ const styles: Record<string, CSSProperties> = {
 // and vote counts. Gradients are color-mix() pairs over semantic tokens
 // so every frame tracks the active scheme.
 
-const mix = (token: string, pct: number, base = 'var(--color-background)') =>
+const mix = (token: string, pct: number, base = 'var(--color-background-body)') =>
   `color-mix(in srgb, var(--color-${token}) ${pct}%, ${base})`;
 
 const GRADIENTS: Array<{from: string; to: string}> = [
@@ -482,63 +485,72 @@ const ART_GLASS = `color-mix(in srgb, ${STORY_INK} 82%, transparent)`;
 const ART_GLASS_SOFT = `color-mix(in srgb, ${STORY_INK} 42%, transparent)`;
 const ART_SHADOW = STORY_SHADE;
 
+// var()/color-mix() values are NOT substituted inside SVG presentation
+// attributes (fill would silently fall back to black), so every token
+// paint goes through the CSS `style` prop instead.
+const FILL_GLASS: CSSProperties = {fill: ART_GLASS};
+const FILL_GLASS_SOFT: CSSProperties = {fill: ART_GLASS_SOFT};
+const FILL_SHADOW: CSSProperties = {fill: ART_SHADOW};
+const STROKE_GLASS: CSSProperties = {stroke: ART_GLASS};
+const STROKE_GLASS_SOFT: CSSProperties = {stroke: ART_GLASS_SOFT};
+
 function ArtShapes({art}: {art: ArtKind}) {
   switch (art) {
     case 'peaks':
       return (
         <g>
-          <circle cx={196} cy={120} r={34} fill={ART_GLASS} />
-          <polygon points="0,360 96,208 190,360" fill={ART_SHADOW} />
-          <polygon points="110,360 208,176 300,360" fill={ART_GLASS_SOFT} />
-          <polygon points="188,232 208,176 230,232" fill={ART_GLASS} />
-          <path d="M46 120 q10 -12 20 0 M86 96 q10 -12 20 0" stroke={ART_GLASS_SOFT} strokeWidth={3} strokeLinecap="round" fill="none" />
+          <circle cx={196} cy={120} r={34} style={FILL_GLASS} />
+          <polygon points="0,360 96,208 190,360" style={FILL_SHADOW} />
+          <polygon points="110,360 208,176 300,360" style={FILL_GLASS_SOFT} />
+          <polygon points="188,232 208,176 230,232" style={FILL_GLASS} />
+          <path d="M46 120 q10 -12 20 0 M86 96 q10 -12 20 0" style={STROKE_GLASS_SOFT} strokeWidth={3} strokeLinecap="round" fill="none" />
         </g>
       );
     case 'city':
       return (
         <g>
-          <circle cx={70} cy={104} r={22} fill={ART_GLASS} />
-          <rect x={24} y={228} width={44} height={152} rx={4} fill={ART_SHADOW} />
-          <rect x={80} y={186} width={52} height={194} rx={4} fill={ART_GLASS_SOFT} />
-          <rect x={144} y={248} width={40} height={132} rx={4} fill={ART_SHADOW} />
-          <rect x={196} y={162} width={54} height={218} rx={4} fill={ART_GLASS_SOFT} />
-          <rect x={92} y={202} width={10} height={10} fill={ART_GLASS} />
-          <rect x={112} y={202} width={10} height={10} fill={ART_GLASS} />
-          <rect x={92} y={224} width={10} height={10} fill={ART_GLASS} />
-          <rect x={208} y={182} width={10} height={10} fill={ART_GLASS} />
-          <rect x={228} y={204} width={10} height={10} fill={ART_GLASS} />
+          <circle cx={70} cy={104} r={22} style={FILL_GLASS} />
+          <rect x={24} y={228} width={44} height={152} rx={4} style={FILL_SHADOW} />
+          <rect x={80} y={186} width={52} height={194} rx={4} style={FILL_GLASS_SOFT} />
+          <rect x={144} y={248} width={40} height={132} rx={4} style={FILL_SHADOW} />
+          <rect x={196} y={162} width={54} height={218} rx={4} style={FILL_GLASS_SOFT} />
+          <rect x={92} y={202} width={10} height={10} style={FILL_GLASS} />
+          <rect x={112} y={202} width={10} height={10} style={FILL_GLASS} />
+          <rect x={92} y={224} width={10} height={10} style={FILL_GLASS} />
+          <rect x={208} y={182} width={10} height={10} style={FILL_GLASS} />
+          <rect x={228} y={204} width={10} height={10} style={FILL_GLASS} />
         </g>
       );
     case 'orbit':
       return (
         <g>
-          <circle cx={135} cy={220} r={62} fill={ART_GLASS_SOFT} />
-          <ellipse cx={135} cy={220} rx={104} ry={30} fill="none" stroke={ART_GLASS} strokeWidth={4} transform="rotate(-18 135 220)" />
-          <circle cx={224} cy={186} r={10} fill={ART_GLASS} />
-          <circle cx={56} cy={258} r={6} fill={ART_GLASS} />
-          <circle cx={68} cy={110} r={3} fill={ART_GLASS} />
-          <circle cx={216} cy={92} r={3} fill={ART_GLASS} />
-          <circle cx={186} cy={340} r={3} fill={ART_GLASS} />
+          <circle cx={135} cy={220} r={62} style={FILL_GLASS_SOFT} />
+          <ellipse cx={135} cy={220} rx={104} ry={30} fill="none" style={STROKE_GLASS} strokeWidth={4} transform="rotate(-18 135 220)" />
+          <circle cx={224} cy={186} r={10} style={FILL_GLASS} />
+          <circle cx={56} cy={258} r={6} style={FILL_GLASS} />
+          <circle cx={68} cy={110} r={3} style={FILL_GLASS} />
+          <circle cx={216} cy={92} r={3} style={FILL_GLASS} />
+          <circle cx={186} cy={340} r={3} style={FILL_GLASS} />
         </g>
       );
     case 'coast':
       return (
         <g>
-          <circle cx={135} cy={168} r={40} fill={ART_GLASS} />
-          <path d="M0 300 q34 -18 68 0 t68 0 t68 0 t68 0 V480 H0 Z" fill={ART_GLASS_SOFT} />
-          <path d="M0 340 q34 -16 68 0 t68 0 t68 0 t68 0 V480 H0 Z" fill={ART_SHADOW} />
-          <rect x={119} y={216} width={32} height={6} rx={3} fill={ART_GLASS_SOFT} />
-          <rect x={111} y={230} width={48} height={6} rx={3} fill={ART_GLASS_SOFT} />
+          <circle cx={135} cy={168} r={40} style={FILL_GLASS} />
+          <path d="M0 300 q34 -18 68 0 t68 0 t68 0 t68 0 V480 H0 Z" style={FILL_GLASS_SOFT} />
+          <path d="M0 340 q34 -16 68 0 t68 0 t68 0 t68 0 V480 H0 Z" style={FILL_SHADOW} />
+          <rect x={119} y={216} width={32} height={6} rx={3} style={FILL_GLASS_SOFT} />
+          <rect x={111} y={230} width={48} height={6} rx={3} style={FILL_GLASS_SOFT} />
         </g>
       );
     case 'trail':
       return (
         <g>
-          <path d="M52 396 C 130 340, 60 268, 140 226 S 226 130, 208 84" fill="none" stroke={ART_GLASS} strokeWidth={5} strokeLinecap="round" strokeDasharray="2 14" />
-          <circle cx={52} cy={396} r={11} fill={ART_GLASS} />
-          <circle cx={208} cy={84} r={11} fill={ART_GLASS_SOFT} />
-          <rect x={172} y={44} width={72} height={24} rx={12} fill={ART_SHADOW} />
-          <rect x={184} y={54} width={48} height={5} rx={2.5} fill={ART_GLASS} />
+          <path d="M52 396 C 130 340, 60 268, 140 226 S 226 130, 208 84" fill="none" style={STROKE_GLASS} strokeWidth={5} strokeLinecap="round" strokeDasharray="2 14" />
+          <circle cx={52} cy={396} r={11} style={FILL_GLASS} />
+          <circle cx={208} cy={84} r={11} style={FILL_GLASS_SOFT} />
+          <rect x={172} y={44} width={72} height={24} rx={12} style={FILL_SHADOW} />
+          <rect x={184} y={54} width={48} height={5} rx={2.5} style={FILL_GLASS} />
         </g>
       );
   }

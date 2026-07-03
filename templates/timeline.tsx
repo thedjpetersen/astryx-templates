@@ -77,7 +77,7 @@ const styles: Record<string, CSSProperties> = {
     position: 'sticky',
     top: 0,
     zIndex: 1,
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     padding: 'var(--spacing-2) 0',
   },
   row: {

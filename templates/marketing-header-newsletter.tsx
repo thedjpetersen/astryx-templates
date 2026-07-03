@@ -333,7 +333,7 @@ const styles: Record<string, CSSProperties> = {
     padding: '8px 16px',
     borderRadius: 999,
     border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     color: 'var(--color-text)',
     fontSize: 14,
     fontWeight: 600,

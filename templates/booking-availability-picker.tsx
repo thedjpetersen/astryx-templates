@@ -154,7 +154,7 @@ const styles: Record<string, CSSProperties> = {
     gap: 2,
     border: 'var(--border-width) solid var(--color-border)',
     borderRadius: 'var(--radius-container)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     cursor: 'pointer',
     font: 'inherit',
     padding: 'var(--spacing-1)',
@@ -193,7 +193,7 @@ const styles: Record<string, CSSProperties> = {
     minHeight: 44,
     border: 'var(--border-width) solid var(--color-border)',
     borderRadius: 'var(--radius-container)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     cursor: 'pointer',
     font: 'inherit',
     color: 'var(--color-text)',
@@ -223,7 +223,7 @@ const styles: Record<string, CSSProperties> = {
   summaryBox: {
     border: 'var(--border-width) solid var(--color-border)',
     borderRadius: 'var(--radius-container)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     padding: 'var(--spacing-3)',
   },
   // Brand tile in the page header.

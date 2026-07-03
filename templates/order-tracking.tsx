@@ -187,12 +187,12 @@ const styles: Record<string, CSSProperties> = {
   },
   stepNodeActive: {
     border: '2px solid var(--color-accent)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     color: 'var(--color-accent)',
   },
   stepNodeUpcoming: {
     border: '2px solid var(--color-border)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     color: 'var(--color-text-secondary)',
   },
 

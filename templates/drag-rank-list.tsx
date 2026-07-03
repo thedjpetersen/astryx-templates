@@ -145,26 +145,26 @@ const LIFT_SHADOW =
 /** Impact meter fill (accent family). */
 const IMPACT_FILL =
   'light-dark(' +
-  'color-mix(in srgb, var(--color-accent) 92%, var(--color-background)), ' +
-  'color-mix(in srgb, var(--color-accent) 80%, var(--color-background)))';
+  'color-mix(in srgb, var(--color-accent) 92%, var(--color-background-body)), ' +
+  'color-mix(in srgb, var(--color-accent) 80%, var(--color-background-body)))';
 
 /** Effort meter fill while under capacity (success family). */
 const EFFORT_FILL =
   'light-dark(' +
-  'color-mix(in srgb, var(--color-success) 88%, var(--color-background)), ' +
-  'color-mix(in srgb, var(--color-success) 76%, var(--color-background)))';
+  'color-mix(in srgb, var(--color-success) 88%, var(--color-background-body)), ' +
+  'color-mix(in srgb, var(--color-success) 76%, var(--color-background-body)))';
 
 /** Effort meter fill once the top-3 load exceeds capacity. */
 const OVER_FILL =
   'light-dark(' +
   'var(--color-error), ' +
-  'color-mix(in srgb, var(--color-error) 88%, var(--color-background)))';
+  'color-mix(in srgb, var(--color-error) 88%, var(--color-background-body)))';
 
 /** Owner-load bar fill (neutral, quieter than the headline meters). */
 const OWNER_FILL =
   'light-dark(' +
-  'color-mix(in srgb, var(--color-text-secondary) 55%, var(--color-background)), ' +
-  'color-mix(in srgb, var(--color-text-secondary) 70%, var(--color-background)))';
+  'color-mix(in srgb, var(--color-text-secondary) 55%, var(--color-background-body)), ' +
+  'color-mix(in srgb, var(--color-text-secondary) 70%, var(--color-background-body)))';
 
 /**
  * Reduced-motion flash + handle hover/focus rules. The keyframe is the

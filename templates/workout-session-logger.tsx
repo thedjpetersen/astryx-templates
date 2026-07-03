@@ -163,14 +163,14 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 10,
     border: '1px solid var(--color-border)',
     padding: 'var(--spacing-3)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
   },
   exerciseBlockActive: {
     borderRadius: 10,
     border: '1px solid var(--color-border-focus, var(--color-border))',
     boxShadow: '0 0 0 1px var(--color-border-focus, var(--color-border))',
     padding: 'var(--spacing-3)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
   },
   // Decorative plate mark next to each exercise name — CSS only.
   // Scheme-locked brand art (see Color policy above): literal gradient

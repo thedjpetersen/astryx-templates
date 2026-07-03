@@ -39,7 +39,7 @@
  * Frame: Layout height="fill". LayoutHeader (56px) carries the Groovebox
  * title, a Playing/Paused Badge, the live pattern · bar · step readout,
  * and a return-to-start IconButton. LayoutContent scrolls one centered
- * column (maxWidth 880): transport card, then the pad grid (instrument
+ * column (maxWidth 960): transport card, then the pad grid (instrument
  * rail + horizontally scrollable 16-column pad field), then the bank-chip
  * row, then the pattern-chain lane. Choose this over wheel-picker-scheduler
  * when the surface is a rhythmic on/off matrix driven by a transport, and
@@ -69,7 +69,7 @@
  *   non-animated equivalent.
  *
  * Responsive contract:
- * - >640px: header | transport card | instrument rail (140px: glyph, name,
+ * - >640px: header | transport card | instrument rail (176px: glyph, name,
  *   mute/solo LEDs) beside the 16-column pad field | bank chips + follow
  *   toggle | chain lane. The pad field is 700px of fixed 40px pads and
  *   scrolls horizontally with scroll-snap per 4-step bar whenever the
@@ -209,16 +209,16 @@ function stepDurationMs(tick: number, bpm: number, swing: number): number {
 
 /** Unlit pad face. */
 const PAD_OFF =
-  'light-dark(color-mix(in srgb, var(--color-text-primary) 6%, var(--color-background)), color-mix(in srgb, var(--color-text-primary) 13%, var(--color-background)))';
+  'light-dark(color-mix(in srgb, var(--color-text-primary) 6%, var(--color-background-body)), color-mix(in srgb, var(--color-text-primary) 13%, var(--color-background-body)))';
 /** Unlit pad face on bar 2 and 4 columns — subtle 4-step banding. */
 const PAD_OFF_ALT =
-  'light-dark(color-mix(in srgb, var(--color-text-primary) 10%, var(--color-background)), color-mix(in srgb, var(--color-text-primary) 18%, var(--color-background)))';
+  'light-dark(color-mix(in srgb, var(--color-text-primary) 10%, var(--color-background-body)), color-mix(in srgb, var(--color-text-primary) 18%, var(--color-background-body)))';
 /** Ghosted (muted / not-soloed) pad fill — the row's "power off" state. */
 const PAD_GHOST =
-  'light-dark(color-mix(in srgb, var(--color-text-primary) 4%, var(--color-background)), color-mix(in srgb, var(--color-text-primary) 8%, var(--color-background)))';
+  'light-dark(color-mix(in srgb, var(--color-text-primary) 4%, var(--color-background-body)), color-mix(in srgb, var(--color-text-primary) 8%, var(--color-background-body)))';
 /** Unlit LED lens for mute/solo and the step header. */
 const LED_OFF =
-  'light-dark(color-mix(in srgb, var(--color-text-primary) 14%, var(--color-background)), color-mix(in srgb, var(--color-text-primary) 24%, var(--color-background)))';
+  'light-dark(color-mix(in srgb, var(--color-text-primary) 14%, var(--color-background-body)), color-mix(in srgb, var(--color-text-primary) 24%, var(--color-background-body)))';
 /** Lit mute LED. */
 const LED_MUTE = 'var(--color-error)';
 /** Lit solo LED. */
@@ -254,7 +254,7 @@ const GROOVE_CSS = `
 const styles: Record<string, CSSProperties> = {
   // Scrolling page column.
   column: {
-    width: '100%', maxWidth: 880, marginInline: 'auto',
+    width: '100%', maxWidth: 960, marginInline: 'auto',
     padding: 'var(--spacing-4) 16px var(--spacing-6)',
     display: 'flex', flexDirection: 'column', gap: 'var(--spacing-4)',
   },
@@ -277,7 +277,7 @@ const styles: Record<string, CSSProperties> = {
   },
   rail: {
     display: 'flex', flexDirection: 'column', gap: PAD_GAP,
-    flexShrink: 0, width: 140,
+    flexShrink: 0, width: 176,
   },
   railCompact: {width: 84},
   railHeaderSpacer: {height: HEADER_H},
@@ -304,7 +304,8 @@ const styles: Record<string, CSSProperties> = {
     width: 22, height: 22, borderRadius: '50%', display: 'inline-flex',
     alignItems: 'center', justifyContent: 'center', fontSize: 10,
     fontWeight: 700, border: 'var(--border-width) solid var(--color-border)',
-    backgroundColor: LED_OFF, color: 'var(--color-text-secondary)',
+    backgroundColor: LED_OFF,
+    color: 'light-dark(var(--color-text-secondary), var(--color-text-primary))',
   },
   // Pad field: deliberate horizontal overflow with per-bar snap points.
   padScroller: {
@@ -400,10 +401,18 @@ interface Instrument {
 const cat = (hue: string, fallback: string) =>
   `var(--color-data-categorical-${hue}, var(--color-${fallback}))`;
 
+/**
+ * Warm hues (yellow/orange) are too bright against a white surface; darken
+ * them toward ink in light scheme only so pad outlines and chain letters
+ * stay legible without touching the dark-scheme glow.
+ */
+const catWarm = (hue: string, fallback: string) =>
+  `light-dark(color-mix(in srgb, ${cat(hue, fallback)} 68%, var(--color-text-primary)), ${cat(hue, fallback)})`;
+
 const INSTRUMENTS: readonly Instrument[] = [
   {id: 'kick', name: 'Kick', short: 'BD', color: cat('red', 'error'), icon: CircleDotIcon},
-  {id: 'snare', name: 'Snare', short: 'SD', color: cat('orange', 'warning'), icon: DrumIcon},
-  {id: 'clap', name: 'Clap', short: 'CP', color: cat('yellow', 'warning'), icon: ZapIcon},
+  {id: 'snare', name: 'Snare', short: 'SD', color: catWarm('orange', 'warning'), icon: DrumIcon},
+  {id: 'clap', name: 'Clap', short: 'CP', color: catWarm('yellow', 'warning'), icon: ZapIcon},
   {id: 'rim', name: 'Rim', short: 'RS', color: cat('pink', 'accent'), icon: TriangleIcon},
   {id: 'chat', name: 'Closed Hat', short: 'CH', color: cat('teal', 'success'), icon: DiscIcon},
   {id: 'ohat', name: 'Open Hat', short: 'OH', color: cat('cyan', 'accent'), icon: Disc3Icon},
@@ -425,7 +434,7 @@ interface BankMeta {
 const BANKS: readonly BankMeta[] = [
   {id: 'A', name: 'Warehouse', color: cat('blue', 'accent')},
   {id: 'B', name: 'Offbeat', color: cat('purple', 'accent')},
-  {id: 'C', name: 'Breaker', color: cat('orange', 'warning')},
+  {id: 'C', name: 'Breaker', color: catWarm('orange', 'warning')},
   {id: 'D', name: 'Fill', color: cat('green', 'success')},
 ];
 
@@ -527,7 +536,7 @@ function nextCycleVelocity(vel: number): number {
 /** Lit pad fill: instrument hue scaled by velocity over the background. */
 function padFill(color: string, vel: number): string {
   const pct = 24 + Math.round((vel / 127) * 56);
-  return `color-mix(in srgb, ${color} ${pct}%, var(--color-background))`;
+  return `color-mix(in srgb, ${color} ${pct}%, var(--color-background-body))`;
 }
 
 // ============= PAD BUTTON =============
@@ -689,7 +698,7 @@ function LedButton({
           ...(isOn
             ? {
                 backgroundColor: litColor,
-                color: 'var(--color-text-on-color, var(--color-background))',
+                color: 'var(--color-text-on-color, var(--color-background-body))',
                 borderColor: litColor,
                 boxShadow: `0 0 6px color-mix(in srgb, ${litColor} 60%, transparent)`,
               }

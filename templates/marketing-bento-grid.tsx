@@ -191,7 +191,7 @@ const styles: Record<string, CSSProperties> = {
     position: 'sticky',
     top: 0,
     zIndex: 30,
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     borderBottom: '1px solid var(--color-border)',
   },
   rail: {
@@ -216,7 +216,7 @@ const styles: Record<string, CSSProperties> = {
     padding: '0 16px',
     borderRadius: 999,
     border: '1.5px solid var(--color-border)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     color: 'var(--color-text-secondary)',
     fontSize: 13,
     fontWeight: 600,
@@ -241,7 +241,7 @@ const styles: Record<string, CSSProperties> = {
     position: 'relative',
     borderRadius: 16,
     border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     boxSizing: 'border-box',
     display: 'flex',
     flexDirection: 'column',
@@ -395,7 +395,7 @@ const styles: Record<string, CSSProperties> = {
   phoneScreen: {
     borderRadius: 16,
     border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     overflow: 'hidden',
   },
   // Scheme-locked (see Color policy): brand gradient art with a literal

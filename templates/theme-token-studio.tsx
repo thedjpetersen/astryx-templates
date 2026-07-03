@@ -188,7 +188,7 @@ const styles: Record<string, CSSProperties> = {
     border: '1px solid var(--color-border)',
     borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     minWidth: 0,
   },
   paneChrome: {
@@ -197,7 +197,7 @@ const styles: Record<string, CSSProperties> = {
     gap: 'var(--spacing-2)',
     padding: 'var(--spacing-2) var(--spacing-3)',
     borderBottom: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
   },
   // Token tree rows: hand-rolled buttons, ~40px tap targets.
   groupHeader: {
@@ -253,7 +253,7 @@ const styles: Record<string, CSSProperties> = {
     padding: 'var(--spacing-3)',
     borderRadius: 10,
     border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
   },
   rampChip: {
     width: 32,
@@ -286,7 +286,7 @@ const styles: Record<string, CSSProperties> = {
     height: 44,
     borderRadius: 10,
     border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
   },
   // Changes rail chips.
   railScroll: {
@@ -298,7 +298,7 @@ const styles: Record<string, CSSProperties> = {
     border: '1px solid var(--color-border)',
     borderRadius: 10,
     padding: 'var(--spacing-2)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
   },
   chipSwatch: {
     width: 14,
@@ -326,7 +326,7 @@ const styles: Record<string, CSSProperties> = {
     flexDirection: 'column',
     borderRadius: 12,
     border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     boxShadow: 'var(--shadow-high)',
     overflow: 'hidden',
   },
@@ -358,7 +358,7 @@ const styles: Record<string, CSSProperties> = {
     borderTopRightRadius: 16,
     border: '1px solid var(--color-border)',
     borderBottom: 'none',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     boxShadow: 'var(--shadow-high)',
   },
   sheetGrabber: {

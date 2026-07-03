@@ -146,7 +146,7 @@ const styles: Record<string, CSSProperties> = {
   viewportFrame: {
     border: '2px dashed var(--color-border-emphasized, var(--color-border))',
     borderRadius: 'var(--radius-container)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     paddingBlock: 'var(--spacing-3)',
     marginInline: 'auto',
     maxWidth: '100%',
@@ -161,7 +161,7 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 'var(--radius-container)',
   },
   containerContent: {
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     border: '1px solid var(--color-border)',
     borderRadius: 'var(--radius-container)',
     paddingBlock: 'var(--spacing-2)',
@@ -204,7 +204,7 @@ const styles: Record<string, CSSProperties> = {
     overflowY: 'auto',
     border: '1px solid var(--color-border)',
     borderRadius: 'var(--radius-container)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
   },
   stickyHeader: {
     position: 'sticky',
@@ -247,7 +247,7 @@ const styles: Record<string, CSSProperties> = {
 
   // ---- Panel 5 · dividers ----
   dividerDemoSurface: {
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     border: '1px solid var(--color-border)',
     borderRadius: 'var(--radius-container)',
     paddingInline: 'var(--spacing-4)',

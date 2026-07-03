@@ -93,7 +93,10 @@ const styles: Record<string, CSSProperties> = {
     flexDirection: 'column',
     gap: 'var(--spacing-4)',
   },
-  // Bell + pill badge: navi's -top-1/-right-1 destructive pill.
+  // Bell + pill badge: navi's -top-1/-right-1 destructive pill. The pill is
+  // compacted (default Badge is a 20px pill that swallows the 16px bell
+  // glyph) and anchored so it overlaps the glyph's top-right corner without
+  // crowding the adjacent avatar.
   bellWrap: {
     position: 'relative',
     display: 'inline-flex',
@@ -101,8 +104,16 @@ const styles: Record<string, CSSProperties> = {
   bellBadge: {
     position: 'absolute',
     top: -4,
-    right: -6,
+    right: -4,
     pointerEvents: 'none',
+    display: 'inline-flex',
+  },
+  bellBadgePill: {
+    height: 16,
+    minWidth: 16,
+    paddingInline: 'var(--spacing-1)',
+    fontSize: 10,
+    lineHeight: 1,
   },
   // Tray internals: header row is fixed; only the list scrolls. The
   // popover itself is width 320 (set on the Popover), list caps ~384px
@@ -239,7 +250,11 @@ function BellWithBadge({
       />
       {unreadCount > 0 && (
         <span style={styles.bellBadge}>
-          <Badge variant="error" label={formatUnread(unreadCount)} />
+          <Badge
+            variant="error"
+            label={formatUnread(unreadCount)}
+            style={styles.bellBadgePill}
+          />
         </span>
       )}
     </span>

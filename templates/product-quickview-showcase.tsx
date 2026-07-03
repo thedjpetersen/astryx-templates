@@ -182,7 +182,7 @@ const styles: Record<string, CSSProperties> = {
   swatchSelected: {
     borderColor: 'var(--color-accent)',
     boxShadow:
-      '0 0 0 2px var(--color-background), 0 0 0 4px var(--color-accent)',
+      '0 0 0 2px var(--color-background-body), 0 0 0 4px var(--color-accent)',
   },
   // Size chips: min 48x40 tap targets. Sold-out chips stay clickable
   // (dashed border, muted label) so the notify-me flow is reachable.
@@ -193,7 +193,7 @@ const styles: Record<string, CSSProperties> = {
     paddingInline: 12,
     borderRadius: 'var(--radius-element)',
     border: '1px solid var(--color-border)',
-    background: 'var(--color-background)',
+    background: 'var(--color-background-body)',
     color: 'inherit',
     font: 'inherit',
     fontSize: 14,

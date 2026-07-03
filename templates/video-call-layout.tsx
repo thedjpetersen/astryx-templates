@@ -258,7 +258,9 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     gap: 'var(--spacing-2)',
-    padding: 'var(--spacing-3)',
+    // Extra bottom padding keeps the centered mock lines clear of the
+    // bottom-left presenter chip in short grid tiles.
+    padding: 'var(--spacing-3) var(--spacing-3) var(--spacing-6)',
     textAlign: 'center',
   },
   shareLines: {
@@ -725,11 +727,6 @@ function ScreenShareTile({
           <div style={{...styles.shareLine, width: '88%'}} />
           <div style={{...styles.shareLine, width: '52%'}} />
         </div>
-        {variant !== 'film' && (
-          <Text type="supporting" size="xsm" color="secondary">
-            {SHARE_DOC}
-          </Text>
-        )}
       </div>
       {variant !== 'film' && (
         <div style={styles.tileTopLeft}>
@@ -764,7 +761,9 @@ function ScreenShareTile({
       </div>
       <div style={styles.nameChip}>
         <Icon icon={MonitorUpIcon} size="xsm" color="inherit" />
-        <span style={styles.nameChipText}>{ownerName} is presenting</span>
+        <span style={styles.nameChipText}>
+          {ownerName} is presenting · {SHARE_DOC}
+        </span>
       </div>
     </div>
   );

@@ -15,8 +15,8 @@
  * Responsive contract:
  * - >768px: the SegmentedControl chooses split (two panes, each with its own
  *   line-number gutter) or unified (old + new gutters on one pane). Code cells
- *   never wrap (white-space: pre); the diff body scrolls horizontally when a
- *   line outgrows the panel.
+ *   soft-wrap long lines (white-space: pre-wrap) so nothing clips at the
+ *   panel edge; the gutters keep their fixed width.
  * - <=768px: the viewer always renders unified — split panes are unreadable at
  *   phone widths — and the split/unified toggle hides. The header row wraps;
  *   the primary action stays visible.
@@ -78,7 +78,8 @@ const styles: Record<string, CSSProperties> = {
   fileHeaderCollapsed: {
     borderBottom: 'none',
   },
-  // Horizontal scroller so long lines never wrap or crush the gutters.
+  // Guard scroller: code cells soft-wrap, so this only engages if a pane
+  // bottoms out at its min-width on very narrow layouts.
   scroller: {
     overflowX: 'auto',
   },
@@ -113,7 +114,8 @@ const styles: Record<string, CSSProperties> = {
     ...mono,
     flex: 1,
     minWidth: 0,
-    whiteSpace: 'pre',
+    whiteSpace: 'pre-wrap',
+    overflowWrap: 'anywhere',
     padding: '0 var(--spacing-2)',
   },
   row: {
@@ -333,7 +335,16 @@ function UnifiedRow({line, hasThread}: {line: DiffLine; hasThread: boolean}) {
 }
 
 /** One half of a split-view row; renders a muted spacer when unpaired. */
-function SplitCell({line, hasThread}: {line: DiffLine | null; hasThread: boolean}) {
+function SplitCell({
+  line,
+  side,
+  hasThread,
+}: {
+  line: DiffLine | null;
+  /** Which file this pane shows — picks the matching line-number counter. */
+  side: 'old' | 'new';
+  hasThread: boolean;
+}) {
   if (line === null) {
     return (
       <div style={{...styles.splitPane, ...styles.cellSpacer}}>
@@ -346,7 +357,7 @@ function SplitCell({line, hasThread}: {line: DiffLine | null; hasThread: boolean
   return (
     <div style={{...styles.splitPane, ...rowTint(line.type)}}>
       <span style={{...styles.gutter, ...styles.gutterDivider}}>
-        {line.oldNo ?? line.newNo}
+        {(side === 'old' ? line.oldNo : line.newNo) ?? ''}
       </span>
       <span aria-hidden="true" style={signStyle(line.type)}>
         {SIGN[line.type]}
@@ -497,9 +508,9 @@ export default function DiffViewerTemplate() {
           return (
             <div key={index}>
               <div style={styles.row}>
-                <SplitCell line={row.left} hasThread={false} />
+                <SplitCell line={row.left} side="old" hasThread={false} />
                 <div style={styles.splitDivider} />
-                <SplitCell line={row.right} hasThread={hasThread} />
+                <SplitCell line={row.right} side="new" hasThread={hasThread} />
               </div>
               {hasThread ? thread : null}
             </div>

@@ -177,7 +177,7 @@ const styles: Record<string, CSSProperties> = {
     border: '1px solid var(--color-border)',
     borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
   },
   // Scheme-locked: brand gradient hero art — identical in light and dark,
   // so literal colors are intentional (see "Color policy" above).
@@ -198,7 +198,7 @@ const styles: Record<string, CSSProperties> = {
     display: 'inline-flex',
     borderRadius: '50%',
     padding: 3,
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
   },
   // Description-list grids.
   dlRowWide: {

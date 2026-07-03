@@ -976,7 +976,7 @@ const styles: Record<string, CSSProperties> = {
     paddingInline: 5,
     borderRadius: 999,
     backgroundColor: 'var(--color-accent)',
-    color: 'var(--color-background)',
+    color: 'var(--color-background-body)',
     whiteSpace: 'nowrap',
     userSelect: 'none',
     zIndex: 2,
@@ -1033,7 +1033,7 @@ const styles: Record<string, CSSProperties> = {
   stepDotActive: {
     backgroundColor: 'var(--color-accent)',
     borderColor: 'var(--color-accent)',
-    color: 'var(--color-background)',
+    color: 'var(--color-background-body)',
   },
   diffRow: {
     display: 'flex',

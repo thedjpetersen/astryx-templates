@@ -108,7 +108,7 @@ import {
 // Token-pure palette: every color resolves through Astryx light-dark()
 // tokens, so the matrix re-tints itself under the demo's scheme toggle.
 const colors = {
-  surface: 'var(--color-background)',
+  surface: 'var(--color-background-body)',
   surfaceMuted: 'var(--color-background-muted)',
   border: 'var(--color-border)',
   accent: 'var(--color-accent)',

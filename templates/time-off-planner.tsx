@@ -163,7 +163,7 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     gap: 8,
     padding: '0 var(--spacing-3)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     borderRight: '1px solid var(--color-border)',
   },
   dayGrid: {

@@ -176,7 +176,7 @@ const styles: Record<string, CSSProperties> = {
     paddingBlock: 4,
     paddingInline: 10,
     borderRadius: 999,
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     border: '1px solid var(--color-border)',
   },
   addressText: {

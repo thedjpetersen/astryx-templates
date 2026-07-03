@@ -190,7 +190,7 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 999,
     padding: 'var(--spacing-1) var(--spacing-3)',
     minHeight: 36,
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
   },
 
   // ---- filter bar ----
@@ -256,12 +256,12 @@ const styles: Record<string, CSSProperties> = {
   },
   stripNodeActive: {
     border: '2px solid var(--color-accent)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     color: 'var(--color-accent)',
   },
   stripNodeUpcoming: {
     border: '2px solid var(--color-border)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     color: 'var(--color-text-secondary)',
   },
   stripNodeError: {

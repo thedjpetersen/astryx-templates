@@ -167,7 +167,7 @@ const styles: Record<string, CSSProperties> = {
     width: 96,
     height: 8,
     borderRadius: 4,
-    backgroundColor: 'var(--color-border)',
+    backgroundColor: 'var(--color-border-emphasized)',
   },
   illustrationLowBar: {
     position: 'absolute',
@@ -176,7 +176,7 @@ const styles: Record<string, CSSProperties> = {
     width: 80,
     height: 8,
     borderRadius: 4,
-    backgroundColor: 'var(--color-border)',
+    backgroundColor: 'var(--color-border-emphasized)',
   },
   illustrationDot: {
     position: 'absolute',
@@ -225,21 +225,25 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 4,
     backgroundColor: 'var(--color-accent)',
   },
-  // Circular percent ring: conic-gradient donut with a punched-out center.
+  // Circular percent ring: conic-gradient donut. The center is truly
+  // punched out with a radial-gradient mask so the card surface shows
+  // through, and the label sits on top via grid centering.
   ringOuter: {
+    position: 'relative',
     width: 96,
     height: 96,
+    flexShrink: 0,
     borderRadius: '50%',
     display: 'grid',
     placeItems: 'center',
   },
-  ringInner: {
-    width: 72,
-    height: 72,
+  ringFill: {
+    position: 'absolute',
+    inset: 0,
     borderRadius: '50%',
-    backgroundColor: 'var(--color-background)',
-    display: 'grid',
-    placeItems: 'center',
+    WebkitMask:
+      'radial-gradient(closest-side, transparent calc(100% - 12px), #000 calc(100% - 11.5px))',
+    mask: 'radial-gradient(closest-side, transparent calc(100% - 12px), #000 calc(100% - 11.5px))',
   },
   // Checkout stepper: wraps to two rows on narrow screens.
   stepperRow: {
@@ -256,7 +260,7 @@ const styles: Record<string, CSSProperties> = {
     minHeight: 40,
     borderRadius: 'var(--radius-md)',
     border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     font: 'inherit',
     cursor: 'pointer',
   },
@@ -1106,11 +1110,11 @@ function ProgressPanel() {
   const [checkoutStep, setCheckoutStep] = useState(1);
 
   const filledSegments = Math.round((percent / 100) * SEGMENT_COUNT);
-  const ringStyle: CSSProperties = {
-    ...styles.ringOuter,
+  const ringFillStyle: CSSProperties = {
+    ...styles.ringFill,
     background: `conic-gradient(var(--color-accent) ${
       percent * 3.6
-    }deg, var(--color-border) 0deg)`,
+    }deg, var(--color-border-emphasized) 0deg)`,
   };
 
   const goToStep = (index: number) => {
@@ -1187,14 +1191,13 @@ function ProgressPanel() {
             <VariantLabel label="Percent ring" />
             <HStack gap={3} vAlign="center">
               <div
-                style={ringStyle}
+                style={styles.ringOuter}
                 role="img"
                 aria-label={`Storage used: ${percent}%`}>
-                <div style={styles.ringInner}>
-                  <Text size="sm" weight="semibold">
-                    {percent}%
-                  </Text>
-                </div>
+                <div style={ringFillStyle} aria-hidden />
+                <Text size="sm" weight="semibold">
+                  {percent}%
+                </Text>
               </div>
               <Text type="supporting" color="secondary">
                 Conic-gradient donut; the label sits in the punched-out

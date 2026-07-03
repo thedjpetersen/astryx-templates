@@ -281,7 +281,7 @@ const styles: Record<string, CSSProperties> = {
     paddingBlock: 'var(--spacing-2)',
     paddingInline: 'var(--spacing-3)',
     borderBottom: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
   },
   chromeDots: {display: 'flex', gap: 6, flexShrink: 0},
   chromeDot: {

@@ -237,7 +237,7 @@ const styles: Record<string, CSSProperties> = {
     border: 'var(--border-width) solid var(--color-border)',
     borderRadius: 'var(--radius-container)',
     padding: 'var(--spacing-3)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
   },
   // Deterministic fake barcode: fixed bar widths, ~200px total, so it
   // always fits a 375px viewport without horizontal scroll.

@@ -153,7 +153,11 @@ const styles: Record<string, CSSProperties> = {
     userSelect: 'none',
     pointerEvents: 'none',
   },
-  // Corner overlays inside the tile art.
+  // Corner overlays inside the tile art. They paint on the scheme-locked
+  // art surface (see "Color policy" in the header doc), so they pin
+  // colorScheme: 'light' too — Badge/ToggleButton tokens resolve to their
+  // light values, which is the only rendering that stays readable over the
+  // fixed pastel gradients (dark-scheme text tokens wash out on them).
   badgeOverlay: {
     position: 'absolute',
     top: 8,
@@ -163,8 +167,15 @@ const styles: Record<string, CSSProperties> = {
     flexDirection: 'column',
     gap: 4,
     alignItems: 'flex-start',
+    colorScheme: 'light',
   },
-  wishlistOverlay: {position: 'absolute', top: 6, right: 6, zIndex: 2},
+  wishlistOverlay: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    zIndex: 2,
+    colorScheme: 'light',
+  },
   // Compact header actions: IconButton with an overlay count Badge.
   countWrap: {position: 'relative', display: 'inline-flex'},
   countDot: {
@@ -633,15 +644,19 @@ function FilterFields({
         ))}
       </CheckboxList>
       <Divider />
+      {/* Live range readout lives in the description line — the inline
+          "text" valueDisplay sits flush against the track and collides
+          with the max-position thumb. */}
       <Slider
         label="Price"
+        description={`$${filters.priceRange[0]} – $${filters.priceRange[1]}`}
         value={filters.priceRange}
         onChange={onPriceRangeChange}
         min={PRICE_MIN}
         max={PRICE_MAX}
         step={25}
         formatValue={value => `$${value}`}
-        valueDisplay="text"
+        valueDisplay="none"
         marks={[
           {value: PRICE_MIN, label: `$${PRICE_MIN}`},
           {value: PRICE_MAX, label: `$${PRICE_MAX}`},

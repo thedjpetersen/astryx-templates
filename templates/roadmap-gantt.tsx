@@ -718,7 +718,7 @@ const styles: Record<string, CSSProperties> = {
     height: 10,
     transform: 'rotate(45deg)',
     borderRadius: 2,
-    border: '1.5px solid var(--color-background)',
+    border: '1.5px solid var(--color-background-body)',
     flexShrink: 0,
   },
   // Collapsed team lane: one condensed strip spanning the team's extent.
@@ -757,7 +757,7 @@ const styles: Record<string, CSSProperties> = {
     paddingInline: 5,
     borderRadius: 999,
     backgroundColor: 'var(--color-accent)',
-    color: 'var(--color-background)',
+    color: 'var(--color-background-body)',
     whiteSpace: 'nowrap',
     userSelect: 'none',
     zIndex: 2,
@@ -931,7 +931,7 @@ function MilestoneMarker({
         <span
           style={{
             ...styles.milestoneDiamond,
-            backgroundColor: isReached ? team.color : 'var(--color-background)',
+            backgroundColor: isReached ? team.color : 'var(--color-background-body)',
             borderColor: team.color,
             border: `2px solid ${team.color}`,
           }}

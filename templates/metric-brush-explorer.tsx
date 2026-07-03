@@ -109,7 +109,7 @@ const colors = {
   brushFill:
     'color-mix(in srgb, var(--color-data-categorical-blue) 16%, transparent)',
   brushStroke: 'var(--color-data-categorical-blue)',
-  handleFill: 'var(--color-background)',
+  handleFill: 'var(--color-background-body)',
   histBar: 'var(--color-data-categorical-blue)',
   histGhost: 'color-mix(in srgb, var(--color-border) 45%, transparent)',
   histRange:

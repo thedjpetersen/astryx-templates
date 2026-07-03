@@ -174,7 +174,7 @@ const styles: Record<string, CSSProperties> = {
     position: 'relative',
     height: '100%',
     overflowY: 'auto',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     color: 'var(--color-text)',
   },
   column: {
@@ -199,7 +199,7 @@ const styles: Record<string, CSSProperties> = {
     flexWrap: 'wrap',
     gap: 'var(--spacing-1)',
     padding: 'var(--spacing-2) var(--spacing-4)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     borderBottom: '1px solid var(--color-border)',
   },
   chipButton: {
@@ -324,7 +324,7 @@ const styles: Record<string, CSSProperties> = {
   mock: {
     borderRadius: 12,
     border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     boxShadow: 'var(--shadow-med)',
     overflow: 'hidden',
   },
@@ -351,7 +351,7 @@ const styles: Record<string, CSSProperties> = {
     border: '1px solid var(--color-border)',
     borderRadius: 999,
     padding: '2px 10px',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',

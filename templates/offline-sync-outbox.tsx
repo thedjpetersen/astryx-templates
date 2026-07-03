@@ -204,7 +204,7 @@ const styles: Record<string, CSSProperties> = {
     marginInline: 'auto',
     border: '1px solid var(--color-border)',
     borderRadius: 20,
-    background: 'var(--color-background)',
+    background: 'var(--color-background-body)',
     overflow: 'hidden',
     display: 'flex',
     flexDirection: 'column',

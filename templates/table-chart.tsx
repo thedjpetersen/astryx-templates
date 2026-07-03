@@ -460,32 +460,34 @@ export default function TableChartTemplate() {
                 <Table density="compact" dividers="rows" hasHover>
                   <TableHeader>
                     <TableRow isHeaderRow>
-                      <TableHeaderCell scope="col">Product</TableHeaderCell>
+                      <TableHeaderCell scope="col" style={{minWidth: 220}}>
+                        Product
+                      </TableHeaderCell>
                       {!isCompact && (
-                        <TableHeaderCell scope="col" style={{width: 110}}>
+                        <TableHeaderCell scope="col" style={{minWidth: 110}}>
                           Category
                         </TableHeaderCell>
                       )}
                       <TableHeaderCell
                         scope="col"
-                        style={{...styles.numericHeader, width: 130}}>
+                        style={{...styles.numericHeader, minWidth: 130}}>
                         {METRIC_META.revenue.columnHeader}
                       </TableHeaderCell>
                       <TableHeaderCell
                         scope="col"
-                        style={{...styles.numericHeader, width: 120}}>
+                        style={{...styles.numericHeader, minWidth: 120}}>
                         {METRIC_META.units.columnHeader}
                       </TableHeaderCell>
                       {!isCompact && (
                         <TableHeaderCell
                           scope="col"
-                          style={{...styles.numericHeader, width: 100}}>
+                          style={{...styles.numericHeader, minWidth: 100}}>
                           Rev. share
                         </TableHeaderCell>
                       )}
                       <TableHeaderCell
                         scope="col"
-                        style={{...styles.numericHeader, width: 100}}>
+                        style={{...styles.numericHeader, minWidth: 100}}>
                         Trend
                       </TableHeaderCell>
                     </TableRow>

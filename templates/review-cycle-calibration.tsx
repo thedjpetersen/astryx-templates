@@ -240,7 +240,7 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     gap: 'var(--spacing-1)',
     borderRadius: 'var(--radius-container)',
-    backgroundColor: 'var(--color-background)',
+    backgroundColor: 'var(--color-background-body)',
     border: '1px solid var(--color-divider)',
     padding: '0 var(--spacing-1) 0 0',
   },
