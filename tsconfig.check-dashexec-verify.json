@@ -1,9 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "include": [
-    "templates/dashboard-executive-summary.tsx",
-    "types/**/*.d.ts",
-    "demo/src/compat/Stat.tsx",
-    "demo/src/compat/lab.tsx"
-  ]
-}

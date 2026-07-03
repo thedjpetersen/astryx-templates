@@ -1,7 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "include": [
-    "templates/compaction-inspector.tsx",
-    "types/**/*.d.ts"
-  ]
-}

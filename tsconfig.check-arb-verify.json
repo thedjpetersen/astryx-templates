@@ -1,7 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "include": [
-    "templates/automation-rule-builder.tsx",
-    "types/**/*.d.ts"
-  ]
-}
