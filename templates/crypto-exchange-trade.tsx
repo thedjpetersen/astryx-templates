@@ -30,18 +30,25 @@
  *
  * Frame: root 100dvh div > Layout height="fill" > LayoutContent padding 0 >
  * one dark stage div (colorScheme pinned to 'dark'). Inside: nav 56px,
- * pair header 64px, then a four-column desk grid — chart column (flex,
- * min 560px; chart on top, open-orders strip pinned beneath), order book
- * 264px, recent trades 216px, trade ticket 320px. Chart geometry derives
+ * pair header 64px, then a four-column desk grid — chart column (flex;
+ * chart on top, open-orders strip pinned beneath at full width; at
+ * tape-hidden widths the strip spans the stage below the desk), order
+ * book 264px, recent trades 216px, trade ticket 320px. Chart geometry derives
  * from one 720x318 viewBox (48 slots x 15 units); axis labels are HTML
  * overlays positioned by the same y()/x() scale so gridlines, wicks, and
  * labels stay registered at any width.
  *
- * Responsive contract:
+ * Responsive contract (breakpoints are the STAGE's measured width via
+ * ResizeObserver — the demo host renders templates in a panel narrower
+ * than the viewport, so viewport media queries are only the fallback
+ * until the first measurement lands):
  * - >1240px: all four columns visible; book and trades scroll internally;
- *   the page itself does not scroll.
+ *   the page itself does not scroll; open-orders strip pinned under the
+ *   chart.
  * - <=1240px: the recent-trades ticker column hides (its last print stays
- *   visible as the pair-header price and the book spread row).
+ *   visible as the pair-header price and the book spread row) and the
+ *   open-orders strip moves below the desk at full width so all eight
+ *   columns stay legible.
  * - <=980px: the desk stacks into one scrolling column — pair header,
  *   chart, trade ticket, order book, open orders — and the nav drops its
  *   link row to brand + icons.
@@ -64,7 +71,14 @@
  * up/down semantics (not brand): #34D399 / #F87171, both AA on this stage.
  */
 
-import {useMemo, useState, type CSSProperties} from 'react';
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type RefObject,
+} from 'react';
 
 import {
   BellIcon,
@@ -448,9 +462,9 @@ const styles: Record<string, CSSProperties> = {
     paddingBlock: 'var(--spacing-2)', borderBottom: `1px solid ${HAIRLINE}`,
   },
   ohlcReadout: {
-    display: 'flex', gap: 'var(--spacing-2)', fontFamily: MONO,
-    fontVariantNumeric: 'tabular-nums', fontSize: 11, color: TEXT_DIM,
-    whiteSpace: 'nowrap',
+    display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-2)',
+    fontFamily: MONO, fontVariantNumeric: 'tabular-nums', fontSize: 11,
+    color: TEXT_DIM, whiteSpace: 'nowrap', minWidth: 0,
   },
   chartBody: {flex: 1, minHeight: 260, display: 'flex', paddingTop: 'var(--spacing-2)'},
   plotArea: {flex: 1, minWidth: 0, position: 'relative'},
@@ -476,7 +490,11 @@ const styles: Record<string, CSSProperties> = {
     fontFamily: MONO, fontVariantNumeric: 'tabular-nums', fontSize: 10,
     color: TEXT_FAINT, whiteSpace: 'nowrap',
   },
-  volTag: {position: 'absolute', left: 8, fontFamily: MONO, fontSize: 10, color: TEXT_FAINT},
+  volTag: {
+    position: 'absolute', left: 8, fontFamily: MONO, fontSize: 10,
+    color: TEXT_FAINT, backgroundColor: 'rgba(11, 14, 20, 0.78)',
+    paddingInline: 4, paddingBlock: 1, borderRadius: 3,
+  },
   // ---- Order book & tape shared row grammar ----
   bookScroll: {flex: 1, minHeight: 0, overflowY: 'auto'},
   bookColsHead: {
@@ -1349,15 +1367,46 @@ function OpenOrdersStrip() {
 
 // ============= PAGE =============
 
+/**
+ * Observe the stage's real width. The demo host renders templates in a
+ * panel narrower than the viewport, so viewport media queries alone
+ * cannot tell when the four-column desk is out of room (precedent:
+ * table-index-detail.tsx).
+ */
+function useElementWidth(ref: RefObject<HTMLDivElement | null>): number {
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    const element = ref.current;
+    if (element == null) {
+      return undefined;
+    }
+    const observer = new ResizeObserver(entries => {
+      const rect = entries[0]?.contentRect;
+      if (rect != null) {
+        setWidth(rect.width);
+      }
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref]);
+  return width;
+}
+
 export default function CryptoExchangeTradeTemplate() {
-  const hideTape = useMediaQuery('(max-width: 1240px)');
-  const isStacked = useMediaQuery('(max-width: 980px)');
+  // Viewport queries are only the pre-measurement fallback; once the
+  // stage reports its width the breakpoints run on container width.
+  const viewportHidesTape = useMediaQuery('(max-width: 1240px)');
+  const viewportStacks = useMediaQuery('(max-width: 980px)');
+  const stageRef = useRef<HTMLDivElement | null>(null);
+  const stageWidth = useElementWidth(stageRef);
+  const hideTape = stageWidth > 0 ? stageWidth <= 1240 : viewportHidesTape;
+  const isStacked = stageWidth > 0 ? stageWidth <= 980 : viewportStacks;
   const [chartInterval, setChartInterval] = useState<IntervalId>('1H');
 
   const chartColumn = (
     <div style={{...styles.chartCol, ...(isStacked ? {minHeight: 460} : undefined)}}>
       <CandleChart interval={chartInterval} onIntervalChange={setChartInterval} />
-      {!isStacked && <OpenOrdersStrip />}
+      {!isStacked && !hideTape && <OpenOrdersStrip />}
     </div>
   );
 
@@ -1368,6 +1417,7 @@ export default function CryptoExchangeTradeTemplate() {
         content={
           <LayoutContent padding={0}>
             <div
+              ref={stageRef}
               style={{
                 ...styles.stage,
                 ...(isStacked ? styles.stageScroll : undefined),
@@ -1405,6 +1455,10 @@ export default function CryptoExchangeTradeTemplate() {
                 )}
                 {isStacked && <OpenOrdersStrip />}
               </div>
+              {/* At tape-hidden desk widths the chart column is too narrow
+                  for the eight-column orders grid, so the strip spans the
+                  full stage below the desk instead. */}
+              {hideTape && !isStacked && <OpenOrdersStrip />}
             </div>
           </LayoutContent>
         }

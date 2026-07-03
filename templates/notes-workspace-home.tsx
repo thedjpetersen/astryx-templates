@@ -46,7 +46,8 @@
  *   full-bleed with tighter padding.
  * - <= 700px: topbar action cluster collapses to the share button + more
  *   menu; the database table scrolls horizontally (pixel column floors);
- *   board columns keep 240px width in one horizontal scroller.
+ *   board columns flex between 160–240px and share the column on desktop,
+ *   dropping into one horizontal scroller once the 160px floor is hit.
  * - The sidebar tree and the canvas scroll independently (`minHeight: 0`
  *   down both flex chains); the topbar and the sidebar member strip are
  *   pinned. The floating New-page button stays anchored over the canvas at
@@ -324,7 +325,10 @@ const styles: Record<string, CSSProperties> = {
 
   // Board view --------------------------------------------------------------
   boardScroll: {display: 'flex', gap: 'var(--spacing-3)', overflowX: 'auto', paddingBottom: 'var(--spacing-2)'},
-  boardColumn: {width: 240, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 'var(--spacing-2)'},
+  // Columns flex to share the page column (all four statuses stay visible
+  // on desktop); the 160px floor turns boardScroll into a horizontal
+  // scroller on narrow viewports instead of crushing cards.
+  boardColumn: {flex: '1 1 220px', minWidth: 160, display: 'flex', flexDirection: 'column', gap: 'var(--spacing-2)'},
   boardColumnHead: {display: 'flex', alignItems: 'center', gap: 'var(--spacing-2)', paddingInline: 2},
   statusDot: {width: 8, height: 8, borderRadius: '50%', flexShrink: 0},
   boardCard: {
@@ -509,7 +513,7 @@ const PROJECTS: ProjectRow[] = [
   {
     id: 'p-alder',
     emoji: '🌿',
-    name: 'Alder & Vine — rebrand sprint',
+    name: 'Alder & Vine rebrand sprint',
     status: 'in-progress',
     owner: 'Priya Raghavan',
     due: '2026-07-10',
@@ -542,7 +546,7 @@ const PROJECTS: ProjectRow[] = [
   {
     id: 'p-harbor',
     emoji: '⚓',
-    name: 'Harborlight app — onboarding flows',
+    name: 'Harborlight app onboarding',
     status: 'in-progress',
     owner: 'June Castellanos',
     due: '2026-07-24',
@@ -1006,29 +1010,35 @@ function TagsCell({tags}: {tags: TagId[]}) {
 
 // Footgun: Table cells carry max-width: 0 — fixed columns need pixel()
 // so the header carries both width and minWidth.
+// Width budget: the demo canvas gives the page column 738px of content.
+// Fixed columns are sized to measured content (8px cell padding per side):
+// 95 + 157 + 56 + 54 + 146 = 508; name's 229px floor lands the pixel-floor
+// total at 737 so nothing clips at desktop, and narrower viewports scroll
+// horizontally instead. Fixture names are kept short enough to render
+// without ellipsis at the floor (sub-pixel overflows still ellipsize).
 const PROJECT_COLUMNS: TableColumn<ProjectRow>[] = [
   {
     key: 'name',
     header: 'Name',
-    width: proportional(2, {minWidth: 220}),
+    width: proportional(2, {minWidth: 229}),
     renderCell: (row: ProjectRow) => <NameCell row={row} />,
   },
   {
     key: 'status',
     header: 'Status',
-    width: pixel(120),
+    width: pixel(95),
     renderCell: (row: ProjectRow) => <StatusCell status={row.status} />,
   },
   {
     key: 'owner',
     header: 'Owner',
-    width: pixel(170),
+    width: pixel(157),
     renderCell: (row: ProjectRow) => <OwnerCell owner={row.owner} />,
   },
   {
     key: 'due',
     header: 'Due',
-    width: pixel(90),
+    width: pixel(56),
     renderCell: (row: ProjectRow) => (
       <Text type="body" color="secondary" hasTabularNumbers style={styles.numericCell}>
         {row.dueLabel}
@@ -1039,7 +1049,7 @@ const PROJECT_COLUMNS: TableColumn<ProjectRow>[] = [
     key: 'effort',
     header: 'Effort',
     align: 'end',
-    width: pixel(80),
+    width: pixel(54),
     renderCell: (row: ProjectRow) => (
       <Text type="body" color="secondary" hasTabularNumbers style={styles.numericCell}>
         {row.effort} pts
@@ -1049,7 +1059,7 @@ const PROJECT_COLUMNS: TableColumn<ProjectRow>[] = [
   {
     key: 'tags',
     header: 'Tags',
-    width: pixel(160),
+    width: pixel(146),
     renderCell: (row: ProjectRow) => <TagsCell tags={row.tags} />,
   },
 ];

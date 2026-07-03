@@ -489,10 +489,12 @@ const PROFILE_STATS = [
   {label: 'Activities', value: '641'},
 ] as const;
 
+// Details lead with the mutual count so the single-line truncation in the
+// 320px rail never cuts a number in half ("… Collective · 1…").
 const SUGGESTED_ATHLETES = [
-  {name: 'Robbie Calloway', detail: 'Ashford Run Collective · 12 mutuals'},
-  {name: 'Ines Fontaine', detail: 'Rode with Maya Okafor · 8 mutuals'},
-  {name: 'Theo Brandt', detail: 'Kettleburn Track regular · 5 mutuals'},
+  {name: 'Robbie Calloway', detail: '12 mutuals · Ashford Run Collective'},
+  {name: 'Ines Fontaine', detail: '8 mutuals · rode with Maya Okafor'},
+  {name: 'Theo Brandt', detail: '5 mutuals · Kettleburn Track regular'},
 ] as const;
 
 // ============= STYLES =============
@@ -592,11 +594,20 @@ const styles: Record<string, CSSProperties> = {
   },
   mapSvg: {display: 'block', width: '100%', height: 'auto'},
   // ---- stat row ----
+  // Stats wrap as fixed [Distance | Pace] [Time | Elev] pairs so narrow
+  // cards always break into the same 2x2 and no divider dangles at a
+  // line end (run cards used to wrap 3+1 while rides wrapped 2+2).
   statRow: {
     display: 'flex',
     alignItems: 'stretch',
-    gap: 'var(--spacing-4)',
+    columnGap: 'var(--spacing-5)',
+    rowGap: 'var(--spacing-3)',
     flexWrap: 'wrap',
+  },
+  statPair: {
+    display: 'flex',
+    alignItems: 'stretch',
+    gap: 'var(--spacing-3)',
   },
   statBlock: {display: 'flex', flexDirection: 'column', gap: 2},
   statValue: {
@@ -919,13 +930,16 @@ function StatBlock({label, value}: {label: string; value: string}) {
 function ActivityStatRow({activity}: {activity: FeedActivity}) {
   return (
     <div style={styles.statRow}>
-      <StatBlock label="Distance" value={activity.distance} />
-      <div style={styles.statDivider} aria-hidden="true" />
-      <StatBlock label={activity.paceLabel} value={activity.pace} />
-      <div style={styles.statDivider} aria-hidden="true" />
-      <StatBlock label="Time" value={activity.movingTime} />
-      <div style={styles.statDivider} aria-hidden="true" />
-      <StatBlock label="Elev gain" value={activity.elevation} />
+      <div style={styles.statPair}>
+        <StatBlock label="Distance" value={activity.distance} />
+        <div style={styles.statDivider} aria-hidden="true" />
+        <StatBlock label={activity.paceLabel} value={activity.pace} />
+      </div>
+      <div style={styles.statPair}>
+        <StatBlock label="Time" value={activity.movingTime} />
+        <div style={styles.statDivider} aria-hidden="true" />
+        <StatBlock label="Elev gain" value={activity.elevation} />
+      </div>
     </div>
   );
 }
@@ -994,7 +1008,9 @@ function KudosSummary({
       </AvatarGroup>
       <Text type="supporting" color="secondary" hasTabularNumbers>
         {kudosCount} kudos
-        {commentCount > 0 ? ` · ${commentCount} comments` : ''}
+        {commentCount > 0
+          ? ` · ${commentCount} ${commentCount === 1 ? 'comment' : 'comments'}`
+          : ''}
       </Text>
     </HStack>
   );
@@ -1130,51 +1146,51 @@ function ActivityCard({
         {activity.achievement != null ? (
           <AchievementCallout achievement={activity.achievement} />
         ) : null}
+        {/* Strava-style footer: summary line, hairline, then a stable
+            action row — never a content-dependent wrap. */}
+        <KudosSummary activity={activity} social={social} />
         <Divider />
-        <HStack gap={2} vAlign="center" hAlign="between" wrap="wrap">
-          <KudosSummary activity={activity} social={social} />
-          <HStack gap={1} vAlign="center">
-            {activity.isOwn ? null : (
-              <span style={social.gaveKudos ? styles.kudosGiven : undefined}>
-                <ToggleButton
-                  label={social.gaveKudos ? 'Kudos given' : 'Give kudos'}
-                  size="sm"
-                  isIconOnly
-                  icon={<Icon icon={ThumbsUpIcon} size="sm" color="inherit" />}
-                  isPressed={social.gaveKudos}
-                  onPressedChange={next =>
-                    onSocialChange(activity.id, prev => ({
-                      ...prev,
-                      gaveKudos: next,
-                    }))
-                  }
-                  tooltip={social.gaveKudos ? 'Remove kudos' : 'Give kudos'}
-                />
-              </span>
-            )}
-            <IconButton
-              label={
-                social.isExpanded
-                  ? `Hide comments on ${activity.title}`
-                  : `Show ${commentCount} comments on ${activity.title}`
-              }
-              icon={<Icon icon={MessageCircleIcon} size="sm" />}
-              variant="ghost"
-              size="sm"
-              onClick={() =>
-                onSocialChange(activity.id, prev => ({
-                  ...prev,
-                  isExpanded: !prev.isExpanded,
-                }))
-              }
-            />
-            <IconButton
-              label={`Share ${activity.title}`}
-              icon={<Icon icon={Share2Icon} size="sm" />}
-              variant="ghost"
-              size="sm"
-            />
-          </HStack>
+        <HStack gap={1} vAlign="center">
+          {activity.isOwn ? null : (
+            <span style={social.gaveKudos ? styles.kudosGiven : undefined}>
+              <ToggleButton
+                label={social.gaveKudos ? 'Kudos given' : 'Give kudos'}
+                size="sm"
+                isIconOnly
+                icon={<Icon icon={ThumbsUpIcon} size="sm" color="inherit" />}
+                isPressed={social.gaveKudos}
+                onPressedChange={next =>
+                  onSocialChange(activity.id, prev => ({
+                    ...prev,
+                    gaveKudos: next,
+                  }))
+                }
+                tooltip={social.gaveKudos ? 'Remove kudos' : 'Give kudos'}
+              />
+            </span>
+          )}
+          <IconButton
+            label={
+              social.isExpanded
+                ? `Hide comments on ${activity.title}`
+                : `Show ${commentCount} comments on ${activity.title}`
+            }
+            icon={<Icon icon={MessageCircleIcon} size="sm" />}
+            variant="ghost"
+            size="sm"
+            onClick={() =>
+              onSocialChange(activity.id, prev => ({
+                ...prev,
+                isExpanded: !prev.isExpanded,
+              }))
+            }
+          />
+          <IconButton
+            label={`Share ${activity.title}`}
+            icon={<Icon icon={Share2Icon} size="sm" />}
+            variant="ghost"
+            size="sm"
+          />
         </HStack>
         {social.isExpanded ? (
           <CommentThread
@@ -1301,7 +1317,8 @@ function ChallengeCard() {
                 {CHALLENGE.name}
               </Text>
               <Text type="supporting" color="secondary">
-                {CHALLENGE.club} · {CHALLENGE.athletes} athletes
+                {/* NBSP keeps "24 athletes" together when the line wraps. */}
+                {CHALLENGE.club} · {CHALLENGE.athletes}{' '}athletes
               </Text>
             </VStack>
           </StackItem>

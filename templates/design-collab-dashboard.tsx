@@ -24,7 +24,7 @@
  *
  * Frame: root 100dvh div > Layout height="fill".
  *   header (brand mark, global search, online facepile, Share)
- *   | rail 240 (scope SegmentedControl + project TreeList + pinned seats
+ *   | rail 264 (scope SegmentedControl + project TreeList + pinned seats
  *   strip) | content (scope toolbar, recents row, file-card grid sections,
  *   scrolls) | end panel 300 (activity feed + libraries, scrolls).
  * Container policy: app-shell archetype — frame rows and panels only; no
@@ -46,7 +46,7 @@
  * - <= 920px: the project rail is dropped; a scope Selector appears in the
  *   content toolbar. The header row wraps instead of clipping search.
  * - The recents row always scrolls horizontally; the card grid reflows
- *   via auto-fill minmax(232px, 1fr); rail, content, and end panel scroll
+ *   via auto-fill minmax(200px, 1fr); rail, content, and end panel scroll
  *   independently (`minHeight: 0` down every flex chain).
  */
 
@@ -386,21 +386,21 @@ const LIBRARIES: SharedLibrary[] = [
     id: 'lib-nova',
     name: 'Nova Components',
     countLabel: '248 components',
-    updatedLabel: 'v4.2 · published 25 min ago',
+    updatedLabel: 'v4.2 · 25 min ago',
     hasUpdate: true,
   },
   {
     id: 'lib-icons',
     name: 'Northbeam Icons',
     countLabel: '512 icons',
-    updatedLabel: 'v2.9 · published Mon',
+    updatedLabel: 'v2.9 · Mon',
     hasUpdate: false,
   },
   {
     id: 'lib-illos',
     name: 'Brand Illustrations',
     countLabel: '64 assets',
-    updatedLabel: 'v1.4 · published 19 Jun',
+    updatedLabel: 'v1.4 · 19 Jun',
     hasUpdate: false,
   },
 ];
@@ -515,7 +515,7 @@ const styles: Record<string, CSSProperties> = {
   sectionHead: {marginTop: 'var(--spacing-5)', marginBottom: 'var(--spacing-3)'},
   cardGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(232px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
     gap: 'var(--spacing-4)',
   },
   // File card — a custom styled button, not a design-system Card.
@@ -605,7 +605,7 @@ const styles: Record<string, CSSProperties> = {
   },
   presenceStack: {display: 'flex', alignItems: 'center'},
   presenceOverlap: {marginInlineStart: -6},
-  liveLabel: {fontSize: 11, color: 'var(--color-text-secondary)', whiteSpace: 'nowrap'},
+  presenceOverlay: {position: 'absolute', left: 8, bottom: 6},
   // End panel ---------------------------------------------------------------
   endScroll: {
     height: '100%',
@@ -757,27 +757,22 @@ function PresenceFacepile({people}: {people: string[]}) {
     return null;
   }
   return (
-    <HStack gap={1} vAlign="center">
-      <div
-        style={styles.presenceStack}
-        role="group"
-        aria-label={`${people.length} ${people.length === 1 ? 'person' : 'people'} in this file now: ${people.join(', ')}`}>
-        {people.map((person, index) => (
-          <span
-            key={person}
-            style={{
-              ...styles.presenceRing,
-              borderColor: PEOPLE[person].ringColor,
-              ...(index > 0 ? styles.presenceOverlap : null),
-            }}>
-            <Avatar name={person} size="xsmall" />
-          </span>
-        ))}
-      </div>
-      <span style={styles.liveLabel} aria-hidden>
-        live
-      </span>
-    </HStack>
+    <div
+      style={styles.presenceStack}
+      role="group"
+      aria-label={`Live now in this file: ${people.join(', ')}`}>
+      {people.map((person, index) => (
+        <span
+          key={person}
+          style={{
+            ...styles.presenceRing,
+            borderColor: PEOPLE[person].ringColor,
+            ...(index > 0 ? styles.presenceOverlap : null),
+          }}>
+          <Avatar name={person} size="xsmall" />
+        </span>
+      ))}
+    </div>
   );
 }
 
@@ -818,6 +813,13 @@ function FileCard({
             pageCount={file.pageCount}
             branch={file.branch}
           />
+          {/* Presence rings float over the art (bottom-left, opposite the
+              page chip) so the meta line never truncates against them. */}
+          {file.activeNow.length > 0 && (
+            <div style={styles.presenceOverlay}>
+              <PresenceFacepile people={file.activeNow} />
+            </div>
+          )}
         </div>
         <VStack gap={1} style={styles.cardMeta}>
           <HStack gap={2} vAlign="center">
@@ -827,27 +829,17 @@ function FileCard({
               </Text>
             </StackItem>
           </HStack>
-          <HStack gap={2} vAlign="center">
-            <StackItem size="fill" style={{minWidth: 0}}>
-              <Text type="supporting" color="secondary" maxLines={1}>
-                {file.project === null
-                  ? `${file.editedAgo} · ${editorLabel}`
-                  : `${file.editedAgo} by ${editorLabel}`}
-              </Text>
-            </StackItem>
-            <PresenceFacepile people={file.activeNow} />
-          </HStack>
+          <Text type="supporting" color="secondary" maxLines={1}>
+            {file.project === null
+              ? `${file.editedAgo} · ${editorLabel}`
+              : `${file.editedAgo} by ${editorLabel}`}
+          </Text>
           {file.branch?.reviewRequested ? (
             <HStack gap={2} vAlign="center">
               <span style={styles.reviewChip}>
                 <Icon icon={GitPullRequestIcon} size="xsm" color="inherit" />
                 Review requested
               </span>
-              <StackItem size="fill" style={{minWidth: 0}}>
-                <Text type="supporting" color="secondary" maxLines={1}>
-                  {file.branch.reviewBranch}
-                </Text>
-              </StackItem>
             </HStack>
           ) : null}
         </VStack>
@@ -958,8 +950,13 @@ function LibraryRow({library}: {library: SharedLibrary}) {
           <Text type="label" size="sm" maxLines={1}>
             {library.name}
           </Text>
+          {/* Two short meta lines — one combined line truncates mid-word
+              at the 300px panel width. */}
           <Text type="supporting" color="secondary" maxLines={1} hasTabularNumbers>
-            {library.countLabel} · {library.updatedLabel}
+            {library.countLabel}
+          </Text>
+          <Text type="supporting" color="secondary" maxLines={1} hasTabularNumbers>
+            {library.updatedLabel}
           </Text>
         </VStack>
       </StackItem>
@@ -1279,7 +1276,6 @@ export default function DesignCollabDashboardTemplate() {
           />
         </StackItem>
         <HStack gap={2} vAlign="center">
-          <span style={styles.onlineDot} aria-hidden />
           <AvatarGroup
             size="xsmall"
             aria-label={`${ONLINE_NOW.length} teammates online now`}>
@@ -1290,9 +1286,13 @@ export default function DesignCollabDashboardTemplate() {
               <AvatarGroupOverflow count={ONLINE_NOW.length - 4} />
             ) : null}
           </AvatarGroup>
-          <Text type="supporting" color="secondary" hasTabularNumbers>
-            {ONLINE_NOW.length} online
-          </Text>
+          {/* Dot sits with its label so it never reads as a stray mark. */}
+          <HStack gap={1} vAlign="center">
+            <span style={styles.onlineDot} aria-hidden />
+            <Text type="supporting" color="secondary" hasTabularNumbers>
+              {ONLINE_NOW.length} online
+            </Text>
+          </HStack>
         </HStack>
         <IconButton
           label="Notifications"
@@ -1342,9 +1342,11 @@ export default function DesignCollabDashboardTemplate() {
         {visibleCount} {visibleCount === 1 ? 'file' : 'files'}
       </Text>
       <StackItem size="fill" />
+      {/* Short trigger labels — the full names live in the menu items;
+          longer triggers wrap the toolbar at the 264-rail content width. */}
       <DropdownMenu
         button={{
-          label: sortMode === 'recent' ? 'Last edited' : 'Alphabetical',
+          label: sortMode === 'recent' ? 'Recent' : 'A–Z',
           variant: 'ghost',
           size: 'sm',
           icon: <Icon icon={ArrowDownUpIcon} size="sm" />,
@@ -1451,7 +1453,7 @@ export default function DesignCollabDashboardTemplate() {
         start={
           isCompact ? undefined : (
             <LayoutPanel
-              width={240}
+              width={264}
               padding={0}
               hasDivider
               label="Projects and drafts">
