@@ -1,0 +1,1 @@
+import{n as e}from"./InteractiveRoleContext-B1Vt8S4n.js";function t({href:t,onClick:n,isDisabled:r=!1}){let i=e();return t!=null&&!r?`link`:n==null?i??`inert`:`button`}export{t};

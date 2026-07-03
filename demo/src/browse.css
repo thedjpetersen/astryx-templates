@@ -1,0 +1,434 @@
+/*
+ * Browse view: full-catalog gallery with a sticky top bar, category rail,
+ * and metadata-only template cards. Namespaced under .browse- so it never
+ * collides with demo.css or landing.css. Colors are exclusively Astryx
+ * tokens (honoring color-scheme: light dark); tints are token-derived via
+ * color-mix. Brand blue appears only as the logo mark fill.
+ */
+
+.browse-root {
+  min-height: 100dvh;
+  background: var(--color-background-body);
+  color: var(--color-text-primary);
+}
+
+/* ---------------------------------------------------------------- top bar */
+
+.browse-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--color-background-body);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.browse-topbar-inner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 12px 24px;
+}
+
+.browse-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-text-primary);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.browse-brand-mark {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  fill: var(--color-brand);
+}
+
+.browse-search {
+  position: relative;
+  flex: 1;
+  min-width: 220px;
+  max-width: 480px;
+}
+
+.browse-search input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 38px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-background-card, Canvas);
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: 14px;
+  padding: 0 38px 0 16px;
+}
+
+.browse-search input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.browse-search input:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.browse-search input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.browse-search-clear {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: var(--radius-full, 999px);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font: inherit;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.browse-search-clear:hover {
+  background: color-mix(in oklab, var(--color-accent) 6%, transparent);
+  color: var(--color-text-primary);
+}
+
+/* Pill segmented control: same numbers as demo.css .segmented, reimplemented
+   under the browse- prefix so this file stands alone. */
+.browse-segmented {
+  display: inline-grid;
+  grid-auto-flow: column;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-background-card, Canvas);
+}
+
+.browse-segmented button {
+  min-width: 72px;
+  border: 0;
+  border-radius: var(--radius-full, 999px);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 6px 12px;
+  font: inherit;
+  font-weight: 500;
+  text-transform: capitalize;
+  transition: background-color 120ms ease;
+}
+
+.browse-segmented button:hover {
+  color: var(--color-text-primary);
+}
+
+.browse-segmented button.is-active {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.browse-count {
+  margin: 0 0 0 auto;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------- body */
+
+.browse-body {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* ---------------------------------------------------------- category rail */
+
+.browse-rail {
+  position: sticky;
+  top: 72px;
+  max-height: calc(100dvh - 96px);
+  overflow-y: auto;
+}
+
+.browse-rail-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 12px;
+  border-radius: var(--radius-element, 12px);
+  color: var(--color-text-primary);
+  font-size: 14px;
+  text-decoration: none;
+  transition: background-color 120ms ease;
+}
+
+.browse-rail-link span {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.browse-rail-link:hover {
+  background: color-mix(in oklab, var(--color-accent) 6%, transparent);
+}
+
+.browse-rail-link.is-active {
+  background: color-mix(in oklab, var(--color-accent) 10%, transparent);
+  font-weight: 600;
+}
+
+/* -------------------------------------------------------------- main area */
+
+.browse-main {
+  min-width: 0;
+}
+
+.browse-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
+
+.browse-section + .browse-section {
+  margin-top: 32px;
+}
+
+.browse-section-head h2 {
+  margin: 0 0 12px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.browse-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+/* ------------------------------------------------------------------- card */
+
+.browse-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-container, 16px);
+  background: var(--color-background-card, Canvas);
+  color: inherit;
+  padding: 16px 18px;
+  text-decoration: none;
+  transition: border-color 120ms ease, transform 120ms ease;
+}
+
+.browse-card:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-1px);
+}
+
+.browse-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.browse-card-name {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* Kind pill: shared visual language with the sidebar/landing pills. */
+.browse-pill {
+  flex-shrink: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full, 999px);
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-style: normal;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 2px 10px;
+}
+
+.browse-card-desc {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 13.5px;
+  line-height: 1.5;
+  min-height: 3em; /* two lines, so card feet stay aligned */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.browse-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.browse-card-id {
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-code);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.browse-req-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-warning, #b78103);
+}
+
+/* ------------------------------------------------------------ empty state */
+
+.browse-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-container, 16px);
+  background: var(--color-background-card, Canvas);
+  padding: 32px;
+}
+
+.browse-empty p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.browse-empty button {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-background-card, Canvas);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  padding: 8px 18px;
+  transition: border-color 120ms ease, background-color 120ms ease;
+}
+
+.browse-empty button:hover {
+  border-color: var(--color-accent);
+  background: color-mix(in oklab, var(--color-accent) 6%, transparent);
+}
+
+/* --------------------------------------------------------------- keyboard */
+
+.browse-card:focus-visible,
+.browse-rail-link:focus-visible,
+.browse-brand:focus-visible,
+.browse-segmented button:focus-visible,
+.browse-search-clear:focus-visible,
+.browse-empty button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------- skeleton */
+
+.browse-skeleton {
+  border-radius: var(--radius-element, 12px);
+  background:
+    linear-gradient(
+        100deg,
+        transparent 30%,
+        color-mix(in oklab, var(--color-accent) 4%, transparent) 50%,
+        transparent 70%
+      )
+      0 0 / 200% 100%,
+    color-mix(in oklab, var(--color-accent) 6%, transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .browse-skeleton {
+    animation: browse-shimmer 1.4s ease-in-out infinite;
+  }
+}
+
+@keyframes browse-shimmer {
+  from {
+    background-position: 200% 0, 0 0;
+  }
+
+  to {
+    background-position: -200% 0, 0 0;
+  }
+}
+
+/* ------------------------------------------------------------------ phone */
+
+@media (max-width: 860px) {
+  .browse-topbar-inner {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  /* Search takes its own full row so the pill stays comfortably tappable. */
+  .browse-search {
+    flex-basis: 100%;
+    max-width: none;
+  }
+
+  .browse-segmented button {
+    min-width: 0;
+  }
+
+  .browse-body {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 16px;
+  }
+
+  /* The rail becomes a horizontal chip row of filter links. */
+  .browse-rail {
+    position: static;
+    max-height: none;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+
+  .browse-rail-link {
+    flex-shrink: 0;
+    gap: 8px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full, 999px);
+    padding: 6px 14px;
+    white-space: nowrap;
+  }
+}
