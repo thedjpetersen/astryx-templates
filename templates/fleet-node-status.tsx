@@ -27,13 +27,17 @@
  *
  * Responsive contract:
  * - Content column: maxWidth 1280, centered; the whole column scrolls.
+ * - Header row flex-wraps: when the title plus view SegmentedControl and
+ *   Refresh no longer fit on one line, the controls drop below the title.
  * - Filter bands (search + status toggles, platform + version chips,
  *   legend) flex-wrap onto multiple lines instead of compressing.
- * - >720px: header caption shows node count, refresh age, and window.
- * - <=720px: header caption collapses to the node count only.
+ * - >720px: header caption shows node count, refresh age, and window;
+ *   grid squares are 12px and open their HoverCard on hover/focus.
+ * - <=720px: header caption collapses to the node count only; grid
+ *   squares grow to 40px tap targets and the density caption says "tap".
  * - Table: horizontal scroll below ~900px (overflow-x wrapper; pixel
  *   columns keep their width, the node column keeps a 200px floor).
- * - Grid squares stay 12px at every breakpoint and wrap to fill the row.
+ * - Grid squares wrap to fill the row at every breakpoint.
  */
 
 import {useMemo, useState, type CSSProperties, type ReactNode} from 'react';
@@ -81,6 +85,7 @@ const styles: Record<string, CSSProperties> = {
     marginInline: 'auto',
     width: '100%',
   },
+  headerRow: {flexWrap: 'wrap'},
   filterRow: {flexWrap: 'wrap'},
   searchBox: {width: 280, maxWidth: '100%'},
   chipRow: {flexWrap: 'wrap'},
@@ -117,6 +122,12 @@ const styles: Record<string, CSSProperties> = {
     padding: 0,
     cursor: 'pointer',
     display: 'block',
+  },
+  // <=720px: each square grows to a full-size tap target.
+  squareCompact: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
   },
   hoverBody: {padding: 'var(--spacing-3)'},
   // Table view: horizontal scroll below ~900px; pixel columns keep width.
@@ -392,7 +403,15 @@ function NodeHoverContent({node}: {node: FleetNode}) {
 
 // ============= GRID VIEW =============
 
-function StatusSquare({node, isPinned}: {node: FleetNode; isPinned: boolean}) {
+function StatusSquare({
+  node,
+  isPinned,
+  isCompact,
+}: {
+  node: FleetNode;
+  isPinned: boolean;
+  isCompact: boolean;
+}) {
   return (
     <HoverCard
       content={<NodeHoverContent node={node} />}
@@ -402,13 +421,23 @@ function StatusSquare({node, isPinned}: {node: FleetNode; isPinned: boolean}) {
       <button
         type="button"
         aria-label={`${node.id} — ${STATUS_LABEL[node.status]}`}
-        style={{...styles.square, backgroundColor: STATUS_COLOR[node.status]}}
+        style={{
+          ...styles.square,
+          ...(isCompact ? styles.squareCompact : null),
+          backgroundColor: STATUS_COLOR[node.status],
+        }}
       />
     </HoverCard>
   );
 }
 
-function GridView({nodes}: {nodes: FleetNode[]}) {
+function GridView({
+  nodes,
+  isCompact,
+}: {
+  nodes: FleetNode[];
+  isCompact: boolean;
+}) {
   return (
     <div style={styles.gridPanel}>
       <VStack gap={3}>
@@ -419,7 +448,8 @@ function GridView({nodes}: {nodes: FleetNode[]}) {
             </Text>
           </StackItem>
           <Text type="supporting" color="secondary" hasTabularNumbers>
-            {nodes.length} nodes · hover a square for instance detail
+            {nodes.length} nodes ·{' '}
+            {isCompact ? 'tap' : 'hover'} a square for instance detail
           </Text>
         </HStack>
         <div style={styles.squareWrap}>
@@ -428,6 +458,7 @@ function GridView({nodes}: {nodes: FleetNode[]}) {
               key={node.id}
               node={node}
               isPinned={node.id === PINNED_NODE_ID}
+              isCompact={isCompact}
             />
           ))}
         </div>
@@ -757,7 +788,7 @@ export default function FleetNodeStatusTemplate() {
       height="fill"
       header={
         <LayoutHeader hasDivider>
-          <HStack gap={3} vAlign="center">
+          <HStack gap={3} vAlign="center" style={styles.headerRow}>
             <StackItem size="fill">
               <VStack gap={0}>
                 <Heading level={1}>Node Availability</Heading>
@@ -891,7 +922,7 @@ export default function FleetNodeStatusTemplate() {
                   </HStack>
                 </VStack>
               ) : view === 'grid' ? (
-                <GridView nodes={filtered} />
+                <GridView nodes={filtered} isCompact={isCompact} />
               ) : view === 'table' ? (
                 <TableView nodes={filtered} />
               ) : (

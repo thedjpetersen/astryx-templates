@@ -16,7 +16,12 @@
  * - Chart widgets: Grid columns={{minWidth: 320, repeat: 'fit'}} — side by
  *   side when space allows, stacked on narrow viewports.
  * - Table: proportional columns absorb remaining width; pixel columns keep
- *   numeric cells stable. Header actions stay pinned right via StackItem fill.
+ *   numeric cells stable. Header actions stay pinned right via StackItem fill
+ *   while the row fits; on narrow viewports the header wraps (wrap="wrap") so
+ *   the time-range control + refresh drop below the title instead of
+ *   overflowing it.
+ * - ≤640px: the SegmentedControl and Refresh IconButton render at size="lg"
+ *   (40px) so the header's primary tap targets stay touch-friendly.
  */
 
 import {useState, type CSSProperties} from 'react';
@@ -42,6 +47,7 @@ import {
 } from '@astryxdesign/core/SegmentedControl';
 import {Table, proportional, pixel} from '@astryxdesign/core/Table';
 import type {TableColumn} from '@astryxdesign/core/Table';
+import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
   ChartV2 as Chart,
   ChartGrid,
@@ -327,12 +333,17 @@ function ChartCard({
 export default function KpiDashboardTemplate() {
   const [range, setRange] = useState('30d');
 
+  // Responsive contract: ≤640px bumps the header's time-range control and
+  // refresh button to size="lg" (40px) so primary tap targets stay
+  // touch-friendly; desktop keeps the compact md chrome.
+  const isCompact = useMediaQuery('(max-width: 640px)');
+
   return (
     <Layout
       height="auto"
       header={
         <LayoutHeader hasDivider>
-          <HStack gap={2} vAlign="center">
+          <HStack gap={2} vAlign="center" wrap="wrap">
             <StackItem size="fill">
               <Heading level={1}>Operations overview</Heading>
             </StackItem>
@@ -340,7 +351,7 @@ export default function KpiDashboardTemplate() {
               value={range}
               onChange={setRange}
               label="Time range"
-              size="md">
+              size={isCompact ? 'lg' : 'md'}>
               <SegmentedControlItem value="24h" label="24h" />
               <SegmentedControlItem value="7d" label="7d" />
               <SegmentedControlItem value="30d" label="30d" />
@@ -350,6 +361,7 @@ export default function KpiDashboardTemplate() {
               label="Refresh"
               icon={<Icon icon={RefreshCwIcon} size="sm" />}
               variant="ghost"
+              size={isCompact ? 'lg' : 'md'}
             />
           </HStack>
         </LayoutHeader>

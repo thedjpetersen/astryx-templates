@@ -33,9 +33,11 @@
  * - >1024px  — full three-column frame (rail | list | reading pane).
  * - <=1024px — folder rail hidden; the list keeps its 340px width and
  *   the reading pane absorbs the reclaimed space.
- * - <=768px  — reading pane hidden; the message list becomes the
- *   content fill (mail-app list view). Rows stay tappable and still
- *   mark messages read.
+ * - <=768px  — single-pane list/detail: the message list becomes the
+ *   content fill; tapping a row (which still marks it read) swaps the
+ *   content region to the reading pane, and a back IconButton in its
+ *   toolbar returns to the list. Archiving on mobile also returns to
+ *   the list so triage continues from the rows.
  * - The message list and reading pane body scroll independently; the
  *   list header (search) and reading-pane toolbar stay pinned.
  */
@@ -70,6 +72,7 @@ import {useMediaQuery} from '@astryxdesign/core/hooks';
 
 import {
   ArchiveIcon,
+  ArrowLeftIcon,
   ClockIcon,
   EllipsisIcon,
   InboxIcon,
@@ -525,6 +528,9 @@ export default function InboxTemplate() {
   // Responsive contract (see file header).
   const isRailHidden = useMediaQuery('(max-width: 1024px)');
   const isListOnly = useMediaQuery('(max-width: 768px)');
+  // Single-pane mode is list-first; tapping a row swaps to the reading
+  // pane and the toolbar back button returns here.
+  const [isReadingShownOnMobile, setIsReadingShownOnMobile] = useState(false);
 
   const unreadByFolder = useMemo(() => {
     const counts: Record<FolderId, number> = {
@@ -576,10 +582,12 @@ export default function InboxTemplate() {
     setSelectedFolderId(folderId);
     setSelectedMessageId(null);
     setSearchQuery('');
+    setIsReadingShownOnMobile(false);
   };
 
   const openMessageRow = (id: string) => {
     setSelectedMessageId(id);
+    setIsReadingShownOnMobile(true);
     setReadIds(prev => {
       if (prev.has(id)) {
         return prev;
@@ -601,6 +609,10 @@ export default function InboxTemplate() {
       visibleMessages[index + 1] ?? visibleMessages[index - 1] ?? null;
     setFolderById(prev => ({...prev, [openMessage.id]: 'archive'}));
     setSelectedMessageId(next === null ? null : next.id);
+    // On mobile, land back in the list so triage continues from the rows.
+    if (isListOnly) {
+      setIsReadingShownOnMobile(false);
+    }
   };
 
   const toggleStar = (id: string) => {
@@ -703,6 +715,16 @@ export default function InboxTemplate() {
         dividers={['bottom']}
         startContent={
           <>
+            {isListOnly && (
+              <IconButton
+                label="Back to messages"
+                tooltip="Back to messages"
+                size="sm"
+                variant="ghost"
+                icon={<Icon icon={ArrowLeftIcon} size="sm" />}
+                onClick={() => setIsReadingShownOnMobile(false)}
+              />
+            )}
             <Button
               label="Reply"
               size="sm"
@@ -854,7 +876,7 @@ export default function InboxTemplate() {
       }
       content={
         <LayoutContent padding={0}>
-          {isListOnly ? messageList : readingPane}
+          {isListOnly && !isReadingShownOnMobile ? messageList : readingPane}
         </LayoutContent>
       }
     />

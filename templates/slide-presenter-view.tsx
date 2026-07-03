@@ -42,7 +42,11 @@
  * - <=900px: the right rack drops below the stage as a horizontal pair —
  *   next preview and notes side by side, Kbd hints underneath.
  * - <=600px: the pair stacks vertically; the footer Buttons keep their big
- *   36px hit targets at every width and the header drops the deck filename.
+ *   36px hit targets at every width and the header slims to fit a 375px
+ *   viewport — it drops the deck filename and the counter Badge (the footer
+ *   keeps the 'Slide x of 8' counter), the pause ToggleButton goes icon-only,
+ *   and the status heading truncates to one line instead of pushing the
+ *   timer chip off the edge.
  * - Slide canvases use container-query (cqw) type sizing, so the identical
  *   shape fixtures paint correctly at jump-grid thumbnail size, the 360px
  *   next preview, and the full stage.
@@ -239,6 +243,9 @@ const styles: Record<string, CSSProperties> = {
   },
   kbdHintLabel: {fontSize: 12, color: CONSOLE_MUTED},
   jumpTileTitle: {minWidth: 0},
+  // Lets the status heading shrink/truncate so the header's fixed chrome
+  // (timer chip, pause toggle) never pushes past a 375px viewport.
+  headerTitle: {minWidth: 0},
 };
 
 // ============= DATA =============
@@ -959,7 +966,7 @@ export default function SlidePresenterViewTemplate() {
       header={
         <LayoutHeader hasDivider>
           <HStack gap={3} vAlign="center">
-            <StackItem size="fill">
+            <StackItem size="fill" style={styles.headerTitle}>
               <HStack gap={2} vAlign="center">
                 <StatusDot
                   variant={isPaused ? 'warning' : 'success'}
@@ -967,7 +974,7 @@ export default function SlidePresenterViewTemplate() {
                   isPulsing={!isPaused}
                   tooltip={isPaused ? 'Timer paused' : 'Live to the room'}
                 />
-                <Heading level={1}>
+                <Heading level={1} maxLines={isNarrow ? 1 : 0}>
                   {isPaused ? 'Paused' : 'Presenting'} · {ROOM_LABEL}
                 </Heading>
                 {!isNarrow && (
@@ -998,9 +1005,12 @@ export default function SlidePresenterViewTemplate() {
               }
               isPressed={isPaused}
               onPressedChange={setIsPaused}
+              isIconOnly={isNarrow}
               tooltip={isPaused ? 'Resume the elapsed timer' : 'Pause the elapsed timer'}
             />
-            <Badge label={counterLabel} variant="neutral" />
+            {/* The counter Badge is duplicated by the footer counter, so the
+                header sheds it first on phone widths. */}
+            {!isNarrow && <Badge label={counterLabel} variant="neutral" />}
           </HStack>
         </LayoutHeader>
       }

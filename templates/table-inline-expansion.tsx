@@ -30,16 +30,27 @@
  *   visible on first render without interaction.
  *
  * Responsive contract:
- * - The Table renders inside its own horizontal scroll wrapper: fixed
- *   pixel widths on the toggle/numeric/status columns hold, the Endpoint
- *   column absorbs remaining width, and the whole table scrolls
- *   horizontally rather than crushing columns on narrow viewports.
+ * - >640px: the Table renders inside its own horizontal scroll wrapper:
+ *   fixed pixel widths on the toggle/numeric/status columns hold, the
+ *   Endpoint column absorbs remaining width, and the whole table scrolls
+ *   horizontally rather than crushing columns on narrow viewports. The
+ *   header keeps title + both buttons on one row (StackItem fill gives
+ *   the title block priority; buttons keep width and never wrap
+ *   mid-label).
+ * - <=640px: the numeric columns (Requests, Error rate, P95) and Owner
+ *   hide so the table — and the colSpan detail region inside it — fits
+ *   the viewport without horizontal panning; the hidden values reappear
+ *   as extra MetadataList rows in each row's detail region. The page
+ *   inset drops to padding 3 and the Status column auto-sizes to its
+ *   badge so the Endpoint column keeps every spare pixel. The header
+ *   HStacks turn on wrap so the buttons drop below the title instead of
+ *   crushing it, and the expand/collapse toggle grows to a 40px tap
+ *   target.
  * - Detail region: MetadataList uses columns="multi" (auto-fill,
  *   minmax 280px), so metadata reflows from several columns on wide
  *   viewports down to a single column as space narrows; the related
- *   endpoints row and the action buttons wrap (HStack wrap="wrap").
- * - Header: the title block keeps priority via StackItem fill; the two
- *   header buttons keep their width and never wrap mid-label.
+ *   endpoints row and the action buttons wrap (HStack wrap="wrap"). On
+ *   phones the content inset shrinks so the description gets the width.
  */
 
 import {useState, type CSSProperties} from 'react';
@@ -70,6 +81,7 @@ import {
   TableHeaderCell,
   TableRow,
 } from '@astryxdesign/core/Table';
+import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
   BookOpenIcon,
   ChevronDownIcon,
@@ -93,6 +105,12 @@ const styles: Record<string, CSSProperties> = {
     padding:
       'var(--spacing-2) var(--spacing-2) var(--spacing-3) var(--spacing-8)',
   },
+  // Phones drop the Endpoint-column inset so the description gets width.
+  detailBodyCompact: {
+    padding: 'var(--spacing-2) var(--spacing-2) var(--spacing-3)',
+  },
+  // Grow the row toggle to a ~40px tap target on touch-sized viewports.
+  toggleTouch: {width: 40, height: 40},
 };
 
 // ============= DATA =============
@@ -332,8 +350,10 @@ const ENDPOINTS: ApiEndpoint[] = [
   },
 ];
 
-// Toggle column + 6 data columns; the detail cell spans all of them.
+// Toggle column + 6 data columns; the detail cell spans all of them. On
+// compact viewports the numeric and Owner columns hide, leaving 3.
 const COLUMN_COUNT = 7;
+const COLUMN_COUNT_COMPACT = 3;
 
 // ============= ROW COMPONENTS =============
 
@@ -348,16 +368,45 @@ function EndpointSignature({method, path}: {method: Method; path: string}) {
 }
 
 /** Full-span detail region rendered beneath an expanded row. */
-function EndpointDetailRow({endpoint}: {endpoint: ApiEndpoint}) {
+function EndpointDetailRow({
+  endpoint,
+  isCompact,
+}: {
+  endpoint: ApiEndpoint;
+  isCompact: boolean;
+}) {
   return (
     <TableRow id={`endpoint-detail-${endpoint.id}`}>
-      <TableCell colSpan={COLUMN_COUNT} style={styles.detailCell}>
-        <div style={styles.detailBody}>
+      <TableCell
+        colSpan={isCompact ? COLUMN_COUNT_COMPACT : COLUMN_COUNT}
+        style={styles.detailCell}>
+        <div style={isCompact ? styles.detailBodyCompact : styles.detailBody}>
           <VStack gap={4}>
             <Text type="body" color="secondary">
               {endpoint.description}
             </Text>
             <MetadataList columns="multi" label={{position: 'top'}}>
+              {/* Columns hidden on compact viewports resurface as metadata.
+                  Individual conditionals (no fragment) keep MetadataList's
+                  Children.toArray item accounting accurate. */}
+              {isCompact && (
+                <MetadataListItem label="Requests (24h)">
+                  {endpoint.requests}
+                </MetadataListItem>
+              )}
+              {isCompact && (
+                <MetadataListItem label="Error rate">
+                  {endpoint.errorRate}
+                </MetadataListItem>
+              )}
+              {isCompact && (
+                <MetadataListItem label="P95">{endpoint.p95}</MetadataListItem>
+              )}
+              {isCompact && (
+                <MetadataListItem label="Owner">
+                  {endpoint.owner}
+                </MetadataListItem>
+              )}
               <MetadataListItem label="Authentication">
                 {endpoint.auth}
               </MetadataListItem>
@@ -424,6 +473,9 @@ export default function TableInlineExpansionTemplate() {
   const [expandedIds, setExpandedIds] = useState<ReadonlySet<string>>(
     () => new Set(['charges-post']),
   );
+  // Phone-width fallback: hide the numeric/Owner columns (their values move
+  // into the detail region), wrap the header, and grow the toggle target.
+  const isCompact = useMediaQuery('(max-width: 640px)');
 
   const toggleRow = (id: string) => {
     setExpandedIds(prev => {
@@ -449,9 +501,12 @@ export default function TableInlineExpansionTemplate() {
       height="fill"
       header={
         <LayoutHeader hasDivider>
-          <HStack gap={3} vAlign="center">
+          <HStack gap={3} vAlign="center" wrap={isCompact ? 'wrap' : 'nowrap'}>
             <StackItem size="fill">
-              <HStack gap={2} vAlign="center">
+              <HStack
+                gap={2}
+                vAlign="center"
+                wrap={isCompact ? 'wrap' : 'nowrap'}>
                 <Heading level={1}>Endpoint registry</Heading>
                 <Text type="supporting" color="secondary">
                   {ENDPOINTS.length} routes · production gateway
@@ -471,24 +526,37 @@ export default function TableInlineExpansionTemplate() {
         </LayoutHeader>
       }
       content={
-        <LayoutContent padding={6}>
+        <LayoutContent padding={isCompact ? 3 : 6}>
           <Table<Record<string, unknown>> density="balanced" dividers="rows">
             <TableHeader>
               <TableRow isHeaderRow>
                 {/* Leading toggle column has no header label. */}
                 <TableHeaderCell style={styles.toggleHeader} />
                 <TableHeaderCell>Endpoint</TableHeaderCell>
-                <TableHeaderCell style={{...styles.numeric, width: 140}}>
-                  Requests (24h)
+                {!isCompact && (
+                  <TableHeaderCell style={{...styles.numeric, width: 140}}>
+                    Requests (24h)
+                  </TableHeaderCell>
+                )}
+                {!isCompact && (
+                  <TableHeaderCell style={{...styles.numeric, width: 110}}>
+                    Error rate
+                  </TableHeaderCell>
+                )}
+                {!isCompact && (
+                  <TableHeaderCell style={{...styles.numeric, width: 100}}>
+                    P95
+                  </TableHeaderCell>
+                )}
+                {/* Fixed width holds on desktop; compact lets the column
+                    auto-size to the badge so the Endpoint column keeps
+                    every spare pixel. */}
+                <TableHeaderCell style={isCompact ? undefined : {width: 120}}>
+                  Status
                 </TableHeaderCell>
-                <TableHeaderCell style={{...styles.numeric, width: 110}}>
-                  Error rate
-                </TableHeaderCell>
-                <TableHeaderCell style={{...styles.numeric, width: 100}}>
-                  P95
-                </TableHeaderCell>
-                <TableHeaderCell style={{width: 120}}>Status</TableHeaderCell>
-                <TableHeaderCell style={{width: 150}}>Owner</TableHeaderCell>
+                {!isCompact && (
+                  <TableHeaderCell style={{width: 150}}>Owner</TableHeaderCell>
+                )}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -512,6 +580,7 @@ export default function TableInlineExpansionTemplate() {
                         }
                         variant="ghost"
                         size="sm"
+                        style={isCompact ? styles.toggleTouch : undefined}
                         aria-expanded={isExpanded}
                         aria-controls={
                           isExpanded
@@ -527,26 +596,35 @@ export default function TableInlineExpansionTemplate() {
                         path={endpoint.path}
                       />
                     </TableCell>
-                    <TableCell style={styles.numeric}>
-                      <Text type="body">{endpoint.requests}</Text>
-                    </TableCell>
-                    <TableCell style={styles.numeric}>
-                      <Text type="body">{endpoint.errorRate}</Text>
-                    </TableCell>
-                    <TableCell style={styles.numeric}>
-                      <Text type="body">{endpoint.p95}</Text>
-                    </TableCell>
+                    {!isCompact && (
+                      <TableCell style={styles.numeric}>
+                        <Text type="body">{endpoint.requests}</Text>
+                      </TableCell>
+                    )}
+                    {!isCompact && (
+                      <TableCell style={styles.numeric}>
+                        <Text type="body">{endpoint.errorRate}</Text>
+                      </TableCell>
+                    )}
+                    {!isCompact && (
+                      <TableCell style={styles.numeric}>
+                        <Text type="body">{endpoint.p95}</Text>
+                      </TableCell>
+                    )}
                     <TableCell>
                       <Badge label={status.label} variant={status.variant} />
                     </TableCell>
-                    <TableCell>
-                      <Text type="body">{endpoint.owner}</Text>
-                    </TableCell>
+                    {!isCompact && (
+                      <TableCell>
+                        <Text type="body">{endpoint.owner}</Text>
+                      </TableCell>
+                    )}
                   </TableRow>,
                   isExpanded ? (
                     <EndpointDetailRow
                       key={`${endpoint.id}-detail`}
                       endpoint={endpoint}
+                      isCompact={isCompact}
                     />
                   ) : null,
                 ];

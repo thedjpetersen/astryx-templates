@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["templates/deck-theme-designer.tsx", "types/**/*.d.ts", "demo/src/compat/*.tsx"]
+}

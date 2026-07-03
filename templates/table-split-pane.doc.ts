@@ -12,6 +12,7 @@ const template = {
     'Button',
     'Divider',
     'EmptyState',
+    'IconButton',
     'Layout',
     'List',
     'MetadataList',

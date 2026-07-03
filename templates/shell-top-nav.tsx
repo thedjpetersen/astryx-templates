@@ -28,6 +28,11 @@
  * - <=768px: the search input collapses to an icon-only search button
  *   so the five nav links keep their labels; the page header stacks
  *   vertically (title block above the action row).
+ * - <=640px: the five nav links cannot fit beside the product mark, so
+ *   they collapse into an icon-only hamburger DropdownMenu (active
+ *   section check-marked) next to the mark; the bar keeps the mark,
+ *   the menu, and the search / notifications / avatar cluster, which
+ *   fits a 320px viewport without horizontal overflow.
  * - LayoutContent scrolls internally; the nav bar never scrolls away.
  * - The placeholder region keeps a 320px floor so the slot reads as a
  *   content area even before real content lands.
@@ -55,14 +60,17 @@ import {IconButton} from '@astryxdesign/core/IconButton';
 import {Icon} from '@astryxdesign/core/Icon';
 import {Avatar} from '@astryxdesign/core/Avatar';
 import {Badge} from '@astryxdesign/core/Badge';
+import {DropdownMenu} from '@astryxdesign/core/DropdownMenu';
 import {TextInput} from '@astryxdesign/core/TextInput';
 import {EmptyState} from '@astryxdesign/core/EmptyState';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
   BellIcon,
   ChartColumnIcon,
+  CheckIcon,
   HashIcon,
   LayoutDashboardIcon,
+  MenuIcon,
   PlusIcon,
   ReceiptIcon,
   SearchIcon,
@@ -180,6 +188,7 @@ export default function ShellTopNavTemplate() {
   const [activeId, setActiveId] = useState('overview');
   const [query, setQuery] = useState('');
   const isNarrow = useMediaQuery('(max-width: 768px)');
+  const isPhone = useMediaQuery('(max-width: 640px)');
 
   const section =
     SECTIONS.find(item => item.id === activeId) ?? SECTIONS[0];
@@ -216,20 +225,42 @@ export default function ShellTopNavTemplate() {
               />
             }
             startContent={
-              <>
-                {SECTIONS.map(item => (
-                  <TopNavItem
-                    key={item.id}
-                    label={item.navLabel}
-                    href={`#${item.id}`}
-                    isSelected={item.id === activeId}
-                    onClick={event => {
-                      event.preventDefault();
-                      setActiveId(item.id);
-                    }}
-                  />
-                ))}
-              </>
+              isPhone ? (
+                // Phone fallback: five labeled links plus the end cluster
+                // cannot fit a 375px bar, so the links collapse into a
+                // hamburger menu with full-width rows (larger tap targets
+                // than the inline links they replace).
+                <DropdownMenu
+                  button={{
+                    label: 'Sections',
+                    icon: <Icon icon={MenuIcon} size="sm" />,
+                    isIconOnly: true,
+                    variant: 'ghost',
+                  }}
+                  hasChevron={false}
+                  menuWidth={220}
+                  items={SECTIONS.map(item => ({
+                    label: item.navLabel,
+                    icon: item.id === activeId ? CheckIcon : undefined,
+                    onClick: () => setActiveId(item.id),
+                  }))}
+                />
+              ) : (
+                <>
+                  {SECTIONS.map(item => (
+                    <TopNavItem
+                      key={item.id}
+                      label={item.navLabel}
+                      href={`#${item.id}`}
+                      isSelected={item.id === activeId}
+                      onClick={event => {
+                        event.preventDefault();
+                        setActiveId(item.id);
+                      }}
+                    />
+                  ))}
+                </>
+              )
             }
             endContent={
               <HStack gap={2} vAlign="center">

@@ -41,6 +41,10 @@
  * - The stage chrome keeps size "sm" IconButtons and tabular timecode at
  *   every width; under 1152px the chrome drops the chapter title next to
  *   the timecode so the scrubber never wraps.
+ * - <=640px: the "sm" (28px) chrome grows to 40px tap targets (play, mute,
+ *   captions, full screen) and the inert settings / picture-in-picture
+ *   affordances hide so the row still fits a 375px frame; the comment
+ *   like/dislike/Reply controls take the same 40px override.
  *
  * Container policy (media watch archetype): frame-first page chrome; Cards
  * are reserved for the stage surface and the description block. Up-next
@@ -196,6 +200,12 @@ const styles: Record<string, CSSProperties> = {
     color: '#FFFFFF',
     marginInlineStart: 'var(--spacing-2)',
   },
+  // <=640px: the "sm" (28px) controls grow to 40px tap targets — the chrome
+  // bar and comment action rows are thumb surfaces on phones. Icon glyphs
+  // stay "sm" so the rows read the same, just roomier; height-only for
+  // labeled buttons so their text width is untouched.
+  controlTouch: {width: 40, height: 40},
+  controlTouchWide: {height: 40},
   chapterLabel: {whiteSpace: 'nowrap', color: 'rgba(255, 255, 255, 0.72)'},
   // Up-next art: 168px 16:9 gradient tiles with overlay chips.
   upNextThumb: {
@@ -442,6 +452,7 @@ interface PlayerStageProps {
   theaterMode: boolean;
   showTheaterToggle: boolean;
   isCompact: boolean;
+  isPhone: boolean;
   onPlayToggle: () => void;
   onSeek: (sec: number) => void;
   onMuteToggle: () => void;
@@ -462,6 +473,7 @@ function PlayerStage({
   theaterMode,
   showTheaterToggle,
   isCompact,
+  isPhone,
   onPlayToggle,
   onSeek,
   onMuteToggle,
@@ -469,6 +481,7 @@ function PlayerStage({
   onTheaterToggle,
 }: PlayerStageProps) {
   const chapter = chapterAt(positionSec);
+  const touch = isPhone ? styles.controlTouch : undefined;
 
   return (
     <Card padding={0} style={styles.stageCard}>
@@ -519,6 +532,7 @@ function PlayerStage({
                   variant="ghost"
                   size="sm"
                   onClick={onPlayToggle}
+                  style={touch}
                 />
                 <IconButton
                   label={isMuted ? 'Unmute' : 'Mute'}
@@ -533,6 +547,7 @@ function PlayerStage({
                   variant="ghost"
                   size="sm"
                   onClick={onMuteToggle}
+                  style={touch}
                 />
                 <Text type="supporting" hasTabularNumbers style={styles.timecode}>
                   {formatTime(positionSec)} / {formatTime(DURATION_SEC)}
@@ -551,25 +566,36 @@ function PlayerStage({
                   size="sm"
                   isPressed={captionsOn}
                   onPressedChange={onCaptionsToggle}
+                  style={touch}
                 />
-                <IconButton
-                  label="Settings"
-                  tooltip={`Quality · ${VIDEO_QUALITY}`}
-                  icon={<Icon icon={SettingsIcon} size="sm" color="inherit" />}
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {}}
-                />
-                <IconButton
-                  label="Picture in picture"
-                  tooltip="Picture in picture (i)"
-                  icon={
-                    <Icon icon={PictureInPicture2Icon} size="sm" color="inherit" />
-                  }
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {}}
-                />
+                {/* Phones hide the inert settings/PiP affordances so the
+                    remaining 40px targets still fit a 375px frame. */}
+                {!isPhone && (
+                  <IconButton
+                    label="Settings"
+                    tooltip={`Quality · ${VIDEO_QUALITY}`}
+                    icon={<Icon icon={SettingsIcon} size="sm" color="inherit" />}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {}}
+                  />
+                )}
+                {!isPhone && (
+                  <IconButton
+                    label="Picture in picture"
+                    tooltip="Picture in picture (i)"
+                    icon={
+                      <Icon
+                        icon={PictureInPicture2Icon}
+                        size="sm"
+                        color="inherit"
+                      />
+                    }
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {}}
+                  />
+                )}
                 {showTheaterToggle && (
                   <ToggleButton
                     label="Theater mode"
@@ -594,6 +620,7 @@ function PlayerStage({
                   variant="ghost"
                   size="sm"
                   onClick={() => {}}
+                  style={touch}
                 />
               </HStack>
             </VStack>
@@ -749,7 +776,8 @@ function DescriptionCard({
 
 // ============= COMMENTS =============
 
-function CommentRow({comment}: {comment: Comment}) {
+function CommentRow({comment, isPhone}: {comment: Comment; isPhone: boolean}) {
+  const touch = isPhone ? styles.controlTouch : undefined;
   return (
     <HStack gap={2} vAlign="start">
       <Avatar name={comment.author} size={32} />
@@ -779,6 +807,7 @@ function CommentRow({comment}: {comment: Comment}) {
               variant="ghost"
               size="sm"
               onClick={() => {}}
+              style={touch}
             />
             <Text type="supporting" color="secondary" hasTabularNumbers>
               {comment.likes}
@@ -790,8 +819,15 @@ function CommentRow({comment}: {comment: Comment}) {
               variant="ghost"
               size="sm"
               onClick={() => {}}
+              style={touch}
             />
-            <Button label="Reply" variant="ghost" size="sm" onClick={() => {}} />
+            <Button
+              label="Reply"
+              variant="ghost"
+              size="sm"
+              onClick={() => {}}
+              style={isPhone ? styles.controlTouchWide : undefined}
+            />
           </HStack>
         </VStack>
       </StackItem>
@@ -802,9 +838,11 @@ function CommentRow({comment}: {comment: Comment}) {
 function CommentsSection({
   sort,
   onSortChange,
+  isPhone,
 }: {
   sort: 'top' | 'newest';
   onSortChange: (sort: 'top' | 'newest') => void;
+  isPhone: boolean;
 }) {
   const sorted = [...COMMENTS].sort((a, b) =>
     sort === 'top' ? b.likes - a.likes : a.ageRank - b.ageRank,
@@ -826,7 +864,7 @@ function CommentsSection({
       </HStack>
       <VStack gap={4}>
         {sorted.map(comment => (
-          <CommentRow key={comment.id} comment={comment} />
+          <CommentRow key={comment.id} comment={comment} isPhone={isPhone} />
         ))}
       </VStack>
     </VStack>
@@ -952,8 +990,11 @@ export default function VideoWatchPageTemplate() {
   const [autoplay, setAutoplay] = useState(true);
   const [queuedId, setQueuedId] = useState(UP_NEXT[0].id);
 
-  // Responsive contract: <=1152px the rail stacks below the player.
+  // Responsive contract: <=1152px the rail stacks below the player;
+  // <=640px the chrome and comment controls take the 40px tap-target
+  // override and the inert settings/PiP chrome affordances hide.
   const isStacked = useMediaQuery('(max-width: 1152px)');
+  const isPhone = useMediaQuery('(max-width: 640px)');
 
   // UI animation only: while "playing", advance the playhead one second per
   // second. All fixture data stays fixed; no real media is decoded.
@@ -995,6 +1036,7 @@ export default function VideoWatchPageTemplate() {
       theaterMode={theaterMode}
       showTheaterToggle={!isStacked}
       isCompact={isStacked}
+      isPhone={isPhone}
       onPlayToggle={() => setIsPlaying(prev => !prev)}
       onSeek={setPositionSec}
       onMuteToggle={() => setIsMuted(prev => !prev)}
@@ -1023,7 +1065,11 @@ export default function VideoWatchPageTemplate() {
   );
 
   const comments = (
-    <CommentsSection sort={commentSort} onSortChange={setCommentSort} />
+    <CommentsSection
+      sort={commentSort}
+      onSortChange={setCommentSort}
+      isPhone={isPhone}
+    />
   );
 
   const rail = (

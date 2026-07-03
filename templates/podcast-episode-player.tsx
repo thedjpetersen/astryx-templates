@@ -39,7 +39,8 @@
  *   its 720px cap and stays centered.
  * - <=768px: the player bar stacks — transport row centered on top, the
  *   scrub Slider full-width beneath (footer height goes auto), and the
- *   speed SegmentedControl drops; the hero stacks cover above the titles.
+ *   speed SegmentedControl drops; the skip/play/mute controls grow to
+ *   40px tap targets; the hero stacks cover above the titles.
  * - Elapsed/total readouts and cue times keep tabular numbers so the bar
  *   never jitters while the playhead ticks.
  *
@@ -152,6 +153,10 @@ const styles: Record<string, CSSProperties> = {
   barTitle: {width: 224, minWidth: 0},
   barTitleNarrow: {minWidth: 0},
   barSlider: {minWidth: 0},
+  // <=768px: skip/play/mute grow from their 28px `sm` / 32px `md` chrome to
+  // 40px tap targets — the player bar is the primary touch surface on
+  // phones. Icon glyphs stay "sm" so the bar reads the same, just roomier.
+  barControlTouch: {width: 40, height: 40},
 };
 
 // ============= DATA =============
@@ -608,14 +613,19 @@ function EpisodePanel({
 function TransportControls({
   isPlaying,
   atEnd,
+  isNarrow,
   onSkip,
   onPlayToggle,
 }: {
   isPlaying: boolean;
   atEnd: boolean;
+  isNarrow: boolean;
   onSkip: (deltaSec: number) => void;
   onPlayToggle: () => void;
 }) {
+  // <=768px the three controls take the 40px tap-target override so the
+  // whole transport clears the touch guideline (sm=28px, md=32px chrome).
+  const touchStyle = isNarrow ? styles.barControlTouch : undefined;
   return (
     <HStack gap={1} vAlign="center">
       <IconButton
@@ -624,6 +634,7 @@ function TransportControls({
         icon={<Icon icon={SkipBackIcon} size="sm" color="inherit" />}
         variant="ghost"
         size="sm"
+        style={touchStyle}
         onClick={() => onSkip(-15)}
       />
       <IconButton
@@ -638,6 +649,7 @@ function TransportControls({
         }
         variant="primary"
         size="md"
+        style={touchStyle}
         onClick={onPlayToggle}
       />
       <IconButton
@@ -646,6 +658,7 @@ function TransportControls({
         icon={<Icon icon={SkipForwardIcon} size="sm" color="inherit" />}
         variant="ghost"
         size="sm"
+        style={touchStyle}
         onClick={() => onSkip(30)}
       />
     </HStack>
@@ -782,6 +795,7 @@ export default function PodcastEpisodePlayerTemplate() {
       }
       variant="ghost"
       size="sm"
+      style={isNarrow ? styles.barControlTouch : undefined}
       onClick={() => setIsMuted(prev => !prev)}
     />
   );
@@ -896,6 +910,7 @@ export default function PodcastEpisodePlayerTemplate() {
                 <TransportControls
                   isPlaying={isPlaying}
                   atEnd={atEnd}
+                  isNarrow
                   onSkip={skipBy}
                   onPlayToggle={togglePlay}
                 />
@@ -909,6 +924,7 @@ export default function PodcastEpisodePlayerTemplate() {
               <TransportControls
                 isPlaying={isPlaying}
                 atEnd={atEnd}
+                isNarrow={false}
                 onSkip={skipBy}
                 onPlayToggle={togglePlay}
               />

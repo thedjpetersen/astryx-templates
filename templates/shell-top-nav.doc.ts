@@ -10,6 +10,7 @@ const template = {
     'Avatar',
     'Badge',
     'Button',
+    'DropdownMenu',
     'EmptyState',
     'IconButton',
     'Layout',

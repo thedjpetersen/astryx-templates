@@ -13,6 +13,9 @@
  * Responsive contract:
  *   > 1024px  header | rows | inspector 380
  *   <= 1024px inspector hidden; rows keep full width
+ *   <= 640px  header controls wrap onto their own row (wrap="wrap") and
+ *             incident rows drop the status Token — it is redundant with the
+ *             group headers — keeping only the relative Timestamp
  *
  * Container policy (tracker archetype): dense data renders as rows —
  * edge-to-edge lists grouped by status, zero cards. Status is carried by
@@ -312,10 +315,12 @@ function IncidentRows({
   incidents,
   selectedId,
   onSelect,
+  isCompact,
 }: {
   incidents: Incident[];
   selectedId: string | null;
   onSelect: (id: string) => void;
+  isCompact: boolean;
 }) {
   const groups = STATUS_ORDER.map(status => ({
     status,
@@ -361,18 +366,28 @@ function IncidentRows({
                   />
                 }
                 endContent={
-                  <HStack gap={3} vAlign="center">
-                    <Token
-                      size="sm"
-                      color={STATUS_TOKEN_COLOR[incident.status]}
-                      label={STATUS_LABEL[incident.status]}
-                    />
+                  // Compact rows drop the status Token (redundant with the
+                  // group header) so the title and description keep room.
+                  isCompact ? (
                     <Timestamp
                       value={incident.startedAt}
                       format="relative"
                       color="secondary"
                     />
-                  </HStack>
+                  ) : (
+                    <HStack gap={3} vAlign="center">
+                      <Token
+                        size="sm"
+                        color={STATUS_TOKEN_COLOR[incident.status]}
+                        label={STATUS_LABEL[incident.status]}
+                      />
+                      <Timestamp
+                        value={incident.startedAt}
+                        format="relative"
+                        color="secondary"
+                      />
+                    </HStack>
+                  )
                 }
                 onClick={() => onSelect(incident.id)}
                 isSelected={incident.id === selectedId}
@@ -468,6 +483,9 @@ export default function IncidentConsolePage() {
   // Responsive contract: the inspector is hidden at <= 1024px so the row
   // list keeps its full width (never compress dense rows).
   const isNarrow = useMediaQuery('(max-width: 1024px)');
+  // Phone widths: incident rows drop the status Token from endContent so the
+  // title and description keep room (see file header).
+  const isCompact = useMediaQuery('(max-width: 640px)');
 
   const inspectorPanel = useResizable({
     defaultSize: 380,
@@ -496,7 +514,7 @@ export default function IncidentConsolePage() {
       height="fill"
       header={
         <LayoutHeader hasDivider>
-          <HStack gap={3} vAlign="center">
+          <HStack gap={3} vAlign="center" wrap="wrap">
             <StackItem size="fill">
               <HStack gap={2} vAlign="center">
                 <Heading level={1}>Incidents</Heading>
@@ -547,6 +565,7 @@ export default function IncidentConsolePage() {
                 incidents={visible}
                 selectedId={selected?.id ?? null}
                 onSelect={setSelectedId}
+                isCompact={isCompact}
               />
             </StackItem>
           </VStack>

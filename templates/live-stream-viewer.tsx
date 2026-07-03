@@ -44,6 +44,10 @@
  * - The stage keeps 16:9 via AspectRatio at every width; its overlay chrome
  *   is colorScheme-locked dark so controls stay legible on the gradient in
  *   both themes.
+ * - <=640px: the `sm` (28px) chrome grows to 40px tap targets — the stage
+ *   transport controls (mute, quality, theater, fullscreen), the header
+ *   back button, and the chat resume pill — while keeping the same `sm`
+ *   type/icon scale. Desktop keeps the compact 28px chrome unchanged.
  *
  * Container policy (media-stage archetype): frame-first rows and panels;
  * the only Card is the stacked chat container below 1024px. All media is
@@ -190,6 +194,12 @@ const styles: Record<string, CSSProperties> = {
     fontSize: 12,
     fontVariantNumeric: 'tabular-nums',
   },
+  // <=640px: the `sm` (28px) controls grow to 40px tap targets — the stage
+  // transport, header back button, and resume pill are the primary touch
+  // surfaces on a phone. Square override for icon-only buttons; height-only
+  // for labeled ones so their text width is untouched.
+  controlTouch: {width: 40, height: 40},
+  controlTouchWide: {height: 40},
   // Bottom chrome: gradient scrim + transport controls.
   stageChrome: {
     position: 'absolute',
@@ -414,6 +424,8 @@ function ChatPanel() {
   const [chatDraft, setChatDraft] = useState('');
   const [chatPaused, setChatPaused] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  // <=640px: the resume pill takes the 40px tap-target override.
+  const isCompact = useMediaQuery('(max-width: 640px)');
 
   // Auto-scroll pins the newest line unless the reader scrolled away.
   useEffect(() => {
@@ -484,6 +496,7 @@ function ChatPanel() {
                 size="sm"
                 icon={<Icon icon={ArrowDownIcon} size="sm" color="inherit" />}
                 onClick={resumeChat}
+                style={isCompact ? styles.controlTouchWide : undefined}
               />
             </div>
           </div>
@@ -547,6 +560,10 @@ function LiveStage({
   theaterMode: boolean;
   onTheaterChange: (theaterMode: boolean) => void;
 }) {
+  // <=640px: transport controls take the 40px tap-target override.
+  const isCompact = useMediaQuery('(max-width: 640px)');
+  const touch = isCompact ? styles.controlTouch : undefined;
+  const wideTouch = isCompact ? styles.controlTouchWide : undefined;
   return (
     <div style={styles.stageFrame}>
       <AspectRatio ratio={16 / 9}>
@@ -600,6 +617,7 @@ function LiveStage({
                 variant="ghost"
                 size="sm"
                 onClick={() => onMutedChange(!muted)}
+                style={touch}
               />
               <DropdownMenu
                 button={{
@@ -607,6 +625,7 @@ function LiveStage({
                   variant: 'ghost',
                   size: 'sm',
                   icon: <Icon icon={SettingsIcon} size="sm" color="inherit" />,
+                  style: wideTouch,
                 }}
                 menuWidth={160}
                 items={QUALITY_OPTIONS.map(option => ({
@@ -630,6 +649,7 @@ function LiveStage({
                 isPressed={theaterMode}
                 onPressedChange={onTheaterChange}
                 tooltip={theaterMode ? 'Exit theater mode' : 'Theater mode'}
+                style={wideTouch}
               />
               <IconButton
                 label="Fullscreen"
@@ -638,6 +658,7 @@ function LiveStage({
                 variant="ghost"
                 size="sm"
                 onClick={() => {}}
+                style={touch}
               />
             </HStack>
           </div>
@@ -754,8 +775,10 @@ export default function LiveStreamViewerTemplate() {
   const [quality, setQuality] = useState<Quality>('1080p60');
   const [theaterMode, setTheaterMode] = useState(false);
 
-  // Responsive contract: <=1024px the chat panel drops below the stage.
+  // Responsive contract: <=1024px the chat panel drops below the stage;
+  // <=640px the header back button takes the 40px tap-target override.
   const isStacked = useMediaQuery('(max-width: 1024px)');
+  const isCompact = useMediaQuery('(max-width: 640px)');
 
   const stageColumn = (
     <div style={styles.stageScroll}>
@@ -799,6 +822,7 @@ export default function LiveStreamViewerTemplate() {
               variant="ghost"
               size="sm"
               onClick={() => {}}
+              style={isCompact ? styles.controlTouch : undefined}
             />
             <StackItem size="fill">
               <HStack gap={2} vAlign="center">

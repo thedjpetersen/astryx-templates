@@ -30,8 +30,12 @@
  *   as the viewport narrows; the title row truncates the run subtitle
  *   first (minWidth 0) and keeps the status Badge visible.
  * - Context tree and Stats tabs are single scroll containers; the tree's
- *   token meters keep fixed width so bars stay comparable, and numeric
- *   cells keep tabular numerals at every width.
+ *   token meters keep a fixed 120px bar above 640px so bars stay
+ *   comparable, and numeric cells keep tabular numerals at every width.
+ * - <=640px: tree token meters narrow to a fixed 64px bar (still mutually
+ *   comparable) and the token count drops its reserved column to natural
+ *   width, returning space to node labels; exact figures remain in the
+ *   count and the hover Tooltip.
  */
 
 import {useState, type CSSProperties} from 'react';
@@ -89,9 +93,13 @@ const styles: Record<string, CSSProperties> = {
   },
   tabContentMax: {maxWidth: 880},
   topicWrap: {display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-1)'},
-  // Fixed-width token meter so tree bars stay visually comparable.
+  // Fixed-width token meter so tree bars stay visually comparable; the
+  // compact variant keeps a (smaller) fixed bar and frees the count column
+  // so node labels get the reclaimed width at narrow viewports.
   meterBar: {width: 120},
+  meterBarCompact: {width: 64},
   meterCount: {width: 64, textAlign: 'right'},
+  meterCountCompact: {textAlign: 'right'},
 };
 
 // ============= FIXTURES =============
@@ -472,16 +480,26 @@ function CompressedSummary() {
 /**
  * Token meter for a tree node: a fixed-width bar encoding this node's
  * share of the post-compaction context, with a hover Tooltip carrying
- * the exact figure, plus a right-aligned tabular count.
+ * the exact figure, plus a right-aligned tabular count. At <=640px the
+ * bar narrows (all bars share the width, so they stay comparable) and
+ * the count sheds its reserved column so node labels keep room.
  */
-function NodeTokenMeter({label, tokens}: {label: string; tokens: number}) {
+function NodeTokenMeter({
+  label,
+  tokens,
+  isCompact,
+}: {
+  label: string;
+  tokens: number;
+  isCompact: boolean;
+}) {
   const pct = Math.round((tokens / RUN.tokensAfter) * 100);
   return (
     <HStack gap={2} vAlign="center">
       <Tooltip
         content={`${formatTokens(tokens)} tokens · ${pct}% of context`}
         hasHoverIndication={false}>
-        <div style={styles.meterBar}>
+        <div style={isCompact ? styles.meterBarCompact : styles.meterBar}>
           <ProgressBar
             label={`${label} share of context`}
             isLabelHidden
@@ -491,7 +509,7 @@ function NodeTokenMeter({label, tokens}: {label: string; tokens: number}) {
           />
         </div>
       </Tooltip>
-      <div style={styles.meterCount}>
+      <div style={isCompact ? styles.meterCountCompact : styles.meterCount}>
         <Text type="supporting" color="secondary" hasTabularNumbers>
           {formatTokens(tokens)}
         </Text>
@@ -500,20 +518,27 @@ function NodeTokenMeter({label, tokens}: {label: string; tokens: number}) {
   );
 }
 
-function toTreeItems(nodes: ContextNode[]): TreeListItemData[] {
+function toTreeItems(
+  nodes: ContextNode[],
+  isCompact: boolean,
+): TreeListItemData[] {
   return nodes.map(node => ({
     id: node.id,
     label: node.label,
     description: node.description,
     isExpanded: node.isExpanded,
-    endContent: <NodeTokenMeter label={node.label} tokens={node.tokens} />,
-    children: node.children ? toTreeItems(node.children) : undefined,
+    endContent: (
+      <NodeTokenMeter
+        label={node.label}
+        tokens={node.tokens}
+        isCompact={isCompact}
+      />
+    ),
+    children: node.children ? toTreeItems(node.children, isCompact) : undefined,
   }));
 }
 
-const TREE_ITEMS = toTreeItems(CONTEXT_NODES);
-
-function ContextTreeTab() {
+function ContextTreeTab({isCompact}: {isCompact: boolean}) {
   return (
     <div style={styles.tabContentMax}>
       <Card padding={3}>
@@ -529,7 +554,7 @@ function ContextTreeTab() {
               </Text>
             </HStack>
           }
-          items={TREE_ITEMS}
+          items={toTreeItems(CONTEXT_NODES, isCompact)}
         />
       </Card>
     </div>
@@ -633,6 +658,8 @@ function StatsTab() {
 export default function CompactionInspectorTemplate() {
   const [activeTab, setActiveTab] = useState('comparison');
   const isStacked = useMediaQuery('(max-width: 880px)');
+  // Tree token meters switch to their compact form at phone widths.
+  const isCompact = useMediaQuery('(max-width: 640px)');
 
   // Left (collapsed messages) pane of the Comparison split.
   const messagesPane = useResizable({
@@ -733,7 +760,11 @@ export default function CompactionInspectorTemplate() {
                 </div>
               ) : (
                 <div style={styles.scrollPane}>
-                  {activeTab === 'tree' ? <ContextTreeTab /> : <StatsTab />}
+                  {activeTab === 'tree' ? (
+                    <ContextTreeTab isCompact={isCompact} />
+                  ) : (
+                    <StatsTab />
+                  )}
                 </div>
               )}
             </div>

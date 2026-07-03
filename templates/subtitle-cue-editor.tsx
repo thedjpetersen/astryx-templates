@@ -41,8 +41,14 @@
  *   scrolls internally.
  * - <=1100px: the inspector stacks below the stage; the upper region scrolls
  *   vertically as one column and the table region keeps a fixed 45% height.
- * - <=768px: the header drops the ghost Preview button; the transport keeps
- *   28px "sm" hit targets at every width.
+ * - <=768px: the header drops the ghost Preview button; transport, nudge,
+ *   and footer cue-operation controls grow to 40px touch targets (icon
+ *   glyphs stay "sm" so the rows read the same, just with more padding).
+ * - The header row and the transport row wrap (flexWrap) instead of
+ *   clipping, so the rate control, mute/captions toggles, and the primary
+ *   Export button stay reachable at phone widths; the cue table keeps its
+ *   662px of pixel columns plus a >=220px text column and scrolls
+ *   horizontally (overflowX) below that.
  * - The caption overlay sizes with the stage via container-query units, so
  *   the same pill reads correctly at any stage width; timecodes keep tabular
  *   numbers so scrubbing never jitters.
@@ -221,11 +227,22 @@ const styles: Record<string, CSSProperties> = {
     flex: 1,
     minHeight: 0,
     overflowY: 'auto',
+    // Pixel columns total 662px; narrow viewports scroll the table
+    // horizontally instead of collapsing the proportional text column.
+    overflowX: 'auto',
     paddingInline: 'var(--spacing-4)',
     paddingBottom: 'var(--spacing-2)',
   },
   footerToolbar: {minHeight: 48},
   timecodeInput: {fontFamily: 'var(--font-family-code, monospace)'},
+  // Header and transport rows reflow onto extra lines at phone widths
+  // rather than clipping the rate control / Export button.
+  headerRow: {flexWrap: 'wrap', rowGap: 'var(--spacing-2)'},
+  transportRow: {flexWrap: 'wrap', rowGap: 'var(--spacing-1)'},
+  // <=768px: grow the sm controls to 40px touch targets (the 28px "sm" box
+  // is fine for pointers but too small for thumbs); icon glyphs stay "sm".
+  tapTarget: {width: 40, height: 40},
+  tapTargetWide: {height: 40},
 };
 
 // ============= DATA =============
@@ -398,6 +415,9 @@ export default function SubtitleCueEditorTemplate() {
 
   const isStacked = useMediaQuery('(max-width: 1100px)');
   const isCompact = useMediaQuery('(max-width: 768px)');
+  // 40px thumb targets on phones; undefined keeps the 28px desktop box.
+  const tapTargetStyle = isCompact ? styles.tapTarget : undefined;
+  const wideTapTargetStyle = isCompact ? styles.tapTargetWide : undefined;
 
   // ---- derived state ----
   const activeCue =
@@ -665,7 +685,9 @@ export default function SubtitleCueEditorTemplate() {
     {
       key: 'text',
       header: 'Text',
-      width: proportional(2),
+      // Floor keeps the caption text legible at phone widths; the scroll
+      // container (styles.tableScroll) picks up the overflow horizontally.
+      width: proportional(2, {minWidth: 220}),
       renderCell: row => (
         <Text type="body" maxLines={1}>
           {row.text.replace(/\n/g, '  ⏎  ')}
@@ -741,6 +763,7 @@ export default function SubtitleCueEditorTemplate() {
         icon={<Icon icon={MinusIcon} size="sm" color="inherit" />}
         variant="ghost"
         size="sm"
+        style={tapTargetStyle}
         onClick={() => nudge(field, -100)}
       />
       <IconButton
@@ -749,6 +772,7 @@ export default function SubtitleCueEditorTemplate() {
         icon={<Icon icon={PlusIcon} size="sm" color="inherit" />}
         variant="ghost"
         size="sm"
+        style={tapTargetStyle}
         onClick={() => nudge(field, 100)}
       />
     </HStack>
@@ -845,13 +869,14 @@ export default function SubtitleCueEditorTemplate() {
         </AspectRatio>
       </Card>
 
-      <HStack gap={1} vAlign="center">
+      <HStack gap={1} vAlign="center" style={styles.transportRow}>
         <IconButton
           label="Previous cue"
           tooltip="Previous cue · J"
           icon={<Icon icon={SkipBackIcon} size="sm" color="inherit" />}
           variant="ghost"
           size="sm"
+          style={tapTargetStyle}
           onClick={() => skipToCue(-1)}
         />
         <Tooltip
@@ -874,6 +899,7 @@ export default function SubtitleCueEditorTemplate() {
             }
             variant="secondary"
             size="sm"
+            style={tapTargetStyle}
             onClick={() => setIsPlaying(prev => !prev)}
           />
         </Tooltip>
@@ -883,6 +909,7 @@ export default function SubtitleCueEditorTemplate() {
           icon={<Icon icon={SkipForwardIcon} size="sm" color="inherit" />}
           variant="ghost"
           size="sm"
+          style={tapTargetStyle}
           onClick={() => skipToCue(1)}
         />
         <Text type="supporting" color="secondary" hasTabularNumbers>
@@ -913,6 +940,7 @@ export default function SubtitleCueEditorTemplate() {
           }
           variant="ghost"
           size="sm"
+          style={tapTargetStyle}
           onClick={() => setIsMuted(prev => !prev)}
         />
         <IconButton
@@ -921,6 +949,7 @@ export default function SubtitleCueEditorTemplate() {
           icon={<Icon icon={CaptionsIcon} size="sm" color="inherit" />}
           variant={hasCaptions ? 'secondary' : 'ghost'}
           size="sm"
+          style={tapTargetStyle}
           onClick={() => setHasCaptions(prev => !prev)}
         />
       </HStack>
@@ -1062,6 +1091,7 @@ export default function SubtitleCueEditorTemplate() {
             label="Add cue"
             variant="ghost"
             size="sm"
+            style={wideTapTargetStyle}
             icon={<Icon icon={PlusIcon} size="sm" color="inherit" />}
             onClick={addCue}
           />
@@ -1069,6 +1099,7 @@ export default function SubtitleCueEditorTemplate() {
             label="Split"
             variant="ghost"
             size="sm"
+            style={wideTapTargetStyle}
             icon={<Icon icon={SplitIcon} size="sm" color="inherit" />}
             tooltip="Split the selected cue at the playhead"
             onClick={splitCue}
@@ -1077,6 +1108,7 @@ export default function SubtitleCueEditorTemplate() {
             label="Merge"
             variant="ghost"
             size="sm"
+            style={wideTapTargetStyle}
             icon={<Icon icon={MergeIcon} size="sm" color="inherit" />}
             tooltip="Merge the selected cue with the next one"
             isDisabled={nextOfSelected == null}
@@ -1095,6 +1127,7 @@ export default function SubtitleCueEditorTemplate() {
             icon={<Icon icon={ChevronsLeftIcon} size="sm" color="inherit" />}
             variant="ghost"
             size="sm"
+            style={tapTargetStyle}
             onClick={() => shiftAll(-100)}
           />
           <IconButton
@@ -1103,6 +1136,7 @@ export default function SubtitleCueEditorTemplate() {
             icon={<Icon icon={ChevronsRightIcon} size="sm" color="inherit" />}
             variant="ghost"
             size="sm"
+            style={tapTargetStyle}
             onClick={() => shiftAll(100)}
           />
         </HStack>
@@ -1115,9 +1149,9 @@ export default function SubtitleCueEditorTemplate() {
       height="fill"
       header={
         <LayoutHeader hasDivider>
-          <HStack gap={3} vAlign="center">
+          <HStack gap={3} vAlign="center" style={styles.headerRow}>
             <StackItem size="fill">
-              <HStack gap={2} vAlign="center">
+              <HStack gap={2} vAlign="center" style={styles.headerRow}>
                 <Icon icon={ClapperboardIcon} size="md" color="secondary" />
                 <Heading level={1}>{TRACK_NAME} · captions</Heading>
                 <Badge

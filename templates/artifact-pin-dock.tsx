@@ -35,10 +35,14 @@
  * - >720px: pills stay on one line and the row scrolls horizontally
  *   (flexShrink 0 per pill); the action cluster renders as a ButtonGroup
  *   of five IconButtons floating top-right of the viewer.
- * - <=720px: pills wrap onto multiple rows; the action cluster collapses
- *   into a single MoreMenu; the viewer drops from 60vh to a 360px minimum.
- * - Data source rows: the MetadataList switches from two columns to one
- *   under 720px (columns="multi" auto-fill handles this).
+ * - <=720px: pills wrap onto multiple rows and grow to 40px touch
+ *   targets; the action cluster collapses into a single MoreMenu; the
+ *   viewer drops from 60vh to a 360px minimum (viewerBody still scrolls
+ *   internally).
+ * - Data source rows: the header HStack wraps (result chip + Run button
+ *   drop below the name when narrow) and the MetadataList switches from
+ *   two columns to one under 720px (columns="multi" auto-fill handles
+ *   this).
  *
  * Container policy (dock archetype): the viewer and the data sources bar
  * are Cards; pills are bespoke rounded-full buttons because CI tint lives
@@ -124,6 +128,10 @@ const styles: Record<string, CSSProperties> = {
     font: 'inherit',
     color: 'inherit',
   },
+  // <=720px: grow the pills to 40px touch targets (the ~28px desktop box
+  // is fine for pointers but too small for thumbs); type and icons stay
+  // the same size, the pill just gains vertical padding.
+  pillCompact: {minHeight: 40},
   pillActive: {
     borderColor: 'var(--color-accent)',
     boxShadow: '0 0 0 1px var(--color-accent)',
@@ -137,6 +145,10 @@ const styles: Record<string, CSSProperties> = {
     height: '60vh',
     minHeight: 360,
   },
+  // <=720px: give up the 60vh tie to the window and sit at the 360px
+  // minimum so the pill rows and data sources stay within thumb reach;
+  // viewerBody still scrolls internally for taller fixtures.
+  viewerWrapCompact: {height: 360},
   viewerCard: {
     height: '100%',
   },
@@ -416,15 +428,18 @@ const WRITE_COUNT = DATA_SOURCES.filter(s => s.mode === 'write').length;
 function ArtifactPill({
   pin,
   isActive,
+  isCompact,
   onSelect,
 }: {
   pin: Pin;
   isActive: boolean;
+  isCompact: boolean;
   onSelect: (id: string) => void;
 }) {
   const ci = pin.ci != null ? PIN_CI[pin.ci] : undefined;
   const pillStyle: CSSProperties = {
     ...styles.pill,
+    ...(isCompact ? styles.pillCompact : {}),
     ...(ci?.border ?? {}),
     ...(isActive ? styles.pillActive : {}),
   };
@@ -675,7 +690,10 @@ function DataSourceRow({
 
   return (
     <VStack gap={3} style={styles.sourceRow}>
-      <HStack gap={2} vAlign="center">
+      {/* wrap="wrap" lets the result chip + Run button drop below the
+          name on narrow viewports instead of squeezing it word-per-line;
+          on desktop everything fits so nothing wraps. */}
+      <HStack gap={2} vAlign="center" wrap="wrap">
         <Token label={mode.label} size="sm" color={mode.color} />
         <StackItem size="fill">
           <Text weight="medium">{source.name}</Text>
@@ -880,6 +898,7 @@ export default function ArtifactPinDockTemplate() {
                     key={pin.id}
                     pin={pin}
                     isActive={pin.id === activePin.id}
+                    isCompact={isCompact}
                     onSelect={selectPin}
                   />
                 ))}
@@ -887,7 +906,12 @@ export default function ArtifactPinDockTemplate() {
 
               {/* Viewer: floating mode switch (top-left) and action
                   cluster (top-right) over the centered artifact body. */}
-              <div style={styles.viewerWrap}>
+              <div
+                style={
+                  isCompact
+                    ? {...styles.viewerWrap, ...styles.viewerWrapCompact}
+                    : styles.viewerWrap
+                }>
                 <Card padding={0} variant="muted" style={styles.viewerCard}>
                   <div style={styles.viewerMode}>
                     <SegmentedControl

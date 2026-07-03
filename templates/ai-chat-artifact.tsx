@@ -22,7 +22,12 @@
  * - <=1200px: conversation panel narrows to 340px; artifact keeps fill.
  * - <=768px: single-pane mode — a Chat/Artifact SegmentedControl appears
  *   in the header and swaps the two surfaces; version chips in assistant
- *   messages jump straight to the artifact pane.
+ *   messages jump straight to the artifact pane. The header sheds its
+ *   secondary chrome (model badge, save-state dot), the session title
+ *   truncates to one line, and "New session" collapses to an icon
+ *   button so the view toggle always fits at 375px. Interactive
+ *   controls (view toggle, version Selector, Copy/Open buttons,
+ *   version chips) grow to ~40px touch targets.
  * - The artifact header actions never clip: the filename cell truncates
  *   first (minWidth 0); if space still runs out the action cluster wraps
  *   onto a second row (flexWrap) while keeping intrinsic width.
@@ -107,6 +112,16 @@ const styles: Record<string, CSSProperties> = {
   versionChipRow: {
     paddingTop: 'var(--spacing-1)',
   },
+  // The session-title cell gives way first so header actions never clip.
+  headerTitle: {
+    minWidth: 0,
+  },
+  // ~40px touch targets in single-pane mode (size="sm" renders 28px).
+  buttonTapTarget: {height: 40},
+  iconTapTarget: {width: 40, height: 40},
+  // SegmentedControlItem height derives from --size-element-sm; raising
+  // the token locally gives the mobile-only view toggle a 40px hit area.
+  segmentedTapTarget: {'--size-element-sm': '40px'} as CSSProperties,
 };
 
 // ============= DATA =============
@@ -328,9 +343,11 @@ const TRANSCRIPT: TranscriptMessage[] = [
 
 function TranscriptEntry({
   message,
+  isCompact,
   onOpenVersion,
 }: {
   message: TranscriptMessage;
+  isCompact: boolean;
   onOpenVersion: (versionId: string) => void;
 }) {
   const isSelf = message.sender === 'user';
@@ -370,6 +387,7 @@ function TranscriptEntry({
             label={`Open ${ARTIFACT_FILE} · ${message.versionId}`}
             variant="secondary"
             size="sm"
+            style={isCompact ? styles.buttonTapTarget : undefined}
             onClick={() => onOpenVersion(message.versionId as string)}
           />
         </div>
@@ -389,6 +407,9 @@ export default function AiChatArtifactTemplate() {
 
   const isSinglePane = useMediaQuery('(max-width: 768px)');
   const isPanelNarrow = useMediaQuery('(max-width: 1200px)');
+
+  // Grow the sm controls to ~40px touch targets in single-pane mode.
+  const tapTargetStyle = isSinglePane ? styles.buttonTapTarget : undefined;
 
   const version =
     ARTIFACT_VERSIONS.find(item => item.id === versionId) ??
@@ -437,6 +458,7 @@ export default function AiChatArtifactTemplate() {
               <TranscriptEntry
                 key={message.id}
                 message={message}
+                isCompact={isSinglePane}
                 onOpenVersion={openVersion}
               />
             ))}
@@ -467,14 +489,21 @@ export default function AiChatArtifactTemplate() {
           }))}
           value={version.id}
           onChange={selectVersion}
+          style={tapTargetStyle}
         />
         <Button
           label={isCopied ? 'Copied' : 'Copy'}
           variant="secondary"
           size="sm"
+          style={tapTargetStyle}
           onClick={copyArtifact}
         />
-        <Button label="Open in editor" size="sm" onClick={() => {}} />
+        <Button
+          label="Open in editor"
+          size="sm"
+          style={tapTargetStyle}
+          onClick={() => {}}
+        />
       </HStack>
       <Divider />
       <StackItem size="fill" style={styles.artifactBody}>
@@ -505,11 +534,15 @@ export default function AiChatArtifactTemplate() {
       header={
         <LayoutHeader hasDivider>
           <HStack gap={3} vAlign="center">
-            <StackItem size="fill">
+            <StackItem size="fill" style={styles.headerTitle}>
               <HStack gap={2} vAlign="center">
-                <Heading level={1}>{SESSION_TITLE}</Heading>
-                <Badge label={MODEL_NAME} variant="neutral" />
-                <StatusDot variant="success" label="All changes saved" />
+                <Heading level={1} maxLines={1}>
+                  {SESSION_TITLE}
+                </Heading>
+                {!isSinglePane && <Badge label={MODEL_NAME} variant="neutral" />}
+                {!isSinglePane && (
+                  <StatusDot variant="success" label="All changes saved" />
+                )}
               </HStack>
             </StackItem>
             {isSinglePane && (
@@ -517,7 +550,8 @@ export default function AiChatArtifactTemplate() {
                 label="Workspace view"
                 value={mobileView}
                 onChange={setMobileView}
-                size="sm">
+                size="sm"
+                style={styles.segmentedTapTarget}>
                 <SegmentedControlItem label="Chat" value="chat" />
                 <SegmentedControlItem label="Artifact" value="artifact" />
               </SegmentedControl>
@@ -527,14 +561,26 @@ export default function AiChatArtifactTemplate() {
               tooltip="Regenerate response"
               icon={<Icon icon={RefreshCwIcon} size="sm" color="inherit" />}
               variant="ghost"
+              style={isSinglePane ? styles.iconTapTarget : undefined}
               onClick={() => {}}
             />
-            <Button
-              label="New session"
-              variant="secondary"
-              icon={<Icon icon={PlusIcon} size="sm" />}
-              onClick={() => {}}
-            />
+            {isSinglePane ? (
+              <IconButton
+                label="New session"
+                tooltip="New session"
+                icon={<Icon icon={PlusIcon} size="sm" color="inherit" />}
+                variant="ghost"
+                style={styles.iconTapTarget}
+                onClick={() => {}}
+              />
+            ) : (
+              <Button
+                label="New session"
+                variant="secondary"
+                icon={<Icon icon={PlusIcon} size="sm" />}
+                onClick={() => {}}
+              />
+            )}
           </HStack>
         </LayoutHeader>
       }

@@ -40,6 +40,10 @@
  *   truncate instead of clipping the transport.
  * - <=640px: the Plays column leaves the table (# / title / heart /
  *   duration remain) and the hero wraps the title block under the cover.
+ *   The dock stacks — identity row, then the transport row centered, then
+ *   the scrub row full-width — the footer height goes auto, and the
+ *   shuffle/prev/next/repeat controls grow to 40px tap targets to match
+ *   the play/pause button.
  * - Timecodes and play counts keep tabular numbers so scrubbing and the
  *   playing-row swap never jitter column widths.
  *
@@ -174,11 +178,21 @@ const styles: Record<string, CSSProperties> = {
     marginInline: 'auto',
   },
   dockVolume: {width: 200, flexShrink: 0},
+  // <=640px: the dock stacks (identity / transport / scrub) and the footer
+  // height goes auto; block padding replaces the fixed 80px row height.
+  dockCompact: {
+    paddingBlock: 'var(--spacing-3)',
+    paddingInline: 'var(--spacing-4)',
+  },
   dockPlayButton: {
     width: 40,
     height: 40,
     borderRadius: '50%',
   },
+  // <=640px: shuffle/prev/next/repeat grow from the 28px `sm` chrome to
+  // 40px tap targets (matching dockPlayButton) — the dock is the primary
+  // touch surface on phones.
+  dockTransportTouch: {width: 40, height: 40},
   // Lucide's play triangle sits left-of-center in its viewBox; nudge it
   // right so it looks optically centered inside the round buttons.
   playGlyphNudge: {display: 'inline-flex', transform: 'translateX(1.5px)'},
@@ -319,7 +333,8 @@ export default function AlbumTracklistPlayerTemplate() {
   const [isFollowing, setIsFollowing] = useState(false);
 
   // Responsive contract: <=900px the dock drops its volume cluster and the
-  // identity cluster relaxes; <=640px the Plays column leaves the table.
+  // identity cluster relaxes; <=640px the Plays column leaves the table and
+  // the dock stacks with 40px transport tap targets.
   const isNarrow = useMediaQuery('(max-width: 900px)');
   const isCompact = useMediaQuery('(max-width: 640px)');
 
@@ -678,108 +693,138 @@ export default function AlbumTracklistPlayerTemplate() {
       ? Volume1Icon
       : Volume2Icon;
 
-  const dock = (
+  // Current track identity: dock-left on desktop, top row when stacked.
+  const dockIdentity = (
+    <HStack gap={3} vAlign="center">
+      <CoverArt size={48} />
+      <StackItem size="fill" style={styles.truncate}>
+        <VStack gap={0}>
+          <Text type="body" weight="semibold" maxLines={1}>
+            {currentTrack.title}
+          </Text>
+          <Text type="supporting" color="secondary" maxLines={1}>
+            {ARTIST_NAME}
+          </Text>
+        </VStack>
+      </StackItem>
+      {heartFor(currentTrack)}
+    </HStack>
+  );
+
+  // Transport row. <=640px the four `sm` controls take a 40px tap-target
+  // override so every dock control matches the play/pause button.
+  const transportTouch = isCompact ? styles.dockTransportTouch : undefined;
+  const dockTransport = (
+    <HStack gap={1} hAlign="center" vAlign="center">
+      <ToggleButton
+        label="Shuffle"
+        isIconOnly
+        size="sm"
+        icon={<Icon icon={ShuffleIcon} size="sm" color="inherit" />}
+        isPressed={isShuffling}
+        onPressedChange={setIsShuffling}
+        tooltip={isShuffling ? 'Shuffle on' : 'Shuffle off'}
+        style={transportTouch}
+      />
+      <IconButton
+        label="Previous track"
+        tooltip="Previous track"
+        icon={<Icon icon={SkipBackIcon} size="sm" color="inherit" />}
+        variant="ghost"
+        size="sm"
+        isDisabled={isAtStart && !hasRepeat}
+        onClick={goPrev}
+        style={transportTouch}
+      />
+      <IconButton
+        label={isPlaying ? 'Pause' : 'Play'}
+        tooltip={
+          isPlaying
+            ? `Pause · ${currentTrack.title}`
+            : `Play · ${currentTrack.title}`
+        }
+        icon={
+          isPlaying ? (
+            <Icon icon={PauseIcon} size="sm" color="inherit" />
+          ) : (
+            <span style={styles.playGlyphNudge}>
+              <Icon icon={PlayIcon} size="sm" color="inherit" />
+            </span>
+          )
+        }
+        variant="primary"
+        style={styles.dockPlayButton}
+        onClick={() => setIsPlaying(prev => !prev)}
+      />
+      <IconButton
+        label="Next track"
+        tooltip="Next track"
+        icon={<Icon icon={SkipForwardIcon} size="sm" color="inherit" />}
+        variant="ghost"
+        size="sm"
+        isDisabled={isAtEnd && !hasRepeat}
+        onClick={goNext}
+        style={transportTouch}
+      />
+      <ToggleButton
+        label="Repeat album"
+        isIconOnly
+        size="sm"
+        icon={<Icon icon={Repeat2Icon} size="sm" color="inherit" />}
+        isPressed={hasRepeat}
+        onPressedChange={setHasRepeat}
+        tooltip={hasRepeat ? 'Repeat on' : 'Repeat off'}
+        style={transportTouch}
+      />
+    </HStack>
+  );
+
+  const dockScrub = (
+    <HStack gap={2} vAlign="center">
+      <Text type="supporting" color="secondary" hasTabularNumbers>
+        {formatTime(scrubValue)}
+      </Text>
+      <StackItem size="fill">
+        <Slider
+          label={`Seek within ${currentTrack.title}`}
+          isLabelHidden
+          min={0}
+          max={currentTrack.durationSec}
+          step={1}
+          value={scrubValue}
+          onChange={setElapsedSec}
+          formatValue={formatTime}
+          width="100%"
+        />
+      </StackItem>
+      <Text type="supporting" color="secondary" hasTabularNumbers>
+        {formatTime(currentTrack.durationSec)}
+      </Text>
+    </HStack>
+  );
+
+  const dock = isCompact ? (
+    // <=640px: single-row can't hold identity plus five 40px transport
+    // controls, so the dock stacks and the footer height goes auto.
+    <div style={styles.dockCompact}>
+      <VStack gap={2}>
+        {dockIdentity}
+        {dockTransport}
+        {dockScrub}
+      </VStack>
+    </div>
+  ) : (
     <div style={styles.dock}>
       {/* Left cluster: current track identity (280px, relaxes <=900px). */}
       <div style={isNarrow ? styles.dockIdentityNarrow : styles.dockIdentityWide}>
-        <HStack gap={3} vAlign="center">
-          <CoverArt size={48} />
-          <StackItem size="fill" style={styles.truncate}>
-            <VStack gap={0}>
-              <Text type="body" weight="semibold" maxLines={1}>
-                {currentTrack.title}
-              </Text>
-              <Text type="supporting" color="secondary" maxLines={1}>
-                {ARTIST_NAME}
-              </Text>
-            </VStack>
-          </StackItem>
-          {heartFor(currentTrack)}
-        </HStack>
+        {dockIdentity}
       </div>
 
       {/* Center cluster: transport + scrub. */}
       <div style={styles.dockCenter}>
         <VStack gap={1}>
-          <HStack gap={1} hAlign="center" vAlign="center">
-            <ToggleButton
-              label="Shuffle"
-              isIconOnly
-              size="sm"
-              icon={<Icon icon={ShuffleIcon} size="sm" color="inherit" />}
-              isPressed={isShuffling}
-              onPressedChange={setIsShuffling}
-              tooltip={isShuffling ? 'Shuffle on' : 'Shuffle off'}
-            />
-            <IconButton
-              label="Previous track"
-              tooltip="Previous track"
-              icon={<Icon icon={SkipBackIcon} size="sm" color="inherit" />}
-              variant="ghost"
-              size="sm"
-              isDisabled={isAtStart && !hasRepeat}
-              onClick={goPrev}
-            />
-            <IconButton
-              label={isPlaying ? 'Pause' : 'Play'}
-              tooltip={
-                isPlaying
-                  ? `Pause · ${currentTrack.title}`
-                  : `Play · ${currentTrack.title}`
-              }
-              icon={
-                isPlaying ? (
-                  <Icon icon={PauseIcon} size="sm" color="inherit" />
-                ) : (
-                  <span style={styles.playGlyphNudge}>
-                    <Icon icon={PlayIcon} size="sm" color="inherit" />
-                  </span>
-                )
-              }
-              variant="primary"
-              style={styles.dockPlayButton}
-              onClick={() => setIsPlaying(prev => !prev)}
-            />
-            <IconButton
-              label="Next track"
-              tooltip="Next track"
-              icon={<Icon icon={SkipForwardIcon} size="sm" color="inherit" />}
-              variant="ghost"
-              size="sm"
-              isDisabled={isAtEnd && !hasRepeat}
-              onClick={goNext}
-            />
-            <ToggleButton
-              label="Repeat album"
-              isIconOnly
-              size="sm"
-              icon={<Icon icon={Repeat2Icon} size="sm" color="inherit" />}
-              isPressed={hasRepeat}
-              onPressedChange={setHasRepeat}
-              tooltip={hasRepeat ? 'Repeat on' : 'Repeat off'}
-            />
-          </HStack>
-          <HStack gap={2} vAlign="center">
-            <Text type="supporting" color="secondary" hasTabularNumbers>
-              {formatTime(scrubValue)}
-            </Text>
-            <StackItem size="fill">
-              <Slider
-                label={`Seek within ${currentTrack.title}`}
-                isLabelHidden
-                min={0}
-                max={currentTrack.durationSec}
-                step={1}
-                value={scrubValue}
-                onChange={setElapsedSec}
-                formatValue={formatTime}
-                width="100%"
-              />
-            </StackItem>
-            <Text type="supporting" color="secondary" hasTabularNumbers>
-              {formatTime(currentTrack.durationSec)}
-            </Text>
-          </HStack>
+          {dockTransport}
+          {dockScrub}
         </VStack>
       </div>
 
@@ -842,7 +887,11 @@ export default function AlbumTracklistPlayerTemplate() {
         </LayoutContent>
       }
       footer={
-        <LayoutFooter hasDivider padding={0} height={80} label="Now playing">
+        <LayoutFooter
+          hasDivider
+          padding={0}
+          height={isCompact ? undefined : 80}
+          label="Now playing">
           {dock}
         </LayoutFooter>
       }

@@ -40,6 +40,10 @@
  *   truncating (flexWrap on the bar, flexShrink 0 on the send slot).
  * - Suggestion pills and attachment chips wrap; the queued tray rows keep
  *   their status Badge and actions and let the message text truncate.
+ * - <=720px: every tap control (attach/mention IconButtons, suggestion
+ *   pills, Send/Queue/Force stop, and the queue-row Send/Retry/Remove
+ *   actions) grows to a 40px hit target via a style override; the "sm"
+ *   glyphs and labels are unchanged, so desktop renders identically.
  *
  * Container policy (anatomy-gallery archetype): every specimen is a Card
  * (rounded, soft border) so ring states read against the page background;
@@ -53,6 +57,7 @@
 
 import {useState, type CSSProperties, type ReactNode} from 'react';
 
+import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
   HStack,
   Layout,
@@ -108,6 +113,11 @@ const styles: Record<string, CSSProperties> = {
   // Control bar wraps to two rows on narrow widths instead of truncating.
   controlBar: {flexWrap: 'wrap', rowGap: 'var(--spacing-2)'},
   sendSlot: {flexShrink: 0},
+  // <=720px: grow the touch controls to 40px hit targets (the "sm" 28px
+  // box is fine for pointers but too small for thumbs); icon glyphs and
+  // labels stay "sm" so the specimens read the same, just more padding.
+  iconTapTarget: {width: 40, height: 40},
+  buttonTapTarget: {height: 40},
   pillWrap: {flexWrap: 'wrap'},
   pill: {borderRadius: 999},
   chipWrap: {flexWrap: 'wrap'},
@@ -276,6 +286,8 @@ function ControlBar({
   endExtras?: ReactNode;
   sendSlot: ReactNode;
 }) {
+  const isCompact = useMediaQuery('(max-width: 720px)');
+  const tapTargetStyle = isCompact ? styles.iconTapTarget : undefined;
   return (
     <HStack gap={2} vAlign="center" style={styles.controlBar}>
       <IconButton
@@ -284,6 +296,7 @@ function ControlBar({
         icon={<Icon icon={PaperclipIcon} size="sm" color="inherit" />}
         variant="ghost"
         size="sm"
+        style={tapTargetStyle}
         onClick={() => {}}
       />
       {mentionSlot ?? (
@@ -293,6 +306,7 @@ function ControlBar({
           icon={<Icon icon={AtSignIcon} size="sm" color="inherit" />}
           variant="ghost"
           size="sm"
+          style={tapTargetStyle}
           onClick={() => {}}
         />
       )}
@@ -309,6 +323,7 @@ function ControlBar({
 function IdleSpecimen() {
   const [draft, setDraft] = useState('');
   const [suggestions, setSuggestions] = useState(IDLE_SUGGESTIONS);
+  const isCompact = useMediaQuery('(max-width: 720px)');
 
   return (
     <Specimen
@@ -323,7 +338,11 @@ function IdleSpecimen() {
                 label={suggestion.label}
                 variant="secondary"
                 size="sm"
-                style={styles.pill}
+                style={
+                  isCompact
+                    ? {...styles.pill, ...styles.buttonTapTarget}
+                    : styles.pill
+                }
                 onClick={() =>
                   setSuggestions(prev =>
                     prev.filter(item => item.id !== suggestion.id),
@@ -380,6 +399,7 @@ function IdleSpecimen() {
               <Button
                 label="Send"
                 size="sm"
+                style={isCompact ? styles.buttonTapTarget : undefined}
                 isDisabled={draft.trim().length === 0}
                 onClick={() => setDraft('')}
               />
@@ -397,6 +417,7 @@ function SlashCommandSpecimen() {
   // Removing the chip cancels the command: ring, lock, and spinner clear.
   const [hasCommand, setHasCommand] = useState(true);
   const [draft, setDraft] = useState('');
+  const isCompact = useMediaQuery('(max-width: 720px)');
 
   return (
     <Specimen
@@ -445,6 +466,7 @@ function SlashCommandSpecimen() {
             <Button
               label="Send"
               size="sm"
+              style={isCompact ? styles.buttonTapTarget : undefined}
               isDisabled={hasCommand || draft.trim().length === 0}
               onClick={() => setDraft('')}
             />
@@ -491,6 +513,7 @@ function MentionRow({
 
 function MentionSpecimen() {
   const [draft, setDraft] = useState('Loop in @');
+  const isCompact = useMediaQuery('(max-width: 720px)');
 
   const mentionPopover = (
     <Popover
@@ -538,6 +561,7 @@ function MentionSpecimen() {
         icon={<Icon icon={AtSignIcon} size="sm" color="inherit" />}
         variant="secondary"
         size="sm"
+        style={isCompact ? styles.iconTapTarget : undefined}
       />
     </Popover>
   );
@@ -561,6 +585,7 @@ function MentionSpecimen() {
             <Button
               label="Send"
               size="sm"
+              style={isCompact ? styles.buttonTapTarget : undefined}
               isDisabled={draft.trim().length === 0}
               onClick={() => setDraft('')}
             />
@@ -575,16 +600,19 @@ function MentionSpecimen() {
 
 function QueueRowItem({
   row,
+  isCompact,
   onSend,
   onRetry,
   onRemove,
 }: {
   row: QueueRow;
+  isCompact: boolean;
   onSend: (id: string) => void;
   onRetry: (id: string) => void;
   onRemove: (id: string) => void;
 }) {
   const badge = QUEUE_BADGE[row.status];
+  const tapTargetStyle = isCompact ? styles.iconTapTarget : undefined;
   return (
     <HStack gap={2} vAlign="center" style={styles.trayRow}>
       {row.status === 'sending' ? (
@@ -613,6 +641,7 @@ function QueueRowItem({
           label="Send"
           variant="secondary"
           size="sm"
+          style={isCompact ? styles.buttonTapTarget : undefined}
           icon={
             <Icon icon={SendIcon} size="sm" color="inherit" />
           }
@@ -626,6 +655,7 @@ function QueueRowItem({
           icon={<Icon icon={RefreshCwIcon} size="sm" color="inherit" />}
           variant="ghost"
           size="sm"
+          style={tapTargetStyle}
           onClick={() => onRetry(row.id)}
         />
       )}
@@ -636,6 +666,7 @@ function QueueRowItem({
           icon={<Icon icon={XIcon} size="sm" color="inherit" />}
           variant="ghost"
           size="sm"
+          style={tapTargetStyle}
           onClick={() => onRemove(row.id)}
         />
       )}
@@ -646,6 +677,7 @@ function QueueRowItem({
 function QueuedTraySpecimen() {
   const [rows, setRows] = useState(INITIAL_QUEUE);
   const [draft, setDraft] = useState('');
+  const isCompact = useMediaQuery('(max-width: 720px)');
 
   const sendNow = (id: string) => {
     setRows(prev => prev.filter(row => row.id !== id));
@@ -683,6 +715,7 @@ function QueuedTraySpecimen() {
               <VStack gap={0} key={row.id}>
                 <QueueRowItem
                   row={row}
+                  isCompact={isCompact}
                   onSend={sendNow}
                   onRetry={retry}
                   onRemove={remove}
@@ -712,6 +745,7 @@ function QueuedTraySpecimen() {
                 label="Queue"
                 variant="secondary"
                 size="sm"
+                style={isCompact ? styles.buttonTapTarget : undefined}
                 isDisabled={draft.trim().length === 0}
                 onClick={() => setDraft('')}
               />
@@ -727,6 +761,7 @@ function QueuedTraySpecimen() {
 
 function DragOverSpecimen() {
   const [pendingFiles, setPendingFiles] = useState(['trace.json']);
+  const isCompact = useMediaQuery('(max-width: 720px)');
 
   return (
     <Specimen
@@ -761,7 +796,14 @@ function DragOverSpecimen() {
           </VStack>
         </div>
         <ControlBar
-          sendSlot={<Button label="Send" size="sm" isDisabled />}
+          sendSlot={
+            <Button
+              label="Send"
+              size="sm"
+              style={isCompact ? styles.buttonTapTarget : undefined}
+              isDisabled
+            />
+          }
         />
       </ComposerCard>
     </Specimen>
@@ -772,6 +814,7 @@ function DragOverSpecimen() {
 
 function ForceStopSpecimen() {
   const [isDialogOpen, setIsDialogOpen] = useState(true);
+  const isCompact = useMediaQuery('(max-width: 720px)');
 
   return (
     <Specimen
@@ -806,6 +849,7 @@ function ForceStopSpecimen() {
                 label="Force stop"
                 variant="destructive"
                 size="sm"
+                style={isCompact ? styles.buttonTapTarget : undefined}
                 icon={<Icon icon={OctagonXIcon} size="sm" color="inherit" />}
                 onClick={() => setIsDialogOpen(true)}
               />

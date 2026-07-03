@@ -34,6 +34,9 @@
  *   detail content in a Dialog instead.
  * - <=900px: the filter rail collapses behind a filters IconButton in the
  *   header; toggling it docks the rail back in.
+ * - <=640px: the "8 memories on file" header caption hides and the node
+ *   search trades its fixed 280px for a flexible share (flex 1 1 140px,
+ *   minWidth 0), so the title, rail toggle, and search fit a phone width.
  *
  * Container policy (graph-browser archetype): dense data renders as rows —
  * an edge-to-edge memory list grouped by fact type and a relations Table.
@@ -125,6 +128,9 @@ const styles: Record<string, CSSProperties> = {
   entityWrap: {flexWrap: 'wrap'},
   dialogBody: {paddingBottom: 'var(--spacing-2)'},
   headerSearch: {width: 280},
+  // <=640px: the fixed 280px search would starve the title block, so the
+  // search flexes against the remaining header width instead.
+  headerSearchCompact: {flex: '1 1 140px', minWidth: 0},
 };
 
 // ============= DATA =============
@@ -803,9 +809,12 @@ export default function MemoryRelationExplorerTemplate() {
   const [isRailOpen, setIsRailOpen] = useState(false);
 
   // Responsive contract: detail panel hides <=1200px (Dialog takes over);
-  // the filter rail collapses behind a header toggle <=900px.
+  // the filter rail collapses behind a header toggle <=900px. <=640px the
+  // header caption drops and the node search gives up its fixed 280px so
+  // the title, rail toggle, and search all fit a phone width.
   const hasDetailPanel = !useMediaQuery('(max-width: 1200px)');
   const isRailCollapsed = useMediaQuery('(max-width: 900px)');
+  const isCompact = useMediaQuery('(max-width: 640px)');
 
   const hasActiveFilters =
     FACT_TYPES.some(type => typesOn[type] !== DEFAULT_TYPES_ON[type]) ||
@@ -978,12 +987,21 @@ export default function MemoryRelationExplorerTemplate() {
               <StackItem size="fill">
                 <HStack gap={2} vAlign="center">
                   <Heading level={1}>Memory</Heading>
-                  <Text type="supporting" color="secondary" hasTabularNumbers>
-                    {MEMORY_NODES.length} memories on file
-                  </Text>
+                  {/* <=640px: the caption cedes its width to the search. */}
+                  {!isCompact && (
+                    <Text
+                      type="supporting"
+                      color="secondary"
+                      hasTabularNumbers>
+                      {MEMORY_NODES.length} memories on file
+                    </Text>
+                  )}
                 </HStack>
               </StackItem>
-              <div style={styles.headerSearch}>
+              <div
+                style={
+                  isCompact ? styles.headerSearchCompact : styles.headerSearch
+                }>
                 <TextInput
                   label="Search nodes"
                   isLabelHidden

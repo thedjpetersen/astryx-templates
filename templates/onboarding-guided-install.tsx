@@ -30,10 +30,14 @@
  * Responsive contract:
  * - Column: maxWidth 512, centered, full-width with 16px gutters below
  *   640px (the gutters are constant — only the max width ever binds).
- * - Step circles stay 20px at every width; their text labels hide below
- *   480px leaving numbers/checks only (Tooltips still name each step).
+ * - Step circles stay 20px at every width; below 480px the indicator
+ *   drops out of the card header onto its own full-width row so the
+ *   heading never squeezes beside it (Tooltips still name each step).
  * - Copy-command blocks wrap with break-all so long proxy exports never
- *   force horizontal scroll; the copy IconButton keeps intrinsic size.
+ *   force horizontal scroll.
+ * - Below 480px the sm wizard controls (copy IconButtons, Check now,
+ *   footer Back/Continue) grow to 40px hit targets; glyphs and labels
+ *   stay "sm" so the card reads the same, just with more padding.
  * - Platform SelectableCards sit side by side above 480px and stack
  *   vertically below it.
  */
@@ -167,6 +171,11 @@ const styles: Record<string, CSSProperties> = {
   platformCards: {
     width: '100%',
   },
+  // <=480px: grow the sm wizard controls to 40px hit targets (the 28px
+  // "sm" box is fine for pointers but too small for thumbs); icon glyphs
+  // and labels stay "sm" so the card reads the same.
+  iconTapTarget: {width: 40, height: 40},
+  buttonTapTarget: {height: 40},
 };
 
 // ============= DATA =============
@@ -311,16 +320,10 @@ function stepCircleStyle(state: StepState): CSSProperties {
 /**
  * Four 20px numbered circles joined by hairline connectors. Passed steps
  * show a green Check and turn their trailing connector green; the active
- * step is the accent-filled number. Labels hide below 480px — Tooltips
+ * step is the accent-filled number and carries its text label. Tooltips
  * keep every circle named.
  */
-function StepIndicator({
-  states,
-  showLabels,
-}: {
-  states: StepState[];
-  showLabels: boolean;
-}) {
+function StepIndicator({states}: {states: StepState[]}) {
   return (
     <HStack gap={1} vAlign="center">
       {states.map((state, index) => {
@@ -338,7 +341,7 @@ function StepIndicator({
                 )}
               </div>
             </Tooltip>
-            {showLabels && state === 'active' && (
+            {state === 'active' && (
               <Text type="supporting" size="sm">
                 {label}
               </Text>
@@ -371,11 +374,13 @@ function CopyCommandBlock({
   title,
   command,
   isCopied,
+  isNarrow,
   onCopy,
 }: {
   title: string;
   command: string;
   isCopied: boolean;
+  isNarrow: boolean;
   onCopy: () => void;
 }) {
   return (
@@ -411,6 +416,7 @@ function CopyCommandBlock({
           }
           variant="ghost"
           size="sm"
+          style={isNarrow ? styles.iconTapTarget : undefined}
           onClick={onCopy}
         />
       </HStack>
@@ -465,10 +471,10 @@ export default function OnboardingGuidedInstallTemplate() {
   );
   const [isConnected, setIsConnected] = useState(false);
 
-  // Below 480px the platform cards stack vertically and the step labels
-  // hide (circles stay 20px everywhere; Tooltips keep steps named).
+  // Below 480px the platform cards stack vertically, the step indicator
+  // drops onto its own row (circles stay 20px everywhere), and the sm
+  // wizard controls grow to 40px hit targets.
   const isNarrow = useMediaQuery('(max-width: 480px)');
-  const showStepLabels = !isNarrow;
   const stackPlatformCards = isNarrow;
 
   const markCopied = (id: string) => {
@@ -513,6 +519,7 @@ export default function OnboardingGuidedInstallTemplate() {
         label="Check now"
         variant="ghost"
         size="sm"
+        style={isNarrow ? styles.buttonTapTarget : undefined}
         onClick={() => setIsConnected(true)}
       />
     </HStack>
@@ -552,24 +559,27 @@ export default function OnboardingGuidedInstallTemplate() {
               {/* ===== Wizard card ===== */}
               <Card padding={5}>
                 <VStack gap={4}>
-                  {/* Header: icon tile + title left, step circles right. */}
-                  <HStack gap={3} vAlign="center">
-                    <div style={styles.brandTile}>
-                      <Icon icon={ServerIcon} size="sm" color="inherit" />
-                    </div>
-                    <StackItem size="fill">
-                      <VStack gap={0}>
-                        <Heading level={2}>Connect a Machine</Heading>
-                        <Text type="supporting" color="secondary">
-                          Run the agent where your code lives
-                        </Text>
-                      </VStack>
-                    </StackItem>
-                    <StepIndicator
-                      states={stepStates}
-                      showLabels={showStepLabels}
-                    />
-                  </HStack>
+                  {/* Header: icon tile + title left, step circles right.
+                      Below 480px the indicator drops onto its own row so
+                      the heading keeps its full width instead of
+                      squeezing beside ~152px of circles. */}
+                  <VStack gap={2}>
+                    <HStack gap={3} vAlign="center">
+                      <div style={styles.brandTile}>
+                        <Icon icon={ServerIcon} size="sm" color="inherit" />
+                      </div>
+                      <StackItem size="fill">
+                        <VStack gap={0}>
+                          <Heading level={2}>Connect a Machine</Heading>
+                          <Text type="supporting" color="secondary">
+                            Run the agent where your code lives
+                          </Text>
+                        </VStack>
+                      </StackItem>
+                      {!isNarrow && <StepIndicator states={stepStates} />}
+                    </HStack>
+                    {isNarrow && <StepIndicator states={stepStates} />}
+                  </VStack>
 
                   <Divider />
 
@@ -623,12 +633,14 @@ export default function OnboardingGuidedInstallTemplate() {
                       title="1. Install the CLI"
                       command={INSTALL_COMMAND[platform]}
                       isCopied={copied.has('install')}
+                      isNarrow={isNarrow}
                       onCopy={() => markCopied('install')}
                     />
                     <CopyCommandBlock
                       title="2. Start the node"
                       command={RUN_COMMAND}
                       isCopied={copied.has('run')}
+                      isNarrow={isNarrow}
                       onCopy={() => markCopied('run')}
                     />
 
@@ -669,12 +681,14 @@ export default function OnboardingGuidedInstallTemplate() {
                       label="Back"
                       variant="ghost"
                       size="sm"
+                      style={isNarrow ? styles.buttonTapTarget : undefined}
                       icon={<Icon icon="chevronLeft" size="sm" />}
                     />
                     <StackItem size="fill" />
                     <Button
                       label={isConnected ? 'Continue' : 'Waiting for node…'}
                       size="sm"
+                      style={isNarrow ? styles.buttonTapTarget : undefined}
                       isDisabled={!isConnected}
                       tooltip={
                         isConnected

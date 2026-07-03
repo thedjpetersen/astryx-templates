@@ -26,6 +26,9 @@
  *   content area reclaims the width.
  * - <=768px: AppShell's automatic mobile nav takes over — the sidebar leaves
  *   the flow and reopens as a hamburger-triggered drawer with the same nav.
+ * - Page header: wrap="wrap" on the action row — on wide viewports the
+ *   Refresh / New conversation buttons sit beside the title; on narrow
+ *   viewports they wrap below it instead of squeezing the title column.
  * - Setup-task cards: Grid columns={{minWidth: 260, max: 3}} — 3-up on
  *   wide viewports, reflowing to 2-up and 1-up as the viewport narrows.
  * - Content column: max width 880px, centered; the page scrolls inside the
@@ -317,8 +320,10 @@ export default function ShellLeftSidebarTemplate() {
     <AppShell height="fill" contentPadding={0} sideNav={sideNav}>
       <div style={styles.page}>
         <VStack gap={6}>
-          {/* Page header — title tracks the active nav item. */}
-          <HStack gap={3} vAlign="center">
+          {/* Page header — title tracks the active nav item. wrap="wrap"
+              lets the action buttons drop below the title on narrow
+              viewports instead of squeezing the fill title column. */}
+          <HStack gap={3} vAlign="center" wrap="wrap">
             <StackItem size="fill">
               <VStack gap={1}>
                 <Heading level={1}>{page.title}</Heading>

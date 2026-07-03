@@ -49,7 +49,10 @@
  *   drops its label to icon-only width pressure relief; card widths stay
  *   fixed — rails simply show fewer cards and keep scrolling.
  * - Hovering any card elevates it (scale + white ring) at every width;
- *   touch devices simply never enter the hover state.
+ *   touch devices simply never enter the hover state. The poster
+ *   add-to-list ListToggle is always mounted (so it stays keyboard
+ *   reachable) but fades in on hover/focus for pointers with hover; on
+ *   "(hover: none)" touch pointers it is simply always visible.
  *
  * Container policy (merchandising-browse archetype): frame-first chrome with
  * custom dark rails — no Cards; the poster surfaces are gradient divs keyed
@@ -269,7 +272,16 @@ const styles: Record<string, CSSProperties> = {
     color: PAGE_TEXT,
     textShadow: '0 1px 2px rgba(0, 0, 0, 0.65)',
   },
-  listToggleOverlay: {position: 'absolute', top: 6, right: 6, zIndex: 3},
+  listToggleOverlay: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    zIndex: 3,
+    transition: 'opacity 160ms ease',
+  },
+  // Hover-capable pointers reveal the toggle on hover/focus; it stays
+  // mounted (keyboard reachable) but invisible and click-transparent.
+  listToggleOverlayHidden: {opacity: 0, pointerEvents: 'none'},
   posterBadgeOverlay: {position: 'absolute', top: 6, left: 6, zIndex: 3},
   caption: {paddingTop: 'var(--spacing-1)', color: PAGE_TEXT_DIM},
   matchCaption: {color: '#4ADE80'},
@@ -621,13 +633,20 @@ function PosterCard({
   onHover,
   isInList,
   onToggleList,
+  isTouch,
 }: {
   entry: PosterEntry;
   isHovered: boolean;
   onHover: (id: string | null) => void;
   isInList: boolean;
   onToggleList: (id: string, next: boolean) => void;
+  /** "(hover: none)" pointers keep the add-to-list toggle always visible. */
+  isTouch: boolean;
 }) {
+  // Keyboard path: the toggle is always mounted, so tabbing to it must
+  // reveal it even though the card never enters the hover state.
+  const [isToggleFocused, setIsToggleFocused] = useState(false);
+  const showListToggle = isTouch || isHovered || isToggleFocused;
   return (
     <div
       style={{
@@ -647,15 +666,19 @@ function PosterCard({
             />
           </div>
         )}
-        {isHovered && (
-          <div style={styles.listToggleOverlay}>
-            <ListToggle
-              isInList={isInList}
-              onToggle={next => onToggleList(entry.id, next)}
-              size="sm"
-            />
-          </div>
-        )}
+        <div
+          style={{
+            ...styles.listToggleOverlay,
+            ...(showListToggle ? undefined : styles.listToggleOverlayHidden),
+          }}
+          onFocus={() => setIsToggleFocused(true)}
+          onBlur={() => setIsToggleFocused(false)}>
+          <ListToggle
+            isInList={isInList}
+            onToggle={next => onToggleList(entry.id, next)}
+            size="sm"
+          />
+        </div>
       </div>
       {entry.match != null && (
         <div style={styles.caption}>
@@ -784,6 +807,8 @@ export default function StreamingBrowseHomeTemplate() {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   const isCompact = useMediaQuery('(max-width: 900px)');
+  // Touch pointers never hover, so poster add-to-list toggles stay visible.
+  const isTouch = useMediaQuery('(hover: none)');
 
   const setListMembership = (id: string, next: boolean) => {
     setMyList(prev => (next ? [...prev, id] : prev.filter(item => item !== id)));
@@ -804,6 +829,7 @@ export default function StreamingBrowseHomeTemplate() {
       onHover={setHoveredId}
       isInList={myList.includes(entry.id)}
       onToggleList={setListMembership}
+      isTouch={isTouch}
     />
   );
 
@@ -902,6 +928,7 @@ export default function StreamingBrowseHomeTemplate() {
                       onHover={setHoveredId}
                       isInList={myList.includes(entry.id)}
                       onToggleList={setListMembership}
+                      isTouch={isTouch}
                     />
                   </HStack>
                 ))}

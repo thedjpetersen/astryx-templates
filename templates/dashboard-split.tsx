@@ -17,6 +17,9 @@
  * - Split: Grid columns={{minWidth: 400, repeat: 'fit'}} — the chart pane
  *   and the stat rail render as equal halves side by side when the viewport
  *   fits two 400px tracks, and stack chart-first on narrower viewports.
+ *   At <=640px the Grid switches to a single fluid column (columns={1}) so
+ *   the stacked track drops the 400px floor and never forces horizontal
+ *   panning at phone widths.
  * - Chart Card: the chart body keeps minWidth 0 so the SVG scales down with
  *   its pane instead of forcing horizontal overflow; the range switcher
  *   stays pinned right of the card title via StackItem fill.
@@ -50,6 +53,7 @@ import {
   SegmentedControl,
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
+import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {ChartV2 as Chart, ChartGrid, ChartAxis, line} from '@astryxdesign/lab';
 import {RefreshCwIcon} from 'lucide-react';
 
@@ -271,6 +275,9 @@ function PlanShareRow({row}: {row: PlanShare}) {
 export default function DashboardSplitTemplate() {
   const [range, setRange] = useState<RangeKey>('30d');
   const fixture = RANGE_FIXTURES[range];
+  // At phone widths the auto-fit track's 400px floor would force horizontal
+  // panning, so drop to a single fluid column instead.
+  const isCompact = useMediaQuery('(max-width: 640px)');
 
   return (
     <Layout
@@ -298,8 +305,12 @@ export default function DashboardSplitTemplate() {
       content={
         <LayoutContent padding={6}>
           {/* Two-pane split: chart half + stat rail half. Grid keeps the
-              halves equal and stacks them chart-first on narrow viewports. */}
-          <Grid columns={{minWidth: 400, repeat: 'fit'}} gap={4}>
+              halves equal and stacks them chart-first on narrow viewports;
+              at compact widths a single fluid column replaces the 400px
+              minimum track so nothing overflows horizontally. */}
+          <Grid
+            columns={isCompact ? 1 : {minWidth: 400, repeat: 'fit'}}
+            gap={4}>
             {/* Left half — primary time-series chart */}
             <Card>
               <VStack gap={1}>

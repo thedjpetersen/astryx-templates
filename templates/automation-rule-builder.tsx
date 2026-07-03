@@ -31,7 +31,12 @@
  * Responsive contract:
  * - > 900px: hook list panel 320 | detail content.
  * - <= 900px: the panel is hidden; a hook Selector sits above the detail
- *   so selection survives the collapse.
+ *   so selection survives the collapse, and the per-hook enable Switch
+ *   (otherwise only in the panel rows) moves into the detail heading row.
+ * - <= 900px: the metadata grid drops from two fixed columns to 'multi'
+ *   auto-fill so value cells never squeeze below readable width.
+ * - <= 900px: the clickable scope pills and add-condition type chips get
+ *   a 40px min tap height; desktop keeps the compact sm pills.
  * - Trigger row value previews truncate at ~200px (maxLines={1} inside a
  *   fixed max-width cell); the six type pill chips wrap to two rows.
  * - The script CodeBlock caps at 240px and scrolls internally.
@@ -117,6 +122,9 @@ const styles: Record<string, CSSProperties> = {
   },
   scriptIcon: {display: 'inline-flex', color: '#059669'},
   narrowSelectorRow: {paddingBottom: 'var(--spacing-3)'},
+  // Touch targets: clickable pills grow to ~40px tall on narrow so taps
+  // land; minHeight wins over the Token's fixed sm height.
+  narrowTapPill: {minHeight: 40},
 };
 
 // ============= DATA =============
@@ -479,6 +487,7 @@ function TriggerRow({
   mode,
   rawValue,
   isOpen,
+  isNarrow,
   onOpenChange,
   onModeChange,
   onRawValueChange,
@@ -488,6 +497,8 @@ function TriggerRow({
   /** Comma-separated editable source for the value Tokens + preview. */
   rawValue: string;
   isOpen: boolean;
+  /** Narrow viewports get ~40px tap heights on the scope pills. */
+  isNarrow: boolean;
   onOpenChange: (isOpen: boolean) => void;
   onModeChange: (mode: TriggerMode) => void;
   onRawValueChange: (raw: string) => void;
@@ -540,6 +551,7 @@ function TriggerRow({
                     label={option}
                     size="sm"
                     color={mode === option ? meta.chip : 'default'}
+                    style={isNarrow ? styles.narrowTapPill : undefined}
                     onClick={() => onModeChange(option)}
                   />
                 ))}
@@ -705,13 +717,31 @@ export default function AutomationRuleBuilderTemplate() {
           {!enabled[selected.id] && (
             <Badge label="disabled" variant="warning" />
           )}
+          {/* The panel rows own the enable Switch on desktop; when the
+              panel collapses the toggle moves here so narrow viewports
+              can still enable/disable the hook. */}
+          {isNarrow && (
+            <>
+              <StackItem size="fill" />
+              <Switch
+                label={`Enable ${selected.name}`}
+                isLabelHidden
+                value={enabled[selected.id]}
+                onChange={value => toggleHook(selected.id, value)}
+              />
+            </>
+          )}
         </HStack>
         <Text type="supporting" color="secondary">
           {selected.description}
         </Text>
       </VStack>
 
-      <MetadataList columns={2} label={{position: 'start', width: 64}}>
+      {/* Narrow drops the two fixed columns for 'multi' auto-fill so value
+          cells keep readable width (same move as table-split-pane). */}
+      <MetadataList
+        columns={isNarrow ? 'multi' : 2}
+        label={{position: 'start', width: 64}}>
         <MetadataListItem label="Event">
           <Code>{selected.event}</Code>
         </MetadataListItem>
@@ -767,6 +797,7 @@ export default function AutomationRuleBuilderTemplate() {
                   mode={modeOverrides[condition.id] ?? condition.mode}
                   rawValue={raw}
                   isOpen={expandedTriggerId === condition.id}
+                  isNarrow={isNarrow}
                   onOpenChange={isOpen =>
                     setExpandedTriggerId(isOpen ? condition.id : null)
                   }
@@ -810,6 +841,7 @@ export default function AutomationRuleBuilderTemplate() {
                       label={meta.label}
                       size="sm"
                       color={meta.chip}
+                      style={isNarrow ? styles.narrowTapPill : undefined}
                       onClick={() => setAddType(type)}
                     />
                   </div>

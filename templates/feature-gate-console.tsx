@@ -42,11 +42,16 @@
  *
  * Responsive contract:
  * - Column: contentWidth 1120 centers the stack; KPI Grid is 3-across and
- *   wraps to 1 column below ~840px; batch Cards sit 2-across and stack.
+ *   wraps to 1 column below ~840px; batch Cards sit 2-across and stack —
+ *   at <=640px they force a single full-width column (the 420px track
+ *   minimum would otherwise overflow a phone).
+ * - Header: <=640px the Refresh and Open Sentry buttons collapse to
+ *   icon-only; labels stay as accessible names and tooltips.
  * - Telemetry Card: internal 1.4fr/0.6fr grid (chart | count lists); at
  *   <=900px it stacks to a single column, chart first.
- * - Gate Table: <=900px hides the Risk and Query columns; Gate, Health,
- *   Batch, and the Switch column survive on mobile.
+ * - Gate Table: <=900px hides the Risk and Query columns; at <=640px the
+ *   Batch column folds into the Gate cell as a Token and Health narrows,
+ *   so Gate, Health, and the Switch fit a phone without horizontal scroll.
  */
 
 import {useState, type CSSProperties} from 'react';
@@ -558,6 +563,10 @@ export default function FeatureGateConsoleTemplate() {
 
   // <=900px: telemetry grid stacks and the Risk/Query columns hide.
   const isCompact = useMediaQuery('(max-width: 900px)');
+  // <=640px: header buttons go icon-only, batch Cards force one full-width
+  // column, and the table folds Batch into the Gate cell so the Switch
+  // column stays on-screen without horizontal scroll.
+  const isMobile = useMediaQuery('(max-width: 640px)');
 
   const enabledCount = gates.filter(gate => gate.enabled).length;
 
@@ -621,6 +630,8 @@ export default function FeatureGateConsoleTemplate() {
                 label="Refresh"
                 variant="secondary"
                 size="sm"
+                isIconOnly={isMobile}
+                tooltip={isMobile ? 'Refresh' : undefined}
                 icon={<Icon icon={RefreshCwIcon} size="sm" color="inherit" />}
                 onClick={refresh}
               />
@@ -628,6 +639,8 @@ export default function FeatureGateConsoleTemplate() {
                 label="Open Sentry"
                 variant="secondary"
                 size="sm"
+                isIconOnly={isMobile}
+                tooltip={isMobile ? 'Open Sentry' : undefined}
                 icon={
                   <Icon icon={ExternalLinkIcon} size="sm" color="inherit" />
                 }
@@ -700,8 +713,12 @@ export default function FeatureGateConsoleTemplate() {
               </Card>
             </Grid>
 
-            {/* Rollout batches: enable/disable a whole wave at once. */}
-            <Grid columns={{minWidth: 420, max: 2}} gap={3}>
+            {/* Rollout batches: enable/disable a whole wave at once. The
+                420px track minimum overflows a phone, so <=640px pins a
+                single full-width column instead. */}
+            <Grid
+              columns={isMobile ? 1 : {minWidth: 420, max: 2}}
+              gap={3}>
               {BATCHES.map(batch => (
                 <BatchCard
                   key={batch.id}
@@ -802,40 +819,58 @@ export default function FeatureGateConsoleTemplate() {
                         <Text type="code" size="sm" maxLines={1}>
                           {gate.name}
                         </Text>
-                        {gate.isSaving === true ? (
-                          <Badge variant="warning" label="Saving…" />
-                        ) : (
-                          <Badge
-                            variant={gate.enabled ? 'success' : 'neutral'}
-                            label={gate.enabled ? 'Enabled' : 'Disabled'}
-                          />
-                        )}
+                        <HStack
+                          gap={1}
+                          vAlign="center"
+                          style={styles.tokenWrap}>
+                          {gate.isSaving === true ? (
+                            <Badge variant="warning" label="Saving…" />
+                          ) : (
+                            <Badge
+                              variant={gate.enabled ? 'success' : 'neutral'}
+                              label={gate.enabled ? 'Enabled' : 'Disabled'}
+                            />
+                          )}
+                          {/* <=640px: the Batch column is hidden, so the
+                              batch Token folds in here. */}
+                          {isMobile && gate.batch != null && (
+                            <Token
+                              label={BATCH_TOKEN[gate.batch].short}
+                              size="sm"
+                              color={BATCH_TOKEN[gate.batch].color}
+                            />
+                          )}
+                        </HStack>
                       </VStack>
                     ),
                   },
                   {
                     key: 'health',
                     header: 'Health',
-                    width: pixel(190),
+                    width: isMobile ? pixel(150) : pixel(190),
                     renderCell: healthCell,
                   },
-                  {
-                    key: 'batch',
-                    header: 'Batch',
-                    width: pixel(100),
-                    renderCell: gate =>
-                      gate.batch != null ? (
-                        <Token
-                          label={BATCH_TOKEN[gate.batch].short}
-                          size="sm"
-                          color={BATCH_TOKEN[gate.batch].color}
-                        />
-                      ) : (
-                        <Text type="supporting" color="secondary">
-                          —
-                        </Text>
-                      ),
-                  },
+                  ...(isMobile
+                    ? []
+                    : [
+                        {
+                          key: 'batch',
+                          header: 'Batch',
+                          width: pixel(100),
+                          renderCell: (gate: Gate) =>
+                            gate.batch != null ? (
+                              <Token
+                                label={BATCH_TOKEN[gate.batch].short}
+                                size="sm"
+                                color={BATCH_TOKEN[gate.batch].color}
+                              />
+                            ) : (
+                              <Text type="supporting" color="secondary">
+                                —
+                              </Text>
+                            ),
+                        },
+                      ]),
                   ...(isCompact
                     ? []
                     : [

@@ -26,15 +26,23 @@
  *
  * Responsive contract:
  * - Page column: maxWidth 1152, centered; the whole content area scrolls.
+ * - Header rows: the page header and the funnel Card header wrap
+ *   (wrap="wrap"), so the Selectors drop below the title when the viewport
+ *   is too narrow for one row.
  * - Stat Grid: columns={{minWidth: 190, max: 5}} — 5-up wide, reflowing to
  *   2-up below ~768px and 1-up on very narrow viewports.
  * - Funnel rows: fixed 140px label column + flexible bar track + 3 numeric
- *   columns. <=640px the label column narrows to 104px and the numeric
- *   columns collapse to two (step CVR drops; "of total" + delta stay).
+ *   columns. <=640px the label column narrows to 104px, the stage label
+ *   becomes a two-line >=40px tap target carrying "users · of-total" (the
+ *   in-bar count and the of-total + step-CVR columns drop), and only the
+ *   comparison delta column stays; the Reset link also grows to a >=40px
+ *   tap target.
  * - Cohort heatmap: sticky first column; below ~1024px the table scrolls
  *   horizontally inside its Card (fixed pixel milestone columns).
  * - Velocity strip: bars are flex children and compress evenly; labels
- *   truncate rather than wrap.
+ *   truncate rather than wrap. On hover-capable pointers the details live
+ *   in Tooltips; on touch devices ("(hover: none)") each bar is a button
+ *   and tapping it prints the details line under the strip.
  */
 
 import {useMemo, useState, type CSSProperties} from 'react';
@@ -119,6 +127,12 @@ const styles: Record<string, CSSProperties> = {
     whiteSpace: 'nowrap',
   },
   excludedLabel: {textDecorationLine: 'line-through'},
+  // <=640px the stage label Link grows to a >=40px tap target and carries a
+  // second "users · of-total" line (the in-bar count and the of-total column
+  // hide at that width, so the label cell becomes the data's home).
+  stageLinkCompact: {minHeight: 40, alignItems: 'center'},
+  // Compact-mode grow for the "Reset (n hidden)" text Link's tap target.
+  resetLinkCompact: {minHeight: 40, alignItems: 'center'},
   // Excluded rows keep the empty track (and fixed columns) so every row's
   // bar scale stays aligned; the note sits where the bar would start.
   excludedNote: {
@@ -159,6 +173,20 @@ const styles: Record<string, CSSProperties> = {
   },
   velocityLabels: {display: 'flex', gap: 'var(--spacing-2)'},
   velocityLabel: {flex: 1, minWidth: 0, textAlign: 'center'},
+  // Touch devices suppress hover Tooltips, so each velocity bar becomes an
+  // unstyled full-height button; tapping prints the details under the strip.
+  velocityTapButton: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    padding: 0,
+    border: 'none',
+    background: 'transparent',
+    font: 'inherit',
+    cursor: 'pointer',
+  },
 };
 
 // ============= DATA =============
@@ -594,14 +622,39 @@ function FunnelStageRow({
   return (
     <HStack gap={3} vAlign="center">
       <div style={{width: labelWidth, flexShrink: 0}}>
-        <Link onClick={() => onToggle(row.id)}>
-          <Text
-            type="supporting"
-            color={row.isExcluded ? 'secondary' : undefined}
-            style={row.isExcluded ? styles.excludedLabel : undefined}
-            maxLines={1}>
-            {row.label}
-          </Text>
+        <Link
+          onClick={() => onToggle(row.id)}
+          style={isCompact ? styles.stageLinkCompact : undefined}>
+          {isCompact ? (
+            <VStack gap={0}>
+              <Text
+                type="supporting"
+                color={row.isExcluded ? 'secondary' : undefined}
+                style={row.isExcluded ? styles.excludedLabel : undefined}
+                maxLines={1}>
+                {row.label}
+              </Text>
+              {/* Compact: the in-bar count and of-total column hide, so the
+                  label cell carries "users · of-total" (and grows the tap
+                  target to two lines). */}
+              <Text
+                type="supporting"
+                color="secondary"
+                size="sm"
+                style={styles.numeric}
+                maxLines={1}>
+                {row.isExcluded ? '—' : `${row.users} · ${row.ofTotal}%`}
+              </Text>
+            </VStack>
+          ) : (
+            <Text
+              type="supporting"
+              color={row.isExcluded ? 'secondary' : undefined}
+              style={row.isExcluded ? styles.excludedLabel : undefined}
+              maxLines={1}>
+              {row.label}
+            </Text>
+          )}
         </Link>
       </div>
       <StackItem size="fill" style={styles.barTrack}>
@@ -620,16 +673,20 @@ function FunnelStageRow({
               />
             )}
             <div style={{...styles.primaryBar, width: `${row.ofTotal}%`}}>
-              <span style={styles.barCount}>{row.users}</span>
+              {/* Compact tracks are too narrow to hold the count without
+                  clipping; the label cell shows it instead. */}
+              {!isCompact && <span style={styles.barCount}>{row.users}</span>}
             </div>
           </>
         )}
       </StackItem>
-      <div style={styles.colOfTotal}>
-        <Text type="supporting" color="secondary" style={styles.numeric}>
-          {row.isExcluded ? '—' : `${row.ofTotal}%`}
-        </Text>
-      </div>
+      {!isCompact && (
+        <div style={styles.colOfTotal}>
+          <Text type="supporting" color="secondary" style={styles.numeric}>
+            {row.isExcluded ? '—' : `${row.ofTotal}%`}
+          </Text>
+        </div>
+      )}
       {!isCompact && (
         <div style={styles.colCvr}>
           <Text type="supporting" color="secondary" style={styles.numeric}>
@@ -651,30 +708,52 @@ function FunnelStageRow({
   );
 }
 
-function VelocityStrip({rows}: {rows: FunnelRow[]}) {
+function velocityDetail(row: FunnelRow, index: number): string {
+  return index === 0
+    ? `${row.users} users · ${row.ofTotal}% of total — Baseline`
+    : `${row.users} users · ${row.ofTotal}% of total — Step CVR: ${row.stepCvr}%`;
+}
+
+function VelocityStrip({rows, isTouch}: {rows: FunnelRow[]; isTouch: boolean}) {
   const visible = rows.filter(row => !row.isExcluded);
+  // Touch devices never see hover Tooltips, so tapping a bar toggles a
+  // details line under the strip instead.
+  const [detailId, setDetailId] = useState<string | null>(null);
+  const detailIndex = visible.findIndex(row => row.id === detailId);
+  const detailRow = detailIndex >= 0 ? visible[detailIndex] : null;
   return (
     <VStack gap={2}>
       <div style={styles.velocityRow}>
-        {visible.map((row, index) => (
-          <div key={row.id} style={styles.velocityCol}>
-            <Tooltip
-              content={
-                index === 0
-                  ? `${row.users} users · ${row.ofTotal}% of total — Baseline`
-                  : `${row.users} users · ${row.ofTotal}% of total — Step CVR: ${row.stepCvr}%`
-              }>
-              <div
-                style={{
-                  ...styles.velocityBar,
-                  height: `${Math.max(row.ofTotal, 4)}%`,
-                  backgroundColor:
-                    index === 0 ? colors.indigo : cvrColor(row.stepCvr),
-                }}
-              />
-            </Tooltip>
-          </div>
-        ))}
+        {visible.map((row, index) => {
+          const bar = (
+            <div
+              style={{
+                ...styles.velocityBar,
+                height: `${Math.max(row.ofTotal, 4)}%`,
+                backgroundColor:
+                  index === 0 ? colors.indigo : cvrColor(row.stepCvr),
+              }}
+            />
+          );
+          return (
+            <div key={row.id} style={styles.velocityCol}>
+              {isTouch ? (
+                <button
+                  type="button"
+                  style={styles.velocityTapButton}
+                  aria-label={`${row.label}: ${velocityDetail(row, index)}`}
+                  aria-pressed={row.id === detailId}
+                  onClick={() =>
+                    setDetailId(prev => (prev === row.id ? null : row.id))
+                  }>
+                  {bar}
+                </button>
+              ) : (
+                <Tooltip content={velocityDetail(row, index)}>{bar}</Tooltip>
+              )}
+            </div>
+          );
+        })}
       </div>
       <div style={styles.velocityLabels}>
         {visible.map(row => (
@@ -685,6 +764,11 @@ function VelocityStrip({rows}: {rows: FunnelRow[]}) {
           </div>
         ))}
       </div>
+      {isTouch && detailRow != null && (
+        <Text type="supporting" color="secondary" style={styles.numeric}>
+          {detailRow.label}: {velocityDetail(detailRow, detailIndex)}
+        </Text>
+      )}
     </VStack>
   );
 }
@@ -699,9 +783,12 @@ export default function ActivationFunnelAnalyticsTemplate() {
     new Set(INITIALLY_EXCLUDED),
   );
 
-  // Responsive contract: <=640px collapses the funnel numeric columns to
-  // two (drop step CVR) and narrows the stage-label column.
+  // Responsive contract: <=640px narrows the stage-label column, moves the
+  // user count + of-total share into it, and keeps only the delta column.
   const isCompact = useMediaQuery('(max-width: 640px)');
+  // Touch devices get tap-to-reveal velocity details (Tooltips are
+  // hover-only and suppressed on "(hover: none)" pointers).
+  const isTouch = useMediaQuery('(hover: none)');
 
   const funnelRows = useMemo(() => buildFunnelRows(excluded), [excluded]);
   const showComparison = compareWith !== 'none';
@@ -769,7 +856,7 @@ export default function ActivationFunnelAnalyticsTemplate() {
       height="fill"
       header={
         <LayoutHeader hasDivider>
-          <HStack gap={3} vAlign="center">
+          <HStack gap={3} vAlign="center" wrap="wrap">
             <StackItem size="fill">
               <HStack gap={2} vAlign="center">
                 <Heading level={1}>Activation Funnel</Heading>
@@ -817,7 +904,7 @@ export default function ActivationFunnelAnalyticsTemplate() {
                   step-CVR math; ghost bars show the comparison segment. */}
               <Card>
                 <VStack gap={4}>
-                  <HStack gap={3} vAlign="center">
+                  <HStack gap={3} vAlign="center" wrap="wrap">
                     <StackItem size="fill">
                       <HStack gap={2} vAlign="center">
                         <Heading level={3}>Funnel</Heading>
@@ -827,7 +914,9 @@ export default function ActivationFunnelAnalyticsTemplate() {
                       </HStack>
                     </StackItem>
                     {hiddenCount > 0 && (
-                      <Link onClick={resetStages}>
+                      <Link
+                        onClick={resetStages}
+                        style={isCompact ? styles.resetLinkCompact : undefined}>
                         <Text type="supporting">
                           Reset ({hiddenCount} hidden)
                         </Text>
@@ -863,11 +952,13 @@ export default function ActivationFunnelAnalyticsTemplate() {
                       <HStack gap={3} vAlign="center">
                         <div style={{width: isCompact ? 104 : 140, flexShrink: 0}} />
                         <StackItem size="fill" />
-                        <div style={styles.colOfTotal}>
-                          <Text type="supporting" color="secondary" size="sm">
-                            of total
-                          </Text>
-                        </div>
+                        {!isCompact && (
+                          <div style={styles.colOfTotal}>
+                            <Text type="supporting" color="secondary" size="sm">
+                              of total
+                            </Text>
+                          </div>
+                        )}
                         {!isCompact && (
                           <div style={styles.colCvr}>
                             <Text type="supporting" color="secondary" size="sm">
@@ -935,10 +1026,12 @@ export default function ActivationFunnelAnalyticsTemplate() {
                   <HStack gap={2} vAlign="center">
                     <Heading level={3}>Milestone velocity</Heading>
                     <Text type="supporting" color="secondary">
-                      Hover a bar for users, of-total share, and step CVR
+                      {isTouch
+                        ? 'Tap a bar for users, of-total share, and step CVR'
+                        : 'Hover a bar for users, of-total share, and step CVR'}
                     </Text>
                   </HStack>
-                  <VelocityStrip rows={funnelRows} />
+                  <VelocityStrip rows={funnelRows} isTouch={isTouch} />
                 </VStack>
               </Card>
             </VStack>

@@ -33,6 +33,8 @@
  *   list inside LayoutContent (divider between), so rows keep full width.
  * - Row second lines (schedule + next run) truncate with maxLines; the
  *   toggle/warning/delete cluster never wraps or shrinks.
+ * - <= 640px: the enable toggle's hit box grows from 24px to 40px for
+ *   touch; the painted StatusDot/hollow ring inside stays 8px.
  * - AlertDialog appears via interaction: the hover delete button on any row
  *   opens it before the job is removed.
  */
@@ -116,6 +118,13 @@ const styles: Record<string, CSSProperties> = {
     background: 'transparent',
     padding: 0,
     cursor: 'pointer',
+  },
+  // <=640px: grow the toggle's hit box to 40px for thumbs (the 24px box is
+  // fine for pointers); the painted dot/ring inside stays 8px so the row
+  // reads the same.
+  dotButtonTouch: {
+    width: 40,
+    height: 40,
   },
   // Hollow ring = disabled job (filled StatusDot = enabled).
   hollowDot: {
@@ -328,12 +337,15 @@ type SaveState = 'saved' | 'saving';
 function JobRow({
   job,
   isSelected,
+  isTouch,
   onSelect,
   onToggle,
   onDeleteRequest,
 }: {
   job: ScheduledJob;
   isSelected: boolean;
+  /** <=640px: the enable toggle grows to a 40px touch hit box. */
+  isTouch: boolean;
   onSelect: (id: string) => void;
   onToggle: (id: string) => void;
   onDeleteRequest: (id: string) => void;
@@ -356,7 +368,10 @@ function JobRow({
             disabled. Toggling resorts the list (enabled-first). */}
         <button
           type="button"
-          style={styles.dotButton}
+          style={{
+            ...styles.dotButton,
+            ...(isTouch ? styles.dotButtonTouch : undefined),
+          }}
           aria-label={
             job.isEnabled ? `Disable ${job.name}` : `Enable ${job.name}`
           }
@@ -646,6 +661,8 @@ export default function ScheduledJobsManagerPage() {
   // Responsive contract: below 1024px the detail panel stacks under the
   // list instead of occupying the `end` slot.
   const isStacked = useMediaQuery('(max-width: 1024px)');
+  // <=640px: the per-row enable toggle grows to a 40px touch hit box.
+  const isTouch = useMediaQuery('(max-width: 640px)');
 
   const scoped =
     scope === 'personal' ? jobs.filter(job => job.owner === 'you') : jobs;
@@ -729,6 +746,7 @@ export default function ScheduledJobsManagerPage() {
             key={job.id}
             job={job}
             isSelected={job.id === selectedId}
+            isTouch={isTouch}
             onSelect={selectJob}
             onToggle={toggleJob}
             onDeleteRequest={setPendingDeleteId}

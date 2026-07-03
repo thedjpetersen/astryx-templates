@@ -32,6 +32,11 @@
  *   beyond 48vh.
  * - <=640px: the footer's prefix cheatsheet is hidden; the Kbd navigation
  *   hints keep the row.
+ * - <=640px TopNav: the header Search button collapses to an icon-only
+ *   IconButton (the "Search" text and mod+k Kbd are dropped) so the
+ *   tap target that reopens the palette stays on screen, and the
+ *   workspace Selector and inline nav links (Sessions/Deploys/Models/
+ *   Docs) are hidden to keep the bar from overflowing.
  * - Background session cards: Grid columns={{minWidth: 280, max: 3}} —
  *   3-up on wide viewports, reflowing to 2-up and 1-up as space narrows.
  */
@@ -61,6 +66,7 @@ import {
 import {Divider} from '@astryxdesign/core/Divider';
 import {Grid} from '@astryxdesign/core/Grid';
 import {Icon} from '@astryxdesign/core/Icon';
+import {IconButton} from '@astryxdesign/core/IconButton';
 import {Kbd} from '@astryxdesign/core/Kbd';
 import {Overlay} from '@astryxdesign/core/Overlay';
 import {Selector} from '@astryxdesign/core/Selector';
@@ -608,36 +614,53 @@ export default function CommandPaletteLauncherPage() {
             label="Workspace navigation"
             heading={<TopNavHeading heading="Waypoint" headingHref="#" />}
             startContent={
-              <>
-                <TopNavItem label="Sessions" href="#" isSelected />
-                <TopNavItem label="Deploys" href="#" />
-                <TopNavItem label="Models" href="#" />
-                <TopNavItem label="Docs" href="#" />
-              </>
+              // Phone fallback: four labeled links plus the end cluster
+              // cannot fit a 375px bar, and endContent (the only tap target
+              // that reopens the palette) must stay on screen.
+              isNarrow ? undefined : (
+                <>
+                  <TopNavItem label="Sessions" href="#" isSelected />
+                  <TopNavItem label="Deploys" href="#" />
+                  <TopNavItem label="Models" href="#" />
+                  <TopNavItem label="Docs" href="#" />
+                </>
+              )
             }
             endContent={
               <HStack gap={3} vAlign="center">
-                <Selector
-                  label="Workspace"
-                  isLabelHidden
-                  size="sm"
-                  options={WORKSPACE_OPTIONS}
-                  value={workspace}
-                  onChange={setWorkspace}
-                />
-                <Button
-                  label="Search sessions and commands"
-                  variant="secondary"
-                  size="sm"
-                  icon={<Icon icon={SearchIcon} size="sm" />}
-                  endContent={
-                    <HStack gap={2} vAlign="center">
-                      <Text type="inherit">Search</Text>
-                      <Kbd keys="mod+k" />
-                    </HStack>
-                  }
-                  onClick={() => setIsPaletteOpen(true)}
-                />
+                {!isNarrow && (
+                  <Selector
+                    label="Workspace"
+                    isLabelHidden
+                    size="sm"
+                    options={WORKSPACE_OPTIONS}
+                    value={workspace}
+                    onChange={setWorkspace}
+                  />
+                )}
+                {isNarrow ? (
+                  <IconButton
+                    label="Search sessions and commands"
+                    variant="secondary"
+                    size="sm"
+                    icon={<Icon icon={SearchIcon} size="sm" />}
+                    onClick={() => setIsPaletteOpen(true)}
+                  />
+                ) : (
+                  <Button
+                    label="Search sessions and commands"
+                    variant="secondary"
+                    size="sm"
+                    icon={<Icon icon={SearchIcon} size="sm" />}
+                    endContent={
+                      <HStack gap={2} vAlign="center">
+                        <Text type="inherit">Search</Text>
+                        <Kbd keys="mod+k" />
+                      </HStack>
+                    }
+                    onClick={() => setIsPaletteOpen(true)}
+                  />
+                )}
                 <Avatar name="Ana Weiss" size="small" />
               </HStack>
             }

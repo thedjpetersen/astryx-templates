@@ -18,11 +18,15 @@
  * Responsive contract:
  * - >768px: tree panel fixed at 300px (LayoutPanel start); preview fills the
  *   remaining width. The history drawer is a 320px LayoutPanel end when open.
+ *   The header keeps title and scope TabList on one row (tabs pinned right).
  * - <=768px: panes stack into a single view — tree first; selecting a file
  *   swaps to the preview, which gains a back Button; the history drawer is
- *   suppressed (History still selectable, the code body stays visible).
- * - Preview header: breadcrumbs truncate via minWidth 0; the view-mode
- *   control and action buttons stay pinned right and never wrap under.
+ *   suppressed (History still selectable, the code body stays visible). The
+ *   header stacks: the scope TabList drops to its own row below the title so
+ *   all three tabs stay reachable at 375px instead of clipping off-viewport.
+ * - Preview header: breadcrumbs truncate via minWidth 0; at narrow widths
+ *   the view-mode control and action buttons wrap onto a second row under
+ *   the breadcrumbs (flexWrap) rather than clipping.
  *
  * Interaction contract:
  * - Tree expand/collapse is handled by TreeList (chevrons, internal state
@@ -110,7 +114,8 @@ const styles: Record<string, CSSProperties> = {
     padding: 'var(--spacing-2) var(--spacing-4)',
     flexWrap: 'wrap',
   },
-  // Breadcrumb trail truncates; controls to its right never wrap under it.
+  // Breadcrumb trail truncates; when even the truncated row is too narrow,
+  // the fixed-width controls wrap under it (previewHeader flexWrap).
   breadcrumbTrail: {
     minWidth: 0,
     overflow: 'hidden',
@@ -946,6 +951,25 @@ export default function FileBrowserPreviewTemplate() {
   const isUploads = scopeTab === 'uploads';
   const showHistoryDrawer = view === 'history' && !isNarrow && !isUploads;
 
+  // ---- Header: title row + scope tabs ----
+
+  const headerTitle = (
+    <HStack gap={2} vAlign="center">
+      <Heading level={1}>Files</Heading>
+      <Text type="supporting" color="secondary">
+        Pulse Analytics
+      </Text>
+    </HStack>
+  );
+
+  const scopeTabs = (
+    <TabList value={scopeTab} onChange={handleScopeChange} size="sm">
+      <Tab value="workspace" label="Workspace files" />
+      <Tab value="personal" label="Personal" />
+      <Tab value="uploads" label="Uploads" />
+    </TabList>
+  );
+
   const mainContent = isUploads
     ? uploadsContent
     : isNarrow
@@ -959,24 +983,19 @@ export default function FileBrowserPreviewTemplate() {
       height="fill"
       header={
         <LayoutHeader hasDivider>
-          <HStack gap={3} vAlign="center">
-            <StackItem size="fill">
-              <HStack gap={2} vAlign="center">
-                <Heading level={1}>Files</Heading>
-                <Text type="supporting" color="secondary">
-                  Pulse Analytics
-                </Text>
-              </HStack>
-            </StackItem>
-            <TabList
-              value={scopeTab}
-              onChange={handleScopeChange}
-              size="sm">
-              <Tab value="workspace" label="Workspace files" />
-              <Tab value="personal" label="Personal" />
-              <Tab value="uploads" label="Uploads" />
-            </TabList>
-          </HStack>
+          {isNarrow ? (
+            // Tabs drop to their own row so all three scopes stay
+            // reachable at 375px — a single row would clip them.
+            <VStack gap={2}>
+              {headerTitle}
+              {scopeTabs}
+            </VStack>
+          ) : (
+            <HStack gap={3} vAlign="center">
+              <StackItem size="fill">{headerTitle}</StackItem>
+              {scopeTabs}
+            </HStack>
+          )}
         </LayoutHeader>
       }
       start={

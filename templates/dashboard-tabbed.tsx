@@ -13,12 +13,15 @@
  * @position Page template; emitted by `astryx template dashboard-tabbed`
  *
  * Responsive contract:
- * - Header: title and controls share one row; the TabList sits on its own
- *   row below so tabs never collide with the Selector at narrow widths.
+ * - Header: title and controls share one row (wrap="wrap"), so the Selector
+ *   and refresh control drop below the title instead of clipping when the
+ *   row runs out of width; the TabList sits on its own row below so tabs
+ *   never collide with the Selector at narrow widths.
  * - KPI row: Grid columns={{minWidth: 240, max: 4}} — 4-up on wide
  *   viewports, reflowing to 2-up and 1-up as the viewport narrows.
- * - Chart + table pair: Grid columns={{minWidth: 420, repeat: 'fit'}} —
- *   side by side on wide viewports, stacked on narrow ones.
+ * - Chart + table pair: Grid columns={{minWidth: 320, repeat: 'fit'}} —
+ *   side by side on wide viewports, stacked on narrow ones; 320px tracks
+ *   keep the stacked column inside a 375px viewport.
  * - Tables: the leading proportional column absorbs remaining width;
  *   pixel columns keep numeric cells stable at every breakpoint.
  */
@@ -893,28 +896,30 @@ export default function DashboardTabbedTemplate() {
       header={
         <LayoutHeader hasDivider>
           <VStack gap={3}>
-            <HStack gap={2} vAlign="center">
+            <HStack gap={2} vAlign="center" wrap="wrap">
               <StackItem size="fill">
-                <HStack gap={2} vAlign="center">
+                <HStack gap={2} vAlign="center" wrap="wrap">
                   <Heading level={1}>Storefront analytics</Heading>
                   <Text type="supporting" color="secondary">
                     acme-outfitters.shop
                   </Text>
                 </HStack>
               </StackItem>
-              <Selector
-                label="Reporting window"
-                isLabelHidden
-                size="sm"
-                options={RANGE_OPTIONS}
-                value={range}
-                onChange={setRange}
-              />
-              <IconButton
-                label="Refresh data"
-                icon={<Icon icon={RefreshCwIcon} size="sm" />}
-                variant="ghost"
-              />
+              <HStack gap={2} vAlign="center">
+                <Selector
+                  label="Reporting window"
+                  isLabelHidden
+                  size="sm"
+                  options={RANGE_OPTIONS}
+                  value={range}
+                  onChange={setRange}
+                />
+                <IconButton
+                  label="Refresh data"
+                  icon={<Icon icon={RefreshCwIcon} size="sm" />}
+                  variant="ghost"
+                />
+              </HStack>
             </HStack>
             <TabList
               value={tab}
@@ -952,7 +957,7 @@ export default function DashboardTabbedTemplate() {
             </Grid>
 
             {/* Chart + table pair for the active tab */}
-            <Grid columns={{minWidth: 420, repeat: 'fit'}} gap={4}>
+            <Grid columns={{minWidth: 320, repeat: 'fit'}} gap={4}>
               <WidgetCard title={view.chart.title} caption={view.chart.caption}>
                 {view.chart.body}
               </WidgetCard>

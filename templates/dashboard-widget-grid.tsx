@@ -24,12 +24,15 @@
  * - 721–1120px: 2-column Grid; 2-column widgets span the full row, metrics
  *   sit side by side.
  * - <=720px: single column; every widget spans full width and the grid
- *   scrolls vertically inside LayoutContent.
+ *   scrolls vertically inside LayoutContent. The toolbar buttons collapse
+ *   to icon-only (labels stay as accessible names / tooltips) and the
+ *   edit-mode hint text is hidden so the pinned header fits on one row.
  * - Widget headers keep title left / MoreMenu right at every width; the
  *   drag handle (edit mode only) sits before the title and never wraps.
  * - Charts shrink with their column (minWidth: 0 body) instead of forcing
- *   horizontal overflow; the table keeps pixel-width numeric columns and
- *   lets the product column absorb remaining space.
+ *   horizontal overflow; the table keeps pixel-width numeric columns, gives
+ *   the product column a 160px floor, and scrolls horizontally inside its
+ *   card when the columns no longer fit.
  */
 
 import {useState, type CSSProperties} from 'react';
@@ -81,6 +84,9 @@ const styles: Record<string, CSSProperties> = {
   chartBody: {minWidth: 0, paddingTop: 'var(--spacing-2)'},
   // Numeric table cells use tabular numerals so digit columns stay aligned.
   numericCell: {fontVariantNumeric: 'tabular-nums'},
+  // Top-products table: horizontal scroll when the card is narrower than the
+  // pixel columns plus the product column's floor; pixel columns keep width.
+  tableScroll: {overflowX: 'auto'},
   // Edit-mode affordances: dashed outline on each widget plus a grab handle.
   cardEditing: {
     outline: '1.5px dashed var(--color-accent)',
@@ -416,7 +422,9 @@ const productColumns: TableColumn<ProductRow>[] = [
   {
     key: 'product',
     header: 'Product',
-    width: proportional(2),
+    // The 160px floor keeps product names readable; below ~460px of card
+    // interior the table scrolls horizontally instead of crushing this column.
+    width: proportional(2, {minWidth: 160}),
     renderCell: (item: ProductRow) => <Text type="body">{item.product}</Text>,
   },
   {
@@ -533,14 +541,16 @@ function WidgetBody({widget}: {widget: Widget}) {
       );
     case 'table':
       return (
-        <Table<ProductRow>
-          data={widget.rows}
-          columns={productColumns}
-          idKey="id"
-          density="compact"
-          dividers="rows"
-          hasHover
-        />
+        <div style={styles.tableScroll}>
+          <Table<ProductRow>
+            data={widget.rows}
+            columns={productColumns}
+            idKey="id"
+            density="compact"
+            dividers="rows"
+            hasHover
+          />
+        </div>
       );
     case 'activity':
       return (
@@ -705,7 +715,7 @@ export default function DashboardWidgetGridTemplate() {
                 </Text>
               </HStack>
             </StackItem>
-            {isEditing ? (
+            {isEditing && !isNarrow ? (
               <Text type="supporting" color="secondary">
                 Drag handles shown — layout editing is visual only
               </Text>
@@ -713,12 +723,15 @@ export default function DashboardWidgetGridTemplate() {
             <ToggleButton
               label="Edit layout"
               icon={<Icon icon={SquarePenIcon} size="sm" />}
+              isIconOnly={isNarrow}
               isPressed={isEditing}
               onPressedChange={setIsEditing}
+              tooltip={isNarrow ? 'Edit layout' : undefined}
             />
             <Button
               label="Add widget"
               variant="primary"
+              isIconOnly={isNarrow}
               icon={<Icon icon={PlusIcon} size="sm" />}
               isDisabled={!nextPooled}
               tooltip={

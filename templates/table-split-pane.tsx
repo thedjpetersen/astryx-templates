@@ -26,6 +26,11 @@
  * - <= 900px: the resize handle is hidden and the list panel keeps a
  *   fixed 280px so dense rows are never crushed; the detail pane keeps
  *   fill width and its metadata grid wraps to fewer columns ('multi').
+ * - <= 640px: single-pane list/detail — the side panel is dropped and
+ *   the ticket list becomes the content fill; tapping a row swaps the
+ *   content region to the ticket detail, and a back IconButton in the
+ *   detail header returns to the list. The page header and the
+ *   detail-header action row wrap instead of clipping.
  * - The ticket list scrolls independently under its pinned search box;
  *   the conversation thread scrolls independently between the pinned
  *   detail header and the pinned reply composer.
@@ -50,6 +55,7 @@ import {Button} from '@astryxdesign/core/Button';
 import {Divider} from '@astryxdesign/core/Divider';
 import {EmptyState} from '@astryxdesign/core/EmptyState';
 import {Icon} from '@astryxdesign/core/Icon';
+import {IconButton} from '@astryxdesign/core/IconButton';
 import {List, ListItem} from '@astryxdesign/core/List';
 import {MetadataList, MetadataListItem} from '@astryxdesign/core/MetadataList';
 import {MoreMenu} from '@astryxdesign/core/MoreMenu';
@@ -64,6 +70,7 @@ import {Timestamp} from '@astryxdesign/core/Timestamp';
 import {Token} from '@astryxdesign/core/Token';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
+  ArrowLeftIcon,
   InboxIcon,
   MessagesSquareIcon,
   PlusIcon,
@@ -499,7 +506,17 @@ function ThreadMessage({message}: {message: TicketMessage}) {
   );
 }
 
-function TicketDetail({ticket, isNarrow}: {ticket: Ticket; isNarrow: boolean}) {
+function TicketDetail({
+  ticket,
+  isNarrow,
+  isPhone,
+  onBack,
+}: {
+  ticket: Ticket;
+  isNarrow: boolean;
+  isPhone: boolean;
+  onBack?: () => void;
+}) {
   const [reply, setReply] = useState('');
   const statusAction =
     ticket.status === 'open'
@@ -512,7 +529,18 @@ function TicketDetail({ticket, isNarrow}: {ticket: Ticket; isNarrow: boolean}) {
     <VStack gap={0} style={styles.detailFill}>
       {/* Detail header: subject, status/priority tokens, header actions. */}
       <VStack gap={3} style={styles.detailHeader}>
-        <HStack gap={2} vAlign="center">
+        {/* On phones this row wraps so the trailing actions never clip. */}
+        <HStack gap={2} vAlign="center" wrap={isPhone ? 'wrap' : 'nowrap'}>
+          {onBack && (
+            <IconButton
+              label="Back to ticket list"
+              tooltip="Back to ticket list"
+              size="sm"
+              variant="ghost"
+              icon={<Icon icon={ArrowLeftIcon} size="sm" />}
+              onClick={onBack}
+            />
+          )}
           <Text type="supporting" color="secondary">
             {ticket.id}
           </Text>
@@ -621,8 +649,13 @@ export default function TableSplitPaneTemplate() {
   const [selectedId, setSelectedId] = useState<string | null>(TICKETS[0].id);
 
   // Responsive contract: below 900px the list keeps a fixed 280px and the
-  // resize handle is hidden (never crush dense rows with a drag handle).
+  // resize handle is hidden (never crush dense rows with a drag handle);
+  // below 640px the split collapses to single-pane list/detail.
   const isNarrow = useMediaQuery('(max-width: 900px)');
+  const isPhone = useMediaQuery('(max-width: 640px)');
+  // Single-pane mode is list-first; tapping a row swaps to the detail
+  // pane and its header back button returns here.
+  const [isDetailShownOnPhone, setIsDetailShownOnPhone] = useState(false);
 
   const listPanel = useResizable({
     defaultSize: 340,
@@ -649,6 +682,11 @@ export default function TableSplitPaneTemplate() {
   const selected = visible.find(ticket => ticket.id === selectedId) ?? null;
   const openCount = TICKETS.filter(ticket => ticket.status === 'open').length;
 
+  const openTicket = (id: string) => {
+    setSelectedId(id);
+    setIsDetailShownOnPhone(true);
+  };
+
   const ticketListPane = (
     <VStack gap={0} style={styles.panelFill}>
       <div style={styles.panelSearch}>
@@ -668,7 +706,7 @@ export default function TableSplitPaneTemplate() {
         <TicketList
           tickets={visible}
           selectedId={selected?.id ?? null}
-          onSelect={setSelectedId}
+          onSelect={openTicket}
         />
       </div>
     </VStack>
@@ -679,7 +717,8 @@ export default function TableSplitPaneTemplate() {
       height="fill"
       header={
         <LayoutHeader hasDivider>
-          <HStack gap={3} vAlign="center">
+          {/* On phones the filter and button wrap under the heading. */}
+          <HStack gap={3} vAlign="center" wrap={isPhone ? 'wrap' : 'nowrap'}>
             <StackItem size="fill">
               <HStack gap={2} vAlign="center">
                 <Heading level={1}>Support queue</Heading>
@@ -707,7 +746,7 @@ export default function TableSplitPaneTemplate() {
         </LayoutHeader>
       }
       start={
-        isNarrow ? (
+        isPhone ? undefined : isNarrow ? (
           <LayoutPanel width={280} padding={0} hasDivider label="Ticket list">
             {ticketListPane}
           </LayoutPanel>
@@ -731,8 +770,17 @@ export default function TableSplitPaneTemplate() {
       }
       content={
         <LayoutContent padding={0}>
-          {selected ? (
-            <TicketDetail ticket={selected} isNarrow={isNarrow} />
+          {isPhone && (!isDetailShownOnPhone || selected === null) ? (
+            ticketListPane
+          ) : selected ? (
+            <TicketDetail
+              ticket={selected}
+              isNarrow={isNarrow}
+              isPhone={isPhone}
+              onBack={
+                isPhone ? () => setIsDetailShownOnPhone(false) : undefined
+              }
+            />
           ) : (
             <EmptyState
               title="No ticket selected"

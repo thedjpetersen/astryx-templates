@@ -31,8 +31,11 @@
  *   Selector and view SegmentedControl drop below the count when narrow.
  * - Grid view: Grid columns={{minWidth: 220}} — 4-up on wide viewports,
  *   reflowing to 2-up and 1-up as the viewport narrows.
- * - List view: rows keep their thumbnail/price rails at every width; the
+ * - List view: rows keep their thumbnail/price rails down to 480px; the
  *   one-line product blurb hides at <=768px so rows never wrap awkwardly.
+ * - <=480px: the right-hand price/rating rail stacks below the name column
+ *   as a wrapping row, so the non-shrinking thumbnail and sale pricing
+ *   never squeeze the product name to a sliver.
  */
 
 import {useMemo, useState, type CSSProperties} from 'react';
@@ -483,35 +486,68 @@ function ProductGridCard({product}: {product: Product}) {
   );
 }
 
-/** List row: compact art, name + blurb in the middle, price rail on the right. */
+/**
+ * List row: compact art, name + blurb in the middle, price rail on the
+ * right. At <=480px the rail stacks below the name column as a wrapping
+ * row — the non-shrinking thumbnail plus sale pricing would otherwise
+ * squeeze the name to a few characters.
+ */
 function ProductListRow({
   product,
   showBlurb,
+  isNarrow,
 }: {
   product: Product;
   showBlurb: boolean;
+  isNarrow: boolean;
 }) {
+  const identity = (
+    <VStack gap={0.5}>
+      <Text type="body" maxLines={1}>
+        {product.name}
+      </Text>
+      <Text type="supporting" color="secondary" maxLines={1}>
+        {product.brand} · {CATEGORY_LABEL[product.category]}
+      </Text>
+      {showBlurb ? (
+        <Text type="supporting" color="secondary" maxLines={1}>
+          {product.blurb}
+        </Text>
+      ) : null}
+    </VStack>
+  );
+
+  if (isNarrow) {
+    return (
+      <Card padding={3}>
+        <VStack gap={2}>
+          <HStack gap={3} vAlign="center">
+            <div style={styles.listMediaBox}>
+              <Thumbnail label={product.name} />
+            </div>
+            <StackItem size="fill">{identity}</StackItem>
+          </HStack>
+          <HStack gap={2} vAlign="center" wrap="wrap">
+            <StackItem size="fill">
+              <PriceLine product={product} hasTabularNumbers />
+            </StackItem>
+            <RatingBadge product={product} hasTabularNumbers />
+            {!product.inStock ? (
+              <Badge variant="neutral" label="Backordered" />
+            ) : null}
+          </HStack>
+        </VStack>
+      </Card>
+    );
+  }
+
   return (
     <Card padding={3}>
       <HStack gap={3} vAlign="center">
         <div style={styles.listMediaBox}>
           <Thumbnail label={product.name} />
         </div>
-        <StackItem size="fill">
-          <VStack gap={0.5}>
-            <Text type="body" maxLines={1}>
-              {product.name}
-            </Text>
-            <Text type="supporting" color="secondary" maxLines={1}>
-              {product.brand} · {CATEGORY_LABEL[product.category]}
-            </Text>
-            {showBlurb ? (
-              <Text type="supporting" color="secondary" maxLines={1}>
-                {product.blurb}
-              </Text>
-            ) : null}
-          </VStack>
-        </StackItem>
+        <StackItem size="fill">{identity}</StackItem>
         <div style={styles.listRail}>
           <VStack gap={1} hAlign="end">
             <PriceLine product={product} hasTabularNumbers />
@@ -541,6 +577,7 @@ export default function ProductListTemplate() {
   const [view, setView] = useState('grid');
   const [isRailOpen, setIsRailOpen] = useState(true);
   const isCompact = useMediaQuery('(max-width: 768px)');
+  const isNarrow = useMediaQuery('(max-width: 480px)');
 
   const activeFilterCount =
     (categories.length < ALL_CATEGORY_IDS.length ? 1 : 0) +
@@ -691,6 +728,7 @@ export default function ProductListTemplate() {
                     key={product.id}
                     product={product}
                     showBlurb={!isCompact}
+                    isNarrow={isNarrow}
                   />
                 ))}
               </VStack>

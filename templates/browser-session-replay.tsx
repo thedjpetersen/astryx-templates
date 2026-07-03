@@ -36,8 +36,10 @@
  * - <=768px: header drops session id + Timestamp (Badge stays); dock
  *   triggers drop the capture time and keep the truncated action text;
  *   step list rows wrap action text instead of truncating.
- * - Transport IconButtons are size "sm" (28px hit targets) at every width;
- *   the frame counter keeps tabular numbers so scrubbing never jitters.
+ * - Transport controls are size "sm" (28px) above 768px; <=768px the
+ *   skip/play IconButtons and the Live toggle grow to 40px hit targets
+ *   (icon glyphs stay "sm") so the primary interactions stay tappable.
+ *   The frame counter keeps tabular numbers so scrubbing never jitters.
  */
 
 import {useEffect, useState, type CSSProperties} from 'react';
@@ -121,6 +123,11 @@ const styles: Record<string, CSSProperties> = {
     textAlign: 'center',
   },
   transportCounter: {whiteSpace: 'nowrap'},
+  // <=768px: grow the transport controls to 40px touch targets (the "sm"
+  // 28px box is fine for pointers but too small for thumbs); icon glyphs
+  // stay "sm" so the row reads the same, just with more padding.
+  transportTapTarget: {width: 40, height: 40},
+  liveTapTarget: {height: 40},
   scrubHint: {flexWrap: 'wrap'},
   stepIndex: {width: 20, textAlign: 'right'},
 };
@@ -393,14 +400,16 @@ function ScreenshotFrame({frame}: {frame: SessionFrame}) {
 
 /**
  * Media-transport row: skip-back / play / skip-forward IconButtons (28px
- * "sm" hit targets, disabled at the ends), a tabular frame counter, and a
- * "Live" ToggleButton that pins playback to the newest frame.
+ * "sm" hit targets above 768px, grown to 40px on compact widths, disabled
+ * at the ends), a tabular frame counter, and a "Live" ToggleButton that
+ * pins playback to the newest frame.
  */
 function TransportToolbar({
   frameIndex,
   isPlaying,
   isLive,
   hasLiveToggle,
+  isCompact,
   onStep,
   onPlayToggle,
   onLiveToggle,
@@ -409,12 +418,14 @@ function TransportToolbar({
   isPlaying: boolean;
   isLive: boolean;
   hasLiveToggle: boolean;
+  isCompact: boolean;
   onStep: (delta: number) => void;
   onPlayToggle: () => void;
   onLiveToggle: (isPressed: boolean) => void;
 }) {
   const atStart = frameIndex <= 1;
   const atEnd = frameIndex >= TOTAL_FRAMES;
+  const tapTargetStyle = isCompact ? styles.transportTapTarget : undefined;
 
   return (
     <Toolbar
@@ -429,6 +440,7 @@ function TransportToolbar({
             icon={<Icon icon={SkipBackIcon} size="sm" color="inherit" />}
             variant="ghost"
             size="sm"
+            style={tapTargetStyle}
             isDisabled={atStart || isLive}
             onClick={() => onStep(-1)}
           />
@@ -452,6 +464,7 @@ function TransportToolbar({
               }
               variant="ghost"
               size="sm"
+              style={tapTargetStyle}
               isDisabled={isLive || (atEnd && !isPlaying)}
               onClick={onPlayToggle}
             />
@@ -462,6 +475,7 @@ function TransportToolbar({
             icon={<Icon icon={SkipForwardIcon} size="sm" color="inherit" />}
             variant="ghost"
             size="sm"
+            style={tapTargetStyle}
             isDisabled={atEnd || isLive}
             onClick={() => onStep(1)}
           />
@@ -481,6 +495,7 @@ function TransportToolbar({
           <ToggleButton
             label="Live"
             size="sm"
+            style={isCompact ? styles.liveTapTarget : undefined}
             icon={<Icon icon={RadioIcon} size="sm" color="inherit" />}
             isPressed={isLive}
             onPressedChange={onLiveToggle}
@@ -556,6 +571,7 @@ function LiveDock({isCompact}: {isCompact: boolean}) {
             isPlaying={isPlaying}
             isLive={isLive}
             hasLiveToggle
+            isCompact={isCompact}
             onStep={delta => {
               setIsPlaying(false);
               setScrubIndex(prev =>
@@ -629,6 +645,7 @@ function HistoryDock({
             isPlaying={isPlaying}
             isLive={false}
             hasLiveToggle={false}
+            isCompact={isCompact}
             onStep={delta => {
               setIsPlaying(false);
               onFrameChange(

@@ -32,6 +32,10 @@
  * - <=720px: the meter collapses to the percentage button (the Popover
  *   breakdown is unchanged); tool rows drop the start-time column and
  *   keep the duration; suggestion pills wrap onto multiple lines.
+ * - Touch controls are size "sm" (28px) above 720px; <=720px the composer
+ *   buttons (attach, Stop agent, Queue message), queued-pill actions, and
+ *   suggestion pills grow to 40px hit targets (icon glyphs and labels stay
+ *   "sm") so the primary interactions stay tappable.
  * - Queued follow-up strip scrolls horizontally; pills keep intrinsic
  *   width (flexShrink 0) so actions never crush the message preview.
  */
@@ -133,6 +137,11 @@ const styles: Record<string, CSSProperties> = {
     padding: 'var(--spacing-3)',
   },
   attachmentWrap: {flexWrap: 'wrap'},
+  // <=720px: grow the touch controls to 40px hit targets (the "sm" 28px
+  // box is fine for pointers but too small for thumbs); icon glyphs and
+  // labels stay "sm" so the rows read the same, just with more padding.
+  iconTapTarget: {width: 40, height: 40},
+  buttonTapTarget: {height: 40},
   meterBar: {width: 96},
   popoverBody: {padding: 'var(--spacing-3)'},
 };
@@ -523,14 +532,17 @@ function ToolPile({
 
 function QueuedFollowUpPill({
   item,
+  isCompact,
   onSend,
   onRemove,
 }: {
   item: QueuedFollowUp;
+  isCompact: boolean;
   onSend: (id: string) => void;
   onRemove: (id: string) => void;
 }) {
   const isFailed = item.status === 'failed';
+  const tapTargetStyle = isCompact ? styles.iconTapTarget : undefined;
   return (
     <HStack gap={2} vAlign="center" style={styles.queuedPill}>
       <Badge
@@ -554,6 +566,7 @@ function QueuedFollowUpPill({
         }
         variant="ghost"
         size="sm"
+        style={tapTargetStyle}
         onClick={() => onSend(item.id)}
       />
       <IconButton
@@ -562,6 +575,7 @@ function QueuedFollowUpPill({
         icon={<Icon icon={XIcon} size="sm" color="inherit" />}
         variant="ghost"
         size="sm"
+        style={tapTargetStyle}
         onClick={() => onRemove(item.id)}
       />
     </HStack>
@@ -655,6 +669,7 @@ export default function AiChatToolStreamTemplate() {
             <QueuedFollowUpPill
               key={item.id}
               item={item}
+              isCompact={isCompact}
               onSend={sendQueued}
               onRemove={removeQueued}
             />
@@ -690,14 +705,26 @@ export default function AiChatToolStreamTemplate() {
               icon={<Icon icon={PaperclipIcon} size="sm" color="inherit" />}
               variant="ghost"
               size="sm"
+              style={isCompact ? styles.iconTapTarget : undefined}
               onClick={() => {}}
             />
             <Text type="supporting" color="secondary">
               Agent is running — new messages join the queue
             </Text>
             <StackItem size="fill" />
-            <Button label="Stop agent" variant="ghost" size="sm" onClick={() => {}} />
-            <Button label="Queue message" size="sm" onClick={() => queueDraft(draft)} />
+            <Button
+              label="Stop agent"
+              variant="ghost"
+              size="sm"
+              style={isCompact ? styles.buttonTapTarget : undefined}
+              onClick={() => {}}
+            />
+            <Button
+              label="Queue message"
+              size="sm"
+              style={isCompact ? styles.buttonTapTarget : undefined}
+              onClick={() => queueDraft(draft)}
+            />
           </HStack>
         </VStack>
       </div>
@@ -864,6 +891,7 @@ export default function AiChatToolStreamTemplate() {
                           label={suggestion.label}
                           variant="secondary"
                           size="sm"
+                          style={isCompact ? styles.buttonTapTarget : undefined}
                           onClick={() => dismissSuggestion(suggestion.id)}
                         />
                       ))}

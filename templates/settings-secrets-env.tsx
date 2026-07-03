@@ -41,8 +41,13 @@
  * Responsive contract:
  * - Column: Layout contentWidth={720} centers a max 720px column on wide
  *   viewports; below that the column keeps full width minus slot padding.
- * - Secret rows: key and value previews truncate (maxLines 1); the
- *   reveal/copy/delete action cluster never wraps or shrinks.
+ * - Secret rows: key and value previews truncate to one line (the key cell
+ *   ellipsizes, the value preview uses maxLines 1); the reveal/copy/delete
+ *   action cluster never wraps or shrinks. At <=640px each env-var row
+ *   stacks the key above a value + actions line so the revealed preview
+ *   keeps a readable width.
+ * - <=640px: the per-row sm controls (reveal/copy/delete, Disconnect) grow
+ *   to 40px touch targets; desktop keeps the compact 28px sm chrome.
  * - Add-variable form: a wrapping flex row — inputs flex with a min width
  *   and the Add button drops to its own line on narrow viewports.
  * - Dialogs: width min(440px, 92vw) so they never overflow small screens.
@@ -78,6 +83,7 @@ import {TextInput} from '@astryxdesign/core/TextInput';
 import {Timestamp} from '@astryxdesign/core/Timestamp';
 import {ToggleButton} from '@astryxdesign/core/ToggleButton';
 import {Tooltip} from '@astryxdesign/core/Tooltip';
+import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
   CopyIcon,
   EyeIcon,
@@ -104,6 +110,21 @@ const styles: Record<string, CSSProperties> = {
   },
   // Secret previews keep truncation working inside flex rows.
   valueCell: {minWidth: 0},
+  // Env-var key: one line with an ellipsis so long keys never word-break
+  // (core Code wraps by default).
+  keyCell: {
+    minWidth: 0,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+  // Desktop rows also cap the key so the value preview keeps room beside
+  // the reveal/copy/delete cluster.
+  keyCellCapped: {maxWidth: '45%'},
+  // <=640px: grow the sm controls to 40px touch targets (the 28px "sm" box
+  // is fine for pointers but too small for thumbs); glyphs stay "sm".
+  iconTapTarget: {width: 40, height: 40},
+  buttonTapTarget: {height: 40},
   // Add-variable form: wraps instead of squeezing inputs on narrow widths.
   addForm: {
     display: 'flex',
@@ -292,6 +313,9 @@ function RevealCopyActions({
   onRevealChange: (isRevealed: boolean) => void;
   onCopy: () => void;
 }) {
+  // <=640px: the sm controls grow to 40px touch targets.
+  const isCompact = useMediaQuery('(max-width: 640px)');
+  const tapTargetStyle = isCompact ? styles.iconTapTarget : undefined;
   return (
     <HStack gap={1} vAlign="center">
       <Tooltip content={isRevealed ? 'Hide value' : 'Reveal value'}>
@@ -299,6 +323,7 @@ function RevealCopyActions({
           label={`Reveal ${subject}`}
           isIconOnly
           size="sm"
+          style={tapTargetStyle}
           icon={<Icon icon={isRevealed ? EyeOffIcon : EyeIcon} size="sm" />}
           isPressed={isRevealed}
           onPressedChange={onRevealChange}
@@ -309,6 +334,7 @@ function RevealCopyActions({
           label={`Copy ${subject}`}
           size="sm"
           variant="ghost"
+          style={tapTargetStyle}
           icon={<Icon icon={CopyIcon} size="sm" />}
           onClick={() => {
             // Clipboard write is best-effort in the demo sandbox; the
@@ -346,6 +372,10 @@ function SaveIndicator({state}: {state: 'idle' | 'saving' | 'saved'}) {
 export default function SettingsSecretsEnvTemplate() {
   // Section expansion — env vars open by default; the other two lazy-load
   // on first expand (Skeleton beat, then rows).
+  // <=640px: env-var rows stack the key above the value + actions line and
+  // the sm row controls grow to 40px touch targets.
+  const isCompact = useMediaQuery('(max-width: 640px)');
+
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     env: true,
     webhooks: false,
@@ -477,41 +507,68 @@ export default function SettingsSecretsEnvTemplate() {
               <VStack gap={2}>
                 {envVars.map(envVar => {
                   const isRevealed = revealedIds.has(envVar.id);
+                  const valuePreview = (
+                    <StackItem size="fill">
+                      <div style={styles.valueCell}>
+                        <Text
+                          type="code"
+                          color="secondary"
+                          maxLines={1}
+                          hasTabularNumbers>
+                          {isRevealed ? envVar.value : maskValue(envVar.value)}
+                        </Text>
+                      </div>
+                    </StackItem>
+                  );
+                  const rowActions = (
+                    <>
+                      <RevealCopyActions
+                        subject={envVar.key}
+                        value={envVar.value}
+                        isRevealed={isRevealed}
+                        isCopied={copiedId === envVar.id}
+                        onRevealChange={toggleReveal(envVar.id)}
+                        onCopy={() => markCopied(envVar.id)}
+                      />
+                      <Tooltip content="Delete variable">
+                        <IconButton
+                          label={`Delete ${envVar.key}`}
+                          size="sm"
+                          variant="ghost"
+                          style={isCompact ? styles.iconTapTarget : undefined}
+                          icon={<Icon icon={Trash2Icon} size="sm" />}
+                          onClick={() => setDeleteTarget(envVar)}
+                        />
+                      </Tooltip>
+                    </>
+                  );
                   return (
                     <div key={envVar.id} style={styles.row}>
-                      <HStack gap={2} vAlign="center">
-                        <Code>{envVar.key}</Code>
-                        <StackItem size="fill">
-                          <div style={styles.valueCell}>
-                            <Text
-                              type="code"
-                              color="secondary"
-                              maxLines={1}
-                              hasTabularNumbers>
-                              {isRevealed
-                                ? envVar.value
-                                : maskValue(envVar.value)}
-                            </Text>
+                      {isCompact ? (
+                        // Key on its own line so the value preview keeps a
+                        // readable width beside the 40px action cluster.
+                        <VStack gap={1}>
+                          <div style={styles.keyCell}>
+                            <Code>{envVar.key}</Code>
                           </div>
-                        </StackItem>
-                        <RevealCopyActions
-                          subject={envVar.key}
-                          value={envVar.value}
-                          isRevealed={isRevealed}
-                          isCopied={copiedId === envVar.id}
-                          onRevealChange={toggleReveal(envVar.id)}
-                          onCopy={() => markCopied(envVar.id)}
-                        />
-                        <Tooltip content="Delete variable">
-                          <IconButton
-                            label={`Delete ${envVar.key}`}
-                            size="sm"
-                            variant="ghost"
-                            icon={<Icon icon={Trash2Icon} size="sm" />}
-                            onClick={() => setDeleteTarget(envVar)}
-                          />
-                        </Tooltip>
-                      </HStack>
+                          <HStack gap={2} vAlign="center">
+                            {valuePreview}
+                            {rowActions}
+                          </HStack>
+                        </VStack>
+                      ) : (
+                        <HStack gap={2} vAlign="center">
+                          <div
+                            style={{
+                              ...styles.keyCell,
+                              ...styles.keyCellCapped,
+                            }}>
+                            <Code>{envVar.key}</Code>
+                          </div>
+                          {valuePreview}
+                          {rowActions}
+                        </HStack>
+                      )}
                     </div>
                   );
                 })}
@@ -683,6 +740,7 @@ export default function SettingsSecretsEnvTemplate() {
                         label="Disconnect"
                         size="sm"
                         variant="ghost"
+                        style={isCompact ? styles.buttonTapTarget : undefined}
                         onClick={() => {
                           setDisconnectTarget(repo);
                           setConfirmName('');

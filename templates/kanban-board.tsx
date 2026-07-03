@@ -27,6 +27,10 @@
  *   region ("Moved <task> to <column>").
  *
  * Responsive contract:
+ * - Header chrome shares one HStack with wrap="wrap": on wide
+ *   viewports title + count, segmented filter, sprint selector, and
+ *   "New task" sit on one row; at narrow widths the controls wrap
+ *   below the title instead of clipping or overflowing the page.
  * - >768px: four 300px columns in a horizontal scroller (overflow-x
  *   auto); columns never shrink, the row scrolls.
  * - <=768px: columns are 85vw with scroll-snap (x mandatory) so each
@@ -36,7 +40,9 @@
  * - Drag-and-drop is enabled only for fine pointers with hover
  *   ("(hover: hover) and (pointer: fine)") so draggable cards never
  *   interfere with touch scrolling; touch users move cards through
- *   the per-card MoreMenu instead.
+ *   the per-card MoreMenu instead, which upsizes from "sm" to "lg"
+ *   when drag is unavailable so the only move affordance keeps a
+ *   usable tap target.
  */
 
 import {useCallback, useMemo, useState, type CSSProperties} from 'react';
@@ -401,9 +407,14 @@ function TaskCard({
                 </Text>
               </VStack>
             </StackItem>
+            {/* On touch devices this menu is the only way to move a
+                card (drag is fine-pointer-only), so bump it to the
+                largest control size for a usable tap target; keep the
+                compact "sm" trigger on hover-capable fine pointers
+                where drag is the primary path. */}
             <MoreMenu
               label={`Move ${task.id}`}
-              size="sm"
+              size={isDraggable ? 'sm' : 'lg'}
               items={moveTargets.map(column => ({
                 label: `Move to ${column.title}`,
                 onClick: () => onMove(task.id, column.id),
@@ -585,7 +596,10 @@ export default function KanbanBoardTemplate() {
       height="fill"
       header={
         <LayoutHeader hasDivider>
-          <HStack gap={3} vAlign="center">
+          {/* wrap="wrap" lets the filter/sprint/New-task controls drop
+              below the title row on narrow viewports instead of clipping
+              or forcing horizontal page overflow. */}
+          <HStack gap={3} vAlign="center" wrap="wrap">
             <StackItem size="fill">
               <HStack gap={2} vAlign="center">
                 <Heading level={1}>Delivery board</Heading>

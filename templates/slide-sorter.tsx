@@ -40,7 +40,12 @@
  *   The Grid reflows with columns={{minWidth: zoom}} where zoom is
  *   S=140 / M=180 / L=240 from the SegmentedControl.
  * - <=640px: the zoom control hides and tiles fix at the 140px minimum;
- *   the info strip drops the slide-title text and keeps the action Buttons.
+ *   the info strip drops the slide-title text and keeps the action Buttons;
+ *   tile controls (reorder chevrons + MoreMenu) grow from sm to lg touch
+ *   targets and the MoreMenu gains Move up / Move down rows mirroring the
+ *   chevrons.
+ * - The header filename Heading and slide counter truncate (maxLines={1})
+ *   instead of overflowing under the Present Button at narrow widths.
  * - Slide canvases use container-query (cqw) type sizing, so identical shape
  *   fixtures paint correctly at every tile width the grid produces.
  *
@@ -574,6 +579,7 @@ interface SlideTileProps {
   isSelected: boolean;
   isFirstInSection: boolean;
   isLastInSection: boolean;
+  isCompact: boolean;
   onSelect: (id: string) => void;
   onMove: (id: string, direction: -1 | 1) => void;
   onDuplicate: (id: string) => void;
@@ -588,6 +594,7 @@ function SlideTile({
   isSelected,
   isFirstInSection,
   isLastInSection,
+  isCompact,
   onSelect,
   onMove,
   onDuplicate,
@@ -599,6 +606,8 @@ function SlideTile({
   const [isHovered, setIsHovered] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const showControls = isHovered || isSelected || isMenuOpen;
+  // <=640px: reorder chevrons + MoreMenu grow to lg so fingers can hit them.
+  const controlSize = isCompact ? 'lg' : 'sm';
 
   return (
     <div
@@ -657,7 +666,7 @@ function SlideTile({
                   tooltip="Move up"
                   icon={<Icon icon={ChevronUpIcon} size="sm" color="inherit" />}
                   variant="ghost"
-                  size="sm"
+                  size={controlSize}
                   isDisabled={isFirstInSection}
                   onClick={() => onMove(slide.id, -1)}
                 />
@@ -668,15 +677,44 @@ function SlideTile({
                     <Icon icon={ChevronDownIcon} size="sm" color="inherit" />
                   }
                   variant="ghost"
-                  size="sm"
+                  size={controlSize}
                   isDisabled={isLastInSection}
                   onClick={() => onMove(slide.id, 1)}
                 />
                 <MoreMenu
                   label={`Slide ${number} actions`}
-                  size="sm"
+                  size={controlSize}
                   onOpenChange={setIsMenuOpen}
                   items={[
+                    ...(isCompact
+                      ? [
+                          {
+                            label: 'Move up',
+                            icon: (
+                              <Icon
+                                icon={ChevronUpIcon}
+                                size="sm"
+                                color="inherit"
+                              />
+                            ),
+                            isDisabled: isFirstInSection,
+                            onClick: () => onMove(slide.id, -1),
+                          },
+                          {
+                            label: 'Move down',
+                            icon: (
+                              <Icon
+                                icon={ChevronDownIcon}
+                                size="sm"
+                                color="inherit"
+                              />
+                            ),
+                            isDisabled: isLastInSection,
+                            onClick: () => onMove(slide.id, 1),
+                          },
+                          {type: 'divider'} as const,
+                        ]
+                      : []),
                     {
                       label: 'Duplicate',
                       icon: <Icon icon={CopyIcon} size="sm" color="inherit" />,
@@ -840,8 +878,14 @@ export default function SlideSorterTemplate() {
         <StackItem size="fill">
           <HStack gap={2} vAlign="center">
             <Icon icon={PresentationIcon} size="md" color="secondary" />
-            <Heading level={1}>{DECK_FILE_NAME}</Heading>
-            <Text type="supporting" color="secondary" hasTabularNumbers>
+            <Heading level={1} maxLines={1}>
+              {DECK_FILE_NAME}
+            </Heading>
+            <Text
+              type="supporting"
+              color="secondary"
+              hasTabularNumbers
+              maxLines={1}>
               · {counterLabel}
             </Text>
           </HStack>
@@ -914,6 +958,7 @@ export default function SlideSorterTemplate() {
                 isSelected={slide.id === selectedId}
                 isFirstInSection={indexInSection === 0}
                 isLastInSection={indexInSection === group.length - 1}
+                isCompact={isCompact}
                 onSelect={id =>
                   setSelectedId(prev => (prev === id ? null : id))
                 }

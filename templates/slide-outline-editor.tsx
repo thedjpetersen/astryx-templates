@@ -15,7 +15,8 @@
  *   that swaps to a TextInput on a second click (or the Pencil button) and
  *   commits on Enter/blur, and hover-revealed IconButtons for
  *   promote/demote (Outdent/Indent), move up/down, and delete, each disabled
- *   where the structure makes the move illegal. The right 380px panel
+ *   where the structure makes the move illegal (collapsed into one per-row
+ *   MoreMenu at phone width). The right 380px panel
  *   renders the SELECTED row's slide live as a mini 4:3 white SlideShape
  *   canvas (title shape + bullets shape derived from the outline children)
  *   above a MetadataList (slide n of 7, bullets, words, characters) and an
@@ -41,6 +42,11 @@
  *   overlays it as a bottom sheet-style block under the outline (max 46%
  *   height, its own scroll, raised shadow); the outline keeps the
  *   remaining height.
+ * - <=640px: the six per-row action IconButtons (hover-revealed on
+ *   desktop, but space-reserving even while hidden) collapse into one
+ *   always-visible md MoreMenu per row — hover cannot reveal them on
+ *   touch, and the ~168px cluster would leave the row text a sliver at
+ *   375px. The menu fences the destructive Delete behind a divider.
  * - The mini slide canvas uses container-query (cqw) type sizing so the
  *   same shape fixtures paint correctly at any panel width.
  *
@@ -83,10 +89,12 @@ import {Badge} from '@astryxdesign/core/Badge';
 import {Button} from '@astryxdesign/core/Button';
 import {Card} from '@astryxdesign/core/Card';
 import {Divider} from '@astryxdesign/core/Divider';
+import type {DropdownMenuOption} from '@astryxdesign/core/DropdownMenu';
 import {EmptyState} from '@astryxdesign/core/EmptyState';
 import {Icon} from '@astryxdesign/core/Icon';
 import {IconButton} from '@astryxdesign/core/IconButton';
 import {MetadataList, MetadataListItem} from '@astryxdesign/core/MetadataList';
+import {MoreMenu} from '@astryxdesign/core/MoreMenu';
 import {TextInput} from '@astryxdesign/core/TextInput';
 import {Tooltip} from '@astryxdesign/core/Tooltip';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
@@ -519,6 +527,7 @@ function OutlineRowView({
   slideNumber,
   isSelected,
   isEditing,
+  isPhone,
   abilities,
   onRowClick,
   onStartEdit,
@@ -534,6 +543,7 @@ function OutlineRowView({
   slideNumber: number | null; // set on level-0 rows only
   isSelected: boolean;
   isEditing: boolean;
+  isPhone: boolean; // <=640px: actions collapse into a MoreMenu
   abilities: RowAbilities;
   onRowClick: () => void;
   onStartEdit: () => void;
@@ -560,6 +570,47 @@ function OutlineRowView({
 
   const showActions = isHovered || isSelected;
   const isTitle = row.level === 0;
+
+  // <=640px: the six 28px IconButtons would reserve ~168px per row and
+  // leave the outline text a few characters wide, and hover cannot reveal
+  // them on touch — so they collapse into one always-visible MoreMenu.
+  // The divider fences the destructive Delete off from the move actions.
+  const phoneMenuItems: DropdownMenuOption[] = [
+    {label: 'Edit text', icon: PencilIcon, onClick: onStartEdit},
+    {
+      label: isTitle ? 'Merge into previous slide' : 'Promote',
+      icon: OutdentIcon,
+      isDisabled: !abilities.canOutdent,
+      onClick: onOutdent,
+    },
+    {
+      label:
+        row.level === 1 && abilities.canIndent
+          ? 'Demote to sub-bullet'
+          : 'Demote',
+      icon: IndentIcon,
+      isDisabled: !abilities.canIndent,
+      onClick: onIndent,
+    },
+    {
+      label: 'Move up',
+      icon: ChevronUpIcon,
+      isDisabled: !abilities.canMoveUp,
+      onClick: onMoveUp,
+    },
+    {
+      label: 'Move down',
+      icon: ChevronDownIcon,
+      isDisabled: !abilities.canMoveDown,
+      onClick: onMoveDown,
+    },
+    {type: 'divider'},
+    {
+      label: isTitle ? 'Delete slide' : 'Delete row',
+      icon: Trash2Icon,
+      onClick: onDelete,
+    },
+  ];
 
   return (
     <div
@@ -623,73 +674,90 @@ function OutlineRowView({
         )}
       </span>
       {/* Hover-revealed actions; rendered hidden so row height is stable.
-          stopPropagation keeps button clicks from re-selecting the row. */}
-      <div
-        style={{visibility: showActions && !isEditing ? 'visible' : 'hidden'}}
-        onClick={event => event.stopPropagation()}>
-        <HStack gap={0} vAlign="center">
-          <IconButton
-            label="Edit text"
-            tooltip="Edit text"
-            icon={<Icon icon={PencilIcon} size="sm" color="inherit" />}
-            variant="ghost"
-            size="sm"
-            onClick={onStartEdit}
-          />
-          <IconButton
-            label={isTitle ? 'Merge into previous slide' : 'Promote'}
-            tooltip={
-              isTitle
-                ? 'Demote — merge this slide into the previous one'
-                : 'Promote'
-            }
-            icon={<Icon icon={OutdentIcon} size="sm" color="inherit" />}
-            variant="ghost"
-            size="sm"
-            isDisabled={!abilities.canOutdent}
-            onClick={onOutdent}
-          />
-          <IconButton
-            label="Demote"
-            tooltip={
-              row.level === 1 && abilities.canIndent
-                ? 'Demote to sub-bullet'
-                : 'Demote'
-            }
-            icon={<Icon icon={IndentIcon} size="sm" color="inherit" />}
-            variant="ghost"
-            size="sm"
-            isDisabled={!abilities.canIndent}
-            onClick={onIndent}
-          />
-          <IconButton
-            label="Move up"
-            tooltip="Move up"
-            icon={<Icon icon={ChevronUpIcon} size="sm" color="inherit" />}
-            variant="ghost"
-            size="sm"
-            isDisabled={!abilities.canMoveUp}
-            onClick={onMoveUp}
-          />
-          <IconButton
-            label="Move down"
-            tooltip="Move down"
-            icon={<Icon icon={ChevronDownIcon} size="sm" color="inherit" />}
-            variant="ghost"
-            size="sm"
-            isDisabled={!abilities.canMoveDown}
-            onClick={onMoveDown}
-          />
-          <IconButton
-            label={isTitle ? 'Delete slide' : 'Delete row'}
-            tooltip={isTitle ? 'Delete slide (and its bullets)' : 'Delete row'}
-            icon={<Icon icon={Trash2Icon} size="sm" color="inherit" />}
-            variant="ghost"
-            size="sm"
-            onClick={onDelete}
-          />
-        </HStack>
-      </div>
+          stopPropagation keeps button clicks from re-selecting the row.
+          On phones the cluster collapses into one md MoreMenu instead. */}
+      {isPhone ? (
+        !isEditing && (
+          <div onClick={event => event.stopPropagation()}>
+            <MoreMenu
+              label={isTitle ? 'Slide actions' : 'Row actions'}
+              size="md"
+              items={phoneMenuItems}
+            />
+          </div>
+        )
+      ) : (
+        <div
+          style={{
+            visibility: showActions && !isEditing ? 'visible' : 'hidden',
+          }}
+          onClick={event => event.stopPropagation()}>
+          <HStack gap={0} vAlign="center">
+            <IconButton
+              label="Edit text"
+              tooltip="Edit text"
+              icon={<Icon icon={PencilIcon} size="sm" color="inherit" />}
+              variant="ghost"
+              size="sm"
+              onClick={onStartEdit}
+            />
+            <IconButton
+              label={isTitle ? 'Merge into previous slide' : 'Promote'}
+              tooltip={
+                isTitle
+                  ? 'Demote — merge this slide into the previous one'
+                  : 'Promote'
+              }
+              icon={<Icon icon={OutdentIcon} size="sm" color="inherit" />}
+              variant="ghost"
+              size="sm"
+              isDisabled={!abilities.canOutdent}
+              onClick={onOutdent}
+            />
+            <IconButton
+              label="Demote"
+              tooltip={
+                row.level === 1 && abilities.canIndent
+                  ? 'Demote to sub-bullet'
+                  : 'Demote'
+              }
+              icon={<Icon icon={IndentIcon} size="sm" color="inherit" />}
+              variant="ghost"
+              size="sm"
+              isDisabled={!abilities.canIndent}
+              onClick={onIndent}
+            />
+            <IconButton
+              label="Move up"
+              tooltip="Move up"
+              icon={<Icon icon={ChevronUpIcon} size="sm" color="inherit" />}
+              variant="ghost"
+              size="sm"
+              isDisabled={!abilities.canMoveUp}
+              onClick={onMoveUp}
+            />
+            <IconButton
+              label="Move down"
+              tooltip="Move down"
+              icon={<Icon icon={ChevronDownIcon} size="sm" color="inherit" />}
+              variant="ghost"
+              size="sm"
+              isDisabled={!abilities.canMoveDown}
+              onClick={onMoveDown}
+            />
+            <IconButton
+              label={isTitle ? 'Delete slide' : 'Delete row'}
+              tooltip={
+                isTitle ? 'Delete slide (and its bullets)' : 'Delete row'
+              }
+              icon={<Icon icon={Trash2Icon} size="sm" color="inherit" />}
+              variant="ghost"
+              size="sm"
+              onClick={onDelete}
+            />
+          </HStack>
+        </div>
+      )}
     </div>
   );
 }
@@ -706,6 +774,8 @@ export default function SlideOutlineEditorTemplate() {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   const isCompact = useMediaQuery('(max-width: 900px)');
+  // <=640px: per-row actions collapse into a MoreMenu (see OutlineRowView).
+  const isPhone = useMediaQuery('(max-width: 640px)');
 
   // ---- derived state ----
   const slides = deriveSlides(rows);
@@ -885,6 +955,7 @@ export default function SlideOutlineEditorTemplate() {
             slideNumber={numberByTitleRowId.get(row.id) ?? null}
             isSelected={row.id === selectedRowId}
             isEditing={row.id === editingRowId}
+            isPhone={isPhone}
             abilities={{
               canIndent: canIndent(rows, index),
               canOutdent: canOutdent(rows, index),

@@ -46,10 +46,15 @@
  * - >720px docked  — 560px card pinned bottom-right, max-height 72vh; the
  *   body region scrolls internally, title bar + footer stay pinned.
  * - >720px expanded — the card grows to a centered 800px window (84vh).
- * - minimized      — the card collapses to a 320px × 48px title bar in the
- *   bottom-right corner and the backdrop scrim drops away.
- * - <=720px        — full-width / full-height mobile compose sheet;
- *   minimize and expand controls are hidden, close remains.
+ * - minimized      — at every width the card collapses to a 320px × 48px
+ *   title bar in the bottom-right corner and the backdrop scrim drops
+ *   away.
+ * - <=720px        — full-width / full-height mobile compose sheet while
+ *   composing; minimize and expand controls are hidden, close remains.
+ *   Closing an empty draft still minimizes, and the minimized bar keeps
+ *   its Restore control so the composer is always recoverable. The
+ *   footer send-row wraps so the schedule label never clips trailing
+ *   actions.
  *
  * Container policy (floating-composer archetype): the compose Card is the
  * only Card on the page. Recipient/subject rows are fixed-height rows with
@@ -738,7 +743,10 @@ export default function MailComposeTemplate() {
             {titleText}
           </Text>
         </StackItem>
-        {!isMobile && (
+        {/* Mobile hides Minimize while composing, but the minimized bar
+            (reached by closing an empty draft) must keep Restore — Close
+            is a no-op there, so this is the only way back. */}
+        {(!isMobile || isMinimized) && (
           <IconButton
             label={isMinimized ? 'Restore' : 'Minimize'}
             tooltip={isMinimized ? 'Restore' : 'Minimize'}
@@ -1106,7 +1114,11 @@ export default function MailComposeTemplate() {
             />
           </HStack>
         )}
-        <HStack gap={2} vAlign="center">
+        {/* wrap="wrap" lets the draft-saved text + discard drop to a second
+            line on narrow phones once the Send label widens to
+            'Schedule send' — the Card clips overflow, so a nowrap row
+            would cut off the trailing controls. */}
+        <HStack gap={2} vAlign="center" wrap="wrap">
           {sendSplit}
           <IconButton
             label="Attach files"
@@ -1165,14 +1177,16 @@ export default function MailComposeTemplate() {
     <Card
       padding={0}
       width={
-        isMobile ? '100%' : isMinimized ? 320 : isExpanded ? 800 : 560
+        isMinimized ? 320 : isMobile ? '100%' : isExpanded ? 800 : 560
       }
       maxWidth="100%"
       style={{
         ...styles.composeCard,
-        height: isMobile ? '100%' : isMinimized ? 48 : undefined,
+        // Minimized always collapses to the 48px title bar — including on
+        // mobile, where a full-height blank card would be a dead end.
+        height: isMinimized ? 48 : isMobile ? '100%' : undefined,
         maxHeight: isMobile ? '100%' : isExpanded ? '84vh' : '72vh',
-        borderRadius: isMobile ? 0 : undefined,
+        borderRadius: isMobile && !isMinimized ? 0 : undefined,
       }}
       role="dialog"
       aria-label={`Compose: ${titleText}`}>
@@ -1191,7 +1205,9 @@ export default function MailComposeTemplate() {
   const composeLayer = (
     <div
       style={
-        isMobile
+        // Minimized docks bottom-right at every width; the full-bleed
+        // mobile layer only applies while the composer is open.
+        isMobile && !isMinimized
           ? styles.composeLayerMobile
           : isExpanded
             ? styles.composeLayerExpanded

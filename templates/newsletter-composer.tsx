@@ -48,6 +48,11 @@
  * - <=860px  — the inspector leaves the frame and overlays the canvas from
  *   the right edge whenever a block is selected (with an explicit close
  *   button); the header drops the 'Send test' button to stay one row.
+ * - <=640px  — the header HStack wraps instead of clipping: the viewport
+ *   SegmentedControl and Schedule menu drop to a second row under the
+ *   title, and the rename TextInput goes fluid (full row) instead of a
+ *   fixed 280px. The rename/save IconButtons and the floating block-action
+ *   cluster grow from sm (28px) to lg (36px) touch targets.
  * - The palette, canvas backdrop, and inspector scroll independently; the
  *   header never scrolls. The viewport SegmentedControl only changes the
  *   email body width (600px vs 360px), never the frame.
@@ -175,6 +180,11 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 8,
     backgroundColor: 'var(--color-background-surface)',
     boxShadow: 'var(--shadow-med)',
+  },
+  // Rename mode on phones: the edit row claims the full header line so the
+  // fluid TextInput and save button never push past the viewport.
+  titleEditPhone: {
+    width: '100%',
   },
   // Inspector: fixed 300px end panel on desktop; overlays the canvas <=860px.
   inspectorColumn: {
@@ -531,6 +541,10 @@ export default function NewsletterComposerTemplate() {
   // Responsive contract (see file header).
   const isPaletteCompact = useMediaQuery('(max-width: 1100px)');
   const isInspectorOverlay = useMediaQuery('(max-width: 860px)');
+  // Phone tier: the header wraps onto a second row and the sm (28px)
+  // rename/save + block-action controls grow to lg (36px) touch targets.
+  const isPhone = useMediaQuery('(max-width: 640px)');
+  const touchControlSize = isPhone ? ('lg' as const) : ('sm' as const);
 
   const selectedIndex = blocks.findIndex(block => block.id === selectedBlockId);
   const selectedBlock = selectedIndex === -1 ? null : blocks[selectedIndex];
@@ -670,12 +684,20 @@ export default function NewsletterComposerTemplate() {
                         <EmailBlockContent block={block} />
                       </SelectableCard>
                       {isSelected && (
-                        <div style={styles.blockActions}>
-                          <ButtonGroup label="Block actions" size="sm">
+                        <div
+                          style={{
+                            ...styles.blockActions,
+                            // Keep the cluster half over the block's top
+                            // edge when the buttons grow to 36px on phones.
+                            ...(isPhone ? {top: -18} : null),
+                          }}>
+                          <ButtonGroup
+                            label="Block actions"
+                            size={touchControlSize}>
                             <IconButton
                               label="Move block up"
                               tooltip="Move up"
-                              size="sm"
+                              size={touchControlSize}
                               variant="secondary"
                               icon={
                                 <Icon
@@ -690,7 +712,7 @@ export default function NewsletterComposerTemplate() {
                             <IconButton
                               label="Move block down"
                               tooltip="Move down"
-                              size="sm"
+                              size={touchControlSize}
                               variant="secondary"
                               icon={
                                 <Icon
@@ -705,7 +727,7 @@ export default function NewsletterComposerTemplate() {
                             <IconButton
                               label="Delete block"
                               tooltip="Delete block"
-                              size="sm"
+                              size={touchControlSize}
                               variant="secondary"
                               icon={
                                 <Icon
@@ -932,21 +954,28 @@ export default function NewsletterComposerTemplate() {
   // ---- header ----
 
   const titleArea = isEditingTitle ? (
-    <HStack gap={1} vAlign="center">
-      <TextInput
-        label="Issue name"
-        isLabelHidden
-        size="sm"
-        width={280}
-        value={titleDraft}
-        onChange={setTitleDraft}
-        onEnter={commitTitle}
-        hasAutoFocus
-      />
+    // On phones the rename row goes full width so the fluid TextInput and
+    // save button share the row instead of clipping at a fixed 280px.
+    <HStack
+      gap={1}
+      vAlign="center"
+      style={isPhone ? styles.titleEditPhone : undefined}>
+      <StackItem size={isPhone ? 'fill' : 'static'}>
+        <TextInput
+          label="Issue name"
+          isLabelHidden
+          size="sm"
+          width={isPhone ? '100%' : 280}
+          value={titleDraft}
+          onChange={setTitleDraft}
+          onEnter={commitTitle}
+          hasAutoFocus
+        />
+      </StackItem>
       <IconButton
         label="Save issue name"
         tooltip="Save name"
-        size="sm"
+        size={touchControlSize}
         variant="secondary"
         icon={<Icon icon={CheckIcon} size="sm" color="inherit" />}
         onClick={commitTitle}
@@ -958,7 +987,7 @@ export default function NewsletterComposerTemplate() {
       <IconButton
         label="Rename issue"
         tooltip="Rename issue"
-        size="sm"
+        size={touchControlSize}
         variant="ghost"
         icon={<Icon icon={PencilLineIcon} size="sm" color="inherit" />}
         onClick={() => {
@@ -974,10 +1003,15 @@ export default function NewsletterComposerTemplate() {
       height="fill"
       header={
         <LayoutHeader hasDivider>
-          <HStack gap={3} vAlign="center">
+          {/* Phone tier: both header rows wrap so the viewport control and
+              Schedule menu drop below the title instead of clipping. */}
+          <HStack gap={3} vAlign="center" wrap={isPhone ? 'wrap' : 'nowrap'}>
             <Icon icon={MailIcon} size="md" color="secondary" />
             <StackItem size="fill">
-              <HStack gap={2} vAlign="center">
+              <HStack
+                gap={2}
+                vAlign="center"
+                wrap={isPhone ? 'wrap' : 'nowrap'}>
                 {titleArea}
                 <Tooltip content="Audience: all subscribers · synced July 1, 2026">
                   <Badge label={AUDIENCE_LABEL} variant="blue" />

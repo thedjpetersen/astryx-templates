@@ -20,9 +20,12 @@
  *   LayoutContent while DialogHeader and the footer actions stay pinned.
  * - Dialog form: the Client/Lead selector pair sits side by side above 640px
  *   and stacks vertically below it (useMediaQuery).
- * - Page header: title block keeps width via StackItem fill; the search
- *   input is hidden below 720px, leaving the status filter and the
- *   "New project" trigger on one row.
+ * - Page header: above 720px the title block keeps width via StackItem fill
+ *   with search, status filter, and the "New project" trigger on the same
+ *   row (the row wraps if it runs out of room). Below 720px the header
+ *   stacks: the title block gets its own full-width row, the search input is
+ *   hidden, and the status filter + "New project" trigger share a second
+ *   row, so nothing clips at 375px.
  * - Table: wrapped in a horizontal scroller with a 760px minimum width so
  *   numeric and avatar columns never crush; the row scrolls, columns don't.
  */
@@ -458,21 +461,53 @@ export default function FormModalTemplate() {
     setIsDialogOpen(true);
   };
 
+  const titleBlock = (
+    <HStack gap={2} vAlign="center">
+      <Heading level={1}>Projects</Heading>
+      <Text type="supporting" color="secondary">
+        {visibleProjects.length} of {projects.length}
+      </Text>
+    </HStack>
+  );
+
+  // Status filter + primary action; shared by both header layouts.
+  const headerControls = (
+    <>
+      <Selector
+        label="Status"
+        isLabelHidden
+        size="sm"
+        options={STATUS_FILTER_OPTIONS}
+        value={statusFilter}
+        onChange={setStatusFilter}
+      />
+      <Button
+        label="New project"
+        variant="primary"
+        icon={<Icon icon={PlusIcon} size="sm" />}
+        onClick={openDialog}
+      />
+    </>
+  );
+
   return (
     <Layout
       height="fill"
       header={
         <LayoutHeader hasDivider>
-          <HStack gap={3} vAlign="center">
-            <StackItem size="fill">
-              <HStack gap={2} vAlign="center">
-                <Heading level={1}>Projects</Heading>
-                <Text type="supporting" color="secondary">
-                  {visibleProjects.length} of {projects.length}
-                </Text>
+          {isNarrow ? (
+            // Controls drop to their own row at phone widths — the fill
+            // title slot would otherwise squeeze to nothing and clip the
+            // heading instead of wrapping (StackItem fill sets minWidth 0).
+            <VStack gap={3}>
+              {titleBlock}
+              <HStack gap={3} vAlign="center">
+                {headerControls}
               </HStack>
-            </StackItem>
-            {!isNarrow && (
+            </VStack>
+          ) : (
+            <HStack gap={3} vAlign="center" wrap="wrap">
+              <StackItem size="fill">{titleBlock}</StackItem>
               <TextInput
                 label="Search projects"
                 isLabelHidden
@@ -484,22 +519,9 @@ export default function FormModalTemplate() {
                 placeholder="Search projects or clients"
                 hasClear
               />
-            )}
-            <Selector
-              label="Status"
-              isLabelHidden
-              size="sm"
-              options={STATUS_FILTER_OPTIONS}
-              value={statusFilter}
-              onChange={setStatusFilter}
-            />
-            <Button
-              label="New project"
-              variant="primary"
-              icon={<Icon icon={PlusIcon} size="sm" />}
-              onClick={openDialog}
-            />
-          </HStack>
+              {headerControls}
+            </HStack>
+          )}
         </LayoutHeader>
       }
       content={

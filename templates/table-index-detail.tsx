@@ -27,6 +27,9 @@
  * - <= 768px: the Technician and Scheduled columns are hidden so the
  *   remaining columns keep readable widths; all data stays reachable
  *   through the detail pane's MetadataList.
+ * - <= 640px: the header "New job" button and the detail pane's action
+ *   buttons keep size sm but grow to 40px tall so their tap targets meet
+ *   the ~40px touch threshold; desktop keeps the 28px sm height.
  */
 
 import {useMemo, useState, type CSSProperties, type KeyboardEvent} from 'react';
@@ -94,6 +97,8 @@ const styles: Record<string, CSSProperties> = {
   detail: {
     padding: 'var(--spacing-4)',
   },
+  // ~40px touch targets on phones (size="sm" renders 28px).
+  buttonTapTarget: {height: 40},
 };
 
 // ============= DATA =============
@@ -384,10 +389,12 @@ function JobsTable({
 function JobDetail({
   job,
   relatedJobs,
+  tapTargetStyle,
   onSelect,
 }: {
   job: ServiceJob;
   relatedJobs: ServiceJob[];
+  tapTargetStyle?: CSSProperties;
   onSelect: (id: string) => void;
 }) {
   const status = STATUS_META[job.status];
@@ -411,8 +418,13 @@ function JobDetail({
       </VStack>
 
       <HStack gap={2}>
-        <Button label={NEXT_ACTION[job.status]} size="sm" />
-        <Button label="Edit job" variant="secondary" size="sm" />
+        <Button label={NEXT_ACTION[job.status]} size="sm" style={tapTargetStyle} />
+        <Button
+          label="Edit job"
+          variant="secondary"
+          size="sm"
+          style={tapTargetStyle}
+        />
       </HStack>
 
       <Divider />
@@ -486,6 +498,10 @@ export default function TableIndexDetailPage() {
   // below the table; <=768px also hides two table columns.
   const isNarrow = useMediaQuery('(max-width: 1024px)');
   const isCompact = useMediaQuery('(max-width: 768px)');
+  // <=640px: sm buttons (28px) are too short to tap; grow the primary
+  // actions to ~40px touch targets while keeping the sm type scale.
+  const isPhone = useMediaQuery('(max-width: 640px)');
+  const tapTargetStyle = isPhone ? styles.buttonTapTarget : undefined;
 
   const selected = useMemo(
     () => JOBS.find(job => job.id === selectedId) ?? JOBS[0],
@@ -503,7 +519,12 @@ export default function TableIndexDetailPage() {
   const openCount = JOBS.filter(job => job.status !== 'completed').length;
 
   const detail = (
-    <JobDetail job={selected} relatedJobs={relatedJobs} onSelect={setSelectedId} />
+    <JobDetail
+      job={selected}
+      relatedJobs={relatedJobs}
+      tapTargetStyle={tapTargetStyle}
+      onSelect={setSelectedId}
+    />
   );
 
   return (
@@ -524,6 +545,7 @@ export default function TableIndexDetailPage() {
               label="New job"
               icon={<Icon icon={PlusIcon} size="sm" />}
               size="sm"
+              style={tapTargetStyle}
             />
           </HStack>
         </LayoutHeader>

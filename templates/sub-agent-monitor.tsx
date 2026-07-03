@@ -32,9 +32,13 @@
  * Responsive contract:
  * - Chat column: maxWidth 768, centered; only the transcript scrolls —
  *   header and composer (with the docked monitor) are fixed chrome.
- * - > 640px: monitor rows show a relative-time Timestamp column.
+ * - > 640px: monitor rows show a relative-time Timestamp column; summary
+ *   clusters spell out "N running / N done / N failed / +N dismissed".
  * - <= 640px: rows drop the relative time; StatusDot, title, status word,
- *   and the View chip keep the row scannable.
+ *   and the View chip keep the row scannable. Summary clusters condense
+ *   to dot + bare count so the fill label keeps room at 375px, the
+ *   bulk-action strip wraps onto a second row, and the sm controls (View,
+ *   Restore, Dismiss, bulk buttons) grow to 40px tap targets.
  * - > 768px: Dialog is a standard modal (width 768, body scrolls within
  *   ~70vh).
  * - <= 768px: Dialog switches to the fullscreen variant.
@@ -107,6 +111,11 @@ const styles: Record<string, CSSProperties> = {
   summaryCell: {minWidth: 0},
   fadedCluster: {opacity: 0.6},
   bulkStrip: {paddingBlock: 'var(--spacing-2)'},
+  // <=640px: grow the sm controls to 40px tap targets (the 28px desktop
+  // box is fine for pointers but too small for thumbs); type and icons
+  // keep their size, the hit area just grows.
+  buttonTapTarget: {height: 40},
+  iconTapTarget: {width: 40, height: 40},
   agentRow: {paddingBlock: 'var(--spacing-2)'},
   agentTitleCell: {minWidth: 0},
   dismissedRow: {opacity: 0.55},
@@ -337,6 +346,7 @@ function AgentRow({
   onDismiss: (id: string) => void;
   onRestore: (id: string) => void;
 }) {
+  const tapTargetStyle = isCompact ? styles.buttonTapTarget : undefined;
   return (
     <HStack
       gap={2}
@@ -372,6 +382,7 @@ function AgentRow({
         label={`View transcript: ${agent.title}`}
         variant="secondary"
         size="sm"
+        style={tapTargetStyle}
         onClick={() => onView(agent.id)}>
         View
       </Button>
@@ -380,6 +391,7 @@ function AgentRow({
           label={`Restore: ${agent.title}`}
           variant="ghost"
           size="sm"
+          style={tapTargetStyle}
           onClick={() => onRestore(agent.id)}>
           Restore
         </Button>
@@ -390,6 +402,7 @@ function AgentRow({
           icon={<Icon icon={XIcon} size="sm" color="inherit" />}
           variant="ghost"
           size="sm"
+          style={isCompact ? styles.iconTapTarget : undefined}
           isDisabled={agent.status === 'running'}
           onClick={() => onDismiss(agent.id)}
         />
@@ -480,8 +493,9 @@ export default function SubAgentMonitorTemplate() {
   // The failed deploy's transcript opens over the page by default.
   const [dialogAgentId, setDialogAgentId] = useState<string | null>('ag-4');
 
-  // Responsive contract: rows drop relative time at <= 640px; the Dialog
-  // goes fullscreen at <= 768px.
+  // Responsive contract: at <= 640px rows drop relative time, summary
+  // clusters condense to bare counts, and sm controls grow to 40px tap
+  // targets; the Dialog goes fullscreen at <= 768px.
   const isCompact = useMediaQuery('(max-width: 640px)');
   const isMobile = useMediaQuery('(max-width: 768px)');
 
@@ -530,8 +544,11 @@ export default function SubAgentMonitorTemplate() {
 
   // Summary bar: fleet icon, agent count, colored count clusters. Rendered
   // inside the Collapsible trigger, so every cluster stays non-interactive.
+  // <=640px the clusters condense to dot + bare count so the four of them
+  // plus the chevron never squeeze the fill label out of a 375px panel;
+  // the StatusDot labels keep each count announced ("Running", "Done"...).
   const summaryBar = (
-    <HStack gap={3} vAlign="center">
+    <HStack gap={isCompact ? 2 : 3} vAlign="center">
       <Icon icon={BotIcon} size="sm" color="secondary" />
       <StackItem size="fill" style={styles.summaryCell}>
         <Text type="label" maxLines={1}>
@@ -542,7 +559,7 @@ export default function SubAgentMonitorTemplate() {
         <HStack gap={1} vAlign="center">
           <StatusDot variant="warning" label="Running" isPulsing />
           <Text type="supporting" color="secondary" hasTabularNumbers>
-            {runningCount} running
+            {isCompact ? runningCount : `${runningCount} running`}
           </Text>
         </HStack>
       )}
@@ -550,7 +567,7 @@ export default function SubAgentMonitorTemplate() {
         <HStack gap={1} vAlign="center">
           <StatusDot variant="success" label="Done" />
           <Text type="supporting" color="secondary" hasTabularNumbers>
-            {doneCount} done
+            {isCompact ? doneCount : `${doneCount} done`}
           </Text>
         </HStack>
       )}
@@ -558,7 +575,7 @@ export default function SubAgentMonitorTemplate() {
         <HStack gap={1} vAlign="center">
           <StatusDot variant="error" label="Failed" />
           <Text type="supporting" color="secondary" hasTabularNumbers>
-            {failedCount} failed
+            {isCompact ? failedCount : `${failedCount} failed`}
           </Text>
         </HStack>
       )}
@@ -566,7 +583,9 @@ export default function SubAgentMonitorTemplate() {
         <Tooltip content="Dismissed agents stay under the DISMISSED section">
           <div style={styles.fadedCluster}>
             <Text type="supporting" color="secondary" hasTabularNumbers>
-              +{dismissed.length} dismissed
+              {isCompact
+                ? `+${dismissed.length}`
+                : `+${dismissed.length} dismissed`}
             </Text>
           </div>
         </Tooltip>
@@ -584,12 +603,15 @@ export default function SubAgentMonitorTemplate() {
         onOpenChange={setIsPanelOpen}
         trigger={summaryBar}>
         <VStack gap={0}>
-          {/* Bulk-action strip. */}
-          <HStack gap={2} vAlign="center" style={styles.bulkStrip}>
+          {/* Bulk-action strip. wrap="wrap" lets "Dismiss N completed"
+              drop to a second row on narrow phones; on desktop all three
+              buttons fit so nothing wraps. */}
+          <HStack gap={2} vAlign="center" wrap="wrap" style={styles.bulkStrip}>
             <Button
               label={showDismissed ? 'Hide dismissed' : 'Show dismissed'}
               variant="ghost"
               size="sm"
+              style={isCompact ? styles.buttonTapTarget : undefined}
               isDisabled={dismissed.length === 0}
               onClick={() => setShowDismissed(prev => !prev)}
             />
@@ -597,6 +619,7 @@ export default function SubAgentMonitorTemplate() {
               label="Restore all"
               variant="ghost"
               size="sm"
+              style={isCompact ? styles.buttonTapTarget : undefined}
               isDisabled={dismissed.length === 0}
               onClick={restoreAll}
             />
@@ -605,6 +628,7 @@ export default function SubAgentMonitorTemplate() {
               label={`Dismiss ${doneCount} completed`}
               variant="ghost"
               size="sm"
+              style={isCompact ? styles.buttonTapTarget : undefined}
               isDisabled={doneCount === 0}
               onClick={dismissCompleted}
             />

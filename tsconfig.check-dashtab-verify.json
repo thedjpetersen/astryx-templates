@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "templates/dashboard-tabbed.tsx",
+    "types/**/*.d.ts"
+  ]
+}

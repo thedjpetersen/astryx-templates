@@ -45,6 +45,12 @@
  * - <=768px: the rail becomes a horizontal thumbnail strip above the canvas
  *   (tiles keep intrinsic 104px width, strip scrolls horizontally) and the
  *   insert Toolbar drops its button labels down to icon Tooltips.
+ * - <=640px: the header stacks into two rows (deck icon + filename + Present
+ *   above the Undo/Redo + insert + panel-toggle row), the open format panel
+ *   renders as a bottom sheet-style block under the stage (max 46% height,
+ *   own scroll) instead of a side panel, and canvas selection hit areas floor
+ *   at 44px per side via CSS max() so thin accent bars stay tappable (the
+ *   painted shape frames are unchanged).
  * - Slide canvases use container-query (cqw) type sizing, so the identical
  *   edited shape state paints correctly at 104px thumbnails and the 840px
  *   stage.
@@ -227,6 +233,16 @@ const styles: Record<string, CSSProperties> = {
     height: '100%',
     overflowY: 'auto',
   },
+  // <=640px: the format panel opens as a bottom sheet-style block under the
+  // stage — raised shadow, own scroll, capped height (mirrors
+  // slide-outline-editor's preview sheet).
+  formatSheet: {
+    flex: '0 0 auto',
+    maxHeight: '46%',
+    overflowY: 'auto',
+    padding: 'var(--spacing-4)',
+    boxShadow: 'var(--shadow-high)',
+  },
   bannerRegion: {flexShrink: 0},
 };
 
@@ -396,6 +412,29 @@ function frameStyle(shape: EditorShape): CSSProperties {
   };
 }
 
+/**
+ * Editing hit frame. On phones the raw shape frames can render a few px tall
+ * (the 64x8 accent bars), so touch hit areas floor at 44px per side via CSS
+ * max(), centered on the shape; painted frames are untouched. Off-phone the
+ * hit frame equals the visual frame.
+ */
+function hitFrameStyle(
+  shape: EditorShape,
+  hasTouchHitAreas: boolean,
+): CSSProperties {
+  if (!hasTouchHitAreas) {
+    return frameStyle(shape);
+  }
+  return {
+    position: 'absolute',
+    left: pctX(shape.x + shape.w / 2),
+    top: pctY(shape.y + shape.h / 2),
+    width: `max(${pctX(shape.w)}, 44px)`,
+    height: `max(${pctY(shape.h)}, 44px)`,
+    transform: 'translate(-50%, -50%)',
+  };
+}
+
 /** One positioned shape; all type sizes are cqw so miniatures scale. */
 function ShapeView({shape}: {shape: EditorShape}) {
   switch (shape.kind) {
@@ -535,11 +574,14 @@ function SlideCanvas({
   selectedShapeId,
   onSelectShape,
   onDeselect,
+  hasTouchHitAreas = false,
 }: {
   shapes: EditorShape[];
   selectedShapeId?: string | null;
   onSelectShape?: (id: string) => void;
   onDeselect?: () => void;
+  /** <=640px: floor selection hit areas at 44px per side. */
+  hasTouchHitAreas?: boolean;
 }) {
   const isEditing = onSelectShape != null;
   const selected =
@@ -555,14 +597,21 @@ function SlideCanvas({
 
   return (
     <div style={styles.canvas} onClick={onDeselect}>
-      {shapes.map(shape =>
-        isEditing ? (
+      {shapes.map(shape => (
+        <div key={shape.id} style={frameStyle(shape)}>
+          <ShapeView shape={shape} />
+        </div>
+      ))}
+      {/* Hit areas are painted separately from the shapes so touch targets
+          can floor at 44px without warping the painted frames. */}
+      {isEditing &&
+        shapes.map(shape => (
           <div
-            key={shape.id}
+            key={`hit-${shape.id}`}
             role="button"
             tabIndex={0}
             aria-label={`Select ${KIND_LABEL[shape.kind].toLowerCase()}`}
-            style={{...frameStyle(shape), cursor: 'pointer'}}
+            style={{...hitFrameStyle(shape, hasTouchHitAreas), cursor: 'pointer'}}
             onClick={event => {
               event.stopPropagation();
               onSelectShape(shape.id);
@@ -572,15 +621,9 @@ function SlideCanvas({
                 event.preventDefault();
                 onSelectShape(shape.id);
               }
-            }}>
-            <ShapeView shape={shape} />
-          </div>
-        ) : (
-          <div key={shape.id} style={frameStyle(shape)}>
-            <ShapeView shape={shape} />
-          </div>
-        ),
-      )}
+            }}
+          />
+        ))}
       {crossesVerticalCenter && <div style={styles.guideVertical} aria-hidden />}
       {crossesHorizontalCenter && (
         <div style={styles.guideHorizontal} aria-hidden />
@@ -659,6 +702,7 @@ export default function SlideEditorCanvasTemplate() {
 
   const isMid = useMediaQuery('(max-width: 1100px)');
   const isCompact = useMediaQuery('(max-width: 768px)');
+  const isPhone = useMediaQuery('(max-width: 640px)');
 
   const activeSlide = SLIDE_ORDER[activeSlideIndex];
   const activeShapes = shapesBySlide[activeSlide.id];
@@ -925,6 +969,7 @@ export default function SlideEditorCanvasTemplate() {
                 selectedShapeId={selectedShapeId}
                 onSelectShape={selectShape}
                 onDeselect={() => selectShape(null)}
+                hasTouchHitAreas={isPhone}
               />
             </AspectRatio>
           </Card>
@@ -963,7 +1008,133 @@ export default function SlideEditorCanvasTemplate() {
         </>
       )}
       {stage}
+      {isPhone && isFormatOpen && (
+        <>
+          <Divider />
+          {/* Bottom sheet-style format block under the stage. */}
+          <div style={styles.formatSheet}>{formatPanelBody}</div>
+        </>
+      )}
     </VStack>
+  );
+
+  // ---- header controls (shared by the one-row and two-row headers) ----
+  const deckTitle = (
+    <HStack gap={2} vAlign="center">
+      <Icon icon={PresentationIcon} size="md" color="secondary" />
+      <Heading level={1}>{DECK_FILE_NAME}</Heading>
+      {!isCompact && <Badge label="Editing" variant="blue" />}
+    </HStack>
+  );
+
+  // Undo/Redo gray out at the ends of the edit stack.
+  const undoRedoControls = (
+    <HStack gap={1} vAlign="center">
+      <IconButton
+        label="Undo"
+        tooltip="Undo last edit"
+        icon={<Icon icon={Undo2Icon} size="sm" color="inherit" />}
+        variant="ghost"
+        size="sm"
+        isDisabled={past.length === 0}
+        onClick={undo}
+      />
+      <IconButton
+        label="Redo"
+        tooltip="Redo edit"
+        icon={<Icon icon={Redo2Icon} size="sm" color="inherit" />}
+        variant="ghost"
+        size="sm"
+        isDisabled={future.length === 0}
+        onClick={redo}
+      />
+    </HStack>
+  );
+
+  const insertToolbar = (
+    <Toolbar
+      label="Insert"
+      size="sm"
+      gap={1}
+      startContent={
+        isCompact ? (
+          <>
+            <IconButton
+              label="Insert text box"
+              tooltip="Insert text box"
+              icon={<Icon icon={TypeIcon} size="sm" color="inherit" />}
+              variant="ghost"
+              size="sm"
+              onClick={() => insertShape('text')}
+            />
+            <IconButton
+              label="Insert shape"
+              tooltip="Insert shape"
+              icon={<Icon icon={SquareIcon} size="sm" color="inherit" />}
+              variant="ghost"
+              size="sm"
+              onClick={() => insertShape('bar')}
+            />
+            <IconButton
+              label="Insert image placeholder"
+              tooltip="Insert image placeholder"
+              icon={<Icon icon={ImageIcon} size="sm" color="inherit" />}
+              variant="ghost"
+              size="sm"
+              onClick={() => insertShape('image')}
+            />
+          </>
+        ) : (
+          <>
+            <Button
+              label="Text"
+              variant="ghost"
+              size="sm"
+              icon={<Icon icon={TypeIcon} size="sm" color="inherit" />}
+              tooltip="Insert a text box at (320, 320)"
+              onClick={() => insertShape('text')}
+            />
+            <Button
+              label="Shape"
+              variant="ghost"
+              size="sm"
+              icon={<Icon icon={SquareIcon} size="sm" color="inherit" />}
+              tooltip="Insert a rectangle at (320, 320)"
+              onClick={() => insertShape('bar')}
+            />
+            <Button
+              label="Image"
+              variant="ghost"
+              size="sm"
+              icon={<Icon icon={ImageIcon} size="sm" color="inherit" />}
+              tooltip="Insert an image placeholder at (320, 320)"
+              onClick={() => insertShape('image')}
+            />
+          </>
+        )
+      }
+    />
+  );
+
+  const formatToggle = isMid ? (
+    <IconButton
+      label={isFormatOpen ? 'Hide format panel' : 'Show format panel'}
+      tooltip={isFormatOpen ? 'Hide format panel' : 'Show format panel'}
+      icon={<Icon icon={PanelRightIcon} size="sm" color="inherit" />}
+      variant={isFormatOpen ? 'secondary' : 'ghost'}
+      size="sm"
+      onClick={() => setIsFormatOpen(prev => !prev)}
+    />
+  ) : null;
+
+  const presentButton = (
+    <Button
+      label={isRehearsing ? 'End rehearsal' : 'Present'}
+      variant={isRehearsing ? 'secondary' : 'primary'}
+      size="sm"
+      icon={<Icon icon={PlayIcon} size="sm" color="inherit" />}
+      onClick={() => setIsRehearsing(prev => !prev)}
+    />
   );
 
   return (
@@ -972,116 +1143,31 @@ export default function SlideEditorCanvasTemplate() {
         height="fill"
         header={
           <LayoutHeader hasDivider>
-            <HStack gap={2} vAlign="center">
-              <StackItem size="fill">
+            {isPhone ? (
+              // <=640px: two rows — filename + Present, then edit controls —
+              // so the fixed-width controls never crush the filename.
+              <VStack gap={1}>
                 <HStack gap={2} vAlign="center">
-                  <Icon icon={PresentationIcon} size="md" color="secondary" />
-                  <Heading level={1}>{DECK_FILE_NAME}</Heading>
-                  {!isCompact && <Badge label="Editing" variant="blue" />}
+                  <StackItem size="fill">{deckTitle}</StackItem>
+                  {presentButton}
                 </HStack>
-              </StackItem>
-              {/* Undo/Redo gray out at the ends of the edit stack. */}
-              <HStack gap={1} vAlign="center">
-                <IconButton
-                  label="Undo"
-                  tooltip="Undo last edit"
-                  icon={<Icon icon={Undo2Icon} size="sm" color="inherit" />}
-                  variant="ghost"
-                  size="sm"
-                  isDisabled={past.length === 0}
-                  onClick={undo}
-                />
-                <IconButton
-                  label="Redo"
-                  tooltip="Redo edit"
-                  icon={<Icon icon={Redo2Icon} size="sm" color="inherit" />}
-                  variant="ghost"
-                  size="sm"
-                  isDisabled={future.length === 0}
-                  onClick={redo}
-                />
+                <HStack gap={2} vAlign="center">
+                  {undoRedoControls}
+                  <Divider orientation="vertical" style={styles.headerDivider} />
+                  <StackItem size="fill">{insertToolbar}</StackItem>
+                  {formatToggle}
+                </HStack>
+              </VStack>
+            ) : (
+              <HStack gap={2} vAlign="center">
+                <StackItem size="fill">{deckTitle}</StackItem>
+                {undoRedoControls}
+                <Divider orientation="vertical" style={styles.headerDivider} />
+                {insertToolbar}
+                {formatToggle}
+                {presentButton}
               </HStack>
-              <Divider orientation="vertical" style={styles.headerDivider} />
-              <Toolbar
-                label="Insert"
-                size="sm"
-                gap={1}
-                startContent={
-                  isCompact ? (
-                    <>
-                      <IconButton
-                        label="Insert text box"
-                        tooltip="Insert text box"
-                        icon={<Icon icon={TypeIcon} size="sm" color="inherit" />}
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => insertShape('text')}
-                      />
-                      <IconButton
-                        label="Insert shape"
-                        tooltip="Insert shape"
-                        icon={<Icon icon={SquareIcon} size="sm" color="inherit" />}
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => insertShape('bar')}
-                      />
-                      <IconButton
-                        label="Insert image placeholder"
-                        tooltip="Insert image placeholder"
-                        icon={<Icon icon={ImageIcon} size="sm" color="inherit" />}
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => insertShape('image')}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <Button
-                        label="Text"
-                        variant="ghost"
-                        size="sm"
-                        icon={<Icon icon={TypeIcon} size="sm" color="inherit" />}
-                        tooltip="Insert a text box at (320, 320)"
-                        onClick={() => insertShape('text')}
-                      />
-                      <Button
-                        label="Shape"
-                        variant="ghost"
-                        size="sm"
-                        icon={<Icon icon={SquareIcon} size="sm" color="inherit" />}
-                        tooltip="Insert a rectangle at (320, 320)"
-                        onClick={() => insertShape('bar')}
-                      />
-                      <Button
-                        label="Image"
-                        variant="ghost"
-                        size="sm"
-                        icon={<Icon icon={ImageIcon} size="sm" color="inherit" />}
-                        tooltip="Insert an image placeholder at (320, 320)"
-                        onClick={() => insertShape('image')}
-                      />
-                    </>
-                  )
-                }
-              />
-              {isMid && (
-                <IconButton
-                  label={isFormatOpen ? 'Hide format panel' : 'Show format panel'}
-                  tooltip={isFormatOpen ? 'Hide format panel' : 'Show format panel'}
-                  icon={<Icon icon={PanelRightIcon} size="sm" color="inherit" />}
-                  variant={isFormatOpen ? 'secondary' : 'ghost'}
-                  size="sm"
-                  onClick={() => setIsFormatOpen(prev => !prev)}
-                />
-              )}
-              <Button
-                label={isRehearsing ? 'End rehearsal' : 'Present'}
-                variant={isRehearsing ? 'secondary' : 'primary'}
-                size="sm"
-                icon={<Icon icon={PlayIcon} size="sm" color="inherit" />}
-                onClick={() => setIsRehearsing(prev => !prev)}
-              />
-            </HStack>
+            )}
           </LayoutHeader>
         }
         start={
@@ -1093,7 +1179,15 @@ export default function SlideEditorCanvasTemplate() {
             </LayoutPanel>
           )
         }
-        end={isMid ? (isFormatOpen ? formatPanel : undefined) : formatPanel}
+        end={
+          isPhone
+            ? undefined // <=640px: the format sheet lives under the stage.
+            : isMid
+              ? isFormatOpen
+                ? formatPanel
+                : undefined
+              : formatPanel
+        }
         content={<LayoutContent padding={0}>{content}</LayoutContent>}
       />
     </div>

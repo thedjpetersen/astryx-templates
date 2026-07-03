@@ -19,8 +19,11 @@
  * - Feed column: max-width 680px, centered; below 720px it spans the full
  *   viewport width minus the LayoutContent gutters.
  * - <=720px: the header drops the visible update count and the compose
- *   button collapses to icon-only; the segmented filter and team selector
- *   keep a single row.
+ *   button collapses to icon-only; the header row wraps so the segmented
+ *   filter, team selector, and compose button drop below the title
+ *   instead of clipping at phone widths.
+ * - <=720px: the sm card controls (save toggle, overflow menu, comments
+ *   button) grow to 40px touch targets; glyphs and labels stay "sm".
  * - Card text self-manages width: titles clamp to 2 lines, excerpts to 3;
  *   tag Tokens wrap onto additional rows instead of overflowing.
  */
@@ -75,6 +78,11 @@ const styles: Record<string, CSSProperties> = {
     flexWrap: 'wrap',
     gap: 'var(--spacing-1)',
   },
+  // <=720px: grow the sm card controls to 40px hit targets (the 28px "sm"
+  // box is fine for pointers but too small for thumbs); icon glyphs and
+  // labels stay "sm" so the cards read the same, just with more padding.
+  iconTapTarget: {width: 40, height: 40},
+  buttonTapTarget: {height: 40},
 };
 
 // ============= DATA =============
@@ -248,10 +256,12 @@ const POSTS: FeedPost[] = [
 function PostCard({
   post,
   isSaved,
+  isNarrow,
   onToggleSaved,
 }: {
   post: FeedPost;
   isSaved: boolean;
+  isNarrow: boolean;
   onToggleSaved: (postId: string, isPressed: boolean) => void;
 }) {
   return (
@@ -277,6 +287,7 @@ function PostCard({
           <MoreMenu
             label={`Options for ${post.title}`}
             size="sm"
+            style={isNarrow ? styles.iconTapTarget : undefined}
             items={[
               {label: 'Copy link', onClick: () => {}},
               {label: `Mute ${post.author}`, onClick: () => {}},
@@ -309,12 +320,14 @@ function PostCard({
             label={`${post.comments} comments`}
             variant="ghost"
             size="sm"
+            style={isNarrow ? styles.buttonTapTarget : undefined}
             icon={<Icon icon={MessagesSquareIcon} size="sm" />}
           />
           <StackItem size="fill" />
           <ToggleButton
             label={isSaved ? 'Remove from saved' : 'Save post'}
             size="sm"
+            style={isNarrow ? styles.iconTapTarget : undefined}
             isIconOnly
             icon={<Icon icon={BookmarkIcon} size="sm" />}
             isPressed={isSaved}
@@ -419,7 +432,7 @@ export default function InfiniteScrollFeedTemplate() {
       height="fill"
       header={
         <LayoutHeader hasDivider>
-          <HStack gap={3} vAlign="center">
+          <HStack gap={3} vAlign="center" wrap="wrap">
             <StackItem size="fill">
               <HStack gap={2} vAlign="center">
                 <Heading level={1}>Team pulse</Heading>
@@ -471,6 +484,7 @@ export default function InfiniteScrollFeedTemplate() {
                     key={post.id}
                     post={post}
                     isSaved={savedIds.has(post.id)}
+                    isNarrow={isNarrow}
                     onToggleSaved={toggleSaved}
                   />
                 ))}

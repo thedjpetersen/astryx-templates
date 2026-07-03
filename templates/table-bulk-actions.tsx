@@ -32,6 +32,10 @@
  *   width, so bulk actions stay reachable while the table scrolls
  *   vertically underneath; its buttons keep size sm and do not wrap out
  *   of the Toolbar's end slot.
+ * - ≤640px: the action bar collapses to fit without horizontal
+ *   overflow — the count label drops the ticket word, and Clear,
+ *   Archive, Assign, and Delete become icon-only buttons (Delete gains
+ *   a trash icon) with tooltips carrying the labels.
  * - Header: title block keeps width via StackItem fill; the segmented
  *   view switch stays pinned right.
  */
@@ -67,9 +71,11 @@ import {
 } from '@astryxdesign/core/Table';
 import type {TableColumn} from '@astryxdesign/core/Table';
 import {Toolbar} from '@astryxdesign/core/Toolbar';
+import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
   ArchiveIcon,
   InboxIcon,
+  Trash2Icon,
   UsersIcon,
   XIcon,
 } from 'lucide-react';
@@ -389,6 +395,11 @@ export default function TableBulkActionsTemplate() {
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
   const [announcement, setAnnouncement] = useState('');
 
+  // ≤640px the Toolbar's slots cannot fit full button labels, so the
+  // action bar collapses to icon-only buttons (labels move to tooltips
+  // and aria labels) instead of overflowing horizontally.
+  const isCompact = useMediaQuery('(max-width: 640px)');
+
   // Select-all must operate on the visible rows only, so the selection
   // state is fed the filtered view, not the full dataset.
   const visibleRows = useMemo(
@@ -487,12 +498,16 @@ export default function TableBulkActionsTemplate() {
                 startContent={
                   <HStack gap={2} vAlign="center">
                     <Text type="label">
-                      {selectedCount} {ticketWord} selected
+                      {isCompact
+                        ? `${selectedCount} selected`
+                        : `${selectedCount} ${ticketWord} selected`}
                     </Text>
                     <Button
                       label="Clear"
                       variant="ghost"
                       icon={<Icon icon={XIcon} size="sm" />}
+                      isIconOnly={isCompact}
+                      tooltip={isCompact ? 'Clear selection' : undefined}
                       onClick={clearSelection}
                     />
                   </HStack>
@@ -503,6 +518,8 @@ export default function TableBulkActionsTemplate() {
                       label="Archive"
                       variant="secondary"
                       icon={<Icon icon={ArchiveIcon} size="sm" />}
+                      isIconOnly={isCompact}
+                      tooltip={isCompact ? 'Archive' : undefined}
                       onClick={archiveSelected}
                       isDisabled={view === 'archived'}
                     />
@@ -511,6 +528,8 @@ export default function TableBulkActionsTemplate() {
                         label: 'Assign',
                         variant: 'secondary',
                         icon: <Icon icon={UsersIcon} size="sm" />,
+                        isIconOnly: isCompact,
+                        tooltip: isCompact ? 'Assign' : undefined,
                       }}
                       hasChevron
                       items={TEAMMATES.map(teammate => ({
@@ -518,9 +537,19 @@ export default function TableBulkActionsTemplate() {
                         onClick: () => assignSelected(teammate),
                       }))}
                     />
+                    {/* Delete is text-only on wide viewports; compact mode
+                        adds the trash icon so the icon-only collapse never
+                        yields an unlabeled destructive button. */}
                     <Button
                       label="Delete"
                       variant="destructive"
+                      icon={
+                        isCompact ? (
+                          <Icon icon={Trash2Icon} size="sm" />
+                        ) : undefined
+                      }
+                      isIconOnly={isCompact}
+                      tooltip={isCompact ? 'Delete' : undefined}
                       onClick={deleteSelected}
                     />
                   </HStack>

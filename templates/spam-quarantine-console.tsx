@@ -43,13 +43,21 @@
  * - >1000px  — header | full-width table | end LayoutPanel 380px when a row
  *   is open. Table and panel scroll independently.
  * - <=1000px — the detail panel becomes a full-height overlay sheet pinned
- *   to the right edge (380px, capped at 92vw) above the table.
+ *   to the right edge (380px, capped at 92vw) above the table, behind it a
+ *   scrim over the table region; tapping the scrim closes the sheet.
  * - Detection-reason Tokens stay on one line: up to two render inline and
  *   the rest collapse into a '+N' Token whose Tooltip lists the hidden
  *   reasons. The visible budget drops to one token when the detail panel is
  *   open or at <=760px, where the filter row also wraps.
  * - The floating bulk Toolbar stays bottom-centered over the table region at
- *   every width.
+ *   every width. At <=640px its action Buttons collapse to icon-only
+ *   (labels stay as accessible names and tooltips) so the bar fits a
+ *   375px viewport, and its controls plus the sheet close button grow to
+ *   ~40px touch targets (the 28px "sm" box is fine for pointers, too
+ *   small for thumbs); glyphs stay "sm".
+ * - <=640px the row-select checkbox sits inside a >=40px hit area; at any
+ *   width a near-miss tap on that area toggles selection instead of
+ *   opening the detail panel.
  */
 
 import {useMemo, useState, type CSSProperties} from 'react';
@@ -154,6 +162,27 @@ const styles: Record<string, CSSProperties> = {
     boxShadow: 'var(--shadow-high)',
     paddingInline: 'var(--spacing-2)',
   },
+  // <=640px: grow the sm controls to ~40px touch targets (size="sm" is a
+  // 28px box); the icon glyphs stay "sm".
+  iconTapTarget: {width: 40, height: 40},
+  // Row-select hit area: at least 40px square around the ~16px sm
+  // checkbox so a near-miss tap toggles selection instead of falling
+  // through to the row click that opens the detail panel.
+  checkboxHit: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 40,
+    minHeight: 40,
+  },
+  // <=1000px: scrim over the table region behind the overlay sheet;
+  // tapping it closes the sheet.
+  sheetScrim: {
+    position: 'absolute',
+    inset: 0,
+    backgroundColor: 'var(--color-overlay)',
+    zIndex: 6,
+  },
   // <=1000px: the detail panel becomes a full-height overlay sheet.
   overlaySheet: {
     position: 'absolute',
@@ -161,7 +190,7 @@ const styles: Record<string, CSSProperties> = {
     bottom: 0,
     insetInlineEnd: 0,
     width: 'min(380px, 92vw)',
-    zIndex: 6,
+    zIndex: 7,
     backgroundColor: 'var(--color-background-surface)',
     borderInlineStart: '1px solid var(--color-border)',
     boxShadow: 'var(--shadow-high)',
@@ -486,6 +515,10 @@ export default function SpamQuarantineConsoleTemplate() {
   // Responsive contract (see file header).
   const isPanelOverlay = useMediaQuery('(max-width: 1000px)');
   const isNarrow = useMediaQuery('(max-width: 760px)');
+  // <=640px: bulk-bar Buttons collapse to icon-only and sm controls grow
+  // to ~40px touch targets.
+  const isPhone = useMediaQuery('(max-width: 640px)');
+  const iconTapTargetStyle = isPhone ? styles.iconTapTarget : undefined;
 
   // ---- derived state ----
   const normalizedQuery = domainQuery.trim().toLowerCase();
@@ -654,8 +687,18 @@ export default function SpamQuarantineConsoleTemplate() {
       ),
       width: pixel(44),
       renderCell: row => (
-        // Stop the click so checking a row never also opens the panel.
-        <div onClick={event => event.stopPropagation()}>
+        // The wrapper is the real touch target: it stops the click so
+        // checking a row never also opens the panel, and a tap on the
+        // hit area around the checkbox (>=40px at <=640px) toggles
+        // selection itself.
+        <div
+          style={isPhone ? styles.checkboxHit : undefined}
+          onClick={event => {
+            event.stopPropagation();
+            if (event.target === event.currentTarget) {
+              toggleRow(row.id, !selectedIds.has(row.id));
+            }
+          }}>
           <CheckboxInput
             label={`Select message from ${row.sender}@${row.domain}`}
             isLabelHidden
@@ -780,6 +823,7 @@ export default function SpamQuarantineConsoleTemplate() {
             size="sm"
             variant="ghost"
             icon={<Icon icon={XIcon} size="sm" color="inherit" />}
+            style={iconTapTargetStyle}
             onClick={() => setOpenRowId(null)}
           />
         </HStack>
@@ -930,6 +974,10 @@ export default function SpamQuarantineConsoleTemplate() {
   );
 
   // ---- floating bulk toolbar ----
+  // <=640px the three action Buttons collapse to icon-only (labels stay
+  // as accessible names and tooltips — the count keeps living in the
+  // '{N} selected' text) so the bar's min-content width fits inside the
+  // calc(100% - 32px) cap on a 375px viewport.
   const bulkToolbar =
     selectedCount === 0 ? null : (
       <div style={styles.bulkBar}>
@@ -952,6 +1000,7 @@ export default function SpamQuarantineConsoleTemplate() {
                   size="sm"
                   variant="ghost"
                   icon={<Icon icon={XIcon} size="sm" color="inherit" />}
+                  style={iconTapTargetStyle}
                   onClick={clearSelection}
                 />
               </HStack>
@@ -961,19 +1010,31 @@ export default function SpamQuarantineConsoleTemplate() {
                 <Button
                   label={`Release ${selectedCount}`}
                   variant="secondary"
+                  size="sm"
+                  isIconOnly={isPhone}
+                  tooltip={isPhone ? `Release ${selectedCount}` : undefined}
                   icon={<Icon icon={MailCheckIcon} size="sm" color="inherit" />}
+                  style={iconTapTargetStyle}
                   onClick={() => releaseRows(selectedVisibleIds)}
                 />
                 <Button
                   label="Block senders"
                   variant="secondary"
+                  size="sm"
+                  isIconOnly={isPhone}
+                  tooltip={isPhone ? 'Block senders' : undefined}
                   icon={<Icon icon={BanIcon} size="sm" color="inherit" />}
+                  style={iconTapTargetStyle}
                   onClick={blockSelectedSenders}
                 />
                 <Button
                   label="Delete"
                   variant="destructive"
+                  size="sm"
+                  isIconOnly={isPhone}
+                  tooltip={isPhone ? 'Delete' : undefined}
                   icon={<Icon icon={Trash2Icon} size="sm" color="inherit" />}
+                  style={iconTapTargetStyle}
                   onClick={() => setIsDeleteDialogOpen(true)}
                 />
               </HStack>
@@ -1029,11 +1090,22 @@ export default function SpamQuarantineConsoleTemplate() {
             </div>
             {bulkToolbar}
             {/* <=1000px: the detail panel renders as an overlay sheet over
-                the table instead of an end LayoutPanel. */}
+                the table instead of an end LayoutPanel; tapping the scrim
+                behind it closes the sheet. */}
             {isPanelOverlay && openRow !== null && (
-              <div style={styles.overlaySheet} role="dialog" aria-label="Message details">
-                {panelContent}
-              </div>
+              <>
+                <div
+                  style={styles.sheetScrim}
+                  aria-hidden
+                  onClick={() => setOpenRowId(null)}
+                />
+                <div
+                  style={styles.overlaySheet}
+                  role="dialog"
+                  aria-label="Message details">
+                  {panelContent}
+                </div>
+              </>
             )}
           </div>
         </LayoutContent>

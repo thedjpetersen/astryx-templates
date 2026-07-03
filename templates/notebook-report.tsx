@@ -22,7 +22,11 @@
  * - Header: title row keeps the Run all action pinned right; the kernel
  *   status line hides below 720px; the author/timestamp meta row wraps.
  * - Block toolbars: revealed on hover or focus-within on hover-capable
- *   pointers; always visible on touch devices ("(hover: none)").
+ *   pointers as a floating top-right overlay; on touch devices
+ *   ("(hover: none)") the toolbar instead sits in flow as a right-aligned
+ *   row at the top of the block — so it never covers the CodeBlock's own
+ *   copy button or block content — and its run/edit and menu controls
+ *   grow from the 28px "sm" chrome to 40px tap targets.
  * - Code and captured result output scroll horizontally inside the block
  *   frame; the chart scales to column width at a fixed height; table pixel
  *   columns keep numeric cells stable while the step column absorbs width.
@@ -93,6 +97,18 @@ const styles: Record<string, CSSProperties> = {
     pointerEvents: 'none',
   },
   blockToolbarVisible: {opacity: 1, pointerEvents: 'auto'},
+  // Touch devices: the toolbar sits in flow at the top of the block (a
+  // right-aligned row) instead of overlaying it, so it never covers the
+  // CodeBlock's copy button or the top-right of block content.
+  blockToolbarRow: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    gap: 'var(--spacing-1)',
+    padding: 'var(--spacing-2) var(--spacing-2) 0',
+  },
+  // Touch devices: grow the "sm" 28px toolbar controls to 40px tap
+  // targets (icon glyphs stay "sm" so the toolbar reads the same).
+  iconTapTarget: {width: 40, height: 40},
   // Prose / titled block body padding.
   blockBody: {padding: 'var(--spacing-4)'},
   // Rendered output area beneath a block's input.
@@ -298,9 +314,11 @@ const BLOCK_DURATIONS: Record<RunnableBlockId, string> = {
 
 /**
  * Subtle block frame with a floating hover toolbar. The toolbar is revealed
- * on hover or focus-within on hover-capable pointers and stays visible on
- * touch devices. `input` renders above the optional `output` area; a run
- * provenance footer appears when `footer` text is provided.
+ * on hover or focus-within on hover-capable pointers; on touch devices
+ * (`isToolbarPinned`) it renders in flow as a right-aligned row at the top
+ * of the block with 40px tap targets, so it never occludes block content.
+ * `input` renders above the optional `output` area; a run provenance footer
+ * appears when `footer` text is provided.
  */
 function NotebookBlock({
   title,
@@ -323,7 +341,7 @@ function NotebookBlock({
 }) {
   const [isHovered, setIsHovered] = useState(false);
   const [isFocusWithin, setIsFocusWithin] = useState(false);
-  const isToolbarVisible = isToolbarPinned || isHovered || isFocusWithin;
+  const isToolbarVisible = isHovered || isFocusWithin;
 
   return (
     <section
@@ -340,14 +358,26 @@ function NotebookBlock({
         ...styles.block,
         ...(isHovered ? styles.blockHovered : undefined),
       }}>
-      <div
-        style={{
-          ...styles.blockToolbar,
-          ...(isToolbarVisible ? styles.blockToolbarVisible : undefined),
-        }}>
-        {primaryAction}
-        <MoreMenu label={`${title} options`} size="sm" items={menuItems} />
-      </div>
+      {isToolbarPinned ? (
+        <div style={styles.blockToolbarRow}>
+          {primaryAction}
+          <MoreMenu
+            label={`${title} options`}
+            size="sm"
+            items={menuItems}
+            style={styles.iconTapTarget}
+          />
+        </div>
+      ) : (
+        <div
+          style={{
+            ...styles.blockToolbar,
+            ...(isToolbarVisible ? styles.blockToolbarVisible : undefined),
+          }}>
+          {primaryAction}
+          <MoreMenu label={`${title} options`} size="sm" items={menuItems} />
+        </div>
+      )}
       {input}
       {output !== undefined &&
         (isOutputHidden ? (
@@ -429,6 +459,7 @@ export default function NotebookReportTemplate() {
       icon={<Icon icon={PlayIcon} size="sm" />}
       variant="ghost"
       size="sm"
+      style={isToolbarPinned ? styles.iconTapTarget : undefined}
       onClick={() => runBlock(id)}
     />
   );
@@ -509,6 +540,7 @@ export default function NotebookReportTemplate() {
                     icon={<Icon icon={SquarePenIcon} size="sm" />}
                     variant="ghost"
                     size="sm"
+                    style={isToolbarPinned ? styles.iconTapTarget : undefined}
                   />
                 }
                 menuItems={[

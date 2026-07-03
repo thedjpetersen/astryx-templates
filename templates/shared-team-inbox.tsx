@@ -53,7 +53,13 @@
  *   header; toggling it restores the 300px end panel.
  * - <=800px  — the queue collapses to back-navigation: the conversation
  *   pane fills the width and a back IconButton in its sticky header swaps
- *   the content region to the queue list; tapping a row returns.
+ *   the content region to the queue list; tapping a row returns. The info
+ *   IconButton swaps the content region to the rail instead of docking a
+ *   side panel, so whichever surface is showing always fills the width.
+ *   The page header sheds the on-shift AvatarGroup and truncates the
+ *   mailbox Heading to one line; the conversation header drops its status
+ *   and SLA Badges to a second row so the subject keeps the full width;
+ *   the back, rail-toggle, and send controls grow to ~40px touch targets.
  * - The queue, message stream, and rail scroll independently; the page
  *   header, conversation header, collision Banner, and composer stay pinned.
  */
@@ -206,6 +212,18 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     height: 20,
   },
+  // The mailbox-title cell gives way first so header actions never clip.
+  headerTitle: {
+    minWidth: 0,
+  },
+  // <=800px: the status/SLA badges drop under the subject so it keeps the
+  // full width instead of wrapping one word per line beside them.
+  mobileBadgeRow: {
+    paddingTop: 'var(--spacing-2)',
+  },
+  // ~40px touch targets in single-pane mode (size="sm" renders 28px).
+  buttonTapTarget: {height: 40},
+  iconTapTarget: {width: 40, height: 40},
 };
 
 // ---------------------------------------------------------------------------
@@ -885,6 +903,21 @@ export default function SharedTeamInboxTemplate() {
   );
 
   // ---- conversation pane ----
+  const conversationBadges = (
+    <>
+      <Badge
+        label={STATUS_BADGE[selectedStatus].label}
+        variant={STATUS_BADGE[selectedStatus].variant}
+      />
+      <Tooltip content={`${selected.slaTarget} — countdown to breach`}>
+        <Badge
+          label={`SLA · ${selected.sla}`}
+          variant={SLA_BADGE[selected.slaLevel]}
+          icon={<Icon icon={ClockIcon} size="sm" />}
+        />
+      </Tooltip>
+    </>
+  );
   const conversationPane = (
     <Stack direction="vertical" style={styles.conversationColumn}>
       <div style={styles.conversationHeader}>
@@ -896,6 +929,7 @@ export default function SharedTeamInboxTemplate() {
               size="sm"
               variant="ghost"
               icon={<Icon icon={ArrowLeftIcon} size="sm" />}
+              style={styles.iconTapTarget}
               onClick={() => setIsQueueShownOnMobile(true)}
             />
           )}
@@ -908,18 +942,13 @@ export default function SharedTeamInboxTemplate() {
               </Text>
             </VStack>
           </StackItem>
-          <Badge
-            label={STATUS_BADGE[selectedStatus].label}
-            variant={STATUS_BADGE[selectedStatus].variant}
-          />
-          <Tooltip content={`${selected.slaTarget} — countdown to breach`}>
-            <Badge
-              label={`SLA · ${selected.sla}`}
-              variant={SLA_BADGE[selected.slaLevel]}
-              icon={<Icon icon={ClockIcon} size="sm" />}
-            />
-          </Tooltip>
+          {!isSinglePane && conversationBadges}
         </HStack>
+        {isSinglePane && (
+          <HStack gap={3} vAlign="center" style={styles.mobileBadgeRow}>
+            {conversationBadges}
+          </HStack>
+        )}
       </div>
       <Divider />
       <StackItem ref={streamRef} size="fill" style={styles.messageScroll}>
@@ -1004,6 +1033,7 @@ export default function SharedTeamInboxTemplate() {
                   color="inherit"
                 />
               }
+              style={isSinglePane ? styles.buttonTapTarget : undefined}
               isDisabled={draft.trim() === ''}
               onClick={sendDraft}
             />
@@ -1142,19 +1172,24 @@ export default function SharedTeamInboxTemplate() {
         <LayoutHeader hasDivider>
           <HStack gap={3} vAlign="center">
             <Icon icon={LifeBuoyIcon} size="md" color="secondary" />
-            <StackItem size="fill">
+            <StackItem size="fill" style={styles.headerTitle}>
               <HStack gap={2} vAlign="center">
-                <Heading level={1}>{MAILBOX}</Heading>
+                <Heading level={1} maxLines={1}>
+                  {MAILBOX}
+                </Heading>
                 <Badge label={`${openCount} open`} variant="info" />
               </HStack>
             </StackItem>
-            <Tooltip content="On shift: Alex, Maya, Sam, Priya">
-              <AvatarGroup size={24} aria-label="Agents on shift">
-                {AGENTS.map(agent => (
-                  <Avatar key={agent.id} name={agent.name} />
-                ))}
-              </AvatarGroup>
-            </Tooltip>
+            {/* <=800px: the on-shift roster cedes its width to the title. */}
+            {!isSinglePane && (
+              <Tooltip content="On shift: Alex, Maya, Sam, Priya">
+                <AvatarGroup size={24} aria-label="Agents on shift">
+                  {AGENTS.map(agent => (
+                    <Avatar key={agent.id} name={agent.name} />
+                  ))}
+                </AvatarGroup>
+              </Tooltip>
+            )}
             {isRailCollapsed && (
               <IconButton
                 label={isRailOpen ? 'Hide details' : 'Show details'}
@@ -1162,6 +1197,7 @@ export default function SharedTeamInboxTemplate() {
                 size="sm"
                 variant={isRailOpen ? 'secondary' : 'ghost'}
                 icon={<Icon icon={InfoIcon} size="sm" />}
+                style={isSinglePane ? styles.iconTapTarget : undefined}
                 onClick={() => setIsRailOpen(prev => !prev)}
               />
             )}
@@ -1177,13 +1213,17 @@ export default function SharedTeamInboxTemplate() {
       }
       content={
         <LayoutContent padding={0}>
-          {isSinglePane && isQueueShownOnMobile
-            ? queuePane
-            : conversationPane}
+          {/* <=800px the rail swaps into the content region (a docked 300px
+              panel would leave the conversation a sliver at phone width). */}
+          {isSinglePane && isRailOpen
+            ? collaborationRail
+            : isSinglePane && isQueueShownOnMobile
+              ? queuePane
+              : conversationPane}
         </LayoutContent>
       }
       end={
-        !isRailCollapsed || isRailOpen ? (
+        !isRailCollapsed || (isRailOpen && !isSinglePane) ? (
           <LayoutPanel
             width={300}
             padding={0}

@@ -48,9 +48,15 @@
  * - >640px  — two-row header (subject row + labels/participants row);
  *   quoted history indents by a 3px rule plus spacing-4.
  * - <=640px — the header collapses to the subject row only (labels and
- *   AvatarGroup hide) and quoted-history indentation shrinks to
- *   spacing-2; the message column keeps full width with tighter
- *   padding.
+ *   AvatarGroup hide), the '5 messages' counter hides and 'Reply all'
+ *   collapses to an icon button so the subject keeps room; quoted-
+ *   history indentation shrinks to spacing-2; the message column keeps
+ *   full width with tighter padding; the collapsed-row sender column
+ *   narrows 128 → 96px; the details Popover narrows 400 → 320px so it
+ *   fits a 375px viewport; the sm controls (archive/star/reply-all,
+ *   'Show details', the '•••' quote toggle, close-composer) grow to
+ *   40px touch targets and the clickable Tokens (reaction chip,
+ *   quick replies) sit on >=44px unstyled-button hit areas.
  * - The header stays pinned at every width; only the message column
  *   scrolls.
  */
@@ -135,9 +141,14 @@ const styles: Record<string, CSSProperties> = {
     width: '100%',
   },
   // Fixed sender column so collapsed names never truncate and the
-  // snippets left-align across rows.
+  // snippets left-align across rows; narrower below 640px so the
+  // snippet keeps a readable share of the row.
   senderCol: {
     width: 128,
+    flexShrink: 0,
+  },
+  senderColCompact: {
+    width: 96,
     flexShrink: 0,
   },
   // Timestamps and counters never wrap or shrink.
@@ -186,6 +197,37 @@ const styles: Record<string, CSSProperties> = {
   },
   composerCard: {
     marginTop: 'var(--spacing-3)',
+  },
+  // <=640px: grow the sm controls to >=40px touch targets (size="sm"
+  // renders a 28px box; the icon glyphs stay "sm").
+  buttonTapTarget: {height: 40},
+  iconTapTarget: {width: 40, height: 40},
+  // Clickable Tokens render ~20px tall, so the click lives on an
+  // unstyled native button around the chip — same footprint on
+  // desktop, a >=44px touch target when the layout is compact.
+  tokenButton: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    padding: 0,
+    border: 'none',
+    background: 'transparent',
+    font: 'inherit',
+    color: 'inherit',
+    cursor: 'pointer',
+  },
+  tokenButtonCompact: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    padding: 0,
+    border: 'none',
+    background: 'transparent',
+    font: 'inherit',
+    color: 'inherit',
+    cursor: 'pointer',
+    minHeight: 44,
+    minWidth: 44,
   },
 };
 
@@ -485,6 +527,7 @@ export default function MailThreadReaderTemplate() {
               label={isArchived ? 'Move back to Inbox' : 'Archive thread'}
               size="sm"
               variant="ghost"
+              style={isCompact ? styles.iconTapTarget : undefined}
               icon={
                 <Icon
                   icon={isArchived ? ArchiveRestoreIcon : ArchiveIcon}
@@ -500,17 +543,31 @@ export default function MailThreadReaderTemplate() {
               label={isStarred ? 'Remove star' : 'Star thread'}
               size="sm"
               variant={isStarred ? 'secondary' : 'ghost'}
+              style={isCompact ? styles.iconTapTarget : undefined}
               icon={<Icon icon={StarIcon} size="sm" color="inherit" />}
               onClick={() => setIsStarred(prev => !prev)}
             />
           </Tooltip>
-          <Button
-            label="Reply all"
-            size="sm"
-            variant="secondary"
-            icon={<Icon icon={ReplyAllIcon} size="sm" color="inherit" />}
-            onClick={() => openComposer('reply-all')}
-          />
+          {isCompact ? (
+            <Tooltip content="Reply all">
+              <IconButton
+                label="Reply all"
+                size="sm"
+                variant="secondary"
+                style={styles.iconTapTarget}
+                icon={<Icon icon={ReplyAllIcon} size="sm" color="inherit" />}
+                onClick={() => openComposer('reply-all')}
+              />
+            </Tooltip>
+          ) : (
+            <Button
+              label="Reply all"
+              size="sm"
+              variant="secondary"
+              icon={<Icon icon={ReplyAllIcon} size="sm" color="inherit" />}
+              onClick={() => openComposer('reply-all')}
+            />
+          )}
         </>
       }
     />
@@ -531,11 +588,13 @@ export default function MailThreadReaderTemplate() {
               {isArchived && <Badge label="Archived" variant="neutral" />}
             </HStack>
           </StackItem>
-          <div style={styles.noWrapCell}>
-            <Text type="supporting" color="secondary" hasTabularNumbers>
-              {MESSAGES.length} messages
-            </Text>
-          </div>
+          {!isCompact && (
+            <div style={styles.noWrapCell}>
+              <Text type="supporting" color="secondary" hasTabularNumbers>
+                {MESSAGES.length} messages
+              </Text>
+            </div>
+          )}
           {threadToolbar}
         </HStack>
         {!isCompact && (
@@ -572,7 +631,7 @@ export default function MailThreadReaderTemplate() {
   const detailsPopover = (message: ThreadMessage) => (
     <Popover
       label={`Message details — ${PARTICIPANTS[message.from].name}`}
-      width={400}
+      width={isCompact ? 320 : 400}
       placement="below"
       alignment="end"
       isOpen={detailsOpenId === message.id}
@@ -619,6 +678,7 @@ export default function MailThreadReaderTemplate() {
         label="Show details"
         size="sm"
         variant="ghost"
+        style={isCompact ? styles.buttonTapTarget : undefined}
         icon={<Icon icon={ChevronDownIcon} size="sm" color="inherit" />}
       />
     </Popover>
@@ -635,13 +695,21 @@ export default function MailThreadReaderTemplate() {
       : message.reaction.reactors.join(', ');
     return (
       <Tooltip content={names}>
-        <Token
-          label={`${message.reaction.emoji} ${count}`}
-          size="sm"
-          color={hasSelf ? 'blue' : 'default'}
-          description={`Toggle your ${message.reaction.emoji} reaction`}
-          onClick={() => setSelfReactedIds(prev => toggled(prev, message.id))}
-        />
+        {/* The ~20px Token stays presentational; the unstyled native
+            button carries the click and grows to a >=44px touch target
+            when compact. */}
+        <button
+          type="button"
+          style={isCompact ? styles.tokenButtonCompact : styles.tokenButton}
+          aria-label={`Toggle your ${message.reaction.emoji} reaction`}
+          aria-pressed={hasSelf}
+          onClick={() => setSelfReactedIds(prev => toggled(prev, message.id))}>
+          <Token
+            label={`${message.reaction.emoji} ${count}`}
+            size="sm"
+            color={hasSelf ? 'blue' : 'default'}
+          />
+        </button>
       </Tooltip>
     );
   };
@@ -690,6 +758,7 @@ export default function MailThreadReaderTemplate() {
             label={isQuoteOpen ? 'Hide trimmed content' : 'Show trimmed content'}
             size="sm"
             variant={isQuoteOpen ? 'secondary' : 'ghost'}
+            style={isCompact ? styles.iconTapTarget : undefined}
             icon={<Icon icon={EllipsisIcon} size="sm" color="inherit" />}
             onClick={() => setOpenQuoteIds(prev => toggled(prev, message.id))}
           />
@@ -716,7 +785,7 @@ export default function MailThreadReaderTemplate() {
     <div style={styles.collapsedRow}>
       <HStack gap={2} vAlign="center" width="100%">
         <Avatar name={PARTICIPANTS[message.from].name} size={24} />
-        <div style={styles.senderCol}>
+        <div style={isCompact ? styles.senderColCompact : styles.senderCol}>
           <Text type="body" weight="semibold" maxLines={1}>
             {PARTICIPANTS[message.from].name}
           </Text>
@@ -889,6 +958,7 @@ export default function MailThreadReaderTemplate() {
                 label="Close composer"
                 size="sm"
                 variant="ghost"
+                style={isCompact ? styles.iconTapTarget : undefined}
                 icon={<Icon icon={XIcon} size="sm" color="inherit" />}
                 onClick={closeComposer}
               />
@@ -896,14 +966,24 @@ export default function MailThreadReaderTemplate() {
           </HStack>
           <HStack gap={2} style={{flexWrap: 'wrap'}}>
             {QUICK_REPLIES.map(suggestion => (
-              <Token
+              /* Same wrapper-button pattern as the reaction chip: the
+                 click lives on the native button so the quick-reply
+                 chips get >=44px touch targets when compact. */
+              <button
                 key={suggestion}
-                label={suggestion}
-                size="sm"
-                color={draft === suggestion ? 'blue' : 'default'}
-                description="Use this quick reply"
-                onClick={() => setDraft(suggestion)}
-              />
+                type="button"
+                style={
+                  isCompact ? styles.tokenButtonCompact : styles.tokenButton
+                }
+                aria-label={`Use quick reply: ${suggestion}`}
+                aria-pressed={draft === suggestion}
+                onClick={() => setDraft(suggestion)}>
+                <Token
+                  label={suggestion}
+                  size="sm"
+                  color={draft === suggestion ? 'blue' : 'default'}
+                />
+              </button>
             ))}
           </HStack>
           <TextArea

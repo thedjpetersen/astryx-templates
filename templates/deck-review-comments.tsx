@@ -41,10 +41,14 @@
  *   stage (tiles keep intrinsic 96px width, strip scrolls horizontally).
  * - <=768px: the thread panel leaves the right edge and stacks below the
  *   stage as a full-width section; the column flows at natural height and
- *   LayoutContent scrolls it as one page; the header drops the version note.
+ *   LayoutContent scrolls it as one page; the header drops the version note
+ *   and canvas markers grow invisible 40px touch hit boxes (the painted
+ *   circle stays 24px).
+ * - Header rows are wrap="wrap", so on narrow widths the filter
+ *   SegmentedControl drops below the filename instead of clipping.
  * - Slide canvases use container-query (cqw) type sizing so the identical
- *   shape fixtures paint at 96px thumbnails and the 800px stage; markers are
- *   fixed 24px hit targets at every stage width.
+ *   shape fixtures paint at 96px thumbnails and the 800px stage; markers
+ *   paint as fixed 24px circles at every stage width.
  *
  * Container policy (review-workbench archetype): the page chrome is
  * frame-first rows and panels; Cards are reserved for the slide paper and the
@@ -179,21 +183,40 @@ const styles: Record<string, CSSProperties> = {
     containerType: 'inline-size',
     overflow: 'hidden',
   },
-  // Anchored comment marker: fixed 24px circle, centered on its shape anchor.
+  // Anchored comment marker: an unstyled button centered on its shape
+  // anchor. Desktop keeps the visible 24px circle as the hit box; <=768px
+  // the invisible hit box grows to 40px for touch (markerTouch) while the
+  // painted circle stays 24px.
   marker: {
     position: 'absolute',
     width: 24,
     height: 24,
     marginLeft: -12,
     marginTop: -12,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    padding: 0,
+    border: 'none',
+    background: 'transparent',
+  },
+  markerTouch: {
+    width: 40,
+    height: 40,
+    marginLeft: -20,
+    marginTop: -20,
+  },
+  // The visible 24px circle inside the marker button.
+  markerDot: {
+    width: 24,
+    height: 24,
     borderRadius: '50%',
     border: '2px solid #FFFFFF',
     boxShadow: 'var(--shadow-med)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    cursor: 'pointer',
-    padding: 0,
     fontSize: 12,
     fontWeight: 700,
     fontVariantNumeric: 'tabular-nums',
@@ -704,12 +727,14 @@ function CommentMarker({
   number,
   isResolved,
   isActive,
+  hasTouchTarget,
   onSelect,
 }: {
   thread: Thread;
   number: number;
   isResolved: boolean;
   isActive: boolean;
+  hasTouchTarget: boolean;
   onSelect: (id: string) => void;
 }) {
   return (
@@ -727,20 +752,28 @@ function CommentMarker({
         onClick={() => onSelect(thread.id)}
         style={{
           ...styles.marker,
+          ...(hasTouchTarget ? styles.markerTouch : null),
           left: pctX(thread.x),
           top: pctY(thread.y),
-          backgroundColor: isResolved
-            ? 'var(--color-accent-muted)'
-            : 'var(--color-accent)',
-          color: isResolved ? 'var(--color-accent)' : 'var(--color-on-accent)',
-          outline: isActive ? '2px solid var(--color-accent)' : 'none',
-          outlineOffset: 2,
         }}>
-        {isResolved ? (
-          <Icon icon={CheckIcon} size="xsm" color="inherit" />
-        ) : (
-          number
-        )}
+        <span
+          style={{
+            ...styles.markerDot,
+            backgroundColor: isResolved
+              ? 'var(--color-accent-muted)'
+              : 'var(--color-accent)',
+            color: isResolved
+              ? 'var(--color-accent)'
+              : 'var(--color-on-accent)',
+            outline: isActive ? '2px solid var(--color-accent)' : 'none',
+            outlineOffset: 2,
+          }}>
+          {isResolved ? (
+            <Icon icon={CheckIcon} size="xsm" color="inherit" />
+          ) : (
+            number
+          )}
+        </span>
       </button>
     </Tooltip>
   );
@@ -1087,6 +1120,7 @@ export default function DeckReviewCommentsTemplate() {
                     number={index + 1}
                     isResolved={resolvedIds.has(thread.id)}
                     isActive={thread.id === activeThreadId}
+                    hasTouchTarget={isPanelStacked}
                     onSelect={selectFromMarker}
                   />
                 ))}
@@ -1190,9 +1224,9 @@ export default function DeckReviewCommentsTemplate() {
       height="fill"
       header={
         <LayoutHeader hasDivider>
-          <HStack gap={3} vAlign="center">
+          <HStack gap={3} vAlign="center" wrap="wrap">
             <StackItem size="fill">
-              <HStack gap={2} vAlign="center">
+              <HStack gap={2} vAlign="center" wrap="wrap">
                 <Icon icon={PresentationIcon} size="md" color="secondary" />
                 <Heading level={1}>{DECK_FILE_NAME}</Heading>
                 {!isPanelStacked && (

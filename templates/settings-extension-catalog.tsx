@@ -48,11 +48,17 @@
  *   when narrow.
  * - Installed/Published rows: string descriptions truncate to one line
  *   (ListItem default); Switch + MoreMenu / Edit actions stay pinned to
- *   the row end at every width.
+ *   the row end at every width. Row labels (name + Badges) wrap when
+ *   cramped instead of colliding with the pinned actions.
+ * - Published rows <=640px: the "N installs" / "Updated …" metadata
+ *   Texts leave endContent (only Edit stays pinned) and render as one
+ *   supporting line under the skill name, so the label column keeps
+ *   usable width on phones.
  */
 
 import {useMemo, useState, type CSSProperties} from 'react';
 
+import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
   VStack,
   HStack,
@@ -409,6 +415,10 @@ export default function SettingsExtensionCatalogTemplate() {
   const [publishedFilter, setPublishedFilter] = useState('all');
   const [isAdminBannerVisible, setIsAdminBannerVisible] = useState(true);
 
+  // <=640px: Published rows move their metadata Texts out of endContent
+  // and under the skill name so the label column keeps usable width.
+  const isCompact = useMediaQuery('(max-width: 640px)');
+
   const workspaceName =
     WORKSPACE_OPTIONS.find(option => option.value === workspace)?.label ??
     'Workspace';
@@ -642,7 +652,7 @@ export default function SettingsExtensionCatalogTemplate() {
                             key={entry.slug}
                             startContent={<SkillGlyph icon={skill.icon} />}
                             label={
-                              <HStack gap={2} vAlign="center">
+                              <HStack gap={2} vAlign="center" wrap="wrap">
                                 <Text type="label">{skill.name}</Text>
                                 <Badge label={`v${skill.version}`} />
                                 <Badge
@@ -737,48 +747,68 @@ export default function SettingsExtensionCatalogTemplate() {
                     />
                   ) : (
                     <List hasDividers>
-                      {publishedResults.map(item => (
-                        <ListItem
-                          key={item.slug}
-                          startContent={<SkillGlyph icon={item.icon} />}
-                          label={
-                            <HStack gap={2} vAlign="center">
-                              <Text type="label">{item.name}</Text>
-                              <Badge
-                                label={item.status === 'live' ? 'Live' : 'Draft'}
-                                variant={
-                                  item.status === 'live'
-                                    ? 'success'
-                                    : 'neutral'
-                                }
-                              />
-                              <Badge label={`v${item.version}`} />
-                            </HStack>
-                          }
-                          description={item.description}
-                          endContent={
-                            <HStack gap={3} vAlign="center">
-                              <Text
-                                type="supporting"
-                                color="secondary"
-                                hasTabularNumbers>
-                                {item.installsLabel} installs
-                              </Text>
-                              <Text type="supporting" color="secondary">
-                                Updated {item.updated}
-                              </Text>
-                              <Button
-                                label="Edit"
-                                size="sm"
-                                variant="secondary"
-                                icon={
-                                  <Icon icon={SquarePenIcon} size="sm" />
-                                }
-                              />
-                            </HStack>
-                          }
-                        />
-                      ))}
+                      {publishedResults.map(item => {
+                        const titleRow = (
+                          <HStack gap={2} vAlign="center" wrap="wrap">
+                            <Text type="label">{item.name}</Text>
+                            <Badge
+                              label={item.status === 'live' ? 'Live' : 'Draft'}
+                              variant={
+                                item.status === 'live' ? 'success' : 'neutral'
+                              }
+                            />
+                            <Badge label={`v${item.version}`} />
+                          </HStack>
+                        );
+                        return (
+                          <ListItem
+                            key={item.slug}
+                            startContent={<SkillGlyph icon={item.icon} />}
+                            label={
+                              isCompact ? (
+                                <VStack gap={1}>
+                                  {titleRow}
+                                  <Text
+                                    type="supporting"
+                                    color="secondary"
+                                    hasTabularNumbers>
+                                    {item.installsLabel} installs · Updated{' '}
+                                    {item.updated}
+                                  </Text>
+                                </VStack>
+                              ) : (
+                                titleRow
+                              )
+                            }
+                            description={item.description}
+                            endContent={
+                              <HStack gap={3} vAlign="center">
+                                {!isCompact && (
+                                  <>
+                                    <Text
+                                      type="supporting"
+                                      color="secondary"
+                                      hasTabularNumbers>
+                                      {item.installsLabel} installs
+                                    </Text>
+                                    <Text type="supporting" color="secondary">
+                                      Updated {item.updated}
+                                    </Text>
+                                  </>
+                                )}
+                                <Button
+                                  label="Edit"
+                                  size="sm"
+                                  variant="secondary"
+                                  icon={
+                                    <Icon icon={SquarePenIcon} size="sm" />
+                                  }
+                                />
+                              </HStack>
+                            }
+                          />
+                        );
+                      })}
                     </List>
                   )}
                 </VStack>

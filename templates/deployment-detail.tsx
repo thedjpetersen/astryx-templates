@@ -14,9 +14,12 @@
  * EmptyState covers the gap before the first line lands.
  *
  * Responsive contract:
- * - ≥769px: header id/actions share one row; metadata is a multi-column grid.
+ * - ≥769px: header id/actions share one row; metadata is a multi-column grid;
+ *   the build log fits without horizontal scrolling.
  * - ≤768px: header controls wrap onto a second line; metadata collapses to a
- *   single column.
+ *   single column; the build log pans horizontally inside an overflow-x
+ *   scroller (640px min width) so the terminal columns keep their alignment
+ *   instead of sliver-wrapping the message column.
  */
 
 import {useEffect, useRef, useState, type CSSProperties} from 'react';
@@ -54,6 +57,15 @@ const styles: Record<string, CSSProperties> = {
   detailBlock: {
     margin: 0,
     whiteSpace: 'pre-wrap',
+  },
+  // LogStream's terminal rows use fixed timestamp/level/source columns
+  // (~316px of chrome), so at narrow widths the whole stream pans
+  // horizontally rather than sliver-wrapping the message column.
+  logScroll: {
+    overflowX: 'auto',
+  },
+  logScrollInner: {
+    minWidth: 640,
   },
 };
 
@@ -335,14 +347,18 @@ export default function DeploymentDetailPage() {
                   description="The build container is starting. The first log lines land here in a moment."
                 />
               ) : (
-                <LogStream
-                  entries={buildEntries}
-                  variant="terminal"
-                  maxHeight={420}
-                  isFollowing={isFollowing}
-                  onFollowChange={setIsFollowing}
-                  label="Build logs"
-                />
+                <div style={styles.logScroll}>
+                  <div style={styles.logScrollInner}>
+                    <LogStream
+                      entries={buildEntries}
+                      variant="terminal"
+                      maxHeight={420}
+                      isFollowing={isFollowing}
+                      onFollowChange={setIsFollowing}
+                      label="Build logs"
+                    />
+                  </div>
+                </div>
               )}
             </VStack>
           </VStack>

@@ -35,6 +35,8 @@
  * - <=900px: the columns stack vertically with the terminal first; the
  *   auth-state Grid reflows from 2x2 toward a single column via
  *   minWidth-based tracks. Auth cards keep maxWidth 384 at every size.
+ *   The variant-strip Tokens' wrapper buttons grow to a >=44px touch
+ *   target (desktop keeps the Token's exact ~20px footprint).
  *
  * Container policy (pairing-console archetype): exactly two primary
  * containers — one dark stdout Card (custom mono palette, never themed
@@ -137,6 +139,32 @@ const styles: Record<string, CSSProperties> = {
     marginBlock: 'var(--spacing-3)',
   },
   variantRow: {paddingBlock: 'var(--spacing-1)'},
+  // Unstyled wrapper button that gives each tiny variant Token a real
+  // click/tap target. Desktop keeps the Token's exact footprint; the
+  // compact variant grows the hit area to >=44px for touch.
+  variantTokenButton: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    padding: 0,
+    border: 'none',
+    background: 'transparent',
+    font: 'inherit',
+    color: 'inherit',
+    cursor: 'pointer',
+  },
+  variantTokenButtonCompact: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    padding: 0,
+    border: 'none',
+    background: 'transparent',
+    font: 'inherit',
+    color: 'inherit',
+    cursor: 'pointer',
+    minHeight: 44,
+    minWidth: 44,
+  },
   // Auth cards: max 384px, rounded; idle gets an accent ring.
   authCard: {maxWidth: 384, width: '100%'},
   authCardPrimary: {
@@ -399,12 +427,17 @@ function DaemonConsole({connection}: {connection: ConnectionState}) {
 /**
  * Divider-separated strip of the three status-line variants, each labeled
  * by a tiny Token; clicking a Token pins that variant into the console.
+ * The Token itself is only ~20px tall, so it sits inside an unstyled
+ * native button that carries the click — same footprint on desktop, a
+ * >=44px touch target when the layout is compact.
  */
 function StatusVariantStrip({
   connection,
+  isCompact,
   onSelectConnection,
 }: {
   connection: ConnectionState;
+  isCompact: boolean;
   onSelectConnection: (state: ConnectionState) => void;
 }) {
   return (
@@ -415,17 +448,26 @@ function StatusVariantStrip({
           <VStack gap={2} key={state}>
             {index > 0 && <div style={styles.termDivider} aria-hidden />}
             <HStack gap={3} vAlign="center" style={styles.variantRow}>
-              <Token
-                label={state}
-                size="sm"
-                color={
-                  state === connection
-                    ? CONNECTION[state].tokenColor
-                    : 'default'
+              <button
+                type="button"
+                style={
+                  isCompact
+                    ? styles.variantTokenButtonCompact
+                    : styles.variantTokenButton
                 }
-                description={`Show the ${state} status line in the console`}
-                onClick={() => onSelectConnection(state)}
-              />
+                aria-label={`Show the ${state} status line in the console`}
+                aria-pressed={state === connection}
+                onClick={() => onSelectConnection(state)}>
+                <Token
+                  label={state}
+                  size="sm"
+                  color={
+                    state === connection
+                      ? CONNECTION[state].tokenColor
+                      : 'default'
+                  }
+                />
+              </button>
               <StackItem size="fill">
                 <DaemonStatusLine state={state} />
               </StackItem>
@@ -608,6 +650,7 @@ export default function CliPairingConsoleTemplate() {
               <DaemonConsole connection={connection} />
               <StatusVariantStrip
                 connection={connection}
+                isCompact={isStacked}
                 onSelectConnection={setConnection}
               />
             </VStack>

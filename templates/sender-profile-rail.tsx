@@ -53,6 +53,13 @@
  * - <=980px — the rail collapses behind a 'Sender info' Button in the
  *   header; it opens as an end-anchored overlay sheet (scrim click or
  *   X closes). The reading column keeps priority at every width.
+ * - <=640px — the header drops the reply/reply-all/forward icon cluster
+ *   (the in-body action row keeps those verbs) so the subject and the
+ *   'Sender info' entry point keep room; the sender-header meta rows
+ *   wrap and the timestamp + thread AvatarGroup drop beneath the
+ *   address block; sm controls grow to ~40px tap targets.
+ * - On touch pointers ("(hover: none)") the participant mini-profiles
+ *   open as tap-triggered Popovers instead of hover-only HoverCards.
  * - The reading column caps at 720px and centers; timestamps keep
  *   tabular numbers so dates align down the rail lists.
  */
@@ -83,6 +90,7 @@ import {IconButton} from '@astryxdesign/core/IconButton';
 import {Link} from '@astryxdesign/core/Link';
 import {List, ListItem} from '@astryxdesign/core/List';
 import {MetadataList, MetadataListItem} from '@astryxdesign/core/MetadataList';
+import {Popover} from '@astryxdesign/core/Popover';
 import {StatusDot} from '@astryxdesign/core/StatusDot';
 import {Tab, TabList} from '@astryxdesign/core/TabList';
 import {TextArea} from '@astryxdesign/core/TextArea';
@@ -182,6 +190,9 @@ const styles: Record<string, CSSProperties> = {
     width: 260,
     padding: 'var(--spacing-1)',
   },
+  // <=640px: grow the sm controls to ~40px tap targets (size="sm" is 28px).
+  buttonTapTarget: {height: 40},
+  iconTapTarget: {width: 40, height: 40},
   // <=980px: the rail becomes an end-anchored sheet over a scrim.
   sheetScrim: {
     position: 'fixed',
@@ -462,41 +473,57 @@ const COMPOSE_SENT: Record<ComposeMode, string> = {
 };
 
 // ---------------------------------------------------------------------------
-// PARTICIPANT CHIP — Token trigger with a HoverCard mini-profile.
+// PARTICIPANT CHIP — Token trigger with a mini-profile: a HoverCard on
+// hover-capable pointers, a tap-triggered Popover on touch (hover never
+// fires there, and this info has no rail equivalent for non-senders).
 // ---------------------------------------------------------------------------
 
 function ParticipantChip({person}: {person: Participant}) {
-  return (
-    <HoverCard
-      placement="below"
-      alignment="start"
-      content={
-        <div style={styles.hoverProfile}>
-          <VStack gap={2}>
-            <HStack gap={2} vAlign="center">
-              <Avatar name={person.name} size="medium" />
-              <VStack gap={0}>
-                <Text type="body" weight="semibold">
-                  {person.name}
-                </Text>
-                <Text type="supporting" color="secondary">
-                  {person.title} · {person.company}
-                </Text>
-              </VStack>
-            </HStack>
-            <Divider />
-            <HStack gap={1} vAlign="center">
-              <Icon icon={MailIcon} size="sm" color="secondary" />
-              <Text type="supporting" color="secondary">
-                {person.email}
-              </Text>
-            </HStack>
+  const isTouch = useMediaQuery('(hover: none)');
+
+  const profile = (
+    <div style={styles.hoverProfile}>
+      <VStack gap={2}>
+        <HStack gap={2} vAlign="center">
+          <Avatar name={person.name} size="medium" />
+          <VStack gap={0}>
+            <Text type="body" weight="semibold">
+              {person.name}
+            </Text>
             <Text type="supporting" color="secondary">
-              {person.relation}
+              {person.title} · {person.company}
             </Text>
           </VStack>
-        </div>
-      }>
+        </HStack>
+        <Divider />
+        <HStack gap={1} vAlign="center">
+          <Icon icon={MailIcon} size="sm" color="secondary" />
+          <Text type="supporting" color="secondary">
+            {person.email}
+          </Text>
+        </HStack>
+        <Text type="supporting" color="secondary">
+          {person.relation}
+        </Text>
+      </VStack>
+    </div>
+  );
+
+  if (isTouch) {
+    // The Token consumes the Popover's InteractiveRoleContext and renders
+    // as a real button, so the profile is tap- and keyboard-reachable.
+    return (
+      <Popover
+        placement="below"
+        alignment="start"
+        label={`Profile: ${person.name}`}
+        content={profile}>
+        <Token label={person.name} size="sm" />
+      </Popover>
+    );
+  }
+  return (
+    <HoverCard placement="below" alignment="start" content={profile}>
       <Token label={person.name} size="sm" />
     </HoverCard>
   );
@@ -522,6 +549,11 @@ export default function SenderProfileRailTemplate() {
 
   // Responsive contract (see file header).
   const isRailCollapsed = useMediaQuery('(max-width: 980px)');
+  const isNarrow = useMediaQuery('(max-width: 640px)');
+
+  // <=640px: grow the sm controls to ~40px tap targets.
+  const tapTargetStyle = isNarrow ? styles.buttonTapTarget : undefined;
+  const iconTapTargetStyle = isNarrow ? styles.iconTapTarget : undefined;
 
   const openCompose = (mode: ComposeMode) => {
     setComposeMode(mode);
@@ -760,12 +792,14 @@ export default function SenderProfileRailTemplate() {
                   size="sm"
                   variant="primary"
                   isDisabled={noteDraft.trim() === ''}
+                  style={tapTargetStyle}
                   onClick={saveNote}
                 />
                 <Button
                   label="Cancel"
                   size="sm"
                   variant="ghost"
+                  style={tapTargetStyle}
                   onClick={() => {
                     setIsNoteEditorOpen(false);
                     setNoteDraft('');
@@ -781,6 +815,7 @@ export default function SenderProfileRailTemplate() {
               variant="secondary"
               icon={<Icon icon={SquarePenIcon} size="sm" color="inherit" />}
               tooltip="New message to Dana"
+              style={tapTargetStyle}
               onClick={() => openCompose('new')}
             />
             <ToggleButton
@@ -788,6 +823,7 @@ export default function SenderProfileRailTemplate() {
               size="sm"
               isPressed={isMuted}
               onPressedChange={setIsMuted}
+              style={tapTargetStyle}
               tooltip={
                 isMuted
                   ? 'Unmute Dana Whitfield'
@@ -799,6 +835,7 @@ export default function SenderProfileRailTemplate() {
               size="sm"
               isPressed={isNoteEditorOpen}
               onPressedChange={setIsNoteEditorOpen}
+              style={tapTargetStyle}
             />
           </HStack>
         </VStack>
@@ -819,14 +856,19 @@ export default function SenderProfileRailTemplate() {
             {isArchived && <Badge label="Archived" variant="neutral" />}
           </HStack>
 
-          {/* Sender header: avatar + participant chips with HoverCard
-              mini-profiles; a muted Token appears while the sender is
-              muted from the rail. */}
+          {/* Sender header: avatar + participant chips with mini-profiles;
+              a muted Token appears while the sender is muted from the
+              rail. <=640px the meta rows wrap and the timestamp + thread
+              AvatarGroup drop beneath the address block so the chips and
+              email never squeeze to ellipses. */}
           <HStack gap={3} vAlign="start">
             <Avatar name={SENDER.name} size="medium" />
             <StackItem size="fill">
               <VStack gap={1}>
-                <HStack gap={2} vAlign="center">
+                <HStack
+                  gap={2}
+                  vAlign="center"
+                  wrap={isNarrow ? 'wrap' : undefined}>
                   <ParticipantChip person={PARTICIPANTS[0]} />
                   <Text type="supporting" color="secondary">
                     {SENDER.email}
@@ -842,7 +884,10 @@ export default function SenderProfileRailTemplate() {
                     />
                   )}
                 </HStack>
-                <HStack gap={1} vAlign="center">
+                <HStack
+                  gap={1}
+                  vAlign="center"
+                  wrap={isNarrow ? 'wrap' : undefined}>
                   <Text type="supporting" color="secondary">
                     to
                   </Text>
@@ -852,16 +897,28 @@ export default function SenderProfileRailTemplate() {
                   </Text>
                   <ParticipantChip person={PARTICIPANTS[2]} />
                 </HStack>
+                {isNarrow && (
+                  <HStack gap={2} vAlign="center">
+                    <Timestamp value={MESSAGE.sentAt} format="date_time" />
+                    <AvatarGroup size="tiny" aria-label="Thread participants">
+                      {PARTICIPANTS.map(person => (
+                        <Avatar key={person.id} name={person.name} />
+                      ))}
+                    </AvatarGroup>
+                  </HStack>
+                )}
               </VStack>
             </StackItem>
-            <VStack gap={1} hAlign="end">
-              <Timestamp value={MESSAGE.sentAt} format="date_time" />
-              <AvatarGroup size="tiny" aria-label="Thread participants">
-                {PARTICIPANTS.map(person => (
-                  <Avatar key={person.id} name={person.name} />
-                ))}
-              </AvatarGroup>
-            </VStack>
+            {!isNarrow && (
+              <VStack gap={1} hAlign="end">
+                <Timestamp value={MESSAGE.sentAt} format="date_time" />
+                <AvatarGroup size="tiny" aria-label="Thread participants">
+                  {PARTICIPANTS.map(person => (
+                    <Avatar key={person.id} name={person.name} />
+                  ))}
+                </AvatarGroup>
+              </VStack>
+            )}
           </HStack>
 
           <Divider />
@@ -900,6 +957,7 @@ export default function SenderProfileRailTemplate() {
                   label={isAttachmentSaved ? 'Saved' : 'Save to files'}
                   size="sm"
                   variant={isAttachmentSaved ? 'ghost' : 'secondary'}
+                  style={tapTargetStyle}
                   icon={
                     <Icon
                       icon={isAttachmentSaved ? CheckIcon : DownloadIcon}
@@ -924,6 +982,7 @@ export default function SenderProfileRailTemplate() {
                 size="sm"
                 variant="secondary"
                 icon={<Icon icon={ReplyIcon} size="sm" color="inherit" />}
+                style={tapTargetStyle}
                 onClick={() => openCompose('reply')}
               />
               <Button
@@ -931,6 +990,7 @@ export default function SenderProfileRailTemplate() {
                 size="sm"
                 variant="ghost"
                 icon={<Icon icon={ReplyAllIcon} size="sm" color="inherit" />}
+                style={tapTargetStyle}
                 onClick={() => openCompose('reply-all')}
               />
               <Button
@@ -938,6 +998,7 @@ export default function SenderProfileRailTemplate() {
                 size="sm"
                 variant="ghost"
                 icon={<Icon icon={ForwardIcon} size="sm" color="inherit" />}
+                style={tapTargetStyle}
                 onClick={() => openCompose('forward')}
               />
             </HStack>
@@ -962,12 +1023,14 @@ export default function SenderProfileRailTemplate() {
                       variant="primary"
                       icon={<Icon icon={SendIcon} size="sm" color="inherit" />}
                       isDisabled={composeDraft.trim() === ''}
+                      style={tapTargetStyle}
                       onClick={sendCompose}
                     />
                     <Button
                       label="Discard"
                       size="sm"
                       variant="ghost"
+                      style={tapTargetStyle}
                       onClick={() => {
                         setComposeMode(null);
                         setComposeDraft('');
@@ -1006,6 +1069,7 @@ export default function SenderProfileRailTemplate() {
                 size="sm"
                 variant="ghost"
                 icon={<Icon icon={ArrowLeftIcon} size="sm" />}
+                style={iconTapTargetStyle}
                 onClick={() => {}}
               />
               <StackItem size="fill">
@@ -1018,32 +1082,39 @@ export default function SenderProfileRailTemplate() {
                 size="sm"
                 startContent={
                   <>
-                    <ButtonGroup label="Reply actions" size="sm">
-                      <IconButton
-                        label="Reply"
-                        tooltip="Reply to Dana"
-                        icon={<Icon icon={ReplyIcon} size="sm" />}
-                        onClick={() => openCompose('reply')}
-                      />
-                      <IconButton
-                        label="Reply all"
-                        tooltip="Reply all"
-                        icon={<Icon icon={ReplyAllIcon} size="sm" />}
-                        onClick={() => openCompose('reply-all')}
-                      />
-                      <IconButton
-                        label="Forward"
-                        tooltip="Forward"
-                        icon={<Icon icon={ForwardIcon} size="sm" />}
-                        onClick={() => openCompose('forward')}
-                      />
-                    </ButtonGroup>
+                    {/* <=640px: drop the reply cluster — the in-body
+                        Reply / Reply all / Forward row keeps these verbs,
+                        and the subject + 'Sender info' entry point keep
+                        their room. */}
+                    {!isNarrow && (
+                      <ButtonGroup label="Reply actions" size="sm">
+                        <IconButton
+                          label="Reply"
+                          tooltip="Reply to Dana"
+                          icon={<Icon icon={ReplyIcon} size="sm" />}
+                          onClick={() => openCompose('reply')}
+                        />
+                        <IconButton
+                          label="Reply all"
+                          tooltip="Reply all"
+                          icon={<Icon icon={ReplyAllIcon} size="sm" />}
+                          onClick={() => openCompose('reply-all')}
+                        />
+                        <IconButton
+                          label="Forward"
+                          tooltip="Forward"
+                          icon={<Icon icon={ForwardIcon} size="sm" />}
+                          onClick={() => openCompose('forward')}
+                        />
+                      </ButtonGroup>
+                    )}
                     <IconButton
                       label={isArchived ? 'Move to inbox' : 'Archive'}
                       tooltip={isArchived ? 'Move to inbox' : 'Archive'}
                       size="sm"
                       variant={isArchived ? 'secondary' : 'ghost'}
                       icon={<Icon icon={ArchiveIcon} size="sm" />}
+                      style={iconTapTargetStyle}
                       onClick={() => setIsArchived(prev => !prev)}
                     />
                     <Tooltip
@@ -1053,6 +1124,7 @@ export default function SenderProfileRailTemplate() {
                         size="sm"
                         variant={isStarred ? 'secondary' : 'ghost'}
                         icon={<Icon icon={StarIcon} size="sm" />}
+                        style={iconTapTargetStyle}
                         onClick={() => setIsStarred(prev => !prev)}
                       />
                     </Tooltip>
@@ -1065,6 +1137,7 @@ export default function SenderProfileRailTemplate() {
                       size="sm"
                       variant="secondary"
                       icon={<Icon icon={UserRoundIcon} size="sm" color="inherit" />}
+                      style={tapTargetStyle}
                       onClick={() => setIsSheetOpen(true)}
                     />
                   ) : undefined
@@ -1111,6 +1184,7 @@ export default function SenderProfileRailTemplate() {
                   size="sm"
                   variant="ghost"
                   icon={<Icon icon={XIcon} size="sm" />}
+                  style={iconTapTargetStyle}
                   onClick={() => setIsSheetOpen(false)}
                 />
               </HStack>

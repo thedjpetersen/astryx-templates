@@ -31,7 +31,9 @@
  * - >768px: header shows title + counts, a 260px search field, Expand
  *   all / Collapse all, and Upload in one row.
  * - <=768px: the counts caption and Expand/Collapse all buttons hide; the
- *   search field flexes to fill the remaining header width.
+ *   search field flexes to fill the remaining header width. The per-folder
+ *   chevron grows to a 40px tap target (leaf rows reserve the same 40px so
+ *   names stay aligned) — it is the sole expand/collapse control on phones.
  * - Table: Name is proportional (min-width floor) and truncates long names;
  *   Type/Size/Updated are pixel columns so numeric/date cells stay stable.
  *   Below ~600px the pixel columns force the table region to scroll
@@ -91,6 +93,11 @@ const styles: Record<string, CSSProperties> = {
     width: 28,
     flexShrink: 0,
   },
+  // <=768px: the chevron grows from the 28px `sm` chrome to a 40px tap
+  // target — with Expand/Collapse all hidden it is the only way to open a
+  // folder on phones. The leaf spacer widens to match so names stay aligned.
+  chevronTouch: {width: 40, height: 40},
+  chevronSpacerTouch: {width: 40},
   // Numeric cells use tabular numerals so size and date digits stay
   // column-aligned.
   numericCell: {fontVariantNumeric: 'tabular-nums'},
@@ -509,9 +516,15 @@ export default function TableTreeTemplate() {
                 size="sm"
                 isDisabled={isSearching}
                 onClick={() => toggleFolder(row.id)}
+                style={isNarrow ? styles.chevronTouch : undefined}
               />
             ) : (
-              <span style={styles.chevronSpacer} />
+              <span
+                style={{
+                  ...styles.chevronSpacer,
+                  ...(isNarrow ? styles.chevronSpacerTouch : undefined),
+                }}
+              />
             )}
             <Icon
               icon={row.node.children ? FolderIcon : FileTextIcon}
@@ -574,7 +587,7 @@ export default function TableTreeTemplate() {
         ),
       },
     ],
-    [isSearching, toggleFolder],
+    [isNarrow, isSearching, toggleFolder],
   );
 
   return (

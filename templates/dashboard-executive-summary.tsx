@@ -16,6 +16,10 @@
  * Responsive contract:
  * - Frame: Layout height="fill" — LayoutHeader stays pinned and the
  *   dashboard body scrolls inside LayoutContent.
+ * - Header: the header HStack wraps, so the fiscal-quarter SegmentedControl
+ *   and Refresh button drop to a second row when the title row runs out of
+ *   room; below 640px the supporting subtitle hides so the quarter control
+ *   stays fully on-screen on phones.
  * - Hero region: two-column CSS grid — fluid hero card (minmax(0, 1fr)) with
  *   a fixed 340px trend rail — above 960px; below 960px the rail drops under
  *   the hero.
@@ -626,6 +630,9 @@ export default function DashboardExecutiveSummaryTemplate() {
   const [quarter, setQuarter] = useState<QuarterKey>('q2-fy26');
   // Below 960px the trend rail drops under the hero and reflows 2-up.
   const isStacked = useMediaQuery('(max-width: 960px)');
+  // Below 640px the header subtitle hides so the quarter SegmentedControl
+  // (the page's primary control) keeps room when it wraps to a second row.
+  const isCompact = useMediaQuery('(max-width: 640px)');
   const fixture = QUARTER_FIXTURES[quarter];
 
   return (
@@ -633,13 +640,15 @@ export default function DashboardExecutiveSummaryTemplate() {
       height="fill"
       header={
         <LayoutHeader hasDivider>
-          <HStack gap={3} vAlign="center">
+          <HStack gap={3} vAlign="center" wrap="wrap">
             <StackItem size="fill">
               <HStack gap={2} vAlign="center">
                 <Heading level={1}>Executive summary</Heading>
-                <Text type="supporting" color="secondary">
-                  Meridian Cloud · Board review
-                </Text>
+                {!isCompact && (
+                  <Text type="supporting" color="secondary">
+                    Meridian Cloud · Board review
+                  </Text>
+                )}
               </HStack>
             </StackItem>
             <SegmentedControl

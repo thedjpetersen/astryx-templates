@@ -26,15 +26,21 @@
  * Responsive contract:
  * - > 960px: the sheet is a docked 400px LayoutPanel; the table takes the
  *   remaining width.
- * - <= 960px: the sheet narrows to 320px and the single-column form keeps
+ * - 641–960px: the sheet narrows to 320px and the single-column form keeps
  *   working; the table yields width rather than the form fields.
+ * - <= 640px: the docked panel is dropped; while open, the sheet takes over
+ *   the content area full-width (the table returns on Cancel/Save/close),
+ *   so neither the form nor the table is ever a sliver.
  * - Table: horizontal scroll inside Table's own scroll wrapper on narrow
  *   viewports; proportional columns keep a minimum so the name cell never
  *   collapses, pixel columns (code, value, used, status) keep width.
+ *   Whole rows are tappable to edit, so the compact per-row Edit icon is a
+ *   shortcut rather than the only (small) touch target.
  * - Sheet: the form body scrolls independently between the pinned sheet
  *   header and the pinned footer actions at every width.
- * - Page header: the title block keeps width via StackItem fill; search
- *   and the "New discount" button stay pinned right.
+ * - Page header: > 640px the title block keeps width via StackItem fill
+ *   with search and the "New discount" button pinned right; <= 640px the
+ *   search drops to its own full-width row so nothing clips.
  */
 
 import {useMemo, useState, type CSSProperties} from 'react';
@@ -63,7 +69,7 @@ import {RadioList, RadioListItem} from '@astryxdesign/core/RadioList';
 import {Selector} from '@astryxdesign/core/Selector';
 import {Switch} from '@astryxdesign/core/Switch';
 import {Table, proportional, pixel} from '@astryxdesign/core/Table';
-import type {TableColumn} from '@astryxdesign/core/Table';
+import type {TableColumn, TablePlugin} from '@astryxdesign/core/Table';
 import {TextArea} from '@astryxdesign/core/TextArea';
 import {TextInput} from '@astryxdesign/core/TextInput';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
@@ -102,6 +108,12 @@ const styles: Record<string, CSSProperties> = {
   },
   tableWrap: {
     padding: 'var(--spacing-4)',
+  },
+  // <=640px the open sheet replaces the table full-width; full height so the
+  // pinned sheet header/footer and scrolling body keep working.
+  phoneSheet: {
+    height: '100%',
+    minHeight: 0,
   },
   emptyWrap: {
     padding: 'var(--spacing-8) var(--spacing-4)',
@@ -544,8 +556,11 @@ export default function FormSideSheetTemplate() {
   const [announcement, setAnnouncement] = useState('');
 
   // Responsive contract: below 960px the sheet narrows to 320px so the
-  // single-column form keeps working while the table yields width.
+  // single-column form keeps working while the table yields width. At phone
+  // widths the docked panel is dropped entirely — the open sheet takes over
+  // the content area full-width instead of squeezing the table to a sliver.
   const isNarrow = useMediaQuery('(max-width: 960px)');
+  const isPhone = useMediaQuery('(max-width: 640px)');
 
   const editingCode =
     editingId === null
@@ -693,37 +708,85 @@ export default function FormSideSheetTemplate() {
     [],
   );
 
+  // Whole-row touch target: the compact per-row Edit icon is well under the
+  // ~40px touch guideline, so clicking/tapping anywhere on a row also opens
+  // the editor (the hasHover highlight already advertises the affordance).
+  const rowOpenPlugin: TablePlugin<DiscountRow> = {
+    transformBodyRow: (props, item) => ({
+      ...props,
+      htmlProps: {
+        ...props.htmlProps,
+        onClick: () => openForEdit(item),
+        style: {...props.htmlProps.style, cursor: 'pointer'},
+      },
+    }),
+  };
+
+  // Rendered either as the docked end panel (> 640px) or as a full-width
+  // content takeover on phones.
+  const sheet = (
+    <DiscountSheet
+      draft={draft}
+      editingCode={editingCode}
+      onChange={patch => setDraft(prev => ({...prev, ...patch}))}
+      onCancel={closeSheet}
+      onSave={saveDraft}
+    />
+  );
+
+  const titleBlock = (
+    <HStack gap={2} vAlign="center">
+      <Heading level={1}>Discounts</Heading>
+      <Text type="supporting" color="secondary">
+        {activeCount} active
+      </Text>
+    </HStack>
+  );
+  const searchField = (
+    <TextInput
+      label="Search discounts"
+      isLabelHidden
+      size="sm"
+      placeholder="Search code or name..."
+      startIcon={<Icon icon={SearchIcon} size="sm" />}
+      value={query}
+      onChange={setQuery}
+      hasClear
+      width={isPhone ? '100%' : undefined}
+    />
+  );
+  const newButton = (
+    <Button
+      label="New discount"
+      icon={<Icon icon={PlusIcon} size="sm" />}
+      size="sm"
+      onClick={openForCreate}
+    />
+  );
+
   return (
     <Layout
       height="fill"
       header={
         <LayoutHeader hasDivider>
-          <HStack gap={3} vAlign="center">
-            <StackItem size="fill">
+          {/* <=640px the single header row would exceed the viewport's
+              min-content and clip the title, so the search drops to its
+              own full-width row. */}
+          {isPhone ? (
+            <VStack gap={2}>
               <HStack gap={2} vAlign="center">
-                <Heading level={1}>Discounts</Heading>
-                <Text type="supporting" color="secondary">
-                  {activeCount} active
-                </Text>
+                <StackItem size="fill">{titleBlock}</StackItem>
+                {newButton}
               </HStack>
-            </StackItem>
-            <TextInput
-              label="Search discounts"
-              isLabelHidden
-              size="sm"
-              placeholder="Search code or name..."
-              startIcon={<Icon icon={SearchIcon} size="sm" />}
-              value={query}
-              onChange={setQuery}
-              hasClear
-            />
-            <Button
-              label="New discount"
-              icon={<Icon icon={PlusIcon} size="sm" />}
-              size="sm"
-              onClick={openForCreate}
-            />
-          </HStack>
+              {searchField}
+            </VStack>
+          ) : (
+            <HStack gap={3} vAlign="center">
+              <StackItem size="fill">{titleBlock}</StackItem>
+              {searchField}
+              {newButton}
+            </HStack>
+          )}
         </LayoutHeader>
       }
       content={
@@ -731,7 +794,13 @@ export default function FormSideSheetTemplate() {
           <div aria-live="polite" style={styles.visuallyHidden}>
             {announcement}
           </div>
-          {visibleRows.length === 0 ? (
+          {/* <=640px there is no room for a docked panel beside the table,
+              so the open sheet takes over the content area full-width. */}
+          {isPhone && isSheetOpen ? (
+            <div style={styles.phoneSheet} role="region" aria-label="Discount editor">
+              {sheet}
+            </div>
+          ) : visibleRows.length === 0 ? (
             <div style={styles.emptyWrap}>
               <EmptyState
                 icon={<Icon icon={SearchIcon} size="lg" />}
@@ -753,25 +822,20 @@ export default function FormSideSheetTemplate() {
                 columns={columns}
                 density="balanced"
                 hasHover
+                plugins={{rowOpen: rowOpenPlugin}}
               />
             </div>
           )}
         </LayoutContent>
       }
       end={
-        isSheetOpen ? (
+        isSheetOpen && !isPhone ? (
           <LayoutPanel
             hasDivider
             padding={0}
             width={isNarrow ? 320 : 400}
             label="Discount editor">
-            <DiscountSheet
-              draft={draft}
-              editingCode={editingCode}
-              onChange={patch => setDraft(prev => ({...prev, ...patch}))}
-              onCancel={closeSheet}
-              onSave={saveDraft}
-            />
+            {sheet}
           </LayoutPanel>
         ) : undefined
       }

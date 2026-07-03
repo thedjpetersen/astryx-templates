@@ -22,7 +22,9 @@
  *   (68%) rows pair an icon + label line with a consistent-width accent
  *   ProgressBar and percent readout, beside a Queued Badge, a green Ready
  *   check, and a red
- *   Failed state whose Tooltip carries the transcode error; selecting a row
+ *   Failed state whose Tooltip carries the transcode error (echoed as
+ *   visible text in the detail pane so touch and keyboard users can read
+ *   it); selecting a row
  *   opens a 360px right detail LayoutPanel with a 16:9 preview placeholder
  *   (gradient stage, deterministic waveform bars for audio), a renditions
  *   mini-Table (1080p / 720p / 480p / HLS ladder with codec, bitrate, size,
@@ -46,7 +48,9 @@
  *   (absolute, 360 wide, card background + shadow) instead of reserving
  *   width; the rail keeps its 240px.
  * - <=768px: the rail and the header search input are dropped (breadcrumbs
- *   still route back to All assets); the overlay panel caps at 100% width;
+ *   still route back to All assets); the header HStack is wrap="wrap", so
+ *   the status SegmentedControl and the Upload CTA reflow onto a second
+ *   header row instead of clipping; the overlay panel caps at 100% width;
  *   the Table scrolls horizontally inside its own wrapper — proportional
  *   columns keep a 120px minimum, pixel columns keep width.
  *
@@ -755,6 +759,14 @@ function AssetDetailPane({
             </StackItem>
             <PipelineCell asset={asset} />
           </HStack>
+          {/* The table exposes the failure reason via a hover Tooltip, which
+              touch and keyboard users cannot reach — echo it here as visible
+              text so tapping the failed row always surfaces the error. */}
+          {asset.state === 'failed' && (
+            <Text type="supporting" style={{color: 'var(--color-error)'}}>
+              {asset.error ?? 'Transcode failed'}
+            </Text>
+          )}
 
           <Divider />
 
@@ -1160,7 +1172,10 @@ export default function MediaAssetPipelineTemplate() {
       height="fill"
       header={
         <LayoutHeader hasDivider>
-          <HStack gap={3} vAlign="center">
+          {/* wrap="wrap" lets the status filter + Upload CTA drop below the
+              breadcrumbs on narrow viewports instead of clipping off-screen;
+              on desktop everything still fits on one row. */}
+          <HStack gap={3} vAlign="center" wrap="wrap">
             <StackItem size="fill">
               <Breadcrumbs label="Library location">
                 <BreadcrumbItem onClick={() => selectFolder('all')}>

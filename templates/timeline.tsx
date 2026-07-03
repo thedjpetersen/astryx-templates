@@ -22,7 +22,10 @@
  *   line.
  * - <=640px: header stacks (filter drops below the title) and each event's
  *   Timestamp wraps under the title instead of pinning right, so long event
- *   titles keep the full row width.
+ *   titles keep the full row width. The type filter keeps its size="sm"
+ *   footprint but raises --size-element-sm to 40px locally so its segments
+ *   are touch-friendly without the wider md/lg padding (five segments still
+ *   fit a 360px row).
  * - Date headers are sticky inside the scrolling content, so the group in
  *   view stays labeled while the feed scrolls.
  */
@@ -114,6 +117,10 @@ const styles: Record<string, CSSProperties> = {
   bodyLast: {
     paddingBottom: 'var(--spacing-2)',
   },
+  // SegmentedControlItem height derives from --size-element-sm; raising the
+  // token on narrow viewports gives the filter ~40px tap targets while
+  // keeping size="sm" padding so five segments still fit a 360px row.
+  filterTapTarget: {'--size-element-sm': '40px'} as CSSProperties,
 };
 
 // ============= DATA =============
@@ -426,7 +433,8 @@ export default function TimelineTemplate() {
       label="Filter events by type"
       value={typeFilter}
       onChange={setTypeFilter}
-      size="sm">
+      size="sm"
+      style={isNarrow ? styles.filterTapTarget : undefined}>
       {FILTERS.map(filter => (
         <SegmentedControlItem
           key={filter.value}

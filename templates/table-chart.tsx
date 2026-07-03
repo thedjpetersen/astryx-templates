@@ -41,7 +41,8 @@
  * - Frame: Layout height="fill" keeps LayoutHeader pinned; the chart +
  *   table stack scrolls inside LayoutContent as one vertical region.
  *   The header row keeps the metric switch pinned right via StackItem
- *   fill.
+ *   fill; at <= 768px the header HStack wraps so the metric switch and
+ *   refresh button drop below the title instead of squeezing it.
  */
 
 import {
@@ -370,7 +371,7 @@ export default function TableChartTemplate() {
       height="fill"
       header={
         <LayoutHeader hasDivider>
-          <HStack gap={3} vAlign="center">
+          <HStack gap={3} vAlign="center" wrap={isCompact ? 'wrap' : 'nowrap'}>
             <StackItem size="fill">
               <VStack gap={0.5}>
                 <Heading level={1}>Store 042 — Weekly sales</Heading>

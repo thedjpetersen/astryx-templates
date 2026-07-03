@@ -40,7 +40,8 @@
  *   in a minmax(220px) Grid.
  * - <=900px: the controls panel becomes a top section above the previews in
  *   one scroll column, and the enlarged master drops back into the grid so
- *   all five masters render at grid size.
+ *   all five masters render at grid size. The header's theme-name readout is
+ *   hidden so the title and Reset/Apply buttons fit narrow widths.
  * - Master canvases use container-query (cqw) type sizing multiplied by the
  *   chosen type scale, so identical shape fixtures paint correctly at 220px
  *   tiles and the 620px hero — and repaint instantly on every control change.
@@ -942,10 +943,12 @@ export default function DeckThemeDesignerTemplate() {
               <HStack gap={2} vAlign="center">
                 <Icon icon={PaletteIcon} size="md" color="secondary" />
                 <Heading level={1}>Theme designer</Heading>
-                <Text type="supporting" color="secondary">
-                  {themeName.length > 0 ? themeName : 'Untitled theme'} ·{' '}
-                  {DECK_FILE_NAME}
-                </Text>
+                {!isStacked && (
+                  <Text type="supporting" color="secondary" maxLines={1}>
+                    {themeName.length > 0 ? themeName : 'Untitled theme'} ·{' '}
+                    {DECK_FILE_NAME}
+                  </Text>
+                )}
               </HStack>
             </StackItem>
             <Button

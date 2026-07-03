@@ -41,7 +41,12 @@
  * - <=960px: the properties panel drops out entirely (its header toggle
  *   disables); rail, monitor, and dock keep their fixed sizes.
  * - <=768px: the header hides the sequence duration text and Fit button;
- *   Export and undo/redo stay.
+ *   Export and undo/redo stay. Transport, snap, and lane mute/lock controls
+ *   grow to 40px touch targets (icon glyphs stay "sm") and lane headers
+ *   widen to 148px to hold the bigger toggles.
+ * - The header row wraps (flexWrap) instead of clipping — the project title
+ *   holds the first row and the undo/zoom/panel/Export cluster flows onto a
+ *   second row at phone widths, so every control stays reachable.
  * - The lane canvas scrolls horizontally at every width — at 200% zoom the
  *   92s sequence is 1472px wide by design; lane headers never scroll.
  *
@@ -124,6 +129,9 @@ const MONO = 'var(--font-family-code, monospace)';
 
 // Dock geometry: 120px lane headers, ruler + scrub rows, 46px lanes.
 const LANE_HEADER_W = 120;
+// <=768px: lane headers widen so the V-label still fits beside two 40px
+// touch-target toggles (16px padding + 2×40 buttons + gaps + label).
+const LANE_HEADER_W_COMPACT = 148;
 const RULER_H = 24;
 const SCRUB_H = 26;
 const LANE_H = 46;
@@ -280,6 +288,13 @@ interface ClipAdjust {
 
 const styles: Record<string, CSSProperties> = {
   mono: {fontFamily: MONO},
+  // Header controls wrap onto a second row instead of clipping — the
+  // 'spring-launch-cut_v4' title alone is wider than half a phone viewport.
+  headerRow: {flexWrap: 'wrap', rowGap: 'var(--spacing-2)'},
+  // <=768px: grow transport/snap/lane toggles to 40px touch targets (the
+  // "sm" 28px box is fine for pointers but too small for thumbs); icon
+  // glyphs stay "sm" so the rows read the same, just with more padding.
+  tapTarget: {width: 40, height: 40},
   // Tool rail: 56px panel, buttons stacked with 4px breathing room.
   rail: {padding: 'var(--spacing-1)', alignItems: 'center'},
   // Program monitor: muted backdrop centering the stage column.
@@ -583,20 +598,24 @@ function ClipBlock({
   );
 }
 
-/** 120px lane header: track label + caption tooltip, mute/lock toggles. */
+/** Lane header (120px, 148px compact): track label + caption tooltip,
+ * mute/lock toggles — 40px touch targets when isCompact. */
 function LaneHeader({
   track,
   isMuted,
   isLocked,
+  isCompact,
   onMuteChange,
   onLockChange,
 }: {
   track: Track;
   isMuted: boolean;
   isLocked: boolean;
+  isCompact: boolean;
   onMuteChange: (isPressed: boolean) => void;
   onLockChange: (isPressed: boolean) => void;
 }) {
+  const tapTargetStyle = isCompact ? styles.tapTarget : undefined;
   return (
     <div style={styles.laneHeaderCell}>
       <StackItem size="fill">
@@ -614,6 +633,7 @@ function LaneHeader({
         isIconOnly
         isPressed={isMuted}
         onPressedChange={onMuteChange}
+        style={tapTargetStyle}
         icon={<Icon icon={Volume2Icon} size="sm" color="inherit" />}
         pressedIcon={<Icon icon={VolumeXIcon} size="sm" color="inherit" />}
       />
@@ -623,6 +643,7 @@ function LaneHeader({
         isIconOnly
         isPressed={isLocked}
         onPressedChange={onLockChange}
+        style={tapTargetStyle}
         icon={<Icon icon={LockOpenIcon} size="sm" color="inherit" />}
         pressedIcon={<Icon icon={LockIcon} size="sm" color="inherit" />}
       />
@@ -827,6 +848,9 @@ export default function VideoClipTimelineTemplate() {
 
   const isNarrow = useMediaQuery('(max-width: 960px)');
   const isCompact = useMediaQuery('(max-width: 768px)');
+  // 40px hit areas for the thumb-driven controls at phone widths.
+  const tapTargetStyle = isCompact ? styles.tapTarget : undefined;
+  const laneHeaderW = isCompact ? LANE_HEADER_W_COMPACT : LANE_HEADER_W;
 
   const pxPerSec = PX_PER_SEC[zoom];
   const canvasWidth = DURATION_SEC * pxPerSec;
@@ -892,17 +916,18 @@ export default function VideoClipTimelineTemplate() {
   // ----- Header -----
   const header = (
     <LayoutHeader hasDivider>
-      <HStack gap={2} vAlign="center">
-        <Icon icon={ClapperboardIcon} size="md" color="secondary" />
-        <Heading level={1}>{PROJECT_NAME}</Heading>
-        <Badge label="Saved" variant="success" />
-        {!isCompact && (
-          <Text type="supporting" color="secondary" hasTabularNumbers>
-            00:01:32:00 · {FPS} fps
-          </Text>
-        )}
+      <HStack gap={2} vAlign="center" style={styles.headerRow}>
         <StackItem size="fill">
-          <span />
+          <HStack gap={2} vAlign="center">
+            <Icon icon={ClapperboardIcon} size="md" color="secondary" />
+            <Heading level={1}>{PROJECT_NAME}</Heading>
+            <Badge label="Saved" variant="success" />
+            {!isCompact && (
+              <Text type="supporting" color="secondary" hasTabularNumbers>
+                00:01:32:00 · {FPS} fps
+              </Text>
+            )}
+          </HStack>
         </StackItem>
         <IconButton
           label="Undo"
@@ -1038,6 +1063,7 @@ export default function VideoClipTimelineTemplate() {
                     icon={<Icon icon={StepBackIcon} size="sm" color="inherit" />}
                     variant="ghost"
                     size="sm"
+                    style={tapTargetStyle}
                     isDisabled={playheadSec <= 0}
                     onClick={() => stepFrames(-1)}
                   />
@@ -1061,6 +1087,7 @@ export default function VideoClipTimelineTemplate() {
                       }
                       variant="secondary"
                       size="sm"
+                      style={tapTargetStyle}
                       onClick={() => setIsPlaying(prev => !prev)}
                     />
                   </Tooltip>
@@ -1072,6 +1099,7 @@ export default function VideoClipTimelineTemplate() {
                     }
                     variant="ghost"
                     size="sm"
+                    style={tapTargetStyle}
                     isDisabled={playheadSec >= DURATION_SEC}
                     onClick={() => stepFrames(1)}
                   />
@@ -1137,6 +1165,7 @@ export default function VideoClipTimelineTemplate() {
                 isIconOnly
                 isPressed={snapEnabled}
                 onPressedChange={setSnapEnabled}
+                style={tapTargetStyle}
                 tooltip={snapEnabled ? 'Snapping on' : 'Snapping off'}
                 icon={<Icon icon={MagnetIcon} size="sm" color="inherit" />}
               />
@@ -1153,8 +1182,9 @@ export default function VideoClipTimelineTemplate() {
           }
         />
         <div style={styles.dockBody}>
-          {/* Fixed 120px lane header column — never scrolls. */}
-          <div style={styles.laneHeaderCol}>
+          {/* Fixed lane header column (120px, 148px compact) — never
+              scrolls. */}
+          <div style={{...styles.laneHeaderCol, width: laneHeaderW}}>
             <div style={styles.laneHeaderTop}>
               <Text type="supporting" color="secondary">
                 {pxPerSec} px/s
@@ -1166,6 +1196,7 @@ export default function VideoClipTimelineTemplate() {
                 track={track}
                 isMuted={mutedTracks[track.id]}
                 isLocked={lockedTracks[track.id]}
+                isCompact={isCompact}
                 onMuteChange={isPressed =>
                   setMutedTracks(prev => ({...prev, [track.id]: isPressed}))
                 }

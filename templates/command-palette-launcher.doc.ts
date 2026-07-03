@@ -13,6 +13,7 @@ const template = {
     'CommandPalette',
     'Divider',
     'Grid',
+    'IconButton',
     'Kbd',
     'Layout',
     'Overlay',

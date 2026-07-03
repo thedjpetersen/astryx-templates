@@ -13,9 +13,13 @@
  * row and unpins on scroll-up ("Jump to latest" re-pins).
  *
  * Responsive contract:
- * - ≥769px: facet rail as a 240px start LayoutPanel; content fills the rest.
+ * - ≥769px: facet rail as a 240px start LayoutPanel; content fills the rest;
+ *   the log stream fits without horizontal scrolling.
  * - ≤768px: the facet rail hides — filtering stays available via PowerSearch
- *   level/service fields; header controls wrap onto a second line.
+ *   level/service fields; header controls wrap onto a second line; the log
+ *   stream pans horizontally inside an overflow-x scroller (640px min width)
+ *   so the fixed timestamp/level/source columns keep their alignment instead
+ *   of sliver-wrapping the message column.
  */
 
 import {useEffect, useMemo, useRef, useState, type CSSProperties} from 'react';
@@ -59,6 +63,17 @@ const styles: Record<string, CSSProperties> = {
   detailBlock: {
     margin: 0,
     whiteSpace: 'pre-wrap',
+  },
+  // LogStream rows use fixed timestamp/level/source columns (~340px of
+  // chrome), so at compact widths (≤768px) the whole stream pans
+  // horizontally rather than sliver-wrapping the message column. The min
+  // width is only applied in compact mode so desktop keeps its
+  // fit-without-scrolling layout.
+  logScroll: {
+    overflowX: 'auto',
+  },
+  logScrollInnerCompact: {
+    minWidth: 640,
   },
   streamFooter: {
     paddingTop: 'var(--spacing-2)',
@@ -455,13 +470,17 @@ export default function LogsExplorerPage() {
               placeholder="Filter logs by level, service, or message..."
               resultCount={visibleEntries.length}
             />
-            <LogStream
-              entries={visibleEntries}
-              maxHeight={520}
-              isFollowing={isFollowing}
-              onFollowChange={setIsFollowing}
-              label="Log results stream"
-            />
+            <div style={styles.logScroll}>
+              <div style={isCompact ? styles.logScrollInnerCompact : undefined}>
+                <LogStream
+                  entries={visibleEntries}
+                  maxHeight={520}
+                  isFollowing={isFollowing}
+                  onFollowChange={setIsFollowing}
+                  label="Log results stream"
+                />
+              </div>
+            </div>
             <div style={styles.streamFooter}>
               <HStack gap={2} vAlign="center">
                 <StackItem size="fill">

@@ -32,10 +32,15 @@
  *   The stage column keeps 4:3 via AspectRatio and caps at 880px wide;
  *   vertical centering falls back to scrolling when the viewport is short.
  * - <=768px: the rail collapses into a horizontal thumbnail strip above the
- *   stage (tiles keep intrinsic 96px width, strip scrolls horizontally) and
- *   the header drops the Read-only Badge.
+ *   stage (tiles keep intrinsic 96px width, strip scrolls horizontally), the
+ *   header drops the Read-only Badge and the slide counter (the stage
+ *   caption still carries "Slide N of M"), the header IconButtons grow to
+ *   40px touch targets, and the backdrop padding tightens so the stage gets
+ *   more width.
  * - Slide canvases use container-query (cqw) type sizing, so the identical
  *   shape fixtures paint correctly at 96px thumbnails and the 880px stage.
+ *   On the <=768px stage, type additionally floors at 11px via max() so
+ *   slide body copy stays readable on phones; thumbnails keep pure cqw.
  *
  * Container policy (document-stage archetype): the page chrome is frame-first
  * rows and panels; the only Cards are the slide surfaces themselves — white
@@ -98,6 +103,16 @@ const pctY = (v: number) => `${((v / CANVAS_H) * 100).toFixed(3)}%`;
  */
 const cqw = (v: number) => `${((v / CANVAS_W) * 100).toFixed(3)}cqw`;
 
+/**
+ * <=768px the stage canvas is only ~330px wide, so raw cqw sizes drop
+ * below legibility (cqw(26) computes to ~9px). The compact stage floors
+ * type at 11px via max(); thumbnails keep pure cqw so miniatures paint
+ * true, and at the 880px desktop stage every cqw size clears the floor
+ * so nothing changes there.
+ */
+const STAGE_TYPE_FLOOR_PX = 11;
+const cqwFloored = (v: number) => `max(${STAGE_TYPE_FLOOR_PX}px, ${cqw(v)})`;
+
 // ============= STYLES =============
 
 const styles: Record<string, CSSProperties> = {
@@ -123,6 +138,12 @@ const styles: Record<string, CSSProperties> = {
     display: 'flex',
     flexDirection: 'column',
   },
+  // <=768px: tighter gutters so the slide gets more of the viewport.
+  stageBackdropCompact: {padding: 'var(--spacing-3)'},
+  // <=768px: grow the header controls to 40px touch targets (the "sm"
+  // 28px box is fine for pointers but too small for thumbs); icon glyphs
+  // stay "sm" so the row reads the same, just with more padding.
+  headerTapTarget: {width: 40, height: 40},
   stageColumn: {
     width: '100%',
     maxWidth: 880,
@@ -353,15 +374,26 @@ function frameStyle(shape: ShapeFrame): CSSProperties {
   };
 }
 
-/** One positioned shape; all type sizes are cqw so miniatures scale. */
-function ShapeView({shape}: {shape: SlideShape}) {
+/**
+ * One positioned shape; all type sizes are cqw so miniatures scale.
+ * `hasTypeFloor` (the compact stage) clamps type to a readable minimum;
+ * bullet glyph metrics are em-based so they track whichever size wins.
+ */
+function ShapeView({
+  shape,
+  hasTypeFloor,
+}: {
+  shape: SlideShape;
+  hasTypeFloor: boolean;
+}) {
+  const typeSize = hasTypeFloor ? cqwFloored : cqw;
   switch (shape.kind) {
     case 'text':
       return (
         <div
           style={{
             ...frameStyle(shape),
-            fontSize: cqw(shape.size),
+            fontSize: typeSize(shape.size),
             fontWeight: shape.weight ?? 400,
             color: TEXT_COLOR[shape.color ?? 'default'],
             lineHeight: 1.2,
@@ -378,8 +410,8 @@ function ShapeView({shape}: {shape: SlideShape}) {
             ...frameStyle(shape),
             display: 'flex',
             flexDirection: 'column',
-            gap: cqw(shape.size * 0.75),
-            fontSize: cqw(shape.size),
+            gap: '0.75em',
+            fontSize: typeSize(shape.size),
             lineHeight: 1.3,
           }}>
           {shape.items.map(item => (
@@ -388,14 +420,14 @@ function ShapeView({shape}: {shape: SlideShape}) {
               style={{
                 display: 'flex',
                 alignItems: 'flex-start',
-                gap: cqw(shape.size * 0.55),
+                gap: '0.55em',
               }}>
               <span
                 aria-hidden
                 style={{
-                  width: cqw(shape.size * 0.34),
-                  height: cqw(shape.size * 0.34),
-                  marginTop: cqw(shape.size * 0.42),
+                  width: '0.34em',
+                  height: '0.34em',
+                  marginTop: '0.42em',
                   borderRadius: '50%',
                   backgroundColor: SLIDE_ACCENT,
                   flexShrink: 0,
@@ -422,7 +454,7 @@ function ShapeView({shape}: {shape: SlideShape}) {
           }}>
           <span
             style={{
-              fontSize: cqw(14),
+              fontSize: typeSize(14),
               letterSpacing: '0.18em',
               color: SLIDE_FAINT,
             }}>
@@ -430,7 +462,7 @@ function ShapeView({shape}: {shape: SlideShape}) {
           </span>
           <span
             style={{
-              fontSize: cqw(20),
+              fontSize: typeSize(20),
               fontFamily: 'var(--font-family-code, monospace)',
               color: SLIDE_MUTED,
             }}>
@@ -453,7 +485,7 @@ function ShapeView({shape}: {shape: SlideShape}) {
           }}>
           <span
             style={{
-              fontSize: cqw(46),
+              fontSize: typeSize(46),
               fontWeight: 700,
               color: SLIDE_ACCENT,
               fontVariantNumeric: 'tabular-nums',
@@ -461,7 +493,7 @@ function ShapeView({shape}: {shape: SlideShape}) {
             }}>
             {shape.value}
           </span>
-          <span style={{fontSize: cqw(17), color: SLIDE_MUTED}}>
+          <span style={{fontSize: typeSize(17), color: SLIDE_MUTED}}>
             {shape.caption}
           </span>
         </div>
@@ -487,7 +519,15 @@ function ShapeView({shape}: {shape: SlideShape}) {
  * centered gray "(empty slide)" — an EmptyState on the stage, micro text
  * on thumbnails.
  */
-function SlideCanvas({slide, isThumb = false}: {slide: Slide; isThumb?: boolean}) {
+function SlideCanvas({
+  slide,
+  isThumb = false,
+  hasTypeFloor = false,
+}: {
+  slide: Slide;
+  isThumb?: boolean;
+  hasTypeFloor?: boolean;
+}) {
   if (slide.shapes.length === 0) {
     return (
       <div style={styles.canvas}>
@@ -508,7 +548,11 @@ function SlideCanvas({slide, isThumb = false}: {slide: Slide; isThumb?: boolean}
   return (
     <div style={styles.canvas}>
       {slide.shapes.map((shape, index) => (
-        <ShapeView key={`${slide.id}-shape-${index}`} shape={shape} />
+        <ShapeView
+          key={`${slide.id}-shape-${index}`}
+          shape={shape}
+          hasTypeFloor={hasTypeFloor}
+        />
       ))}
     </div>
   );
@@ -611,8 +655,16 @@ export default function SlideDeckViewerTemplate() {
     />
   ));
 
+  // <=768px: 40px hit boxes for the header IconButtons.
+  const tapTargetStyle = isCompact ? styles.headerTapTarget : undefined;
+
   const stage = (
-    <div style={styles.stageBackdrop}>
+    <div
+      style={
+        isCompact
+          ? {...styles.stageBackdrop, ...styles.stageBackdropCompact}
+          : styles.stageBackdrop
+      }>
       <div style={styles.stageColumn}>
         <VStack gap={2}>
           <Card padding={0} style={styles.stageCard}>
@@ -620,7 +672,7 @@ export default function SlideDeckViewerTemplate() {
               {isParsing ? (
                 <StageSkeleton />
               ) : (
-                <SlideCanvas slide={activeSlide} />
+                <SlideCanvas slide={activeSlide} hasTypeFloor={isCompact} />
               )}
             </AspectRatio>
           </Card>
@@ -644,9 +696,13 @@ export default function SlideDeckViewerTemplate() {
               <HStack gap={2} vAlign="center">
                 <Icon icon={PresentationIcon} size="md" color="secondary" />
                 <Heading level={1}>{DECK_FILE_NAME}</Heading>
-                <Text type="supporting" color="secondary" hasTabularNumbers>
-                  · Slide {activeIndex + 1} of {SLIDE_COUNT}
-                </Text>
+                {/* <=768px the stage caption carries the counter instead,
+                    freeing header width for the 40px touch targets. */}
+                {!isCompact && (
+                  <Text type="supporting" color="secondary" hasTabularNumbers>
+                    · Slide {activeIndex + 1} of {SLIDE_COUNT}
+                  </Text>
+                )}
                 {!isCompact && <Badge label="Read-only" variant="neutral" />}
               </HStack>
             </StackItem>
@@ -657,6 +713,7 @@ export default function SlideDeckViewerTemplate() {
               variant={isParsing ? 'secondary' : 'ghost'}
               size="sm"
               onClick={() => setIsParsing(prev => !prev)}
+              style={tapTargetStyle}
             />
             {/* Pager: chevrons disable at the deck ends (and while parsing). */}
             <HStack gap={1} vAlign="center">
@@ -668,6 +725,7 @@ export default function SlideDeckViewerTemplate() {
                 size="sm"
                 isDisabled={isAtStart || isParsing}
                 onClick={goPrev}
+                style={tapTargetStyle}
               />
               <IconButton
                 label="Next slide"
@@ -677,6 +735,7 @@ export default function SlideDeckViewerTemplate() {
                 size="sm"
                 isDisabled={isAtEnd || isParsing}
                 onClick={goNext}
+                style={tapTargetStyle}
               />
             </HStack>
           </HStack>
