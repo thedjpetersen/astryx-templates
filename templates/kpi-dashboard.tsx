@@ -67,6 +67,9 @@ const styles: Record<string, CSSProperties> = {
   numericCell: {fontVariantNumeric: 'tabular-nums'},
   // Keep the chart from collapsing when the card flexes below min width.
   chartBody: {minWidth: 0, paddingTop: 'var(--spacing-2)'},
+  // Breathing room under the last table row so it doesn't sit flush against
+  // the card's bottom border (matches the padding above the card title).
+  tableWrap: {paddingBottom: 'var(--spacing-3)'},
 };
 
 // Chart series colors via Astryx design tokens (CSS custom properties).
@@ -462,14 +465,16 @@ export default function KpiDashboardTemplate() {
                     Busiest routes for the selected period
                   </Text>
                 </HStack>
-                <Table<EndpointRow>
-                  data={endpointRows}
-                  columns={endpointColumns}
-                  idKey="id"
-                  density="compact"
-                  dividers="rows"
-                  hasHover
-                />
+                <div style={styles.tableWrap}>
+                  <Table<EndpointRow>
+                    data={endpointRows}
+                    columns={endpointColumns}
+                    idKey="id"
+                    density="compact"
+                    dividers="rows"
+                    hasHover
+                  />
+                </div>
               </VStack>
             </Card>
           </VStack>

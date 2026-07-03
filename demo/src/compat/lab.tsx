@@ -103,6 +103,49 @@ const tickLabelStyle: CSSProperties = {
   fill: 'var(--color-text-secondary)',
 };
 
+// Categorical series tokens, scoped to the chart svg. Light values match the
+// hexes every chart template already uses as its light fallback (so light
+// rendering is unchanged); dark values lift lightness further than the
+// per-template fallbacks so series stay vivid on near-black cards even when
+// the svg is downscaled (e.g. 40px sparklines rendered at ~1/3 width).
+const chartPaletteTokens = {
+  '--color-data-categorical-blue': 'light-dark(#0171E3, #66B2FF)',
+  '--color-data-categorical-green': 'light-dark(#0B991F, #4ADE80)',
+  '--color-data-categorical-orange': 'light-dark(#EB6E00, #FFA155)',
+  '--color-data-categorical-purple': 'light-dark(#6B1EFD, #B18AFF)',
+  '--color-data-categorical-teal': 'light-dark(#0E7E8B, #45C4D3)',
+  '--color-data-categorical-pink': 'light-dark(#D91E76, #FF6FAD)',
+  '--color-data-categorical-red': 'light-dark(#D92D20, #FF7368)',
+  '--color-data-categorical-yellow': 'light-dark(#B78103, #EFC252)',
+  '--color-data-categorical-cyan': 'light-dark(#0EA5E9, #4FC3F7)',
+} as CSSProperties;
+
+/**
+ * Bar path with rounded corners on the value end only, so bars sit flat on
+ * the zero baseline (a plain rect's `rx` rounds all four corners, which
+ * visibly lifts short bars off the axis).
+ */
+function barPath(
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  radius: number,
+  roundTop: boolean,
+): string {
+  if (h <= 0 || w <= 0) {
+    return '';
+  }
+  const r = Math.min(radius, w / 2, h);
+  if (r <= 0) {
+    return `M${x},${y} h${w} v${h} h${-w} Z`;
+  }
+  if (roundTop) {
+    return `M${x},${y + h} v${-(h - r)} q0,${-r} ${r},${-r} h${w - 2 * r} q${r},0 ${r},${r} v${h - r} Z`;
+  }
+  return `M${x},${y} h${w} v${h - r} q0,${r} ${-r},${r} h${-(w - 2 * r)} q${-r},0 ${-r},${-r} Z`;
+}
+
 export function ChartV2<T extends Record<string, unknown>>({
   data,
   xKey,
@@ -156,7 +199,8 @@ export function ChartV2<T extends Record<string, unknown>>({
       width="100%"
       height={height}
       role="img"
-      aria-label="Chart preview">
+      aria-label="Chart preview"
+      style={chartPaletteTokens}>
       <rect width={width} height={height} fill="var(--color-background-card)" />
       {grid
         ? ticks
@@ -235,13 +279,16 @@ export function ChartV2<T extends Record<string, unknown>>({
                 const value = numeric(row[s.key]);
                 const y = scaleY(value);
                 return (
-                  <rect
+                  <path
                     key={index}
-                    x={left + (index / data.length) * plotWidth + 5}
-                    y={Math.min(y, baseline)}
-                    width={barWidth}
-                    height={Math.abs(baseline - y)}
-                    rx={s.radius ?? 3}
+                    d={barPath(
+                      left + (index / data.length) * plotWidth + 5,
+                      Math.min(y, baseline),
+                      barWidth,
+                      Math.abs(baseline - y),
+                      s.radius ?? 3,
+                      value >= 0,
+                    )}
                     fill={color}
                     opacity={0.85}
                   />
@@ -300,6 +347,15 @@ const terminalLevelColor: Record<LogStreamLevel, string> = {
 
 const terminalRowBorder = '1px solid rgba(148, 163, 184, 0.16)';
 
+// Nested detail blocks (e.g. a warn entry's multi-line body) typically render
+// secondary-colored Text, whose theme token goes muddy against the fixed dark
+// canvas. Remap the token locally — one step lighter than the info gray — so
+// detail lines stay legible in both schemes.
+const terminalDetailStyle = {
+  color: '#cbd5e1',
+  '--color-text-secondary': '#cbd5e1',
+} as CSSProperties;
+
 export function LogStream({
   entries,
   variant = 'default',
@@ -342,7 +398,11 @@ export function LogStream({
           <span>{entry.source}</span>
           <span>
             {entry.message}
-            {entry.detail ? <div>{entry.detail}</div> : null}
+            {entry.detail ? (
+              <div style={terminal ? terminalDetailStyle : undefined}>
+                {entry.detail}
+              </div>
+            ) : null}
           </span>
         </div>
       ))}

@@ -187,6 +187,10 @@ const styles: Record<string, CSSProperties> = {
   },
   // Quick-view art column keeps its width beside the detail stack.
   quickArtRail: {width: 260, flexShrink: 0},
+  // Slider mark labels ($0/$600) hang below the track absolutely
+  // positioned, so they add no layout height; without this pad the next
+  // section Divider sits flush against the label glyphs.
+  sliderMarkPad: {paddingBottom: 14},
 };
 
 // Muted home-goods gradient pairs; a name hash picks the pair so every
@@ -403,7 +407,7 @@ const PRODUCTS: ReadonlyArray<Product> = [
     brand: 'Meridian Glassworks',
     department: 'tableware',
     price: 54,
-    rating: 4.2,
+    rating: 3.8,
     reviews: 342,
     availability: 'in-stock',
     isNew: true,
@@ -458,7 +462,7 @@ const PRODUCTS: ReadonlyArray<Product> = [
     department: 'decor',
     price: 84,
     compareAt: 98,
-    rating: 4.1,
+    rating: 3.9,
     reviews: 156,
     availability: 'in-stock',
     finishes: ['Brass'],
@@ -646,23 +650,26 @@ function FilterFields({
       <Divider />
       {/* Live range readout lives in the description line — the inline
           "text" valueDisplay sits flush against the track and collides
-          with the max-position thumb. */}
-      <Slider
-        label="Price"
-        description={`$${filters.priceRange[0]} – $${filters.priceRange[1]}`}
-        value={filters.priceRange}
-        onChange={onPriceRangeChange}
-        min={PRICE_MIN}
-        max={PRICE_MAX}
-        step={25}
-        formatValue={value => `$${value}`}
-        valueDisplay="none"
-        marks={[
-          {value: PRICE_MIN, label: `$${PRICE_MIN}`},
-          {value: PRICE_MAX, label: `$${PRICE_MAX}`},
-        ]}
-        width="100%"
-      />
+          with the max-position thumb. The pad wrapper reserves room for
+          the absolutely-positioned $0/$600 mark labels (styles.sliderMarkPad). */}
+      <div style={styles.sliderMarkPad}>
+        <Slider
+          label="Price"
+          description={`$${filters.priceRange[0]} – $${filters.priceRange[1]}`}
+          value={filters.priceRange}
+          onChange={onPriceRangeChange}
+          min={PRICE_MIN}
+          max={PRICE_MAX}
+          step={25}
+          formatValue={value => `$${value}`}
+          valueDisplay="none"
+          marks={[
+            {value: PRICE_MIN, label: `$${PRICE_MIN}`},
+            {value: PRICE_MAX, label: `$${PRICE_MAX}`},
+          ]}
+          width="100%"
+        />
+      </div>
       <Divider />
       <RadioList
         label="Rating"
@@ -678,13 +685,14 @@ function FilterFields({
         ))}
       </RadioList>
       <Divider />
+      {/* Default spacing keeps the toggle and its label side by side on
+          the left, matching the checkbox/radio rows above ("spread" left
+          the control orphaned at the far edge of the rail). */}
       <Switch
         label="In stock only"
         description="Hide backordered items"
         value={filters.inStockOnly}
         onChange={onInStockOnlyChange}
-        labelSpacing="spread"
-        width="100%"
       />
     </VStack>
   );
@@ -1474,12 +1482,10 @@ export default function StorefrontBrowseTemplate() {
                   ))}
                 </Grid>
 
-                {/* Load-more pagination footer. */}
+                {/* Load-more pagination footer. The running count lives in
+                    the toolbar above the grid — repeating it here read as a
+                    duplicate. */}
                 <VStack gap={2} hAlign="center">
-                  <Text type="supporting" color="secondary" hasTabularNumbers>
-                    Showing {visibleProducts.length} of{' '}
-                    {filteredProducts.length} products
-                  </Text>
                   {remainingCount > 0 ? (
                     <Button
                       label={`Load ${Math.min(PAGE_SIZE, remainingCount)} more products`}

@@ -244,12 +244,16 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 4,
     lineHeight: 1.4,
   },
+  // Inset pill so the bar never enters the thumb's rounded-corner curve —
+  // a full-bleed 4px bar under a 12px radius reads as square bleed.
   watchedTrack: {
     position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
+    left: 6,
+    right: 6,
+    bottom: 6,
     height: 4,
+    borderRadius: 2,
+    overflow: 'hidden',
     backgroundColor: 'rgba(255, 255, 255, 0.35)',
   },
   watchedFill: {height: '100%', backgroundColor: '#F03B30'},
@@ -268,11 +272,17 @@ const styles: Record<string, CSSProperties> = {
     color: 'inherit',
   },
   upNextBody: {minWidth: 0, flex: 1},
+  // View count and upload date are atomic tokens: never let them wrap or
+  // shrink — the collapsed teaser text absorbs the squeeze instead.
+  descriptionStat: {whiteSpace: 'nowrap', flexShrink: 0},
   gearStrip: {display: 'flex', gap: 'var(--spacing-2)', flexWrap: 'wrap'},
   commentBody: {minWidth: 0},
   // Deepen the sort control's track a step so the unselected segment reads
   // as part of one control against the page background.
   commentSort: {backgroundColor: 'var(--color-background-gray)'},
+  // Creator-heart badge: keep the light-mode red, lift the dark-mode rose
+  // one step — the Badge default reads dim on its dark maroon pill.
+  heartBadge: {color: 'light-dark(#7B0210, #FFC9CE)'},
 };
 
 // ============= DATA =============
@@ -741,10 +751,18 @@ function DescriptionCard({
         onOpenChange={onExpandedChange}
         trigger={
           <HStack gap={2} vAlign="center">
-            <Text type="body" weight="semibold" hasTabularNumbers>
+            <Text
+              type="body"
+              weight="semibold"
+              hasTabularNumbers
+              style={styles.descriptionStat}>
               {VIEW_COUNT}
             </Text>
-            <Timestamp value={UPLOADED_AT} format="date" type="body" weight="semibold" color="primary" />
+            {/* span wrapper: white-space inherits through, and the span is
+                the flex item that takes the no-shrink rule. */}
+            <span style={styles.descriptionStat}>
+              <Timestamp value={UPLOADED_AT} format="date" type="body" weight="semibold" color="primary" />
+            </span>
             {!isExpanded && (
               <Text type="supporting" color="secondary" maxLines={1}>
                 Everything in this video was bought over six months on a $1,400
@@ -810,6 +828,7 @@ function CommentRow({comment, isPhone}: {comment: Comment; isPhone: boolean}) {
                 label={`by ${CHANNEL_NAME}`}
                 variant="red"
                 icon={<Icon icon={HeartIcon} size="xsm" color="inherit" />}
+                style={styles.heartBadge}
               />
             )}
           </HStack>
@@ -919,7 +938,6 @@ function UpNextRow({
           <AspectRatio ratio={16 / 9}>
             <div style={upNextArtStyle(item)} />
           </AspectRatio>
-          <span style={styles.durationChip}>{item.duration}</span>
           {item.watchedPct != null && (
             <div style={styles.watchedTrack} aria-hidden>
               <div
@@ -927,6 +945,8 @@ function UpNextRow({
               />
             </div>
           )}
+          {/* Chip renders after the track so it stacks above the pill. */}
+          <span style={styles.durationChip}>{item.duration}</span>
         </div>
         <div style={styles.upNextBody}>
           <VStack gap={0}>

@@ -201,6 +201,8 @@ const styles: Record<string, CSSProperties> = {
     flex: '0 0 160px',
   },
   // Bottom-left name chip and top overlays share the dark pill treatment.
+  // The tile menu lives top-right, so the chip only needs its own edge
+  // inset — no 56px menu reservation — before ellipsizing.
   nameChip: {
     position: 'absolute',
     bottom: 'var(--spacing-2)',
@@ -212,7 +214,7 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 999,
     backgroundColor: TILE_CHIP_BG,
     fontSize: 12,
-    maxWidth: 'calc(100% - 56px)',
+    maxWidth: 'calc(100% - 2 * var(--spacing-2))',
   },
   nameChipText: {
     overflow: 'hidden',

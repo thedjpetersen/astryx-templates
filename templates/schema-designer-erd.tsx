@@ -107,10 +107,17 @@ const CANVAS_EXTENT_Y = 1000;
 const NUDGE_STEP = 16; // arrow-key move distance for card headers
 
 // One-shot warning pulse for "click a warning → flash the offending card".
+// The .erd-ddl rule tunes CodeBlock's isWrapped mode: keep the soft wrap
+// (pre-wrap) but break at spaces instead of break-all, so DDL never splits
+// mid-token ('NOT N/ULL'); !important outranks the library's atomic CSS.
 const PULSE_KEYFRAMES = `
 @keyframes erd-card-pulse {
   0% { outline: 3px solid var(--color-warning); outline-offset: 2px; }
   100% { outline: 3px solid transparent; outline-offset: 12px; }
+}
+.erd-ddl code {
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
 }`;
 
 // ============= STYLES =============
@@ -230,6 +237,13 @@ const styles: Record<string, CSSProperties> = {
   },
   panelCode: {
     minWidth: 0,
+  },
+  // Panel hint text (relationship direction, footnote): secondary reads too
+  // dim on the dark panel, so dark steps up to the primary token — the
+  // supporting size still carries the hierarchy.
+  panelHint: {
+    color:
+      'light-dark(var(--color-text-secondary), var(--color-text-primary))',
   },
   dialogBody: {paddingBottom: 'var(--spacing-2)'},
   visuallyHidden: {
@@ -986,10 +1000,11 @@ function DdlInspector({
 
       <Divider />
 
-      <div style={styles.panelCode}>
-        {/* No isWrapped: wrapping break-alls mid-token ('NOT N/ULL'); long
-            DDL lines scroll horizontally instead. Title-cased "SQL" header
-            matches the "Relationships" heading below. */}
+      <div className="erd-ddl" style={styles.panelCode}>
+        {/* isWrapped + the .erd-ddl word-break override (see PULSE_KEYFRAMES)
+            soft-wraps long DDL at spaces — no mid-token clipping and no
+            hidden horizontal overflow at the 360px panel width. Title-cased
+            "SQL" header matches the "Relationships" heading below. */}
         <CodeBlock
           code={ddl}
           language="sql"
@@ -997,6 +1012,7 @@ function DdlInspector({
           hasLanguageLabel={false}
           size="sm"
           width="100%"
+          isWrapped
           hasCopyButton
         />
       </div>
@@ -1022,16 +1038,25 @@ function DdlInspector({
                   // Non-string label opts out of single-line truncation so
                   // the target column ("→ addresses.id") is never ellipsized.
                   label={<>{describeEdge(edge)}</>}
-                  description={isOutgoing ? 'outgoing' : 'incoming'}
+                  // The mismatch badge rides the description line (not
+                  // endContent), so a long label wrapping can never shove
+                  // the badge around and break the rows' vertical rhythm.
+                  description={
+                    <HStack gap={2} vAlign="center">
+                      <span style={styles.panelHint}>
+                        <Text type="supporting" color="inherit">
+                          {isOutgoing ? 'outgoing' : 'incoming'}
+                        </Text>
+                      </span>
+                      {mismatchEdgeIds.has(edge.id) && (
+                        <Badge variant="error" label="type mismatch" />
+                      )}
+                    </HStack>
+                  }
                   startContent={
                     <span style={styles.fkIcon}>
                       <Icon icon={LinkIcon} size="sm" color="inherit" />
                     </span>
-                  }
-                  endContent={
-                    mismatchEdgeIds.has(edge.id) ? (
-                      <Badge variant="error" label="type mismatch" />
-                    ) : undefined
                   }
                   onClick={() => onSelectTable(otherTableId)}
                 />
@@ -1039,9 +1064,11 @@ function DdlInspector({
             })}
           </List>
         )}
-        <Text type="supporting" color="secondary">
-          Click a relationship to jump to the other table.
-        </Text>
+        <span style={styles.panelHint}>
+          <Text type="supporting" color="inherit">
+            Click a relationship to jump to the other table.
+          </Text>
+        </span>
       </VStack>
     </VStack>
   );

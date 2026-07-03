@@ -222,6 +222,11 @@ const styles: Record<string, CSSProperties> = {
     transform: 'scaleX(0)',
   },
   authorRow: {display: 'flex', alignItems: 'center', gap: 'var(--spacing-2)'},
+  // The on-stage avatar sits on the always-dark story gradient, but its
+  // initials fall back to the theme foreground token (dark in light
+  // scheme). Re-point that token at the always-light stage ink so the
+  // initials read in both schemes.
+  authorAvatar: {'--color-text-secondary': STORY_INK} as CSSProperties,
   authorName: {fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap'},
   postedAgo: {fontSize: 12, color: STORY_INK_SOFT},
   rowSpacer: {flex: 1},
@@ -795,7 +800,7 @@ function StoryFace({
           ))}
         </div>
         <div style={styles.authorRow}>
-          <Avatar name={author.name} size={24} />
+          <Avatar name={author.name} size={24} style={styles.authorAvatar} />
           <span style={styles.authorName}>{author.name}</span>
           <span style={styles.postedAgo}>
             {author.handle} · {frame.postedAgo}
@@ -1312,8 +1317,7 @@ export default function StoryProgressViewerTemplate() {
 
       <div style={styles.statusLine}>
         <Text type="supporting" color="secondary" hasTabularNumbers role="status">
-          {author.name} · frame {pos.f + 1} of {author.frames.length} ·{' '}
-          {viewedCount} of {TOTAL_FRAMES} viewed
+          {author.name} · frame {pos.f + 1} of {author.frames.length}
         </Text>
       </div>
 

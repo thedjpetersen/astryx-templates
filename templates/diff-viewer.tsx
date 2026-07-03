@@ -117,6 +117,11 @@ const styles: Record<string, CSSProperties> = {
     whiteSpace: 'pre-wrap',
     overflowWrap: 'anywhere',
     padding: '0 var(--spacing-2)',
+    // Hanging indent: wrapped continuations tuck in past the code's own
+    // indentation instead of starting at the column edge, where a leading
+    // "- " fragment would read like a deletion marker.
+    paddingLeft: 'calc(var(--spacing-2) + 4ch)',
+    textIndent: '-4ch',
   },
   row: {
     display: 'flex',
@@ -141,7 +146,8 @@ const styles: Record<string, CSSProperties> = {
   },
   commentMarker: {
     display: 'inline-flex',
-    verticalAlign: 'text-bottom',
+    verticalAlign: 'middle',
+    marginLeft: 'var(--spacing-1)',
     color: 'var(--color-accent)',
   },
   thread: {

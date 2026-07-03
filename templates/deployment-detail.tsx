@@ -58,6 +58,19 @@ const styles: Record<string, CSSProperties> = {
     margin: 0,
     whiteSpace: 'pre-wrap',
   },
+  // Code identifiers (e.g. an eslint rule id) must not break mid-token at a
+  // hyphen when the detail block wraps.
+  noWrap: {
+    whiteSpace: 'nowrap',
+  },
+  // MetadataListItem's label <dt> vertically centers its text inside a 24px
+  // min-height flex row; mirror that box on the value so label and value
+  // share a baseline instead of the value riding ~2px high.
+  metaValue: {
+    display: 'flex',
+    alignItems: 'center',
+    minHeight: 24,
+  },
   // LogStream's terminal rows use fixed timestamp/level/source columns
   // (~316px of chrome), so at narrow widths the whole stream pans
   // horizontally rather than sliver-wrapping the message column.
@@ -169,8 +182,9 @@ const BUILD_SCRIPT: LogEntry[] = [
       <pre style={styles.detailBlock}>
         <Text type="code" size="sm" color="secondary">
           {
-            './app/logs/page.tsx\n42:9  Warning: "range" is assigned a value but never used.  @typescript-eslint/no-unused-vars'
+            './app/logs/page.tsx\n42:9  Warning: "range" is assigned a value but never used.  '
           }
+          <span style={styles.noWrap}>@typescript-eslint/no-unused-vars</span>
         </Text>
       </pre>
     ),
@@ -325,7 +339,9 @@ export default function DeploymentDetailPage() {
                 label={{position: 'start', width: 96}}>
                 {METADATA.map(item => (
                   <MetadataListItem key={item.label} label={item.label}>
-                    <Text type="body">{item.value}</Text>
+                    <div style={styles.metaValue}>
+                      <Text type="body">{item.value}</Text>
+                    </div>
                   </MetadataListItem>
                 ))}
               </MetadataList>

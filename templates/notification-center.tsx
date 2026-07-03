@@ -103,8 +103,8 @@ const styles: Record<string, CSSProperties> = {
   },
   bellBadge: {
     position: 'absolute',
-    top: -4,
-    right: -4,
+    top: -2,
+    right: -2,
     pointerEvents: 'none',
     display: 'inline-flex',
   },
@@ -125,10 +125,18 @@ const styles: Record<string, CSSProperties> = {
     maxHeight: 336,
     overflowY: 'auto',
   },
+  // Rows top-align their slots so the unread dot anchors to the title line
+  // instead of centering on the whole multi-line item.
+  row: {
+    alignItems: 'flex-start',
+  },
   // Top-aligned unread dot column; the dot is transparent (not removed)
-  // when read so titles stay aligned.
+  // when read so titles stay aligned. display:flex strips the inline-block
+  // dot's baseline whitespace; paddingTop then centers the 8px dot on the
+  // title's 20px line box: (20 - 8) / 2.
   dotCell: {
-    paddingTop: 5,
+    display: 'flex',
+    paddingTop: 6,
     width: 8,
     flexShrink: 0,
   },
@@ -198,11 +206,11 @@ const INITIAL_NOTIFICATIONS: TrayNotification[] = [
     title: 'Sandbox provisioned',
     body: 'sbx-4188 is ready: Node 22, repo checkout, and secrets mounted.',
     when: {kind: 'text', display: 'Yesterday 4:03 PM'},
-    isUnread: false,
+    isUnread: true,
   },
   {
     id: 'n-4',
-    title: 'Fork completed: Retry with smaller batch size',
+    title: 'Fork completed: smaller batches',
     body: 'Run #86 branched from step 3 with batch size 50; 240 items queued.',
     when: {kind: 'text', display: 'Jun 30 11:20 AM'},
     isUnread: false,
@@ -216,8 +224,9 @@ const INITIAL_NOTIFICATIONS: TrayNotification[] = [
   },
 ];
 
-// The corner toast is the third unread: it counts toward the badge while
-// pending and files into the tray as an unread row when dismissed.
+// The corner toast files into the tray as an unread row when dismissed;
+// it joins the badge count only once it lands in the tray, so the pill
+// always matches the visible unread dots.
 const TOAST_NOTIFICATION: TrayNotification = {
   id: 'n-6',
   title: 'Nightly repo scan finished',
@@ -321,6 +330,7 @@ function NotificationRow({
         </div>
       }
       onClick={() => onRead(notification.id)}
+      style={styles.row}
     />
   );
 }
@@ -462,9 +472,9 @@ export default function NotificationCenterTemplate() {
 
   const isNarrow = useMediaQuery('(max-width: 768px)');
 
-  // The pending toast counts toward the badge: 2 unread rows + 1 toast = 3.
-  const unreadRows = notifications.filter(item => item.isUnread).length;
-  const unreadCount = unreadRows + (isToastPending ? 1 : 0);
+  // The badge mirrors the tray: 3 unread rows = 3. The pending toast only
+  // counts once it files into the tray, so the pill matches the dots.
+  const unreadCount = notifications.filter(item => item.isUnread).length;
 
   const markRead = (id: string) => {
     setNotifications(prev =>
@@ -484,8 +494,8 @@ export default function NotificationCenterTemplate() {
     });
   };
 
-  // Dismissing the toast files it into the tray as an unread row, so the
-  // badge holds at 3 until something is read.
+  // Dismissing the toast files it into the tray as an unread row, ticking
+  // the badge up until something is read.
   const dismissToast = () => {
     setIsToastPending(false);
     setNotifications(prev =>

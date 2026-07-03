@@ -124,7 +124,12 @@ const styles: Record<string, CSSProperties> = {
     minHeight: 0,
   },
   pillWrap: {flexWrap: 'wrap'},
-  weightBar: {width: 40},
+  // Baseline-align the "N memories on file" caption with the page heading.
+  headerTitleRow: {alignItems: 'baseline'},
+  weightBar: {width: 28},
+  // ProgressBar ships a 48px min-width; the in-cell mini bar opts out so
+  // the flexible Relation column keeps that width for relation names.
+  weightBarTrack: {minWidth: 0},
   entityWrap: {flexWrap: 'wrap'},
   dialogBody: {paddingBottom: 'var(--spacing-2)'},
   headerSearch: {width: 280},
@@ -645,7 +650,7 @@ function RelationsTable({edges}: {edges: MemoryEdge[]}) {
         {
           key: 'type',
           header: 'Type',
-          width: pixel(96),
+          width: pixel(88),
           renderCell: edge => (
             <Badge
               variant={EDGE_TYPE[edge.type].badge}
@@ -656,7 +661,7 @@ function RelationsTable({edges}: {edges: MemoryEdge[]}) {
         {
           key: 'weight',
           header: 'Weight',
-          width: pixel(104),
+          width: pixel(80),
           align: 'end',
           renderCell: edge => (
             <Tooltip content={`Relation strength ${edge.weight.toFixed(2)} of 1.00`}>
@@ -668,6 +673,7 @@ function RelationsTable({edges}: {edges: MemoryEdge[]}) {
                     label={`Weight ${edge.weight.toFixed(2)}`}
                     isLabelHidden
                     variant="accent"
+                    style={styles.weightBarTrack}
                   />
                 </div>
                 <Text type="supporting" hasTabularNumbers>
@@ -975,7 +981,7 @@ export default function MemoryRelationExplorerTemplate() {
                 />
               )}
               <StackItem size="fill">
-                <HStack gap={2} vAlign="center">
+                <HStack gap={2} style={styles.headerTitleRow}>
                   <Heading level={1}>Memory</Heading>
                   {/* <=640px: the caption cedes its width to the search. */}
                   {!isCompact && (
