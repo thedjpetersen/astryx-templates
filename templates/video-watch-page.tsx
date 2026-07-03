@@ -50,6 +50,15 @@
  * are reserved for the stage surface and the description block. Up-next
  * rows and comments are plain rows — no card-in-card nesting. The stage is
  * locked colorScheme dark so its chrome reads correctly in both themes.
+ *
+ * Color policy: the video stage (mock-frame gradients, play bubble, caption
+ * strip, scrim, timecode, chapter label) and the up-next thumb tiles
+ * (duration chip, watched track/fill) are deliberately scheme-locked dark —
+ * they are video art and player chrome, which stay dark in both themes like
+ * a real player. Both surfaces carry colorScheme: 'dark' in their styles,
+ * and everything sitting on them uses raw literals (whites, near-black
+ * scrims, the #F03B30 watched red) rather than tokens so it never flips.
+ * All other chrome inherits Astryx light-dark() tokens.
  */
 
 import {
@@ -207,13 +216,16 @@ const styles: Record<string, CSSProperties> = {
   controlTouch: {width: 40, height: 40},
   controlTouchWide: {height: 40},
   chapterLabel: {whiteSpace: 'nowrap', color: 'rgba(255, 255, 255, 0.72)'},
-  // Up-next art: 168px 16:9 gradient tiles with overlay chips.
+  // Up-next art: 168px 16:9 gradient tiles with overlay chips. Locked to
+  // colorScheme dark (scheme-locked art surface — see header Color policy):
+  // the hsl art and literal-colored chips stay dark in both themes.
   upNextThumb: {
     position: 'relative',
     width: 168,
     flexShrink: 0,
     borderRadius: 'var(--radius-element)',
     overflow: 'hidden',
+    colorScheme: 'dark',
   },
   upNextArt: {width: '100%', height: '100%'},
   durationChip: {

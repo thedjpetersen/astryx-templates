@@ -115,27 +115,28 @@ import {
 // ============= STYLES =============
 
 const colors = {
-  surface: 'var(--color-background, #FFFFFF)',
-  surfaceMuted: 'var(--color-background-muted, #F5F5F7)',
-  border: 'var(--color-border, #E2E2E6)',
-  accent: 'var(--color-accent, #0171E3)',
-  accentMuted: 'var(--color-accent-muted, #E8F1FD)',
-  urgentBg: 'var(--color-background-red, #FBE2E0)',
-  urgentFg: 'var(--color-text-red, #B3231A)',
-  highBg: 'var(--color-background-yellow, #FCF0D2)',
-  highFg: 'var(--color-text-yellow, #8A6A00)',
-  normalBg: 'var(--color-background-blue, #DFEDFB)',
-  normalFg: 'var(--color-text-blue, #0B5CAB)',
-  meterOk: 'var(--color-text-green, #0B7A24)',
-  meterWarn: 'var(--color-text-yellow, #C77E00)',
-  meterOver: 'var(--color-text-red, #B3231A)',
-  warnSurface: 'var(--color-background-yellow, #FCF0D2)',
-  warnBorder: 'var(--color-text-yellow, #C77E00)',
+  surface: 'var(--color-background)',
+  surfaceMuted: 'var(--color-background-muted)',
+  border: 'var(--color-border)',
+  accent: 'var(--color-accent)',
+  accentMuted: 'var(--color-accent-muted)',
+  urgentBg: 'var(--color-background-red)',
+  urgentFg: 'var(--color-text-red)',
+  highBg: 'var(--color-background-yellow)',
+  highFg: 'var(--color-text-yellow)',
+  normalBg: 'var(--color-background-blue)',
+  normalFg: 'var(--color-text-blue)',
+  meterOk: 'var(--color-text-green)',
+  meterWarn: 'var(--color-text-yellow)',
+  meterOver: 'var(--color-text-red)',
+  warnSurface: 'var(--color-background-yellow)',
+  warnBorder: 'var(--color-text-yellow)',
 };
 
 // Sticky driver column casts this shadow only after the board has
 // actually scrolled horizontally beneath it.
-const COLUMN_SHADOW = '8px 0 8px -8px rgba(15, 23, 42, 0.18)';
+const COLUMN_SHADOW =
+  '8px 0 8px -8px color-mix(in oklab, var(--color-text-primary) 18%, transparent)';
 
 const LANE_ROW_HEIGHT = 72;
 const BLOCK_TOP = 13;
@@ -273,7 +274,8 @@ const styles: Record<string, CSSProperties> = {
   meterTrack: {
     height: 6,
     borderRadius: 3,
-    backgroundColor: 'rgba(15, 23, 42, 0.10)',
+    backgroundColor:
+      'color-mix(in oklab, var(--color-text-primary) 10%, transparent)',
     overflow: 'hidden',
     width: '100%',
   },

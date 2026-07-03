@@ -52,6 +52,13 @@
  * playback is useState UI state (a 1s interval ticks positionSec while
  * "playing"); the cover is a fixed two-stop CSS gradient with a
  * deterministic inline-SVG soundwave.
+ *
+ * Color policy: the episode cover art (COVER_GRADIENT plus the white
+ * soundwave mark) is deliberately scheme-locked — cover art is "ink" and
+ * must render the same pixels in both themes, so it keeps raw literals and
+ * pins colorScheme: 'dark' on its surface (styles.cover); the #FFFFFF wave
+ * bars sit on that locked surface and stay literal so they remain readable.
+ * Everything else in the template is token-pure (var(--color-*) only).
  */
 
 import {useEffect, useRef, useState, type CSSProperties} from 'react';
@@ -104,7 +111,9 @@ import {useMediaQuery} from '@astryxdesign/core/hooks';
 // ============= COVER ART CONSTANTS =============
 // Fixed two-stop gradient + deterministic soundwave bars (no image assets,
 // no randomness). The same mark paints the 120px hero cover and the 44px
-// player-bar thumb.
+// player-bar thumb. Scheme-locked brand art (see header "Color policy"):
+// the literal hex stops are intentional and styles.cover pins colorScheme
+// so the art renders identically in light and dark mode.
 
 const COVER_GRADIENT = 'linear-gradient(135deg, #4C1D95 0%, #0E7490 100%)';
 const WAVE_BARS = [8, 14, 22, 12, 26, 18, 30, 16, 24, 10, 19, 13];
@@ -119,7 +128,10 @@ const styles: Record<string, CSSProperties> = {
     maxWidth: 720,
     marginInline: 'auto',
   },
+  // Scheme-locked cover art: same pixels in both themes (see header
+  // "Color policy"); literals only inside this surface.
   cover: {
+    colorScheme: 'dark',
     background: COVER_GRADIENT,
     borderRadius: 'var(--radius-container)',
     display: 'flex',
@@ -395,6 +407,8 @@ function CoverArt({size}: {size: number}) {
             width={2.5}
             height={bar}
             rx={1.25}
+            // Literal white on the scheme-locked cover gradient (see header
+            // "Color policy") so the mark stays readable in both themes.
             fill="#FFFFFF"
             opacity={index % 3 === 0 ? 0.95 : 0.7}
           />

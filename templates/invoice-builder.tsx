@@ -66,6 +66,13 @@
  *   overflow-x wrapper so the qty/rate/amount columns never crush; the
  *   document Card caps at 640px and shrinks fluidly below that, so the
  *   page itself never scrolls sideways at 375px.
+ *
+ * Color policy: everything runs on Astryx light-dark() tokens except the
+ * issuer logo mark, which is scheme-locked brand art (fixed indigo→magenta
+ * gradient with literal white highlights, colorScheme pinned to light) so
+ * the "brand" reads identically in both schemes. The SENT stamp ink is a
+ * light-dark() pair — green on light paper, brighter emerald on the
+ * token-darkened paper.
  */
 
 import {useState, type CSSProperties, type ReactNode} from 'react';
@@ -112,9 +119,10 @@ import {Tooltip} from '@astryxdesign/core/Tooltip';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
 
 // ---------------------------------------------------------------------------
-// STYLES — plain CSS properties with semantic tokens. The two exceptions are
-// the gradient logo mark (deterministic placeholder, no network images) and
-// the fixed green of the decorative SENT stamp.
+// STYLES — plain CSS properties with semantic tokens. The one literal
+// exception is the gradient logo mark (deterministic scheme-locked brand
+// placeholder, no network images); the decorative SENT stamp green is a
+// light-dark() pair so it tracks the token-driven paper surface.
 // ---------------------------------------------------------------------------
 
 const styles: Record<string, CSSProperties> = {
@@ -176,12 +184,15 @@ const styles: Record<string, CSSProperties> = {
     paddingBlock: 'var(--spacing-6)',
     paddingInline: 'var(--spacing-5)',
   },
-  // Issuer logo: fixed-stop CSS gradient — no network images.
+  // Issuer logo: fixed-stop CSS gradient — no network images. Scheme-locked
+  // brand art: the gradient and its white highlights are identical in light
+  // and dark mode, so the literals stay and colorScheme is pinned.
   logoMark: {
     width: 48,
     height: 48,
     borderRadius: 10,
     flexShrink: 0,
+    colorScheme: 'light',
     background: [
       'radial-gradient(circle at 70% 24%, rgba(255,255,255,0.35) 0 10px, transparent 11px)',
       'radial-gradient(circle at 26% 78%, rgba(255,255,255,0.18) 0 14px, transparent 15px)',
@@ -293,21 +304,22 @@ const styles: Record<string, CSSProperties> = {
     textAlign: 'center',
     color: 'var(--color-text-secondary)',
   },
-  // Decorative stamp over the paper once the invoice is sent. Fixed green
-  // (like the logo gradient, this is artifact ink, not UI chrome).
+  // Decorative stamp over the paper once the invoice is sent. Green stamp
+  // ink as a light-dark pair: the paper Card follows tokens (it darkens in
+  // dark mode), so the ink brightens there to keep the same contrast intent.
   sentStamp: {
     position: 'absolute',
     top: 22,
     right: 20,
     transform: 'rotate(8deg)',
-    border: '3px solid rgba(31, 157, 85, 0.75)',
+    border: '3px solid light-dark(rgba(31, 157, 85, 0.75), rgba(52, 211, 153, 0.65))',
     borderRadius: 8,
     paddingBlock: 4,
     paddingInline: 14,
     fontSize: 18,
     fontWeight: 800,
     letterSpacing: '0.18em',
-    color: 'rgba(31, 157, 85, 0.85)',
+    color: 'light-dark(rgba(31, 157, 85, 0.85), rgba(52, 211, 153, 0.9))',
     pointerEvents: 'none',
   },
 };

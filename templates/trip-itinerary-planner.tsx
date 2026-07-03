@@ -84,6 +84,16 @@
  * for the phone-width budget summary. Fixture policy: fixed data only —
  * fixed dates, fixed minutes, fixed costs; no clocks, no randomness, no
  * real imagery (the map is stylized vector shapes).
+ *
+ * Color policy: token-first with one scheme-locked surface. All chrome,
+ * cards, chips, bars, and the undo-toast shadow use var(--color-*) tokens
+ * or light-dark() pairs. The stylized Lisbon map (styles.mapFrame + the
+ * inline SVG in LisbonMap) is deliberately scheme-locked as daylight
+ * paper-map art: its ocean gradient, landmass/hill fills, bridge, rail
+ * line, hub dots, and hub labels are raw literals and colorScheme is
+ * pinned to 'light' on the frame so the inset reads as a printed map in
+ * both schemes; label/stroke literals stay literals so they remain
+ * readable on that locked surface.
  */
 
 import {
@@ -241,7 +251,8 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 'var(--radius-container)',
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-surface)',
-    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.18)',
+    boxShadow:
+      '0 4px 16px light-dark(rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.6))',
     padding: 'var(--spacing-2) var(--spacing-3)',
     zIndex: 4,
   },
@@ -302,8 +313,11 @@ const styles: Record<string, CSSProperties> = {
     overflow: 'hidden',
     border: '1px solid var(--color-border)',
     // Ocean gradient behind the vector landmass — a styled placeholder,
-    // never a real map tile.
+    // never a real map tile. Scheme-locked daylight paper-map art (see the
+    // header "Color policy"): literals only inside this surface, with
+    // colorScheme pinned so it reads as a printed map inset in dark mode.
     background: 'linear-gradient(160deg, #B7D9EE 0%, #8FBFDF 100%)',
+    colorScheme: 'light',
   },
   categoryBarTrack: {
     height: 8,
@@ -335,7 +349,7 @@ type TokenColor = 'blue' | 'orange' | 'purple' | 'teal';
 interface ActivityCategory {
   id: CategoryId;
   label: string;
-  /** Spine / dot / bar color — categorical token with hex fallback. */
+  /** Spine / dot / bar color — categorical token (light-dark aware). */
   color: string;
   token: TokenColor;
 }
@@ -344,25 +358,25 @@ const CATEGORIES: readonly ActivityCategory[] = [
   {
     id: 'transit',
     label: 'Transit',
-    color: 'var(--color-data-categorical-blue, #0171E3)',
+    color: 'var(--color-data-categorical-blue)',
     token: 'blue',
   },
   {
     id: 'food',
     label: 'Food',
-    color: 'var(--color-data-categorical-orange, #EB6E00)',
+    color: 'var(--color-data-categorical-orange)',
     token: 'orange',
   },
   {
     id: 'sights',
     label: 'Sights',
-    color: 'var(--color-data-categorical-purple, #6B1EFD)',
+    color: 'var(--color-data-categorical-purple)',
     token: 'purple',
   },
   {
     id: 'lodging',
     label: 'Lodging',
-    color: 'var(--color-data-categorical-teal, #0E7E8B)',
+    color: 'var(--color-data-categorical-teal)',
     token: 'teal',
   },
 ];
@@ -955,6 +969,10 @@ function ActivityCard({
 }
 
 // ============= MAP PANEL =============
+// Scheme-locked surface: every fill/stroke below is a deliberate raw
+// literal on the daylight paper-map inset (colorScheme: 'light' pinned in
+// styles.mapFrame) — see the header "Color policy". Text/strokes stay
+// literals so they remain readable on the locked art in both schemes.
 
 function LisbonMap({selectedHubId}: {selectedHubId: string}) {
   return (

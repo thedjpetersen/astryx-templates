@@ -38,6 +38,14 @@
  * scrolling strip; countdown chips are Tokens so tone (default/amber/red)
  * reads at a glance and each chip doubles as a preview-tab shortcut.
  *
+ * Color policy: all chrome (panes, tiles, link cards, previews, text) uses
+ * semantic tokens and adapts to light/dark. The ONLY raw color literals are
+ * the deterministic gradient placeholders standing in for uploaded images
+ * and the link-card hero/favicon art — image content is scheme-locked
+ * (colorScheme: 'light' on each gradient surface) so it renders identically
+ * in dark mode, exactly like a real photo would; the rgba(255,255,255,…)
+ * highlight circles are part of that locked art and stay literal.
+ *
  * Choose over newsletter-composer when the artifact is one social post
  * fanned out to several networks rather than a block-built email; choose
  * over mail-compose when the surface has no recipients or subject — reach
@@ -181,9 +189,11 @@ const styles: Record<string, CSSProperties> = {
     outline: '2px solid var(--color-border-blue)',
     outlineOffset: 1,
   },
+  // Scheme-locked: carries a gradient image fixture (see Color policy).
   mediaThumb: {
     height: 72,
     width: '100%',
+    colorScheme: 'light',
   },
   mediaTileFooter: {
     display: 'flex',
@@ -201,12 +211,15 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 8,
     padding: 'var(--spacing-2)',
   },
+  // Scheme-locked brand art: the favicon placeholder is a fixed brand
+  // gradient, identical in both schemes (see Color policy).
   linkFavicon: {
     width: 40,
     height: 40,
     borderRadius: 6,
     flexShrink: 0,
     background: 'linear-gradient(135deg, #5B6CF0 0%, #2CC7B0 100%)',
+    colorScheme: 'light',
   },
   hashtagRow: {
     display: 'flex',
@@ -360,7 +373,11 @@ interface ImageAttachment {
   id: string;
   name: string;
   alt: string;
-  /** Deterministic gradient placeholder — no network images. */
+  /**
+   * Deterministic gradient placeholder — no network images. Literal color
+   * stops (incl. rgba white highlights) are intentional: image content is
+   * scheme-locked and does not adapt to dark mode (see Color policy).
+   */
   gradient: string;
 }
 
@@ -548,7 +565,14 @@ function GradientImage({
     <div
       role="img"
       aria-label={hasAlt ? image.alt : `${image.name} (no alt text)`}
-      style={{...style, background: image.gradient, position: 'relative'}}>
+      // Scheme-locked image fixture (see Color policy): renders the same
+      // in dark mode, exactly like a real uploaded photo.
+      style={{
+        ...style,
+        background: image.gradient,
+        position: 'relative',
+        colorScheme: 'light',
+      }}>
       <div style={styles.altOverlay}>
         <Badge
           label={hasAlt ? 'ALT' : 'No alt'}
@@ -565,9 +589,12 @@ function PreviewLinkCard({compact}: {compact: boolean}) {
       {!compact && (
         <div
           aria-hidden
+          // Scheme-locked brand art: fixed link-card hero gradient, identical
+          // in both schemes (see Color policy).
           style={{
             height: 96,
             background: 'linear-gradient(135deg, #5B6CF0 0%, #2CC7B0 100%)',
+            colorScheme: 'light',
           }}
         />
       )}

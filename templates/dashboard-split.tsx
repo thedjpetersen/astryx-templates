@@ -66,10 +66,15 @@ const styles: Record<string, CSSProperties> = {
   numeric: {fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap'},
 };
 
-// Chart series colors via Astryx design tokens (CSS custom properties)
+// Chart series colors via Astryx design tokens (CSS custom properties).
+// Fallbacks are light-dark() pairs: the light value matches the original
+// series hue exactly; the dark value lifts lightness (same hue) so the
+// lines keep their contrast on a dark chart background.
 const chartColors = {
-  current: 'var(--color-data-categorical-blue, #0171E3)',
-  previous: 'var(--color-data-categorical-purple, #6B1EFD)',
+  current:
+    'var(--color-data-categorical-blue, light-dark(#0171E3, #5CA9FF))',
+  previous:
+    'var(--color-data-categorical-purple, light-dark(#6B1EFD, #A583FF))',
 };
 
 // ============= DATA =============

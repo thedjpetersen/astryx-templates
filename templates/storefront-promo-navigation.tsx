@@ -63,6 +63,17 @@
  * chrome with custom gradient tiles for merchandising art; Cards for the
  * offer pair; Popover for the mega menu and Dialog for the mobile drawer;
  * Toasts confirm copy/add actions so cause and effect stay visible.
+ *
+ * Color policy: token-first with documented scheme-locked brand surfaces.
+ * The dark-pine promo bar, the sale hero's brand gradient, the tile scrim,
+ * the hash-keyed merchandising gradient art (GRADIENT_PAIRS, phone tile),
+ * and all text/strokes sitting on those surfaces are deliberate brand art
+ * that stays identical in both schemes — each locks colorScheme: 'dark' in
+ * its style and keeps color literals so contrast never flips. The QR block
+ * is scannable "print paper": locked white via colorScheme: 'light' with
+ * literal dark cells. Everything else (page chrome, nav row, brand mark,
+ * cards, phone-screen tint) uses var(--color-*) tokens or light-dark()
+ * pairs and adapts to the demo's System/Light/Dark toggle.
  */
 
 import {useEffect, useState, type CSSProperties, type ReactNode} from 'react';
@@ -121,14 +132,20 @@ import {useMediaQuery} from '@astryxdesign/core/hooks';
 
 // ============= SURFACE CONSTANTS =============
 
-const NAV_INK = '#1C2B24'; // deep pine used by the nav chrome
+// Brand mark ink sits on the token nav row, so it adapts: deep pine in
+// light mode, pale pine in dark mode (same hue intent, flipped lightness).
+const NAV_INK = 'light-dark(#1C2B24, #D7E3DB)';
+// Scheme-locked brand chrome (see header Color policy): the promo bar and
+// sale hero stay dark pine in both schemes, so their text stays literal.
 const PROMO_BAR_BG = '#14211B';
 const PROMO_BAR_TEXT = '#E8EFE9';
 const HERO_TEXT = '#F2EEE6';
 const HERO_TEXT_DIM = 'rgba(242, 238, 230, 0.72)';
 
 // Earthy outdoor-gear gradient pairs; a name hash picks the pair so every
-// tile is stable across renders and sessions.
+// tile is stable across renders and sessions. Scheme-locked brand art: the
+// pairs render identically in light and dark mode (styles.art/.circleArt
+// pin colorScheme: 'dark'), so these stay literal by design.
 const GRADIENT_PAIRS: ReadonlyArray<readonly [string, string]> = [
   ['#1E3A2F', '#4C7C59'],
   ['#7C3F2C', '#C4764F'],
@@ -187,6 +204,8 @@ const styles: Record<string, CSSProperties> = {
     overflow: 'hidden',
   },
   // Promo top bar: dark pine band with rotating messages + pagers.
+  // Scheme-locked brand chrome — dark pine in both schemes; colorScheme is
+  // pinned so the ghost IconButtons inside resolve dark-scheme tokens.
   promoBar: {
     display: 'flex',
     alignItems: 'center',
@@ -195,6 +214,7 @@ const styles: Record<string, CSSProperties> = {
     paddingInline: 'var(--spacing-3)',
     backgroundColor: PROMO_BAR_BG,
     color: PROMO_BAR_TEXT,
+    colorScheme: 'dark',
   },
   promoMessage: {
     flex: 1,
@@ -283,12 +303,15 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 'var(--radius-container)',
     backgroundColor: 'var(--color-bg-secondary)',
   },
-  // Shared gradient art block; aspect ratio set per usage.
+  // Shared gradient art block; aspect ratio set per usage. Scheme-locked
+  // brand art: the GRADIENT_PAIRS literals render identically in both
+  // schemes, so colorScheme is pinned and the watermark stays literal.
   art: {
     position: 'relative',
     width: '100%',
     borderRadius: 'var(--radius-container)',
     overflow: 'hidden',
+    colorScheme: 'dark',
   },
   artInitial: {
     position: 'absolute',
@@ -314,6 +337,8 @@ const styles: Record<string, CSSProperties> = {
     cursor: 'pointer',
     textAlign: 'left',
   },
+  // Scheme-locked: the scrim darkens locked gradient art in both schemes,
+  // so its rgba ramp and light text stay literal for constant contrast.
   tileScrim: {
     position: 'absolute',
     left: 0,
@@ -324,6 +349,7 @@ const styles: Record<string, CSSProperties> = {
     background:
       'linear-gradient(180deg, transparent 0%, rgba(10, 16, 12, 0.62) 55%, rgba(10, 16, 12, 0.9) 100%)',
     color: '#F4F6F2',
+    colorScheme: 'dark',
     display: 'flex',
     alignItems: 'flex-end',
     justifyContent: 'space-between',
@@ -349,6 +375,8 @@ const styles: Record<string, CSSProperties> = {
     background: 'transparent',
     cursor: 'pointer',
   },
+  // Scheme-locked gradient disc (GRADIENT_PAIRS art); literal light icon
+  // ink keeps constant contrast on the locked gradient in both schemes.
   circleArt: {
     width: 64,
     height: 64,
@@ -357,6 +385,7 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     color: 'rgba(255, 255, 255, 0.92)',
+    colorScheme: 'dark',
   },
   // Seasonal split banner: art beside copy; stacks at <=640px.
   splitBanner: {
@@ -375,13 +404,17 @@ const styles: Record<string, CSSProperties> = {
     gap: 'var(--spacing-3)',
     backgroundColor: 'var(--color-bg-secondary)',
   },
-  // Full-bleed sale hero.
+  // Full-bleed sale hero. Scheme-locked brand gradient art: the pine/copper
+  // gradient stack renders identically in both schemes; colorScheme is
+  // pinned so nested Buttons/Badges resolve dark-scheme tokens, and all
+  // hero text/scrim/border literals below stay literal for contrast.
   saleHero: {
     position: 'relative',
     borderRadius: 'var(--radius-container)',
     overflow: 'hidden',
     padding: 'var(--spacing-8)',
     color: HERO_TEXT,
+    colorScheme: 'dark',
     background: [
       'radial-gradient(90% 120% at 85% 10%, rgba(196, 118, 79, 0.42), transparent 55%)',
       'radial-gradient(70% 90% at 8% 92%, rgba(62, 142, 126, 0.3), transparent 60%)',
@@ -411,6 +444,8 @@ const styles: Record<string, CSSProperties> = {
     gap: 'var(--spacing-2)',
     alignItems: 'stretch',
   },
+  // On the locked sale hero (inherits its colorScheme): literal scrim +
+  // border keep the chips readable on the brand gradient in both schemes.
   countdownUnit: {
     minWidth: 64,
     padding: 'var(--spacing-2)',
@@ -435,6 +470,7 @@ const styles: Record<string, CSSProperties> = {
     textTransform: 'uppercase',
     opacity: 0.72,
   },
+  // On the locked sale hero (inherits its colorScheme): literals by design.
   promotedRow: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -481,26 +517,37 @@ const styles: Record<string, CSSProperties> = {
     overflow: 'hidden',
     backgroundColor: 'var(--color-bg-primary)',
   },
+  // Translucent brand tint over the token phone body — light-dark pairs
+  // keep the light appearance exact and brighten the tint on dark bg.
   phoneScreen: {
     aspectRatio: '9 / 16',
     padding: 10,
     display: 'flex',
     flexDirection: 'column',
     gap: 6,
-    background:
-      'linear-gradient(160deg, rgba(76, 124, 89, 0.24) 0%, rgba(36, 67, 92, 0.18) 100%)',
+    background: [
+      'linear-gradient(160deg,',
+      'light-dark(rgba(76, 124, 89, 0.24), rgba(107, 163, 122, 0.3)) 0%,',
+      'light-dark(rgba(36, 67, 92, 0.18), rgba(92, 140, 168, 0.24)) 100%)',
+    ].join(' '),
   },
   phoneBar: {
     height: 8,
     borderRadius: 4,
     backgroundColor: 'var(--color-border-primary)',
   },
+  // Scheme-locked brand-gradient stand-in for app art (same pine pair as
+  // GRADIENT_PAIRS[0]); identical in both schemes, colorScheme pinned.
   phoneTile: {
     flex: 1,
     borderRadius: 8,
     background: 'linear-gradient(150deg, #4C7C59 0%, #1E3A2F 120%)',
+    colorScheme: 'dark',
   },
-  // Deterministic hash-drawn QR block (9x9 cells).
+  // Deterministic hash-drawn QR block (9x9 cells). Scheme-locked "print
+  // paper": a QR code must stay literal white with literal dark cells in
+  // both schemes to read as scannable; colorScheme is pinned to 'light'
+  // so any tokens inside resolve to their light values.
   qrGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(9, 10px)',
@@ -511,6 +558,7 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: '#FFFFFF',
     border: '1px solid var(--color-border-primary)',
     width: 'fit-content',
+    colorScheme: 'light',
   },
   qrCellOn: {backgroundColor: '#14211B', borderRadius: 1},
   qrCellOff: {backgroundColor: 'transparent'},
@@ -785,6 +833,8 @@ function qrCellFilled(key: string, row: number, col: number): boolean {
  * Deterministic merchandising art: a two-color gradient keyed to the given
  * name, a soft key-light radial, and a centered initial watermark. Stands
  * in for all category/collection photography — zero image assets ship.
+ * Scheme-locked brand art (styles.art pins colorScheme: 'dark'), so the
+ * gradient and key-light literals render identically in both schemes.
  */
 function CategoryArt({
   name,
@@ -816,7 +866,10 @@ function CategoryArt({
   );
 }
 
-/** Faint ridgeline polyline along the sale hero's bottom — decorative. */
+/**
+ * Faint ridgeline polyline along the sale hero's bottom — decorative.
+ * Literal strokes by design: they sit on the scheme-locked hero gradient.
+ */
 function RidgelineArt() {
   return (
     <svg viewBox="0 0 800 120" style={styles.saleRidge} aria-hidden>

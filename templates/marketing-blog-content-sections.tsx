@@ -65,6 +65,14 @@
  * and TOC rail, plain measured columns for prose. Category chips are
  * ToggleButtons; metadata uses Text + Token; the only Badges are
  * category and "New" markers.
+ *
+ * Color policy: the category cover gradients (CATEGORY_GRADIENT) and the
+ * figure placeholder are deliberately scheme-locked — they stand in for
+ * cover images, and art must render the same pixels in both themes, so
+ * they keep raw literal gradient stops and pin colorScheme on their
+ * surfaces. The white cover glyph and the figure icon ink sit on those
+ * locked surfaces and stay literal so they remain readable. Everything
+ * else is token-pure (var(--color-*)).
  */
 
 import {useMemo, useRef, useState, type CSSProperties, type UIEvent} from 'react';
@@ -133,10 +141,13 @@ const styles: Record<string, CSSProperties> = {
     flexWrap: 'wrap',
     gap: 'var(--spacing-1)',
   },
-  // Gradient cover placeholder — never a network image.
+  // Gradient cover placeholder — never a network image. Scheme-locked
+  // stand-in for cover art: same pixels in both themes (see header
+  // "Color policy"), hence the pinned colorScheme.
   cover: {
     height: 120,
     borderRadius: 'var(--radius-inner)',
+    colorScheme: 'dark',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -144,6 +155,7 @@ const styles: Record<string, CSSProperties> = {
   leadCover: {
     height: 220,
     borderRadius: 'var(--radius-inner)',
+    colorScheme: 'dark',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -151,6 +163,7 @@ const styles: Record<string, CSSProperties> = {
   coverGlyph: {
     fontFamily: 'var(--font-family-heading)',
     fontWeight: 700,
+    // Literal white on the scheme-locked gradient (see "Color policy").
     color: 'rgba(255, 255, 255, 0.9)',
     letterSpacing: 1,
   },
@@ -219,9 +232,14 @@ const styles: Record<string, CSSProperties> = {
     lineHeight: 1.5,
     color: 'var(--color-text-primary)',
   },
+  // Scheme-locked like the covers (see "Color policy"): the gradient and
+  // its icon ink render the same pixels in both themes, so the ink is a
+  // literal pinned to the light-theme text value rather than a token.
   figureBox: {
     height: 220,
     borderRadius: 'var(--radius-container)',
+    colorScheme: 'light',
+    color: '#15110C',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -294,7 +312,11 @@ const CATEGORY_TOKEN: Record<Category, TokenColor> = {
   Security: 'blue',
 };
 
-/** Deterministic gradient per category; covers are never real images. */
+/**
+ * Deterministic gradient per category; covers are never real images.
+ * Scheme-locked brand art (see header "Color policy"): literal hex stops
+ * on purpose — the surfaces that paint these pin colorScheme.
+ */
 const CATEGORY_GRADIENT: Record<Category, string> = {
   Infrastructure: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
   Frontend: 'linear-gradient(135deg, #ec4899 0%, #f97316 100%)',

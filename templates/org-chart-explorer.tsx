@@ -144,10 +144,10 @@ const styles: Record<string, CSSProperties> = {
     boxSizing: 'border-box',
     display: 'block',
     padding: '10px 12px 8px',
-    border: '1px solid var(--color-border, #d2d2d7)',
+    border: '1px solid var(--color-border)',
     borderLeftWidth: 4,
     borderRadius: 10,
-    background: 'var(--color-background-primary, #ffffff)',
+    background: 'var(--color-background-primary)',
     font: 'inherit',
     textAlign: 'start',
     color: 'inherit',
@@ -156,20 +156,20 @@ const styles: Record<string, CSSProperties> = {
   nodeOpenReq: {
     borderStyle: 'dashed',
     borderLeftStyle: 'solid',
-    background: 'var(--color-background-secondary, #f5f5f7)',
+    background: 'var(--color-background-secondary)',
   },
   nodeSelected: {
-    boxShadow: '0 0 0 2px var(--color-accent, #0171e3)',
+    boxShadow: '0 0 0 2px var(--color-accent)',
   },
   nodeMatch: {
-    boxShadow: '0 0 0 2px var(--color-warning, #f5a623)',
+    boxShadow: '0 0 0 2px var(--color-warning)',
   },
   nodeActiveMatch: {
     boxShadow:
-      '0 0 0 3px var(--color-warning, #f5a623), 0 2px 8px rgba(0, 0, 0, 0.18)',
+      '0 0 0 3px var(--color-warning), 0 2px 8px light-dark(rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.55))',
   },
   nodeDropTarget: {
-    boxShadow: '0 0 0 3px var(--color-success, #2fb344)',
+    boxShadow: '0 0 0 3px var(--color-success)',
   },
   nodeDragging: {opacity: 0.45},
   // Collapse toggle + MoreMenu float on the tile's footer line; the toggle
@@ -213,12 +213,15 @@ const styles: Record<string, CSSProperties> = {
 
 type Department = 'exec' | 'engineering' | 'product' | 'gtm' | 'operations';
 
+// Department rail colors are explicit light-dark() pairs: the light values
+// are unchanged, and each dark value lifts lightness (same hue) so the 4px
+// rail keeps its category contrast against dark card surfaces.
 const DEPARTMENT_META: Record<Department, {label: string; color: string}> = {
-  exec: {label: 'Executive', color: '#6e6e73'},
-  engineering: {label: 'Engineering', color: '#0171e3'},
-  product: {label: 'Product & Design', color: '#8944ab'},
-  gtm: {label: 'Go-to-Market', color: '#f5a623'},
-  operations: {label: 'Operations', color: '#2fb344'},
+  exec: {label: 'Executive', color: 'light-dark(#6e6e73, #9a9aa1)'},
+  engineering: {label: 'Engineering', color: 'light-dark(#0171e3, #4da3ff)'},
+  product: {label: 'Product & Design', color: 'light-dark(#8944ab, #b678d4)'},
+  gtm: {label: 'Go-to-Market', color: 'light-dark(#f5a623, #f7b850)'},
+  operations: {label: 'Operations', color: 'light-dark(#2fb344, #4ecf63)'},
 };
 
 interface Employee {
@@ -1163,7 +1166,7 @@ export default function OrgChartExplorerTemplate() {
               key={edge.id}
               d={edge.d}
               fill="none"
-              stroke="var(--color-border, #d2d2d7)"
+              stroke="var(--color-border)"
               strokeWidth={1.5}
             />
           ))}

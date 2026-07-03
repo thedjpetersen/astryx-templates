@@ -54,6 +54,15 @@
  * everywhere; the only Card is the selected-clip summary in the properties
  * panel. The monitor stage and timeline lanes are styled divs — CSS
  * gradients and fixture-driven bars, never <video> or network media.
+ *
+ * Color policy: the program monitor stage is deliberately scheme-locked
+ * dark (colorScheme: 'dark' in `styles.stage`) — it stands in for a video
+ * program feed, which stays dark in both schemes, so its gradient, slate
+ * label/scrim values, and red progress fill are intentional literals.
+ * Every other color is a var(--color-*) token or an explicit light-dark()
+ * pair: track tints, clip borders, and waveform bars keep their exact
+ * light values and shift to the lighter 400-weight hues on dark; the red
+ * timeline playhead flips #EF4444 -> #F87171.
  */
 
 import {useState, type CSSProperties, type MouseEvent} from 'react';
@@ -210,8 +219,8 @@ const TRACKS: Track[] = [
     label: 'V2',
     caption: 'Titles',
     kind: 'video',
-    blockBg: 'rgba(168, 85, 247, 0.24)',
-    blockBorder: '#A855F7',
+    blockBg: 'light-dark(rgba(168, 85, 247, 0.24), rgba(192, 132, 252, 0.28))',
+    blockBorder: 'light-dark(#A855F7, #C084FC)',
     clips: [
       clip('v2-1', 'Title: Spring Launch', 2, 8),
       clip('v2-2', 'Lower third: Dana Reyes', 33, 39),
@@ -222,8 +231,8 @@ const TRACKS: Track[] = [
     label: 'V1',
     caption: 'Main video',
     kind: 'video',
-    blockBg: 'rgba(59, 130, 246, 0.26)',
-    blockBorder: '#3B82F6',
+    blockBg: 'light-dark(rgba(59, 130, 246, 0.26), rgba(96, 165, 250, 0.3))',
+    blockBorder: 'light-dark(#3B82F6, #60A5FA)',
     clips: [
       clip('v1-1', 'A001_C012_interview.mov', 0, 18),
       clip('v1-2', 'B-roll_office_pan.mp4', 18, 31),
@@ -237,9 +246,9 @@ const TRACKS: Track[] = [
     label: 'A1',
     caption: 'Dialog',
     kind: 'audio',
-    blockBg: 'rgba(34, 197, 94, 0.18)',
-    blockBorder: '#22C55E',
-    waveColor: 'rgba(34, 197, 94, 0.75)',
+    blockBg: 'light-dark(rgba(34, 197, 94, 0.18), rgba(74, 222, 128, 0.22))',
+    blockBorder: 'light-dark(#22C55E, #4ADE80)',
+    waveColor: 'light-dark(rgba(34, 197, 94, 0.75), rgba(74, 222, 128, 0.8))',
     wave: A1_WAVE,
     clips: [clip('a1-1', 'interview_dialog_mixdown.wav', 0, 92)],
   },
@@ -248,9 +257,9 @@ const TRACKS: Track[] = [
     label: 'A2',
     caption: 'Music',
     kind: 'audio',
-    blockBg: 'rgba(20, 184, 166, 0.16)',
-    blockBorder: '#14B8A6',
-    waveColor: 'rgba(20, 184, 166, 0.7)',
+    blockBg: 'light-dark(rgba(20, 184, 166, 0.16), rgba(45, 212, 191, 0.2))',
+    blockBorder: 'light-dark(#14B8A6, #2DD4BF)',
+    waveColor: 'light-dark(rgba(20, 184, 166, 0.7), rgba(45, 212, 191, 0.75))',
     wave: A2_WAVE,
     clips: [clip('a2-1', 'score_horizon_loop.wav', 0, 92, -12)],
   },
@@ -313,6 +322,10 @@ const styles: Record<string, CSSProperties> = {
     marginBlock: 'auto',
   },
   // 16:9 gradient stage — a styled div stands in for the program feed.
+  // Scheme-locked dark (see the header Color policy): a program monitor
+  // stays dark in both schemes, so this gradient and every color rendered
+  // on top of it (label, safe-area frame, clip readout, progress bar) are
+  // deliberate literals, not tokens.
   stage: {
     position: 'relative',
     aspectRatio: '16 / 9',
@@ -481,7 +494,7 @@ const styles: Record<string, CSSProperties> = {
     top: 0,
     bottom: 0,
     width: 2,
-    backgroundColor: '#EF4444',
+    backgroundColor: 'light-dark(#EF4444, #F87171)',
     pointerEvents: 'none',
     zIndex: 2,
   },
@@ -491,7 +504,7 @@ const styles: Record<string, CSSProperties> = {
     left: -4,
     width: 10,
     height: 10,
-    backgroundColor: '#EF4444',
+    backgroundColor: 'light-dark(#EF4444, #F87171)',
     clipPath: 'polygon(0 0, 100% 0, 50% 100%)',
   },
   panelScroll: {height: '100%', overflowY: 'auto', padding: 'var(--spacing-3)'},

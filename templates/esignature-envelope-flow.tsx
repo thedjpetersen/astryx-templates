@@ -67,6 +67,15 @@
  * (colorScheme) so the document reads as paper in dark mode. All sequence
  * numbers, per-recipient counts, and validation hints derive live from the
  * recipients + fields arrays — nothing is cached.
+ *
+ * Color policy: ONLY the agreement paper is scheme-locked — the white page
+ * background and the PAPER_* ink literals under colorScheme:'light', plus
+ * the literal-white × on the on-paper chip delete dot — so the document
+ * reads as printed paper in dark mode. Everything else uses Astryx tokens
+ * or light-dark() pairs; the recipient palette solids are light-dark()
+ * pairs that resolve to their light (ink) values on the locked paper via
+ * the inherited color-scheme, while sequence circles and picker dots
+ * brighten in dark mode.
  */
 
 import {useState, type CSSProperties} from 'react';
@@ -184,7 +193,7 @@ const styles: Record<string, CSSProperties> = {
   },
   circleDone: {
     backgroundColor: 'var(--color-accent)',
-    color: 'var(--color-text-inverse, #fff)',
+    color: 'var(--color-on-accent)',
   },
   circleCurrent: {
     border: '2px solid var(--color-accent)',
@@ -215,7 +224,7 @@ const styles: Record<string, CSSProperties> = {
     containerType: 'inline-size',
     overflow: 'hidden',
     borderRadius: 4,
-    border: '1px solid var(--color-border, #D7DEE5)',
+    border: '1px solid var(--color-border)',
     boxSizing: 'border-box',
   },
   paperClickable: {
@@ -238,6 +247,8 @@ const styles: Record<string, CSSProperties> = {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
   },
+  // Renders only on the colorScheme-locked paper (over a light recipient
+  // solid), so the × stays a literal white per the paper color policy.
   fieldChipDelete: {
     position: 'absolute',
     top: -8,
@@ -298,7 +309,8 @@ const styles: Record<string, CSSProperties> = {
     width: 28,
     height: 28,
     borderRadius: '50%',
-    color: '#FFFFFF',
+    // Dark mode brightens the recipient solids, so the numeral flips dark.
+    color: 'light-dark(#FFFFFF, #101418)',
     fontSize: 'var(--font-size-sm)',
     fontWeight: 'var(--font-weight-semibold)',
     flexShrink: 0,
@@ -310,7 +322,7 @@ const styles: Record<string, CSSProperties> = {
     width: 28,
     height: 28,
     borderRadius: '50%',
-    border: '2px dashed var(--color-border, #B9C4CE)',
+    border: '2px dashed var(--color-border)',
     color: 'var(--color-text-secondary)',
     fontSize: 10,
     fontWeight: 600,
@@ -345,7 +357,7 @@ const styles: Record<string, CSSProperties> = {
     padding: 'var(--spacing-1) var(--spacing-2)',
     boxSizing: 'border-box',
     borderRadius: 8,
-    border: '1px solid var(--color-border, #B9C4CE)',
+    border: '1px solid var(--color-border)',
     background: 'none',
     color: 'inherit',
     font: 'inherit',
@@ -377,7 +389,7 @@ const styles: Record<string, CSSProperties> = {
   },
   // Tracker event timeline: inset under the recipient identity.
   timeline: {
-    borderLeft: '2px solid var(--color-border, #B9C4CE)',
+    borderLeft: '2px solid var(--color-border)',
     paddingLeft: 'var(--spacing-3)',
     marginLeft: 13,
   },
@@ -419,14 +431,21 @@ interface Recipient {
 }
 
 // Recipient color coding: sequence circles, assignment picker dots, and
-// placed-chip tints all derive from this palette by colorIndex.
+// placed-chip tints all derive from this palette by colorIndex. Solids are
+// light-dark() pairs: on the colorScheme-locked paper they resolve to the
+// light (ink) values, while UI circles/dots brighten in dark mode. Softs
+// are 12% tints of the same solid — identical to the light-mode
+// rgba(..., 0.12) values they replace.
 const RECIPIENT_COLORS = [
-  {solid: '#0B5FAE', soft: 'rgba(11, 95, 174, 0.12)'},
-  {solid: '#B45309', soft: 'rgba(180, 83, 9, 0.12)'},
-  {solid: '#6D28D9', soft: 'rgba(109, 40, 217, 0.12)'},
-  {solid: '#0F766E', soft: 'rgba(15, 118, 110, 0.12)'},
-  {solid: '#BE185D', soft: 'rgba(190, 24, 93, 0.12)'},
-];
+  'light-dark(#0B5FAE, #5CA3EC)',
+  'light-dark(#B45309, #E8A04B)',
+  'light-dark(#6D28D9, #A98BF0)',
+  'light-dark(#0F766E, #45B5AA)',
+  'light-dark(#BE185D, #EE6FA8)',
+].map(solid => ({
+  solid,
+  soft: `color-mix(in srgb, ${solid} 12%, transparent)`,
+}));
 
 const INITIAL_RECIPIENTS: Recipient[] = [
   {

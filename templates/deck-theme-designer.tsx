@@ -50,6 +50,15 @@
  * panels; the only Cards are the slide surfaces (palette "paper", colorScheme
  * locked to light) and the palette SelectableCards. No clocks, randomness, or
  * network assets — slide artwork is positioned text/shape data.
+ *
+ * Color policy: the ONLY raw hex literals are the four preset deck palettes
+ * (Horizon/Ember/Meadow/Slate). They are deliberately scheme-locked: slide
+ * canvases are print-paper surfaces (MasterCanvas sets colorScheme:'light')
+ * that must look identical in app dark mode — a PowerPoint slide does not
+ * re-theme with the OS — and the swatch chips (also colorScheme-locked)
+ * preview those exact export colors. All slide text/shapes resolve from the
+ * same palette literals so contrast on the locked surfaces is preserved;
+ * every piece of app chrome around them uses Astryx tokens.
  */
 
 import {useState, type CSSProperties} from 'react';
@@ -137,12 +146,15 @@ const styles: Record<string, CSSProperties> = {
     overflow: 'hidden',
   },
   tileCard: {overflow: 'hidden'},
-  // Palette swatch chips inside the SelectableCards.
+  // Palette swatch chips inside the SelectableCards. Scheme-locked (see
+  // header Color policy): each chip previews an exact export hex, so it must
+  // not re-theme in dark mode; only the border is app chrome (token).
   swatchChip: {
     height: 18,
     flex: 1,
     borderRadius: 4,
     border: '1px solid var(--color-border)',
+    colorScheme: 'light',
   },
   // <=900px: the controls become a top section above the previews.
   stackedControls: {
@@ -152,7 +164,10 @@ const styles: Record<string, CSSProperties> = {
 
 // ============= THEME FIXTURES =============
 // Deterministic fixtures: literal hex palettes, fixed font stacks, no
-// clocks, randomness, or network assets.
+// clocks, randomness, or network assets. The hex values below are the deck's
+// EXPORT colors, painted only onto scheme-locked surfaces (slide canvases and
+// swatch chips, both colorScheme:'light') — see the header Color policy.
+// They intentionally stay literal in dark mode.
 
 const DECK_FILE_NAME = 'q3-kickoff.pptx';
 const DECK_SLIDE_COUNT = 24;

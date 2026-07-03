@@ -55,6 +55,15 @@
  * demo toolbar is a separate muted Card above the frame so demo controls
  * never read as part of the product screen.
  *
+ * Color policy: token/light-dark hybrid. The framed-viewport washes, the
+ * auth-card surface, and the code boxes use explicit light-dark() pairs
+ * (light values unchanged; deep hue-matched darks). The Lumen Route brand
+ * gradient surfaces (brandMark, brandPanel, brandStrip) are deliberately
+ * scheme-locked: they are the product's brand art, keep their indigo→pink
+ * gradient literals in both schemes with colorScheme:'dark', and the white
+ * text / rgba-white overlays sitting on them stay literal so they remain
+ * readable on the locked gradient.
+ *
  * Fixture policy: fixed strings only — no Date.now, no Math.random. The
  * loading Buttons and code verification use short bounded setTimeouts to
  * reveal pre-written outcomes, and the resend countdown is a plain
@@ -309,25 +318,35 @@ const styles: Record<string, CSSProperties> = {
     placeItems: 'center',
     padding: 'var(--spacing-3)',
   },
-  // Variant-specific washes behind the centered card. Fixed hexes so the
-  // screens read the same in both themes.
+  // Variant-specific washes behind the centered card. Each stop is a
+  // light-dark() pair: the pastel light hexes are unchanged, the dark arm
+  // keeps the same hue at deep lightness so the wash stays a quiet tint.
   washCentered: {
-    background: 'linear-gradient(160deg, #eef2ff 0%, #fdf4ff 55%, #fff7ed 100%)',
+    background:
+      'linear-gradient(160deg, light-dark(#eef2ff, #20243a) 0%, light-dark(#fdf4ff, #2e2237) 55%, light-dark(#fff7ed, #332417) 100%)',
   },
   washSplit: {
-    background: 'linear-gradient(160deg, #f8fafc 0%, #eef2ff 100%)',
+    background:
+      'linear-gradient(160deg, light-dark(#f8fafc, #191d24) 0%, light-dark(#eef2ff, #20243a) 100%)',
   },
   washRegister: {
-    background: 'linear-gradient(160deg, #ecfeff 0%, #eef2ff 60%, #fdf4ff 100%)',
+    background:
+      'linear-gradient(160deg, light-dark(#ecfeff, #12282e) 0%, light-dark(#eef2ff, #20243a) 60%, light-dark(#fdf4ff, #2e2237) 100%)',
   },
   washPasswordless: {
-    background: 'linear-gradient(160deg, #fafaf9 0%, #ecfeff 100%)',
+    background:
+      'linear-gradient(160deg, light-dark(#fafaf9, #1b1a19) 0%, light-dark(#ecfeff, #12282e) 100%)',
   },
   // ---- auth cards ----
   authCard: {width: '100%', maxWidth: 400},
   authCardWide: {width: '100%', maxWidth: 440},
-  cardSurface: {backgroundColor: '#ffffff', borderColor: '#e2e8f0'},
+  cardSurface: {
+    backgroundColor: 'light-dark(#ffffff, #1e2027)',
+    borderColor: 'light-dark(#e2e8f0, #373c47)',
+  },
   fullWidth: {width: '100%'},
+  // Scheme-locked brand art: the logo mark keeps its literal gradient and
+  // white glyph in both themes; colorScheme:'dark' locks any tokens inside.
   brandMark: {
     width: 40,
     height: 40,
@@ -336,6 +355,7 @@ const styles: Record<string, CSSProperties> = {
     placeItems: 'center',
     color: '#ffffff',
     background: 'linear-gradient(135deg, #4f46e5 0%, #9333ea 60%, #db2777 100%)',
+    colorScheme: 'dark',
     flexShrink: 0,
   },
   // ---- split-brand panel ----
@@ -354,6 +374,9 @@ const styles: Record<string, CSSProperties> = {
     width: '100%',
     maxWidth: 440,
   },
+  // Scheme-locked brand art: the testimonial panel/strip keep their literal
+  // indigo→pink gradient in both themes (colorScheme:'dark'), so the text
+  // and overlays on them stay literal white / rgba-white below.
   brandPanel: {
     borderRadius: 'var(--radius-container)',
     padding: 'var(--spacing-6)',
@@ -363,6 +386,7 @@ const styles: Record<string, CSSProperties> = {
     gap: 'var(--spacing-6)',
     color: '#ffffff',
     background: 'linear-gradient(150deg, #4338ca 0%, #7c3aed 55%, #db2777 100%)',
+    colorScheme: 'dark',
   },
   brandStrip: {
     borderRadius: 'var(--radius-container)',
@@ -370,6 +394,7 @@ const styles: Record<string, CSSProperties> = {
     paddingInline: 'var(--spacing-4)',
     color: '#ffffff',
     background: 'linear-gradient(135deg, #4338ca 0%, #7c3aed 55%, #db2777 100%)',
+    colorScheme: 'dark',
   },
   brandQuote: {
     margin: 0,
@@ -377,6 +402,7 @@ const styles: Record<string, CSSProperties> = {
     lineHeight: 1.55,
     fontWeight: 500,
   },
+  // Literal rgba-whites: these sit on the scheme-locked brand gradient.
   brandDim: {color: 'rgba(255, 255, 255, 0.75)'},
   brandInitials: {
     width: 40,
@@ -409,8 +435,8 @@ const styles: Record<string, CSSProperties> = {
     fontSize: 20,
     fontWeight: 600,
     fontFamily: MONO_FONT,
-    color: '#0f172a',
-    backgroundColor: '#ffffff',
+    color: 'light-dark(#0f172a, #e2e8f0)',
+    backgroundColor: 'light-dark(#ffffff, #15171d)',
     border: '1px solid var(--color-border)',
     borderRadius: 'var(--radius-container)',
     // Six 44px boxes + five 8px gaps = 304px: fits a 375px screen with
@@ -424,8 +450,8 @@ const styles: Record<string, CSSProperties> = {
     fontSize: 20,
     fontWeight: 600,
     fontFamily: MONO_FONT,
-    color: '#0f172a',
-    backgroundColor: '#ffffff',
+    color: 'light-dark(#0f172a, #e2e8f0)',
+    backgroundColor: 'light-dark(#ffffff, #15171d)',
     border: '1px solid var(--color-error)',
     borderRadius: 'var(--radius-container)',
     flexShrink: 0,

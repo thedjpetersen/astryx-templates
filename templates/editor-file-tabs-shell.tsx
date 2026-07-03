@@ -54,6 +54,14 @@
  *   live region. Problem lines get tinted gutter numbers + wavy underline.
  * - The problems panel collapses from its own header and from the
  *   status-bar error/warning counter; both stay in sync (one state).
+ *
+ * Color policy: every rendered surface and syntax tone is token-driven
+ * (var(--color-*)), so the shell adapts to light/dark automatically. The
+ * only raw color literals in this file ('#ffffff', '#f4f5f7', '#4f7cff' in
+ * TOKENS_CSS) are fixture *source text* — string tokens of the fake
+ * tokens.css file shown inside the editor viewport, never applied as CSS
+ * colors — and they anchor the stylelint diagnostic fixture, so they stay
+ * literal by design.
  */
 
 import {useMemo, useState, type CSSProperties} from 'react';

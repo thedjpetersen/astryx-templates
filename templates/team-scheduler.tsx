@@ -105,27 +105,33 @@ import {
 
 // ============= STYLES =============
 
+// Token-pure palette: every color resolves through Astryx light-dark()
+// tokens, so the matrix re-tints itself under the demo's scheme toggle.
 const colors = {
-  surface: 'var(--color-background, #FFFFFF)',
-  surfaceMuted: 'var(--color-background-muted, #F5F5F7)',
-  border: 'var(--color-border, #E2E2E6)',
-  accent: 'var(--color-accent, #0171E3)',
-  freeBg: 'var(--color-background-green, #DBF2E1)',
-  freeFg: 'var(--color-text-green, #0B7A24)',
-  busyBg: 'var(--color-background-red, #FBE2E0)',
-  busyFg: 'var(--color-text-red, #B3231A)',
-  tentativeBg: 'var(--color-background-yellow, #FCF0D2)',
-  tentativeFg: 'var(--color-text-yellow, #8A6A00)',
+  surface: 'var(--color-background)',
+  surfaceMuted: 'var(--color-background-muted)',
+  border: 'var(--color-border)',
+  accent: 'var(--color-accent)',
+  freeBg: 'var(--color-background-green)',
+  freeFg: 'var(--color-text-green)',
+  busyBg: 'var(--color-background-red)',
+  busyFg: 'var(--color-text-red)',
+  tentativeBg: 'var(--color-background-yellow)',
+  tentativeFg: 'var(--color-text-yellow)',
 };
 
 // Sticky member column casts this shadow only after the matrix has
-// actually scrolled horizontally beneath it.
-const COLUMN_SHADOW = '8px 0 8px -8px rgba(15, 23, 42, 0.18)';
+// actually scrolled horizontally beneath it. Mixed from the text token so
+// it stays a subtle ink-tinted edge in both schemes.
+const COLUMN_SHADOW =
+  '8px 0 8px -8px color-mix(in oklab, var(--color-text-primary) 18%, transparent)';
 
 // Diagonal hatch marks hours that fall outside a member's local 08:00–18:00.
+const HATCH_STROKE =
+  'color-mix(in oklab, var(--color-text-primary) 12%, transparent)';
 const OFF_HOURS_HATCH =
-  'repeating-linear-gradient(135deg, rgba(15, 23, 42, 0.12) 0px, ' +
-  'rgba(15, 23, 42, 0.12) 3px, transparent 3px, transparent 7px)';
+  `repeating-linear-gradient(135deg, ${HATCH_STROKE} 0px, ` +
+  `${HATCH_STROKE} 3px, transparent 3px, transparent 7px)`;
 
 const styles: Record<string, CSSProperties> = {
   column: {
@@ -233,7 +239,8 @@ const styles: Record<string, CSSProperties> = {
     pointerEvents: 'none',
     transition: 'left 160ms ease, width 160ms ease',
     zIndex: 2,
-    boxShadow: '0 0 0 3px rgba(1, 113, 227, 0.14)',
+    boxShadow:
+      '0 0 0 3px color-mix(in oklab, var(--color-accent) 14%, transparent)',
   },
   panelScroll: {
     height: '100%',

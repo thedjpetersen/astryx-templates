@@ -69,6 +69,18 @@
  * mocks — no network assets, no real screenshots, no clocks, no
  * randomness.
  *
+ * Color policy: token/light-dark hybrid. App chrome, the schematic mock
+ * windows, and all status/role tints use var(--color-*) tokens or
+ * explicit light-dark() pairs so they adapt to the app scheme. Literal
+ * colors are KEPT only on deliberately scheme-locked surfaces, each with
+ * colorScheme:'dark' in its style: the announcement banner, the spotlight
+ * testimonial, the final CTA panel, the footer, the two CLI terminal
+ * panels (bentoTerminal), and the brand-art tiles (logo tile, feature
+ * glyph gradients, testimonial avatar disc, third-party integration
+ * tiles) — brand gradients and vendor colors must not reflow with the
+ * theme. Text sitting on those locked surfaces (DARK_TEXT* / CHIP_* /
+ * ERROR_ON_DARK) is literal on purpose so it stays readable there.
+ *
  * Responsive contract:
  * - Column: max-width 1120px, centered, page gutters; full-bleed banner,
  *   navbar, and footer paint edge to edge.
@@ -159,8 +171,9 @@ const DARK_TEXT_FAINT = 'rgba(226, 232, 240, 0.62)';
 const CHIP_BG = 'rgba(255, 255, 255, 0.14)';
 const CHIP_BORDER = 'rgba(255, 255, 255, 0.24)';
 const ERROR_ON_DARK = '#FECACA';
-const ACCENT = 'var(--color-accent, #0171E3)';
-const ACCENT_MUTED = 'var(--color-accent-muted, #EAF2FF)';
+const ACCENT = 'var(--color-accent, light-dark(#0171E3, #66AFFF))';
+const ACCENT_MUTED =
+  'var(--color-accent-muted, light-dark(#EAF2FF, #16283E))';
 
 /** Sticky-nav height; smooth-scroll and scroll-spy both allow for it. */
 const NAV_ALLOWANCE = 72;
@@ -221,6 +234,8 @@ const styles: Record<string, CSSProperties> = {
     gap: 'var(--spacing-2)',
     minHeight: 56,
   },
+  // Scheme-locked brand art (see Color policy): the teal→indigo brand
+  // gradient and its white glyph are identical in both app themes.
   logoTile: {
     width: 36,
     height: 36,
@@ -229,6 +244,7 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,
+    colorScheme: 'dark',
     background: 'linear-gradient(135deg, #14B8A6 0%, #4338CA 100%)',
     color: '#FFFFFF',
   },
@@ -263,7 +279,8 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 14,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background)',
-    boxShadow: 'var(--shadow-high, 0 12px 32px rgba(15, 23, 42, 0.18))',
+    boxShadow:
+      'var(--shadow-high, 0 12px 32px light-dark(rgba(15, 23, 42, 0.18), rgba(0, 0, 0, 0.5)))',
     padding: 'var(--spacing-2)',
     zIndex: 40,
   },
@@ -305,7 +322,8 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 14,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background)',
-    boxShadow: 'var(--shadow-high, 0 12px 32px rgba(15, 23, 42, 0.18))',
+    boxShadow:
+      'var(--shadow-high, 0 12px 32px light-dark(rgba(15, 23, 42, 0.18), rgba(0, 0, 0, 0.5)))',
     padding: 'var(--spacing-3)',
     zIndex: 40,
     maxHeight: 'calc(100vh - 120px)',
@@ -402,7 +420,7 @@ const styles: Record<string, CSSProperties> = {
   emailError: {
     fontSize: 13,
     margin: 0,
-    color: 'var(--color-error, #B3261E)',
+    color: 'var(--color-error, light-dark(#B3261E, #F2B8B5))',
   },
   emailErrorOnDark: {
     color: ERROR_ON_DARK,
@@ -470,6 +488,8 @@ const styles: Record<string, CSSProperties> = {
     flex: '1 1 0',
     minWidth: 0,
   },
+  // Scheme-locked brand art (see Color policy): each feature row supplies
+  // a literal brand gradient; the white glyph reads on all of them.
   featureGlyph: {
     width: 40,
     height: 40,
@@ -477,6 +497,7 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,
+    colorScheme: 'dark',
     color: '#FFFFFF',
   },
   bulletDisc: {
@@ -487,8 +508,9 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
-    backgroundColor: 'rgba(52, 168, 83, 0.14)',
-    color: 'var(--color-success, #1E8E3E)',
+    backgroundColor:
+      'light-dark(rgba(52, 168, 83, 0.14), rgba(52, 168, 83, 0.24))',
+    color: 'var(--color-success, light-dark(#1E8E3E, #6DD58C))',
   },
   // ---- CSS-drawn schematic mocks ----
   mockWindow: {
@@ -536,7 +558,7 @@ const styles: Record<string, CSSProperties> = {
     height: 56,
     borderRadius: 8,
     backgroundImage:
-      'linear-gradient(120deg, rgba(20, 184, 166, 0.30), rgba(67, 56, 202, 0.26))',
+      'linear-gradient(120deg, light-dark(rgba(20, 184, 166, 0.30), rgba(45, 212, 191, 0.26)), light-dark(rgba(67, 56, 202, 0.26), rgba(129, 140, 248, 0.24)))',
     border: '1px solid var(--color-border)',
   },
   mockBar: {
@@ -608,6 +630,8 @@ const styles: Record<string, CSSProperties> = {
     color: '#A5F3FC',
     overflowX: 'hidden',
   },
+  // Scheme-locked brand art (see Color policy): tiles carry third-party
+  // vendor colors (INTEGRATION_TILES) that must not shift with the theme.
   integrationTile: {
     width: 36,
     height: 36,
@@ -617,6 +641,7 @@ const styles: Record<string, CSSProperties> = {
     justifyContent: 'center',
     fontSize: 13,
     fontWeight: 700,
+    colorScheme: 'dark',
     color: '#FFFFFF',
     flexShrink: 0,
   },
@@ -650,6 +675,8 @@ const styles: Record<string, CSSProperties> = {
   quoteTextCompact: {
     fontSize: 19,
   },
+  // Scheme-locked brand art (see Color policy): avatar gradient sits on
+  // the already-locked testimonial panel and never reflows.
   avatarDisc: {
     width: 48,
     height: 48,
@@ -658,6 +685,7 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
+    colorScheme: 'dark',
     background: 'linear-gradient(135deg, #F59E0B 0%, #DB2777 100%)',
     color: '#FFFFFF',
     fontSize: 16,
@@ -686,7 +714,7 @@ const styles: Record<string, CSSProperties> = {
   checkGlyph: {
     display: 'inline-flex',
     flexShrink: 0,
-    color: 'var(--color-success, #1E8E3E)',
+    color: 'var(--color-success, light-dark(#1E8E3E, #6DD58C))',
   },
   // ---- final CTA panel ----
   finalCta: {
@@ -876,6 +904,10 @@ interface FeatureRow {
   copy: string;
   bullets: readonly string[];
   icon: Glyph;
+  /**
+   * Scheme-locked brand gradient (see Color policy): painted inside the
+   * colorScheme:'dark' featureGlyph tile, identical in both app themes.
+   */
   glyphBackground: string;
   mock: 'sync' | 'audit' | 'roles';
 }
@@ -934,29 +966,50 @@ const FEATURE_ROWS: readonly FeatureRow[] = [
   },
 ];
 
+// Mock status/role tints live on token-adaptive mock windows, so each is
+// an explicit light-dark() pair (light value unchanged, brighter dark).
+
 /** Schematic sync rows for the hero + sync mocks: env, status, tone. */
 const SYNC_ROWS: readonly {env: string; status: string; tone: string}[] = [
-  {env: 'production', status: 'in sync', tone: '#34D399'},
-  {env: 'canary', status: 'in sync', tone: '#34D399'},
-  {env: 'staging', status: 'syncing…', tone: '#FBBF24'},
-  {env: 'dev', status: 'in sync', tone: '#34D399'},
+  {env: 'production', status: 'in sync', tone: 'light-dark(#34D399, #6EE7B7)'},
+  {env: 'canary', status: 'in sync', tone: 'light-dark(#34D399, #6EE7B7)'},
+  {env: 'staging', status: 'syncing…', tone: 'light-dark(#FBBF24, #FCD34D)'},
+  {env: 'dev', status: 'in sync', tone: 'light-dark(#34D399, #6EE7B7)'},
 ];
 
 const AUDIT_LINES: readonly {actor: string; action: string; tone: string}[] = [
-  {actor: 'mokonkwo', action: 'enabled checkout-v2 in production', tone: '#34D399'},
-  {actor: 'jchen', action: 'edited rate-limit config in canary', tone: '#60A5FA'},
-  {actor: 'approval', action: '2 of 2 approvals — release 84 cleared', tone: '#A78BFA'},
-  {actor: 'svasquez', action: 'rolled back search-ranking in prod', tone: '#F87171'},
-  {actor: 'relay-bot', action: 'drift reconciled in staging', tone: '#FBBF24'},
+  {actor: 'mokonkwo', action: 'enabled checkout-v2 in production', tone: 'light-dark(#34D399, #6EE7B7)'},
+  {actor: 'jchen', action: 'edited rate-limit config in canary', tone: 'light-dark(#60A5FA, #93C5FD)'},
+  {actor: 'approval', action: '2 of 2 approvals — release 84 cleared', tone: 'light-dark(#A78BFA, #C4B5FD)'},
+  {actor: 'svasquez', action: 'rolled back search-ranking in prod', tone: 'light-dark(#F87171, #FCA5A5)'},
+  {actor: 'relay-bot', action: 'drift reconciled in staging', tone: 'light-dark(#FBBF24, #FCD34D)'},
 ];
 
 const ROLE_CHIPS: readonly {label: string; bg: string; fg: string}[] = [
-  {label: 'Admin', bg: 'rgba(219, 39, 119, 0.14)', fg: '#BE185D'},
-  {label: 'Release manager', bg: 'rgba(37, 99, 235, 0.12)', fg: '#1D4ED8'},
-  {label: 'Editor', bg: 'rgba(13, 148, 136, 0.14)', fg: '#0F766E'},
-  {label: 'Viewer', bg: 'rgba(107, 114, 128, 0.14)', fg: '#374151'},
+  {
+    label: 'Admin',
+    bg: 'light-dark(rgba(219, 39, 119, 0.14), rgba(219, 39, 119, 0.28))',
+    fg: 'light-dark(#BE185D, #F9A8D4)',
+  },
+  {
+    label: 'Release manager',
+    bg: 'light-dark(rgba(37, 99, 235, 0.12), rgba(37, 99, 235, 0.28))',
+    fg: 'light-dark(#1D4ED8, #93C5FD)',
+  },
+  {
+    label: 'Editor',
+    bg: 'light-dark(rgba(13, 148, 136, 0.14), rgba(13, 148, 136, 0.28))',
+    fg: 'light-dark(#0F766E, #5EEAD4)',
+  },
+  {
+    label: 'Viewer',
+    bg: 'light-dark(rgba(107, 114, 128, 0.14), rgba(107, 114, 128, 0.28))',
+    fg: 'light-dark(#374151, #D1D5DB)',
+  },
 ];
 
+// Scheme-locked vendor colors (see Color policy): rendered inside the
+// colorScheme:'dark' integrationTile so they never shift with the theme.
 const INTEGRATION_TILES: readonly {label: string; bg: string}[] = [
   {label: 'GH', bg: '#24292F'},
   {label: 'SL', bg: '#611F69'},
@@ -1347,9 +1400,24 @@ function SchematicMock({
   return (
     <div style={styles.mockWindow} role="img" aria-label={ariaLabel}>
       <div aria-hidden="true" style={styles.mockChrome}>
-        <span style={{...styles.mockDot, backgroundColor: '#F87171'}} />
-        <span style={{...styles.mockDot, backgroundColor: '#FBBF24'}} />
-        <span style={{...styles.mockDot, backgroundColor: '#34D399'}} />
+        <span
+          style={{
+            ...styles.mockDot,
+            backgroundColor: 'light-dark(#F87171, #FCA5A5)',
+          }}
+        />
+        <span
+          style={{
+            ...styles.mockDot,
+            backgroundColor: 'light-dark(#FBBF24, #FCD34D)',
+          }}
+        />
+        <span
+          style={{
+            ...styles.mockDot,
+            backgroundColor: 'light-dark(#34D399, #6EE7B7)',
+          }}
+        />
         <span style={styles.mockUrl}>{url}</span>
       </div>
       <div aria-hidden="true" style={styles.mockBody}>

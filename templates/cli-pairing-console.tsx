@@ -47,6 +47,15 @@
  *
  * Fixture policy: fixed strings only — the heartbeat clock is frozen, the
  * pairing code is an obvious fake, and no value resembles a credential.
+ *
+ * Color policy: the daemon console Cards (styles.terminal) are
+ * scheme-locked terminal-dark surfaces — they reproduce the CLI's stdout
+ * and stay dark in both light and dark mode, with colorScheme: 'dark'
+ * pinned in the style. Every color painted on them (the TERM palette:
+ * bg/border/base/dim/cyan/green/red/yellow) is an intentional raw literal
+ * so text stays readable on the locked surface; it must NOT be converted
+ * to theme tokens. Everything outside the terminal uses Astryx tokens and
+ * follows the active color scheme.
  */
 
 import {useState, type CSSProperties, type ReactNode} from 'react';
@@ -77,8 +86,10 @@ import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {TerminalIcon} from 'lucide-react';
 
 // ============= TERMINAL PALETTE =============
-// The daemon console reproduces stdout, so it keeps its own fixed dark
-// palette instead of themed Text colors (it must stay dark in both themes).
+// Scheme-locked surface: the daemon console reproduces stdout, so it keeps
+// its own fixed dark palette instead of themed tokens (it must stay dark in
+// both themes — colorScheme is pinned to 'dark' in styles.terminal, and all
+// text on it uses these raw literals so it stays readable on the locked bg).
 
 const TERM = {
   bg: '#0d1117',
@@ -112,7 +123,9 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'start',
   },
   // Dark stdout card: mono 12.5px with a 2-space feel via padding.
+  // Scheme-locked: stays terminal-dark in both themes (see Color policy).
   terminal: {
+    colorScheme: 'dark',
     backgroundColor: TERM.bg,
     borderColor: TERM.border,
     fontFamily: MONO_FONT,

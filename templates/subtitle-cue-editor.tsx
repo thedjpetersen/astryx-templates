@@ -57,6 +57,14 @@
  * the only Cards are the player stage surface and the cue inspector. All
  * validation (CPS > 17, line > 42 chars, cue overlap) is recomputed live
  * from the edited fixture state — no clocks, randomness, or network media.
+ *
+ * Color policy: the mock player stage is the only scheme-locked surface —
+ * it stands in for real video footage, so it stays dark in both themes and
+ * pins colorScheme: 'dark' (styles.stage). Every raw literal in this file
+ * (footage gradient, key-light glow, scene note, timecode chip, caption
+ * scrim pill and its white text) sits inside that locked surface and stays
+ * a literal on purpose so captions read like a real player. Everything
+ * outside the stage uses var(--color-*) tokens only.
  */
 
 import {useEffect, useState, type CSSProperties} from 'react';
@@ -134,6 +142,10 @@ const styles: Record<string, CSSProperties> = {
   // Mock player surface: CSS gradients only — no <video>, no network media.
   // containerType makes cqw units track the rendered stage width so the
   // caption pill scales with the stage.
+  // Scheme-locked footage surface (see "Color policy" in the header): dark
+  // in both themes via colorScheme: 'dark'; this style and every overlay
+  // inside it (glow, scene note, timecode chip, caption pill) use raw
+  // literals intentionally so they never flip with the app scheme.
   stage: {
     position: 'relative',
     width: '100%',

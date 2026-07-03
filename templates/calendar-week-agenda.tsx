@@ -71,6 +71,14 @@
  * recompute live from the category filter. Fixtures are fixed calendar
  * dates and minutes — no Date construction at all, and never a clock read;
  * the current-time rule sits at the fixed fixture minute.
+ *
+ * Color policy: token-pure — every color is a var(--color-*) token, and the
+ * category palette rides the scheme-stable categorical data tokens (same
+ * saturated value in light and dark). The one literal is EVENT_TEXT, an
+ * explicit light-dark(#FFFFFF, #FFFFFF) pair for text on those solid
+ * categorical blocks/chips: white is the readable choice in both schemes
+ * and must never follow the scheme's flipping text color. Nothing here is
+ * scheme-locked.
  */
 
 import {useMemo, useState, type CSSProperties} from 'react';
@@ -120,6 +128,13 @@ const DAY_END_MIN = 20 * 60;
 const GRID_HEIGHT = ((DAY_END_MIN - DAY_START_MIN) / 60) * HOUR_HEIGHT;
 /** Shared column template so header, all-day, and grid rows align. */
 const GRID_COLUMNS = `${GUTTER_WIDTH}px repeat(7, minmax(0, 1fr))`;
+
+// Text on the solid categorical event blocks and all-day chips. The
+// categorical data tokens are scheme-stable (identical light/dark values),
+// so this stays white in BOTH schemes — an explicit light-dark() pair, not
+// a text token, so dark mode never flips it unreadable on the saturated
+// block color.
+const EVENT_TEXT = 'light-dark(#FFFFFF, #FFFFFF)';
 
 // ============= STYLES =============
 
@@ -194,7 +209,7 @@ const styles: Record<string, CSSProperties> = {
     fontSize: 11,
     lineHeight: '18px',
     fontWeight: 500,
-    color: '#FFFFFF',
+    color: EVENT_TEXT,
     borderRadius: 4,
     padding: '0 6px',
     textAlign: 'left',
@@ -246,7 +261,7 @@ const styles: Record<string, CSSProperties> = {
     padding: '2px 6px',
     overflow: 'hidden',
     textAlign: 'left',
-    color: '#FFFFFF',
+    color: EVENT_TEXT,
     cursor: 'pointer',
     font: 'inherit',
     boxShadow: '0 0 0 1px var(--color-background-surface)',
@@ -281,7 +296,7 @@ const styles: Record<string, CSSProperties> = {
     left: GUTTER_WIDTH,
     right: 0,
     height: 2,
-    backgroundColor: 'var(--color-data-categorical-red, #E5484D)',
+    backgroundColor: 'var(--color-data-categorical-red)',
     opacity: 0.85,
     pointerEvents: 'none',
     zIndex: 3,
@@ -292,7 +307,7 @@ const styles: Record<string, CSSProperties> = {
     width: 8,
     height: 8,
     borderRadius: '50%',
-    backgroundColor: 'var(--color-data-categorical-red, #E5484D)',
+    backgroundColor: 'var(--color-data-categorical-red)',
   },
   // Legend swatches inside the ToggleButton chips: filled while the
   // category is visible, hollow while hidden.
@@ -370,7 +385,7 @@ type TokenColor = 'blue' | 'purple' | 'green' | 'orange' | 'teal';
 interface CalendarCategory {
   id: CategoryId;
   label: string;
-  /** Solid block / chip / bar color — categorical token with hex fallback. */
+  /** Solid block / chip / bar color — scheme-stable categorical token. */
   color: string;
   /** Matching Token color for the detail panel. */
   token: TokenColor;
@@ -380,31 +395,31 @@ const CATEGORIES: readonly CalendarCategory[] = [
   {
     id: 'work',
     label: 'Work',
-    color: 'var(--color-data-categorical-blue, #0171E3)',
+    color: 'var(--color-data-categorical-blue)',
     token: 'blue',
   },
   {
     id: 'team',
     label: 'Team',
-    color: 'var(--color-data-categorical-purple, #6B1EFD)',
+    color: 'var(--color-data-categorical-purple)',
     token: 'purple',
   },
   {
     id: 'personal',
     label: 'Personal',
-    color: 'var(--color-data-categorical-green, #0B991F)',
+    color: 'var(--color-data-categorical-green)',
     token: 'green',
   },
   {
     id: 'deadline',
     label: 'Deadlines',
-    color: 'var(--color-data-categorical-orange, #EB6E00)',
+    color: 'var(--color-data-categorical-orange)',
     token: 'orange',
   },
   {
     id: 'travel',
     label: 'Travel',
-    color: 'var(--color-data-categorical-teal, #0E7E8B)',
+    color: 'var(--color-data-categorical-teal)',
     token: 'teal',
   },
 ];

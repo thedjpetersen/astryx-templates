@@ -59,6 +59,14 @@
  * for catalog tiles; Dialogs for the quick view and the compact filter
  * sheet; gradient art divs keyed to product names keep the catalog
  * deterministic and asset-free.
+ *
+ * Color policy: the product-art tiles (GRADIENT_PAIRS hex stops, the white
+ * key-light radial, and the white initial watermark + its soft shadow) are
+ * deliberately scheme-locked — they stand in for product photography, and
+ * photos do not reskin in dark mode. styles.art pins colorScheme: 'light'
+ * on that surface, and everything painted on it stays a literal so it reads
+ * identically in both schemes. All remaining chrome is Astryx components on
+ * tokens, so the rest of the page adapts via light-dark() automatically.
  */
 
 import {useMemo, useState, type CSSProperties} from 'react';
@@ -120,12 +128,17 @@ const styles: Record<string, CSSProperties> = {
     overflow: 'hidden',
   },
   // Gradient stand-in for product photography; the aspect ratio is set
-  // per usage (4:3 tiles, 1:1 quick-view art).
+  // per usage (4:3 tiles, 1:1 quick-view art). Scheme-locked (see "Color
+  // policy" in the header doc): product "photos" render identically in
+  // light and dark, so colorScheme is pinned and the paint stays literal.
   art: {
     position: 'relative',
     width: '100%',
+    colorScheme: 'light',
   },
-  // Oversized initial watermark centered over the gradient.
+  // Oversized initial watermark centered over the gradient. Literal white
+  // + literal shadow on the scheme-locked art surface (not tokens) so it
+  // never flips against the fixed gradient.
   artInitial: {
     position: 'absolute',
     inset: 0,
@@ -166,7 +179,10 @@ const styles: Record<string, CSSProperties> = {
 };
 
 // Muted home-goods gradient pairs; a name hash picks the pair so every
-// tile is stable across renders and sessions.
+// tile is stable across renders and sessions. Scheme-locked literals (see
+// "Color policy" in the header doc): these are product-photo stand-ins and
+// keep the same hex stops in dark mode under styles.art's pinned
+// colorScheme.
 const GRADIENT_PAIRS: ReadonlyArray<readonly [string, string]> = [
   ['#D9C8B4', '#A98F76'],
   ['#C9D6C3', '#8FA98B'],
@@ -499,7 +515,9 @@ function minRatingFor(value: RatingValue): number {
 /**
  * Deterministic product art: a two-color gradient keyed to the product
  * name, a soft key-light radial, and a centered initial watermark. Stands
- * in for every product photo — the template ships zero image assets.
+ * in for every product photo — the template ships zero image assets. The
+ * whole surface is scheme-locked via styles.art (see "Color policy" in the
+ * header doc), so the white radial literal below stays a literal.
  */
 function ProductArt({name, ratio}: {name: string; ratio: string}) {
   const [from, to] = gradientFor(name);

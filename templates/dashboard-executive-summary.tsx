@@ -87,10 +87,14 @@ const styles: Record<string, CSSProperties> = {
   numericCell: {fontVariantNumeric: 'tabular-nums'},
 };
 
-// Chart series colors via Astryx design tokens (CSS custom properties)
+// Chart series colors via Astryx design tokens (CSS custom properties).
+// Fallbacks are light-dark() pairs so charts stay legible when the theme
+// doesn't define the categorical data tokens: light values match the
+// original palette exactly; dark values are lighter same-hue equivalents.
 const chartColors = {
-  revenue: 'var(--color-data-categorical-blue, #0171E3)',
-  spark: 'var(--color-data-categorical-purple, #6B1EFD)',
+  revenue:
+    'var(--color-data-categorical-blue, light-dark(#0171E3, #4C9FFF))',
+  spark: 'var(--color-data-categorical-purple, light-dark(#6B1EFD, #9D7BFF))',
 };
 
 // ============= DATA =============

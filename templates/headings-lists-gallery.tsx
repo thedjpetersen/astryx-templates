@@ -72,6 +72,14 @@
  *
  * Fixture policy: fixed data only; no Date.now, no randomness, no network
  * assets. The banner cover strip is a layered CSS gradient.
+ *
+ * Color policy: everything reads from Astryx tokens except two
+ * deliberately scheme-locked surfaces that must render identically in
+ * light and dark: (1) the banner cover strip — brand gradient hero art
+ * (`bannerCover`) — and (2) the "Dark card" description-list variant
+ * (`darkCard`/`darkLabel`/`darkValue`/`darkDivider`), whose entire point
+ * is demonstrating a dark panel; its text uses literals (not tokens) so
+ * it stays readable on the locked surface. Both styles pin `colorScheme`.
  */
 
 import {
@@ -171,10 +179,13 @@ const styles: Record<string, CSSProperties> = {
     overflow: 'hidden',
     backgroundColor: 'var(--color-background)',
   },
+  // Scheme-locked: brand gradient hero art — identical in light and dark,
+  // so literal colors are intentional (see "Color policy" above).
   bannerCover: {
     height: 88,
     background:
       'linear-gradient(120deg, #1d4ed8 0%, #7c3aed 45%, #db2777 100%)',
+    colorScheme: 'dark',
   },
   bannerBody: {
     padding: 'var(--spacing-4)',
@@ -205,13 +216,15 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 8,
   },
   dlStripe: {backgroundColor: 'var(--color-background-muted)'},
-  // Dark description-list card — raw spans since Text colors assume the
-  // light surface.
+  // Scheme-locked: the "Dark card" pattern demo stays dark in both color
+  // schemes, so the surface and its text keep literal colors — tokens
+  // would flip in light mode and break the demo (see "Color policy").
   darkCard: {
     backgroundColor: '#141a24',
     border: '1px solid #2a3342',
     borderRadius: 12,
     padding: 'var(--spacing-5)',
+    colorScheme: 'dark',
   },
   darkLabel: {
     color: '#8b95a7',

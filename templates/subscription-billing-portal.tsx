@@ -71,6 +71,13 @@
  *   columns (amount, status, actions) keep width.
  * - Dialogs: width min(480px, 92vw) so they never overflow small screens;
  *   dialog footers keep Cancel + primary side by side (both fit at 375px).
+ *
+ * Color policy: all chrome, meters, badges, and dialogs use Astryx
+ * var(--color-*) tokens. Scheme-locked surfaces: the payment-method brand
+ * tiles (styles.brandTile + BRAND_TILE_BACKGROUND) are brand-gradient art —
+ * Visa/Mastercard/Amex network colors — with colorScheme locked to 'light',
+ * so their literal hex gradient stops and the literal #ffffff brand text are
+ * intentional and render identically in light and dark mode.
  */
 
 import {useState, type CSSProperties, type ReactNode} from 'react';
@@ -123,6 +130,8 @@ const styles: Record<string, CSSProperties> = {
   },
   // Card-brand tile: styled gradient placeholder instead of a network
   // image — the brand word is baked in so no asset is fetched.
+  // Scheme-locked brand art (see Color policy above): literal white text on
+  // the network gradients, colorScheme pinned so it never flips in dark mode.
   brandTile: {
     width: 46,
     height: 30,
@@ -131,6 +140,7 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     color: '#ffffff',
+    colorScheme: 'light',
     fontSize: 9,
     fontWeight: 700,
     letterSpacing: '0.08em',
@@ -165,6 +175,8 @@ const styles: Record<string, CSSProperties> = {
 };
 
 // Brand tiles use fixed gradients per network — deterministic, no assets.
+// Scheme-locked brand art (see Color policy above): literal hex stops on
+// purpose — these are Visa/Mastercard/Amex brand colors and must not adapt.
 const BRAND_TILE_BACKGROUND: Record<CardBrand, string> = {
   visa: 'linear-gradient(135deg, #1a1f71 0%, #3d4db7 100%)',
   mastercard: 'linear-gradient(135deg, #eb001b 0%, #f79e1b 100%)',

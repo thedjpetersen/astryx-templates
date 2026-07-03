@@ -53,6 +53,14 @@
  * an inline-SVG monogram (album art reads identically in both themes); no
  * <audio>, no network assets, no real playback — transport state is
  * useState-driven UI only.
+ *
+ * Color policy: the cover art (COVER_GRADIENT / COVER_LINE / COVER_TEXT) is
+ * deliberately scheme-locked — album art is "ink" and must render the same
+ * pixels in both themes, so it keeps raw literals and pins
+ * colorScheme: 'dark' on its surface; the monogram/arc literals sit on that
+ * locked surface and stay literal so they remain readable. Everything else
+ * (the hero wash and the now-playing row tint) uses light-dark() pairs
+ * derived from the cover palette so they track the active scheme.
  */
 
 import {useState, type CSSProperties} from 'react';
@@ -104,22 +112,28 @@ import {
 } from 'lucide-react';
 
 // ============= COVER ART PAINT =============
-// The album cover is a literal gradient (album art is "ink", like slide
-// paper — identical in both themes) with an inline-SVG monogram. No image
-// assets, no randomness.
+// Scheme-locked surface: the album cover is a literal gradient (album art
+// is "ink", like slide paper — identical pixels in both themes) with an
+// inline-SVG monogram. CoverArt pins colorScheme: 'dark' on this surface,
+// and the line/text literals below stay literal so they remain readable on
+// the locked paint. No image assets, no randomness.
 
 const COVER_GRADIENT =
   'linear-gradient(140deg, #10344F 0%, #1F5D7A 52%, #7FB6C9 100%)';
 const COVER_LINE = 'rgba(242, 247, 250, 0.4)';
 const COVER_TEXT = '#F2F7FA';
 
-// Cover-derived tints (the gradient's mid tone at low alpha). The hero wash
-// and the now-playing highlight follow the album art, not the app accent —
-// like the cover itself, they read identically in both themes.
+// Cover-derived tints at low alpha. These wash over token page surfaces, so
+// each stop is a light-dark() pair: light keeps the gradient's deep mid tone
+// (rgb 31 93 122), dark swaps to the gradient's bright end (rgb 127 182 201)
+// so the same cover hue stays visible over dark backgrounds.
 const HERO_TINT =
-  'linear-gradient(180deg, rgba(31, 93, 122, 0.16) 0%, ' +
-  'rgba(31, 93, 122, 0.07) 55%, rgba(31, 93, 122, 0) 100%)';
-const NOW_PLAYING_TINT = 'rgba(31, 93, 122, 0.09)';
+  'linear-gradient(180deg, ' +
+  'light-dark(rgba(31, 93, 122, 0.16), rgba(127, 182, 201, 0.16)) 0%, ' +
+  'light-dark(rgba(31, 93, 122, 0.07), rgba(127, 182, 201, 0.07)) 55%, ' +
+  'light-dark(rgba(31, 93, 122, 0), rgba(127, 182, 201, 0)) 100%)';
+const NOW_PLAYING_TINT =
+  'light-dark(rgba(31, 93, 122, 0.09), rgba(127, 182, 201, 0.14))';
 
 // ============= STYLES =============
 
@@ -266,6 +280,9 @@ function CoverArt({size}: {size: number}) {
         height: size,
         flexShrink: 0,
         borderRadius: 'var(--radius-container)',
+        // Scheme-locked album art: same pixels in both themes (see header
+        // "Color policy"); literals only inside this surface.
+        colorScheme: 'dark',
         background: COVER_GRADIENT,
         display: 'flex',
         alignItems: 'center',

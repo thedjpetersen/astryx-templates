@@ -45,6 +45,15 @@
  * Container policy (document-stage archetype): the page chrome is frame-first
  * rows and panels; the only Cards are the slide surfaces themselves — white
  * regardless of theme (colorScheme locked to light, like real slide paper).
+ *
+ * Color policy: the slide canvas is a deliberately scheme-locked light
+ * surface — real presentation paper stays white in dark mode, exactly like
+ * PowerPoint/Keynote render their decks. Every SLIDE_* hex literal (text,
+ * bullets, accent bar, stat fill, image placeholder) paints ONLY inside the
+ * canvas div, which locks colorScheme:'light' over its #FFFFFF background;
+ * literals (not tokens) keep that ink readable on the locked paper. All
+ * chrome outside the canvas (backdrop, rail, header) is token-pure and
+ * follows light-dark() automatically.
  */
 
 import {useState, type CSSProperties} from 'react';

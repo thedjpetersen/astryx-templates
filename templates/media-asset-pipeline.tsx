@@ -57,6 +57,13 @@
  * Container policy (ops-table archetype): frame-first rows and panels; the
  * only Card is the storage widget in the rail. Fixture ids (ast_9f27c1,
  * sum_04d2aa) are obviously fake and never credential-shaped.
+ *
+ * Color policy: token/light-dark hybrid. Chrome, table, rail, and detail
+ * panel are all var(--color-*) tokens; the per-type thumbnail tints are
+ * explicit light-dark() gradient pairs (same hues, flipped lightness). The
+ * one scheme-locked surface is the video preview stage (styles.previewVideo):
+ * a deliberately dark "poster frame" stage, so its gradient and light-on-dark
+ * text stay raw literals with colorScheme: 'dark' pinned on the surface.
  */
 
 import {useState, type CSSProperties, type ReactNode} from 'react';
@@ -160,8 +167,8 @@ const styles: Record<string, CSSProperties> = {
   },
   headerSearch: {width: 220},
   // 16:9 thumbnail tile: per-type gradient tint + glyph, deterministic.
-  // Literal tints (like the preview stage) so the art reads the same in
-  // both themes.
+  // Tints are light-dark() pairs (see TYPE_TILE) so the tiles keep their
+  // hue identity in both themes without glowing on dark backgrounds.
   thumbTile: {
     width: 48,
     height: 27,
@@ -191,8 +198,9 @@ const styles: Record<string, CSSProperties> = {
     overflowY: 'auto',
     padding: 'var(--spacing-4)',
   },
-  // Preview stage: literal dark gradient locked to light-on-dark text so
-  // the placeholder reads identically in both themes.
+  // Preview stage: deliberately scheme-locked dark "poster frame" surface —
+  // literal gradient + light-on-dark text with colorScheme pinned so the
+  // placeholder reads identically in both themes (see Color policy above).
   previewVideo: {
     height: '100%',
     display: 'flex',
@@ -202,6 +210,7 @@ const styles: Record<string, CSSProperties> = {
     gap: 'var(--spacing-2)',
     background: 'linear-gradient(135deg, #1F2A44 0%, #0E1526 100%)',
     color: '#C7D2E4',
+    colorScheme: 'dark',
     borderRadius: 'var(--radius-container)',
   },
   previewMuted: {
@@ -464,24 +473,29 @@ const TYPE_BADGE: Record<AssetType, {label: string; variant: 'info' | 'neutral' 
 
 // Deterministic thumbnail art per media type: a subtle gradient tint plus a
 // type glyph — cool for video, warm for audio, green for image bundles.
+// Every stop is an explicit light-dark() pair: pastel tints with darker
+// glyphs in light mode, deep same-hue tints with lighter glyphs in dark.
 const TYPE_TILE: Record<
   AssetType,
   {icon: typeof FilmIcon; background: string; color: string}
 > = {
   video: {
     icon: FilmIcon,
-    background: 'linear-gradient(135deg, #DFE9F8 0%, #C2D4EE 100%)',
-    color: '#44618C',
+    background:
+      'linear-gradient(135deg, light-dark(#DFE9F8, #263650) 0%, light-dark(#C2D4EE, #1B2A42) 100%)',
+    color: 'light-dark(#44618C, #A5BCDD)',
   },
   audio: {
     icon: AudioLinesIcon,
-    background: 'linear-gradient(135deg, #FAEEDC 0%, #F0DAB5 100%)',
-    color: '#8A6428',
+    background:
+      'linear-gradient(135deg, light-dark(#FAEEDC, #453620) 0%, light-dark(#F0DAB5, #372A17) 100%)',
+    color: 'light-dark(#8A6428, #DCC08A)',
   },
   image: {
     icon: ImageIcon,
-    background: 'linear-gradient(135deg, #E2F1E7 0%, #C6E2D0 100%)',
-    color: '#417C59',
+    background:
+      'linear-gradient(135deg, light-dark(#E2F1E7, #22402E) 0%, light-dark(#C6E2D0, #193122) 100%)',
+    color: 'light-dark(#417C59, #93C7A8)',
   },
 };
 

@@ -56,6 +56,15 @@
  * colors locked with colorScheme:'dark' so it reads identically in light
  * mode — while the slide surfaces stay white paper (colorScheme:'light')
  * exactly like the audience-facing projector output.
+ *
+ * Color policy: every raw hex/rgba literal in this file is a deliberate
+ * scheme lock, not an oversight. The CONSOLE_* palette paints the
+ * backstage-dark cockpit (colorScheme:'dark' on consoleScroll, timerChip,
+ * and notesPanel) and the SLIDE_* palette plus #FFFFFF paint the
+ * projector-white slide paper (colorScheme:'light' on canvas and endPaper).
+ * Both surfaces must look identical in light and dark app themes, so they
+ * intentionally use literals instead of var(--color-*) or light-dark();
+ * text sitting on these locked surfaces is literal too, for contrast.
  */
 
 import {useState, type CSSProperties} from 'react';
@@ -221,10 +230,13 @@ const styles: Record<string, CSSProperties> = {
     colorScheme: 'dark',
   },
   // Speaker-notes panel: dark card with its own scroll and zoomable body.
+  // Locked dark explicitly (not just inherited) — it is its own literal
+  // backstage surface.
   notesPanel: {
     backgroundColor: CONSOLE_PANEL,
     border: `1px solid ${CONSOLE_BORDER}`,
     color: CONSOLE_TEXT,
+    colorScheme: 'dark',
   },
   notesHeader: {
     display: 'flex',

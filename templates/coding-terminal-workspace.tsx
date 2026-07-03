@@ -56,6 +56,16 @@
  * fixed dark palette (never themed Text colors) so it stays dark in
  * both themes. The only Card is the floating command palette.
  *
+ * Color policy: the scrollback panes are deliberately scheme-locked
+ * terminal-dark surfaces — the TERM literals (backgrounds, borders,
+ * ANSI-ish text colors, progress bars, amber search highlights, caret,
+ * input row) stay raw hex/rgba and styles.terminalPane pins
+ * colorScheme: 'dark' so the panes render identically in light and
+ * dark themes; text on those panes uses the same literals so it stays
+ * readable. Everything outside the panes (sidebar, tab strip, search
+ * bar, status bar, palette) uses Astryx tokens, and the new-output
+ * activity dot on themed chrome is an explicit light-dark() pair.
+ *
  * Interaction contract:
  * - Tabs and sidebar rows switch the active session and clear its
  *   new-output activity dot; switching to the session shown in the
@@ -142,6 +152,9 @@ import {
 // The scrollback reproduces a real terminal, so it keeps its own fixed
 // dark palette instead of themed Text colors (it must stay dark in both
 // themes). Same GitHub-dark-adjacent ramp as cli-pairing-console.
+// Scheme-locked on purpose: these literals never adapt to the theme —
+// styles.terminalPane sets colorScheme: 'dark' so the panes (and any
+// UA-rendered scrollbars inside them) stay dark under both schemes.
 
 const TERM = {
   bg: '#0d1117',
@@ -273,11 +286,13 @@ const styles: Record<string, CSSProperties> = {
     flexShrink: 0,
   },
   // Always-visible new-output dot (amber) on tabs and sidebar rows.
+  // These sit on themed chrome (not the locked terminal panes), so the
+  // amber is a light-dark pair: TERM.yellow in light, brighter in dark.
   activityDot: {
     width: 8,
     height: 8,
     borderRadius: '50%',
-    backgroundColor: TERM.yellow,
+    backgroundColor: 'light-dark(#d4a72c, #e3b341)',
     flexShrink: 0,
   },
 
@@ -315,6 +330,9 @@ const styles: Record<string, CSSProperties> = {
     minHeight: 0,
     minWidth: 0,
     backgroundColor: TERM.bg,
+    // Scheme-locked surface: the terminal stays dark in both themes
+    // (see the TERM palette note and the header Color policy).
+    colorScheme: 'dark',
   },
   terminalPaneHeader: {
     display: 'flex',
@@ -387,7 +405,8 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: TERM.cyan,
   },
   // Search highlights: translucent amber for every match, solid amber
-  // with inverted text for the active one.
+  // with inverted text for the active one. Literal rgba on purpose —
+  // they sit on the scheme-locked terminal surface (TERM.yellow @ 35%).
   searchMatch: {
     backgroundColor: 'rgba(212, 167, 44, 0.35)',
     color: 'inherit',

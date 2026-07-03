@@ -57,6 +57,13 @@
  * other regions (tree, saved rail, result grid, status bar) are plain
  * frame rows on the themed background; no Cards.
  *
+ * Color policy: token-driven except one scheme-locked surface — the SQL
+ * editor (editorWrap/editorArea) reproduces a terminal code surface and
+ * keeps its fixed dark CODE palette in both themes, with
+ * colorScheme: 'dark' locked in the style; text on that surface uses the
+ * CODE literals (never themed tokens) so it stays readable. Everything
+ * else uses var(--color-*) tokens or light-dark() pairs.
+ *
  * Fixture policy: fixed data only — no Date.now, no Math.random, no
  * network assets. Result rows, elapsed milliseconds (per connection),
  * row estimates, and timestamps are frozen constants; the running-state
@@ -125,8 +132,10 @@ import {
 } from 'lucide-react';
 
 // ============= CODE PALETTE =============
-// The SQL editor reproduces a code surface, so it keeps a fixed dark
-// palette instead of themed Text colors (dark in both themes).
+// Scheme-locked surface: the SQL editor reproduces a code surface, so it
+// keeps a fixed dark palette instead of themed Text colors (dark in both
+// themes; colorScheme is locked to 'dark' on editorWrap/editorArea).
+// Text on this surface deliberately uses these literals, not tokens.
 
 const CODE = {
   bg: '#0d1117',
@@ -139,12 +148,12 @@ const CODE = {
 const MONO_FONT =
   "ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace";
 
-// Column-type accents lean on chart tokens with fixed fallbacks.
+// Column-type accents lean on chart tokens (light-dark aware).
 const TYPE_COLORS: Record<string, string> = {
-  bigint: 'var(--color-data-categorical-blue, #0171E3)',
-  numeric: 'var(--color-data-categorical-blue, #0171E3)',
-  text: 'var(--color-data-categorical-green, #1B7F37)',
-  timestamptz: 'var(--color-data-categorical-purple, #8250DF)',
+  bigint: 'var(--color-data-categorical-blue)',
+  numeric: 'var(--color-data-categorical-blue)',
+  text: 'var(--color-data-categorical-green)',
+  timestamptz: 'var(--color-data-categorical-purple)',
 };
 
 // ============= STYLES =============
@@ -251,7 +260,7 @@ const styles: Record<string, CSSProperties> = {
     borderBottom: '2px solid transparent',
   },
   tabActive: {
-    borderBottomColor: 'var(--color-accent, #0171E3)',
+    borderBottomColor: 'var(--color-accent)',
   },
   tabSelect: {
     display: 'flex',
@@ -272,12 +281,15 @@ const styles: Record<string, CSSProperties> = {
     paddingInline: 'var(--spacing-1)',
   },
   // ---- SQL editor ----
+  // Scheme-locked dark code surface (see Color policy in the header).
   editorWrap: {
     flex: 'none',
     display: 'flex',
     backgroundColor: CODE.bg,
+    colorScheme: 'dark',
   },
   editorArea: {
+    colorScheme: 'dark',
     flex: 1,
     width: '100%',
     border: 'none',
@@ -351,12 +363,13 @@ const styles: Record<string, CSSProperties> = {
   errorBlock: {
     margin: 'var(--spacing-4)',
     border: '1px solid var(--color-border)',
-    borderLeft: '3px solid var(--color-icon-error, #d1242f)',
+    borderLeft:
+      '3px solid var(--color-icon-error, light-dark(#d1242f, #f85149))',
     borderRadius: 6,
     padding: 'var(--spacing-3) var(--spacing-4)',
     fontFamily: MONO_FONT,
     fontSize: 12.5,
-    color: 'var(--color-icon-error, #d1242f)',
+    color: 'var(--color-icon-error, light-dark(#d1242f, #f85149))',
   },
   runningBlock: {
     display: 'flex',

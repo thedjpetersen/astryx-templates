@@ -50,6 +50,14 @@
  *   restated in the caption below it, so nothing is hover- or pointer-only.
  * - No hover-only interactions anywhere: rows toggle on click/tap/Enter,
  *   alerts are covered via real Buttons.
+ *
+ * Color policy: data inks (burn-down bars, envelope fill bars, alert/covered
+ * icons, over-budget text) resolve through var(--color-data-categorical-*)
+ * tokens with light-dark() fallbacks; all other chrome uses Astryx tokens.
+ * Scheme-locked surfaces: the envelope gradient icon chips and the header
+ * wallet mark are brand-gradient art with colorScheme locked to 'light' —
+ * their literal hex gradient stops and literal #fff glyphs are intentional
+ * so the chips render identically in light and dark mode.
  */
 
 import {useMemo, useState, type CSSProperties} from 'react';
@@ -94,15 +102,18 @@ import {
 
 // ============= STYLES =============
 
-// Data colors via Astryx tokens with hex fallbacks.
+// Data colors via Astryx tokens with light-dark() fallbacks: light values
+// match the original hexes exactly; dark values lift lightness, same hue.
 const colors = {
-  blue: 'var(--color-data-categorical-blue, #0171E3)',
-  green: 'var(--color-data-categorical-green, #0B991F)',
-  amber: 'var(--color-data-categorical-orange, #EB6E00)',
-  red: 'var(--color-data-categorical-red, #D92D20)',
+  blue: 'var(--color-data-categorical-blue, light-dark(#0171E3, #4C9FFF))',
+  green: 'var(--color-data-categorical-green, light-dark(#0B991F, #4ADE80))',
+  amber: 'var(--color-data-categorical-orange, light-dark(#EB6E00, #FFA94D))',
+  red: 'var(--color-data-categorical-red, light-dark(#D92D20, #F97066))',
 };
 
 // Gradient placeholders for the envelope icon chips (no network assets).
+// Scheme-locked brand art (see Color policy above): literal hex stops on
+// purpose; the chip styles lock colorScheme so they never flip in dark mode.
 const chipGradients: Record<string, string> = {
   housing: 'linear-gradient(135deg, #6366F1, #8B5CF6)',
   groceries: 'linear-gradient(135deg, #0B991F, #4ADE80)',
@@ -118,13 +129,15 @@ const styles: Record<string, CSSProperties> = {
   // Centered scrollable page column.
   page: {maxWidth: 1040, marginInline: 'auto', width: '100%'},
   numeric: {fontVariantNumeric: 'tabular-nums'},
-  // Header wallet mark — gradient placeholder, white glyph.
+  // Header wallet mark — gradient placeholder, white glyph. Scheme-locked
+  // brand art: literal gradient + literal white glyph, colorScheme pinned.
   brandChip: {
     width: 32,
     height: 32,
     borderRadius: 'var(--radius-control, 8px)',
     background: 'linear-gradient(135deg, #0171E3, #6B1EFD)',
     color: '#fff',
+    colorScheme: 'light',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -176,11 +189,14 @@ const styles: Record<string, CSSProperties> = {
     color: 'inherit',
     cursor: 'pointer',
   },
+  // Envelope icon chip — scheme-locked brand gradient surface; the white
+  // glyph is a literal so it stays readable on the locked gradient.
   chip: {
     width: 36,
     height: 36,
     borderRadius: 'var(--radius-control, 10px)',
     color: '#fff',
+    colorScheme: 'light',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -216,7 +232,7 @@ const styles: Record<string, CSSProperties> = {
     display: 'flex',
     flexShrink: 0,
     transition: 'transform 120ms ease',
-    color: 'var(--color-content-secondary, #666)',
+    color: 'var(--color-content-secondary, light-dark(#666, #9CA3AF))',
   },
   chevronOpen: {transform: 'rotate(180deg)'},
   // Inline transactions region: indented under the icon chip on desktop;

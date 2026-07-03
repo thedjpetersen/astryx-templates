@@ -52,7 +52,17 @@
  * the only Cards are the stacked rail below 1024px and the breakout room
  * drop zones (bordered targets need a container). The stage is
  * colorScheme-locked dark so tiles and chrome read identically in both
- * themes. All media is mocked — no <video>/getUserMedia/network assets;
+ * themes.
+ *
+ * Color policy: the stage column is a deliberately scheme-locked surface —
+ * `colorScheme: 'dark'` in styles.stageColumn plus literal hex/rgba paint
+ * (STAGE_BG, camera-off slate, tile-chip scrims, speaking glow, muted-mic
+ * red, hand-queue amber, share-frame and per-person tile gradients, and the
+ * control-bar white hairline). Video "glass" must look identical under the
+ * Light/Dark toggle, so these stay raw literals rather than tokens or
+ * light-dark() pairs, and text/icons sitting on the stage use literals too
+ * (TILE_TEXT) for guaranteed contrast. Everything outside the stage (header,
+ * tabbed rail, breakout zones, dialogs) is token-pure and theme-adaptive. All media is mocked — no <video>/getUserMedia/network assets;
  * tiles are CSS gradients with Avatar initials, the speaking glow rotates
  * on a plain setInterval over fixture order, and the elapsed/REC chrome is
  * fixed fixture text.

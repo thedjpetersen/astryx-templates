@@ -5,7 +5,7 @@
 /**
  * @file page.tsx
  * @input Deterministic fixtures only (one pull request — "Harden webhook
- *   signature verification", #482 on checkout-api — with 5 changed files
+ *   signature verification", PR 482 on checkout-api — with 5 changed files
  *   carrying real-looking diff hunks with old/new line numbers, 3 inline
  *   comment threads anchored to new-file lines with fixed "Jun 30 / Jul 1,
  *   2026" author timestamps, and a 5-item CI check fixture with mixed

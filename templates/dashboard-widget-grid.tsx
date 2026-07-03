@@ -116,11 +116,14 @@ const styles: Record<string, CSSProperties> = {
   },
 };
 
-// Chart series colors via Astryx design tokens (CSS custom properties)
+// Chart series colors via Astryx design tokens (CSS custom properties).
+// Fallbacks are explicit light-dark() pairs so the series stay legible when
+// the categorical tokens are absent: light values match the original palette
+// exactly; dark values flip lightness while keeping each hue.
 const chartColors = {
-  revenue: 'var(--color-data-categorical-blue, #0171E3)',
-  orders: 'var(--color-data-categorical-green, #0B991F)',
-  spark: 'var(--color-data-categorical-purple, #6B1EFD)',
+  revenue: 'var(--color-data-categorical-blue, light-dark(#0171E3, #4C9EFF))',
+  orders: 'var(--color-data-categorical-green, light-dark(#0B991F, #34C749))',
+  spark: 'var(--color-data-categorical-purple, light-dark(#6B1EFD, #9D6BFF))',
 };
 
 // ============= DATA =============

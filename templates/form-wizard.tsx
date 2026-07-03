@@ -115,7 +115,7 @@ const styles: Record<string, CSSProperties> = {
   },
   circleDone: {
     backgroundColor: 'var(--color-accent)',
-    color: 'var(--color-text-inverse, #fff)',
+    color: 'var(--color-on-accent)',
   },
   circleCurrent: {
     border: '2px solid var(--color-accent)',

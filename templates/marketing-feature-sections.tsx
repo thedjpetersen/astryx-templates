@@ -71,6 +71,14 @@
  * each feature-section variant is its own painted panel or bordered Card
  * inside the document column. Dark surfaces lock literal fixture gradients
  * via colorScheme so they read identically in light and dark app themes.
+ * Color policy: the Variant 4 spotlight panel and its code card are
+ * deliberately scheme-locked (colorScheme:'dark' with literal gradient,
+ * ring, border, shadow, chip, and syntax-highlight colors — including the
+ * literal white/soft-slate text that sits on them) so the marketing art
+ * reads identically in both app themes. Everything else follows the app
+ * theme: accents on theme-following surfaces use Astryx tokens or
+ * light-dark() pairs that keep the light appearance exact and brighten
+ * one ramp step in dark.
  * Fixture policy: fixed Relay copy and code snippets only — no Date.now,
  * no randomness, no network assets; every "image" is a CSS-drawn schematic.
  */
@@ -145,6 +153,30 @@ const CODE_FUNCTION = '#93C5FD';
 const CODE_COMMENT = '#64748B';
 const CODE_PLAIN = '#E2E8F0';
 
+// ============= ACCENT RAMPS =============
+// Feature accents on theme-following surfaces: light-dark() pairs keep the
+// exact light values and step up to the brighter end of the same hue ramp
+// in dark mode so discs, dots, and tints stay legible on dark backgrounds.
+
+const ACCENT_INDIGO = 'light-dark(#4F46E5, #818CF8)';
+const ACCENT_INDIGO_TINT =
+  'light-dark(rgba(99, 102, 241, 0.14), rgba(129, 140, 248, 0.2))';
+const ACCENT_SKY = 'light-dark(#0284C7, #38BDF8)';
+const ACCENT_SKY_TINT =
+  'light-dark(rgba(14, 165, 233, 0.14), rgba(56, 189, 248, 0.2))';
+const ACCENT_GREEN = 'light-dark(#16A34A, #4ADE80)';
+const ACCENT_GREEN_TINT =
+  'light-dark(rgba(34, 197, 94, 0.14), rgba(74, 222, 128, 0.2))';
+const ACCENT_ORANGE = 'light-dark(#EA580C, #FB923C)';
+const ACCENT_ORANGE_TINT =
+  'light-dark(rgba(249, 115, 22, 0.14), rgba(251, 146, 60, 0.2))';
+const ACCENT_PURPLE = 'light-dark(#9333EA, #C084FC)';
+const ACCENT_PURPLE_TINT =
+  'light-dark(rgba(168, 85, 247, 0.14), rgba(192, 132, 252, 0.2))';
+const ACCENT_PINK = 'light-dark(#DB2777, #F472B6)';
+const ACCENT_PINK_TINT =
+  'light-dark(rgba(236, 72, 153, 0.14), rgba(244, 114, 182, 0.2))';
+
 // ============= STYLES =============
 
 const styles: Record<string, CSSProperties> = {
@@ -205,7 +237,7 @@ const styles: Record<string, CSSProperties> = {
     boxSizing: 'border-box',
   },
   featureCardOpen: {
-    borderColor: 'var(--color-border-focus, #6366F1)',
+    borderColor: 'var(--color-border-focus, light-dark(#6366F1, #818CF8))',
     boxShadow: 'var(--shadow-med)',
   },
   featureIconDisc: {
@@ -286,7 +318,7 @@ const styles: Record<string, CSSProperties> = {
     height: 8,
     borderRadius: 4,
     backgroundImage:
-      'linear-gradient(90deg, rgba(99, 102, 241, 0.55), rgba(14, 165, 233, 0.45))',
+      'linear-gradient(90deg, light-dark(rgba(99, 102, 241, 0.55), rgba(129, 140, 248, 0.6)), light-dark(rgba(14, 165, 233, 0.45), rgba(56, 189, 248, 0.5)))',
     border: 'none',
   },
   mockLinkRail: {
@@ -424,7 +456,7 @@ const styles: Record<string, CSSProperties> = {
     height: 56,
     borderRadius: 8,
     backgroundImage:
-      'linear-gradient(120deg, rgba(99, 102, 241, 0.28), rgba(14, 165, 233, 0.22))',
+      'linear-gradient(120deg, light-dark(rgba(99, 102, 241, 0.28), rgba(129, 140, 248, 0.32)), light-dark(rgba(14, 165, 233, 0.22), rgba(56, 189, 248, 0.26)))',
     border: '1px solid var(--color-border)',
   },
   screenshotCards: {
@@ -655,8 +687,8 @@ const GRID_FEATURES: readonly GridFeature[] = [
   {
     id: 'sync',
     icon: RefreshCwIcon,
-    iconBg: 'rgba(99, 102, 241, 0.14)',
-    iconColor: '#4F46E5',
+    iconBg: ACCENT_INDIGO_TINT,
+    iconColor: ACCENT_INDIGO,
     title: 'Realtime sync',
     blurb: 'Every record lands everywhere within 200ms, conflict-free.',
     detail:
@@ -667,8 +699,8 @@ const GRID_FEATURES: readonly GridFeature[] = [
   {
     id: 'audit',
     icon: ScrollTextIcon,
-    iconBg: 'rgba(14, 165, 233, 0.14)',
-    iconColor: '#0284C7',
+    iconBg: ACCENT_SKY_TINT,
+    iconColor: ACCENT_SKY,
     title: 'Audit log',
     blurb: 'An append-only trail of who changed what, and from where.',
     detail:
@@ -679,8 +711,8 @@ const GRID_FEATURES: readonly GridFeature[] = [
   {
     id: 'roles',
     icon: UsersIcon,
-    iconBg: 'rgba(34, 197, 94, 0.14)',
-    iconColor: '#16A34A',
+    iconBg: ACCENT_GREEN_TINT,
+    iconColor: ACCENT_GREEN,
     title: 'Role-based access',
     blurb: 'Grant by role, not by spreadsheet of one-off exceptions.',
     detail:
@@ -691,8 +723,8 @@ const GRID_FEATURES: readonly GridFeature[] = [
   {
     id: 'api',
     icon: TerminalIcon,
-    iconBg: 'rgba(249, 115, 22, 0.14)',
-    iconColor: '#EA580C',
+    iconBg: ACCENT_ORANGE_TINT,
+    iconColor: ACCENT_ORANGE,
     title: 'Typed API',
     blurb: 'REST and streaming endpoints with generated client types.',
     detail:
@@ -703,8 +735,8 @@ const GRID_FEATURES: readonly GridFeature[] = [
   {
     id: 'webhooks',
     icon: WebhookIcon,
-    iconBg: 'rgba(168, 85, 247, 0.14)',
-    iconColor: '#9333EA',
+    iconBg: ACCENT_PURPLE_TINT,
+    iconColor: ACCENT_PURPLE,
     title: 'Webhooks',
     blurb: 'Signed delivery with automatic retries and a replay console.',
     detail:
@@ -715,8 +747,8 @@ const GRID_FEATURES: readonly GridFeature[] = [
   {
     id: 'sso',
     icon: KeyRoundIcon,
-    iconBg: 'rgba(236, 72, 153, 0.14)',
-    iconColor: '#DB2777',
+    iconBg: ACCENT_PINK_TINT,
+    iconColor: ACCENT_PINK,
     title: 'SSO & SCIM',
     blurb: 'SAML sign-in and directory sync on every paid plan.',
     detail:
@@ -799,32 +831,32 @@ const CENTERED_FEATURES: readonly CenteredFeature[] = [
   {
     id: 'c-latency',
     icon: ZapIcon,
-    iconBg: 'rgba(249, 115, 22, 0.14)',
-    iconColor: '#EA580C',
+    iconBg: ACCENT_ORANGE_TINT,
+    iconColor: ACCENT_ORANGE,
     title: 'p99 under 200ms',
     body: 'Fan-out is edge-cached per region, so reads stay fast at any scale.',
   },
   {
     id: 'c-branch',
     icon: GitBranchIcon,
-    iconBg: 'rgba(99, 102, 241, 0.14)',
-    iconColor: '#4F46E5',
+    iconBg: ACCENT_INDIGO_TINT,
+    iconColor: ACCENT_INDIGO,
     title: 'Schema branching',
     body: 'Draft schema changes on a branch and merge with a migration plan.',
   },
   {
     id: 'c-lock',
     icon: LockIcon,
-    iconBg: 'rgba(34, 197, 94, 0.14)',
-    iconColor: '#16A34A',
+    iconBg: ACCENT_GREEN_TINT,
+    iconColor: ACCENT_GREEN,
     title: 'Encryption everywhere',
     body: 'AES-256 at rest, TLS 1.3 in transit, optional customer-held keys.',
   },
   {
     id: 'c-audit',
     icon: FingerprintIcon,
-    iconBg: 'rgba(14, 165, 233, 0.14)',
-    iconColor: '#0284C7',
+    iconBg: ACCENT_SKY_TINT,
+    iconColor: ACCENT_SKY,
     title: 'Compliance-ready',
     body: 'SOC 2 Type II and ISO 27001, with the audit log as your evidence.',
   },
@@ -837,11 +869,11 @@ const AUDIT_LOG_ROWS: readonly {
   action: string;
   dotColor: string;
 }[] = [
-  {actor: 'maya@acme.dev', action: 'updated customers/1042 · plan: pro → scale', dotColor: '#4F46E5'},
-  {actor: 'api-key ci-deploy', action: 'created webhooks/checkout-sync', dotColor: '#0284C7'},
-  {actor: 'jordan@acme.dev', action: 'granted role auditor to sam@acme.dev', dotColor: '#16A34A'},
-  {actor: 'sam@acme.dev', action: 'exported audit range Q2 · 4,182 entries', dotColor: '#EA580C'},
-  {actor: 'maya@acme.dev', action: 'merged schema branch billing-v2', dotColor: '#9333EA'},
+  {actor: 'maya@acme.dev', action: 'updated customers/1042 · plan: pro → scale', dotColor: ACCENT_INDIGO},
+  {actor: 'api-key ci-deploy', action: 'created webhooks/checkout-sync', dotColor: ACCENT_SKY},
+  {actor: 'jordan@acme.dev', action: 'granted role auditor to sam@acme.dev', dotColor: ACCENT_GREEN},
+  {actor: 'sam@acme.dev', action: 'exported audit range Q2 · 4,182 entries', dotColor: ACCENT_ORANGE},
+  {actor: 'maya@acme.dev', action: 'merged schema branch billing-v2', dotColor: ACCENT_PURPLE},
 ];
 
 const ROLE_MATRIX = {
@@ -1075,7 +1107,7 @@ function SyncMock() {
         </div>
       </div>
       <div aria-hidden style={styles.mockLogRow}>
-        <span style={{...styles.mockLogDot, backgroundColor: '#16A34A'}} />
+        <span style={{...styles.mockLogDot, backgroundColor: ACCENT_GREEN}} />
         customers/1042 · merged 2 fields · 184ms
       </div>
     </div>
@@ -1132,8 +1164,9 @@ function RolesMock() {
                   ...styles.mockMatrixCell,
                   ...(granted
                     ? {
-                        backgroundColor: 'rgba(34, 197, 94, 0.12)',
-                        color: '#16A34A',
+                        backgroundColor:
+                          'light-dark(rgba(34, 197, 94, 0.12), rgba(74, 222, 128, 0.16))',
+                        color: ACCENT_GREEN,
                       }
                     : {color: 'var(--color-border)'}),
                 }}>
@@ -1227,9 +1260,24 @@ function ScreenshotPanel({tab}: {tab: ScreenshotTab}) {
           : 'Stylized screenshot of the Relay audit trail'
       }>
       <div aria-hidden style={styles.screenshotChrome}>
-        <span style={{...styles.screenshotDot, backgroundColor: '#F87171'}} />
-        <span style={{...styles.screenshotDot, backgroundColor: '#FBBF24'}} />
-        <span style={{...styles.screenshotDot, backgroundColor: '#34D399'}} />
+        <span
+          style={{
+            ...styles.screenshotDot,
+            backgroundColor: 'light-dark(#F87171, #FCA5A5)',
+          }}
+        />
+        <span
+          style={{
+            ...styles.screenshotDot,
+            backgroundColor: 'light-dark(#FBBF24, #FCD34D)',
+          }}
+        />
+        <span
+          style={{
+            ...styles.screenshotDot,
+            backgroundColor: 'light-dark(#34D399, #6EE7B7)',
+          }}
+        />
         <span style={styles.screenshotUrl}>
           {tab === 'overview'
             ? 'relay.dev/app/overview'

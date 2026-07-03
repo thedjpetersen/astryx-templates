@@ -74,6 +74,11 @@
  * the only Cards are the three summary tiles. The timeline axis, lanes, and
  * validity bars are styled divs/buttons — CSS colors and fixture date math,
  * never chart libraries, clocks, or network images.
+ *
+ * Color policy: no scheme-locked surfaces. Team swatches and status
+ * line/track hues are explicit light-dark() pairs (same hue, lighter dark
+ * variant; translucent tracks via color-mix over the pair); everything else
+ * uses Astryx var(--color-*) tokens.
  */
 
 import {useMemo, useState, type CSSProperties} from 'react';
@@ -276,10 +281,10 @@ interface TeamMeta {
 }
 
 const TEAMS: TeamMeta[] = [
-  {id: 'edge', name: 'Edge Platform', color: '#6366F1'},
-  {id: 'payments', name: 'Payments', color: '#EC4899'},
-  {id: 'tools', name: 'Internal Tools', color: '#14B8A6'},
-  {id: 'data', name: 'Data Platform', color: '#F97316'},
+  {id: 'edge', name: 'Edge Platform', color: 'light-dark(#6366F1, #818CF8)'},
+  {id: 'payments', name: 'Payments', color: 'light-dark(#EC4899, #F472B6)'},
+  {id: 'tools', name: 'Internal Tools', color: 'light-dark(#14B8A6, #2DD4BF)'},
+  {id: 'data', name: 'Data Platform', color: 'light-dark(#F97316, #FB923C)'},
 ];
 
 const TEAM_META: Record<TeamId, TeamMeta> = Object.fromEntries(
@@ -650,24 +655,24 @@ const STATUS_META: Record<CertStatus, StatusMeta> = {
     label: 'Healthy',
     tileLabel: 'Healthy',
     badge: 'success',
-    line: '#22C55E',
-    track: 'rgba(34, 197, 94, 0.18)',
+    line: 'light-dark(#22C55E, #4ADE80)',
+    track: 'color-mix(in srgb, light-dark(#22C55E, #4ADE80) 18%, transparent)',
     icon: ShieldCheckIcon,
   },
   expiring: {
     label: 'Expiring ≤30d',
     tileLabel: 'Expiring soon',
     badge: 'warning',
-    line: '#F59E0B',
-    track: 'rgba(245, 158, 11, 0.2)',
+    line: 'light-dark(#F59E0B, #FBBF24)',
+    track: 'color-mix(in srgb, light-dark(#F59E0B, #FBBF24) 20%, transparent)',
     icon: ShieldAlertIcon,
   },
   expired: {
     label: 'Expired',
     tileLabel: 'Expired',
     badge: 'error',
-    line: '#EF4444',
-    track: 'rgba(239, 68, 68, 0.2)',
+    line: 'light-dark(#EF4444, #F87171)',
+    track: 'color-mix(in srgb, light-dark(#EF4444, #F87171) 20%, transparent)',
     icon: ShieldXIcon,
   },
 };

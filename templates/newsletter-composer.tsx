@@ -56,6 +56,13 @@
  * - The palette, canvas backdrop, and inspector scroll independently; the
  *   header never scrolls. The viewport SegmentedControl only changes the
  *   email body width (600px vs 360px), never the frame.
+ *
+ * Color policy: token-pure except the article thumbnail (styles.articleThumb),
+ * a deterministic brand-gradient placeholder (indigo→teal linear gradient with
+ * white/navy rgba() blobs) that stands in for hero art. Brand artwork renders
+ * identically in both schemes, so its literals stay raw and the surface pins
+ * colorScheme: 'light'. It is aria-hidden and carries no text, so no literals
+ * sit on it. Every other color in the file is a var(--color-*) token.
  */
 
 import {useState, type CSSProperties, type ReactNode} from 'react';
@@ -215,7 +222,12 @@ const styles: Record<string, CSSProperties> = {
     color: 'var(--color-text-primary)',
     whiteSpace: 'pre-line',
   },
+  // Scheme-locked brand artwork: the thumbnail is a fixed indigo→teal brand
+  // gradient placeholder that must look identical in light and dark mode, so
+  // colorScheme is pinned and the gradient stops stay raw literals (see the
+  // "Color policy" note in the file header). No text sits on this surface.
   articleThumb: {
+    colorScheme: 'light',
     height: 140,
     borderRadius: 6,
     background: [

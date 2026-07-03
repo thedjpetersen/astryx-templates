@@ -23,6 +23,16 @@
  *   and a validated status-updates email subscribe form.
  * @position Page template; emitted by `astryx template error-404-collection`.
  *
+ * Color policy: the only raw color literals are deliberately scheme-locked
+ * surfaces that must render identically in light and dark mode — (1) the
+ * Northlight brand gradient (header brand mark + gradient-clipped error
+ * code), which is brand art; (2) the CSS-drawn lost-robot mascot, a fixed
+ * illustration whose slate/amber palette (and the eye/mouth/badge marks
+ * sitting on those surfaces) depicts an artifact, not themed UI; and
+ * (3) the browser frame's traffic-light dots, which depict window chrome.
+ * Each locked style carries colorScheme: 'light'. Every other color is an
+ * Astryx var(--color-*) token and adapts via the theme's light-dark() system.
+ *
  * Frame: Layout height="fill". LayoutHeader carries the Northlight brand
  * mark, a StatusDot mirroring the active screen's severity, and the two
  * controls — a four-item SegmentedControl variant switcher and a 404/500
@@ -116,21 +126,24 @@ import {
 
 // ============= STYLES =============
 // Plain inline styles using Astryx design-token CSS variables. The only
-// custom palettes are the browser-frame chrome and the robot mascot, which
-// must look the same in both themes (they depict a fixed artifact, not
-// themed UI).
+// custom palettes are the brand gradient, the browser-frame traffic dots,
+// and the robot mascot, which must look the same in both themes (they
+// depict fixed artifacts, not themed UI) — each is scheme-locked with
+// colorScheme: 'light'. See the "Color policy" note in the header.
 
 const MONO_FONT =
   "ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace";
 
 const styles: Record<string, CSSProperties> = {
   // --- page chrome ---
+  // Scheme-locked Northlight brand gradient (see Color policy).
   brandMark: {
     width: 28,
     height: 28,
     borderRadius: 8,
     background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 55%, #d946ef)',
     flexShrink: 0,
+    colorScheme: 'light',
   },
   // SegmentedControls get a guaranteed touch height on compact screens.
   segmentedTapTarget: {minHeight: 44},
@@ -151,7 +164,9 @@ const styles: Record<string, CSSProperties> = {
     borderBottom: '1px solid var(--color-border)',
   },
   frameDots: {display: 'flex', gap: 6, flexShrink: 0},
-  frameDot: {width: 10, height: 10, borderRadius: '50%'},
+  // Scheme-locked traffic-light dots — fixed window-chrome hexes, same in
+  // both themes like real macOS traffic lights (Color policy).
+  frameDot: {width: 10, height: 10, borderRadius: '50%', colorScheme: 'light'},
   addressPill: {
     flex: 1,
     minWidth: 0,
@@ -192,6 +207,8 @@ const styles: Record<string, CSSProperties> = {
   },
 
   // --- minimal variant ---
+  // Scheme-locked brand gradient clipped to the oversized error code; the
+  // vivid mid-tone ramp reads on both light and dark stages (Color policy).
   bigCode: {
     fontSize: 96,
     lineHeight: 1,
@@ -201,6 +218,7 @@ const styles: Record<string, CSSProperties> = {
     WebkitBackgroundClip: 'text',
     backgroundClip: 'text',
     color: 'transparent',
+    colorScheme: 'light',
   },
   bigCodeCompact: {
     fontSize: 64,
@@ -211,15 +229,21 @@ const styles: Record<string, CSSProperties> = {
     WebkitBackgroundClip: 'text',
     backgroundClip: 'text',
     color: 'transparent',
+    colorScheme: 'light',
   },
   centeredCopy: {maxWidth: 440, textAlign: 'center'},
 
   // --- robot mascot (pure CSS) ---
+  // Scheme-locked illustration: the wrapper pins colorScheme for the whole
+  // mascot; every literal below (slate surfaces, amber antenna + glow, and
+  // the eye/mouth/badge marks on those surfaces) stays fixed in both themes
+  // so the artifact never re-themes (Color policy).
   robotWrap: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     transform: 'rotate(-4deg)',
+    colorScheme: 'light',
   },
   robotAntennaStem: {
     width: 3,

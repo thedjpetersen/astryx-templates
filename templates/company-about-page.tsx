@@ -62,6 +62,14 @@
  * - Bio Popovers cap content width at 300px so they fit a 375px viewport.
  * - Only LayoutContent scrolls (height="fill"); the header + subnav stay
  *   pinned so the scroll-spy is always visible.
+ *
+ * Color policy: the brand mark tile and the six gradient-initial leader
+ * avatars are scheme-locked brand art (colorScheme: 'light' on their
+ * styles) — like a logo asset or a photo, the saturated brand gradients
+ * and their white initials render identically in light and dark mode, so
+ * their gradient stops and the white text stay raw literals on purpose.
+ * Every other surface uses Astryx tokens or light-dark() pairs (the
+ * careers panel wash flips to a subtler indigo/violet tint in dark mode).
  */
 
 import {
@@ -123,7 +131,11 @@ import {
 
 const styles: Record<string, CSSProperties> = {
   // Brand mark: small gradient tile standing in for a real logo asset.
+  // Scheme-locked brand art (see "Color policy" above): the gradient and
+  // white glyph are literals, with colorScheme pinned so the tile renders
+  // identically in dark mode.
   brandMark: {
+    colorScheme: 'light',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -235,7 +247,11 @@ const styles: Record<string, CSSProperties> = {
     flexShrink: 0,
   },
   // Gradient-initial avatars — no network images anywhere on the page.
+  // Scheme-locked brand art (see "Color policy" above): like photos, the
+  // avatar gradients and their white initials do not flip with the theme,
+  // so colorScheme is pinned and the literals are deliberate.
   leaderAvatar: {
+    colorScheme: 'light',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -267,10 +283,14 @@ const styles: Record<string, CSSProperties> = {
     color: 'var(--color-text-secondary)',
     whiteSpace: 'nowrap',
   },
-  // Careers CTA panel gradient wash behind the role cards.
+  // Careers CTA panel gradient wash behind the role cards. light-dark()
+  // pairs keep the light tint exactly and swap to lighter-hued, slightly
+  // stronger stops over the dark body so the wash stays visible.
   careersPanel: {
     background:
-      'linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(168, 85, 247, 0.08))',
+      'linear-gradient(135deg, ' +
+      'light-dark(rgba(99, 102, 241, 0.08), rgba(129, 140, 248, 0.14)), ' +
+      'light-dark(rgba(168, 85, 247, 0.08), rgba(192, 132, 252, 0.14)))',
     border: '1px solid var(--color-border)',
     borderRadius: 16,
     padding: 'var(--spacing-6)',
@@ -526,6 +546,10 @@ interface Leader {
   name: string;
   role: string;
   joined: string;
+  /**
+   * Scheme-locked brand-art gradient stops (raw literals on purpose);
+   * rendered inside the colorScheme-pinned avatar disc — see Color policy.
+   */
   gradient: [string, string];
   bio: string;
   focus: ReadonlyArray<{label: string; color: TokenColor}>;

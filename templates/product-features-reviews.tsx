@@ -65,6 +65,16 @@
  * bars, and review entries are plain rows/buttons — no card-in-card
  * nesting. All product art and diagrams are layered CSS gradients, so
  * the template ships zero image assets.
+ *
+ * Color policy: the CSS product/photo art is deliberately scheme-locked —
+ * the feature-row art tiles (featureArtStyle, including its rgba() corner
+ * scrim), the mini-bar thumb, the gasket-stack diagram bars, and the
+ * review photo chips stand in for product photography and diagram inks
+ * that never re-render for dark mode. Those surfaces keep literal
+ * hsl/rgba stops and pin colorScheme: 'dark' (they are dark-toned in both
+ * schemes), and the icons/labels sitting on them stay literal #FFFFFF so
+ * they remain readable on the locked art. Every other color in this file
+ * is an Astryx token that inherits light-dark() from the theme.
  */
 
 import {useState, type CSSProperties, type ReactNode} from 'react';
@@ -139,6 +149,9 @@ const styles: Record<string, CSSProperties> = {
     paddingBlock: 'var(--spacing-2)',
   },
   miniBarInner: {width: '100%', maxWidth: 1120, marginInline: 'auto'},
+  // Product-art thumb: scheme-locked gradient standing in for a product
+  // photo (see "Color policy" in the header doc) — literal stops, literal
+  // white icon, colorScheme pinned dark in both themes.
   miniThumb: {
     width: 40,
     height: 40,
@@ -148,6 +161,7 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     color: '#FFFFFF',
+    colorScheme: 'dark',
     background:
       'linear-gradient(135deg, hsl(258, 46%, 46%) 0%, hsl(212, 52%, 26%) 100%)',
   },
@@ -161,10 +175,13 @@ const styles: Record<string, CSSProperties> = {
   featureRowReverse: {flexDirection: 'row-reverse'},
   featureRowStacked: {flexDirection: 'column', alignItems: 'stretch'},
   featureHalf: {flex: 1, minWidth: 0},
+  // Feature-art tile: scheme-locked CSS "product photo" (see Color
+  // policy) — featureArtStyle paints literal hsl/rgba layers on it.
   featureArt: {
     width: '100%',
     height: '100%',
     borderRadius: 'var(--radius-element)',
+    colorScheme: 'dark',
   },
   featureArtFrame: {
     borderRadius: 'var(--radius-element)',
@@ -181,6 +198,8 @@ const styles: Record<string, CSSProperties> = {
   },
   specGridStacked: {gridTemplateColumns: 'minmax(0, 1fr)'},
   // Accordion diagrams: pure CSS — layer bars, chips, gauges, spectrum.
+  // The stack-layer bars are scheme-locked diagram inks (see Color
+  // policy): literal hsl gradient fills with literal white labels.
   diagramLayer: {
     height: 22,
     borderRadius: 6,
@@ -188,6 +207,7 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     paddingInline: 10,
     color: '#FFFFFF',
+    colorScheme: 'dark',
     fontSize: 11,
     lineHeight: 1,
     whiteSpace: 'nowrap',
@@ -287,12 +307,15 @@ const styles: Record<string, CSSProperties> = {
     overflow: 'hidden',
     border: '1px solid var(--color-border)',
   },
+  // Photo-chip art: scheme-locked gradient stand-in for a review photo
+  // (see Color policy) — literal white icon on the locked art.
   photoArt: {
     height: 44,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     color: '#FFFFFF',
+    colorScheme: 'dark',
   },
   photoLabel: {
     paddingInline: 4,
@@ -716,7 +739,9 @@ function featureArtStyle(row: FeatureRow): CSSProperties {
       ];
       break;
     case 'signal':
-      // Signal arcs: concentric radial rings off one corner.
+      // Signal arcs: concentric radial rings off one corner. The rgba()
+      // corner shade is part of the scheme-locked art (see Color policy),
+      // not a UI scrim — it stays literal in both themes.
       layers = [
         `repeating-radial-gradient(circle at 18% 22%, hsla(${h1}, 60%, 82%, 0.28) 0 10px, transparent 10px 34px)`,
         `radial-gradient(120% 90% at 80% 85%, rgba(8, 8, 12, 0.5), transparent 70%)`,

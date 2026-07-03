@@ -187,7 +187,9 @@ const styles: Record<string, CSSProperties> = {
     fontSize: 11,
     lineHeight: '16px',
     fontWeight: 500,
-    color: '#FFFFFF',
+    // Light text on solid categorical chips; slightly dimmed in dark mode
+    // to cut glare against the saturated chip fills.
+    color: 'light-dark(#FFFFFF, rgba(255, 255, 255, 0.92))',
     borderRadius: 4,
     padding: '1px 6px',
   },
@@ -275,7 +277,7 @@ type TokenColor = 'blue' | 'purple' | 'green' | 'orange' | 'teal';
 interface CalendarCategory {
   id: CategoryId;
   label: string;
-  /** Solid chip / dot / bar color — categorical token with hex fallback. */
+  /** Solid chip / dot / bar color — light-dark-aware categorical token. */
   color: string;
   /** Matching Token color for the selected-day panel. */
   token: TokenColor;
@@ -285,31 +287,31 @@ const CATEGORIES: readonly CalendarCategory[] = [
   {
     id: 'work',
     label: 'Work',
-    color: 'var(--color-data-categorical-blue, #0171E3)',
+    color: 'var(--color-data-categorical-blue)',
     token: 'blue',
   },
   {
     id: 'team',
     label: 'Team',
-    color: 'var(--color-data-categorical-purple, #6B1EFD)',
+    color: 'var(--color-data-categorical-purple)',
     token: 'purple',
   },
   {
     id: 'personal',
     label: 'Personal',
-    color: 'var(--color-data-categorical-green, #0B991F)',
+    color: 'var(--color-data-categorical-green)',
     token: 'green',
   },
   {
     id: 'deadline',
     label: 'Deadlines',
-    color: 'var(--color-data-categorical-orange, #EB6E00)',
+    color: 'var(--color-data-categorical-orange)',
     token: 'orange',
   },
   {
     id: 'travel',
     label: 'Travel',
-    color: 'var(--color-data-categorical-teal, #0E7E8B)',
+    color: 'var(--color-data-categorical-teal)',
     token: 'teal',
   },
 ];

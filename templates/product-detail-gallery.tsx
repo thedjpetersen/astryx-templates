@@ -57,6 +57,15 @@
  *   'Color · Ember Rust' label text, stage arrows are always visible,
  *   and out-of-stock sizes stay rendered (disabled) rather than hiding.
  *
+ * Color policy: all product art (gallery frames, thumbnail rail art,
+ * color swatch fills, related-tile art) is deliberately scheme-locked
+ * brand gradient imagery — it renders identically in light and dark,
+ * with colorScheme: 'dark' pinned on the art layers. The caption chips
+ * (dark rgba scrim + white text), and the white swatch check, sit ON
+ * that locked art, so they keep literal values (not tokens) and pin
+ * colorScheme: 'dark' themselves to stay readable in both schemes.
+ * Every other surface uses Astryx light-dark() tokens and adapts.
+ *
  * Container policy (product-detail archetype): frame-first page chrome;
  * Cards for the stage surface, the buy box, and each collapsible info
  * section. Histogram bars, featured reviews, and related tiles are plain
@@ -133,6 +142,10 @@ const styles: Record<string, CSSProperties> = {
   // Gallery stage: gradient art inside a Card; overlays pin to corners.
   stageCard: {overflow: 'hidden'},
   stageArt: {position: 'relative', width: '100%', height: '100%'},
+  // Scheme-locked product art layer (see Color policy): the gradient
+  // compositions render identically in light and dark. Kept as its own
+  // layer so the lock never leaks onto the token-styled overlay controls.
+  stageArtLayer: {position: 'absolute', inset: 0, colorScheme: 'dark'},
   stageBadges: {
     position: 'absolute',
     top: 10,
@@ -150,11 +163,15 @@ const styles: Record<string, CSSProperties> = {
   },
   stageNavStart: {left: 8},
   stageNavEnd: {right: 8},
+  // Caption chips over the locked stage art: literal dark scrim + white
+  // text in BOTH schemes (see Color policy) — like a photo caption, the
+  // chip must read against the art, not the page theme.
   viewChip: {
     position: 'absolute',
     left: 10,
     bottom: 10,
     zIndex: 2,
+    colorScheme: 'dark',
     backgroundColor: 'rgba(8, 8, 10, 0.72)',
     color: '#FFFFFF',
     fontSize: 12,
@@ -168,6 +185,7 @@ const styles: Record<string, CSSProperties> = {
     right: 10,
     bottom: 10,
     zIndex: 2,
+    colorScheme: 'dark',
     backgroundColor: 'rgba(8, 8, 10, 0.72)',
     color: '#FFFFFF',
     fontSize: 12,
@@ -204,7 +222,8 @@ const styles: Record<string, CSSProperties> = {
     background: 'none',
   },
   thumbSelected: {borderColor: 'var(--color-accent)'},
-  thumbArt: {width: '100%', height: '100%'},
+  // Same scheme-locked art as the stage (see Color policy).
+  thumbArt: {width: '100%', height: '100%', colorScheme: 'dark'},
   galleryRow: {display: 'flex', gap: 'var(--spacing-3)'},
   galleryStageWrap: {flex: 1, minWidth: 0},
   // Color swatches: 40px round gradient buttons with a selected ring.
@@ -220,8 +239,11 @@ const styles: Record<string, CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color: '#FFFFFF',
   },
+  // White check over the scheme-locked swatch gradient (see Color
+  // policy): literal white in BOTH schemes; pinned on its own wrapper so
+  // the swatch button's token border/ring still track the page theme.
+  swatchCheck: {display: 'inline-flex', color: '#FFFFFF', colorScheme: 'dark'},
   swatchSelected: {
     borderColor: 'var(--color-accent)',
     boxShadow: '0 0 0 2px var(--color-background), 0 0 0 4px var(--color-accent)',
@@ -529,6 +551,9 @@ function maxQuantityFor(availability: SizeAvailability): number {
  * Deterministic product art: each view composes a different layered
  * gradient/pattern stack from the colorway's fixed hue pair, so swapping
  * the color swatch visibly re-renders every gallery frame and thumbnail.
+ * Scheme-locked (see Color policy): the rgba() shadow/tread layers are
+ * part of the imagery itself and render identically in light and dark —
+ * the elements that host this background pin colorScheme: 'dark'.
  */
 function viewArtStyle(color: Colorway, viewId: ViewId): CSSProperties {
   const {h1, h2} = color;
@@ -634,7 +659,10 @@ function Gallery({color, viewIndex, onViewChange, isPhone, isOnSale}: GalleryPro
   const stage = (
     <Card padding={0} style={styles.stageCard}>
       <AspectRatio ratio={4 / 3}>
-        <div style={{...styles.stageArt, ...viewArtStyle(color, view.id)}}>
+        <div style={styles.stageArt}>
+          {/* Locked art layer sits below the token-styled overlays so
+              colorScheme: 'dark' never leaks onto them. */}
+          <div style={{...styles.stageArtLayer, ...viewArtStyle(color, view.id)}} />
           <div style={styles.stageBadges}>
             {isOnSale && <Badge variant="red" label="Sale" />}
             <Badge variant="info" label="New season" />
@@ -725,7 +753,9 @@ function ColorSwatchRow({
               }}
               onClick={() => onSelect(color.id)}>
               {color.id === selectedId && (
-                <Icon icon={CheckIcon} size="sm" color="inherit" />
+                <span style={styles.swatchCheck}>
+                  <Icon icon={CheckIcon} size="sm" color="inherit" />
+                </span>
               )}
             </button>
           </Tooltip>

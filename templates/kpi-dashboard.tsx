@@ -68,12 +68,15 @@ const styles: Record<string, CSSProperties> = {
   chartBody: {minWidth: 0, paddingTop: 'var(--spacing-2)'},
 };
 
-// Chart series colors via Astryx design tokens (CSS custom properties)
+// Chart series colors via Astryx design tokens (CSS custom properties).
+// Fallbacks are light-dark() pairs so the series stay legible in dark mode
+// even when the categorical tokens are not defined by the active theme:
+// same hue, lifted lightness for dark backgrounds.
 const chartColors = {
-  requests: 'var(--color-data-categorical-blue, #0171E3)',
-  errors: 'var(--color-data-categorical-orange, #EB6E00)',
-  signups: 'var(--color-data-categorical-green, #0B991F)',
-  spark: 'var(--color-data-categorical-purple, #6B1EFD)',
+  requests: 'var(--color-data-categorical-blue, light-dark(#0171E3, #4DA3FF))',
+  errors: 'var(--color-data-categorical-orange, light-dark(#EB6E00, #FF9447))',
+  signups: 'var(--color-data-categorical-green, light-dark(#0B991F, #45CE58))',
+  spark: 'var(--color-data-categorical-purple, light-dark(#6B1EFD, #9D6BFF))',
 };
 
 // ============= DATA =============

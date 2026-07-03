@@ -165,7 +165,7 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: 'var(--color-background-card)',
     border: '1px solid var(--color-border)',
     borderRadius: 'var(--radius-container)',
-    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
+    boxShadow: '0 1px 3px light-dark(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.35))',
   },
   cardSelected: {
     boxShadow: '0 0 0 2px var(--color-accent)',

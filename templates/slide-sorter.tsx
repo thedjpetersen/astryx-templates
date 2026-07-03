@@ -53,6 +53,13 @@
  * only Cards are the slide tiles themselves — white paper regardless of theme
  * (colorScheme locked to light). All numbering renumbers live from the flat
  * slide order after any reorder / duplicate / delete.
+ *
+ * Color policy: the miniature slide canvases are scheme-locked "print paper"
+ * (colorScheme:'light' on styles.canvas) — the white #FFFFFF surface and the
+ * SLIDE_* literal palette painted on it stay literal on purpose so slides
+ * render as WYSIWYG paper in dark mode, exactly like a real light-table.
+ * All chrome outside the canvas (header, tiles' Card frame, info strip,
+ * selection ring) uses Astryx tokens and adapts to the active scheme.
  */
 
 import {useState, type CSSProperties} from 'react';

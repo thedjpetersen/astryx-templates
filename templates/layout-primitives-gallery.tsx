@@ -190,7 +190,7 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: 'var(--color-background-muted)',
     border: '1px solid var(--color-border)',
     borderRadius: 'var(--radius-container)',
-    boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.06)',
+    boxShadow: 'inset 0 1px 2px light-dark(rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.4))',
   },
 
   // ---- Panel 3 · list containers ----

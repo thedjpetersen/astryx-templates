@@ -62,6 +62,13 @@
  * - FAQ: Collapsible triggers span the full card width with vertical
  *   padding for ~44px tap targets; expansion is tap/keyboard driven —
  *   nothing on this page is hover-only.
+ *
+ * Color policy: every surface, border, and shadow derives from Astryx
+ * tokens with light-dark() fallbacks, so the page adapts to both schemes.
+ * The only scheme-locked literals are the three plan glyph tiles: they are
+ * brand-gradient "plan art" (identical pixels in both themes), pinned with
+ * colorScheme: 'dark' on the tile, and their white icon color stays a
+ * literal so it remains readable on the locked gradient paint.
  */
 
 import {useState, type CSSProperties, type UIEvent} from 'react';
@@ -101,18 +108,26 @@ import {
 
 // ============= STYLES =============
 
+// Astryx tokens with light-dark() fallbacks: the light side of each pair
+// matches the prior light-mode literal exactly; the dark side flips
+// lightness while keeping the hue/contrast intent.
 const colors = {
-  surface: 'var(--color-background, #FFFFFF)',
-  surfaceMuted: 'var(--color-background-muted, #F5F5F7)',
-  accent: 'var(--color-accent, #0171E3)',
-  accentMuted: 'var(--color-accent-muted, #EAF2FF)',
-  border: 'var(--color-border, #E2E2E6)',
-  success: 'var(--color-data-categorical-green, #0B991F)',
+  surface: 'var(--color-background, light-dark(#FFFFFF, #1C1C1E))',
+  surfaceMuted:
+    'var(--color-background-muted, light-dark(#F5F5F7, #2C2C2E))',
+  accent: 'var(--color-accent, light-dark(#0171E3, #4C9FFF))',
+  accentMuted: 'var(--color-accent-muted, light-dark(#EAF2FF, #1F3350))',
+  border: 'var(--color-border, light-dark(#E2E2E6, #3A3A3F))',
+  success:
+    'var(--color-data-categorical-green, light-dark(#0B991F, #3DBF51))',
 };
 
 // Frozen-column edge shadow — only rendered after horizontal scroll so the
 // label column reads as flat until plan columns actually slide under it.
-const COLUMN_SHADOW = '8px 0 8px -8px rgba(15, 23, 42, 0.18)';
+// light-dark() pair: same slate scrim in light, plain black at a slightly
+// higher alpha in dark so the edge stays legible on dark surfaces.
+const COLUMN_SHADOW =
+  '8px 0 8px -8px light-dark(rgba(15, 23, 42, 0.18), rgba(0, 0, 0, 0.45))';
 
 const styles: Record<string, CSSProperties> = {
   // Marketing surfaces read best as one centered column, not full-bleed.
@@ -128,6 +143,9 @@ const styles: Record<string, CSSProperties> = {
     boxShadow: `0 0 0 1px ${colors.accent}`,
   },
   // Gradient glyph tiles stand in for plan art — no network assets.
+  // Scheme-locked surface (see "Color policy" in the header comment): the
+  // brand gradients below render identical pixels in both themes, so
+  // colorScheme is pinned and the white icon literal stays literal.
   glyphTile: {
     width: 44,
     height: 44,
@@ -136,6 +154,7 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 'var(--radius-container)',
+    colorScheme: 'dark',
     color: '#FFFFFF',
   },
   glyphStarter: {

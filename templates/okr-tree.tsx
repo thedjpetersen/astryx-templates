@@ -131,8 +131,11 @@ const styles: Record<string, CSSProperties> = {
     color: 'inherit',
   },
   krButtonSelected: {
+    // Fallback is scheme-aware: the light value keeps the original blue
+    // selection tint; dark uses the theme's dark brand blue, slightly
+    // stronger so the tint reads on dark ground.
     backgroundColor:
-      'var(--color-background-selected, rgba(1, 113, 227, 0.08))',
+      'var(--color-background-selected, light-dark(rgba(1, 113, 227, 0.08), rgba(61, 135, 255, 0.16)))',
   },
   rowPad: {paddingBlock: 8, paddingInline: 12},
   // <=640px key-result rows keep a comfortable two-line tap target.

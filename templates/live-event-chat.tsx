@@ -308,22 +308,24 @@ interface EventUser {
 
 // Role-colored usernames: host amber-orange, mods green, subs
 // purple-family, viewers a fixed per-author palette, "you" the accent.
-// Shades are darkened for AA-ish contrast on the light chat surface.
+// Every color is an explicit light-dark() pair: the light value is darkened
+// for AA-ish contrast on the light chat surface; the dark value keeps the
+// same hue, brightened for contrast on the dark chat surface.
 const USERS: Record<string, EventUser> = {
-  ari_hale: {color: '#C2410C', role: 'host', tagline: 'Keynote host · Aurora'},
-  juno_mod: {color: '#1F8A4C', role: 'mod', tagline: 'Community moderator'},
-  silas_mod: {color: '#15803D', role: 'mod', tagline: 'Community moderator'},
-  comet_kai: {color: '#7C3AED', role: 'sub', months: 9, tagline: 'Launch-week regular'},
-  lumen_lee: {color: '#9333EA', role: 'sub', months: 3, tagline: 'Design nerd, demo enjoyer'},
-  orbit_ola: {color: '#6D28D9', role: 'sub', months: 15, tagline: 'Day-one subscriber'},
-  vega_v: {color: '#8250DF', role: 'sub', months: 2, tagline: 'Here for the reveals'},
-  pixel_pat: {color: '#0E7DB8', role: 'viewer', tagline: 'First launch week'},
-  torch_talia: {color: '#B45309', role: 'viewer', tagline: 'Hardware rumor chaser'},
-  echo_eli: {color: '#D03C74', role: 'viewer', tagline: 'Asks the pricing questions'},
-  nightowl_nia: {color: '#4D7C0F', role: 'viewer', tagline: 'Watching from UTC+9'},
-  waveform_wes: {color: '#0F766E', role: 'viewer', tagline: 'Clip curator'},
-  spam_blitz99: {color: '#6B7280', role: 'viewer', tagline: 'Joined 4 minutes ago'},
-  dealz_dropz: {color: '#6B7280', role: 'viewer', tagline: 'Joined 2 minutes ago'},
+  ari_hale: {color: 'light-dark(#C2410C, #FB923C)', role: 'host', tagline: 'Keynote host · Aurora'},
+  juno_mod: {color: 'light-dark(#1F8A4C, #5BE49B)', role: 'mod', tagline: 'Community moderator'},
+  silas_mod: {color: 'light-dark(#15803D, #4ADE80)', role: 'mod', tagline: 'Community moderator'},
+  comet_kai: {color: 'light-dark(#7C3AED, #A78BFA)', role: 'sub', months: 9, tagline: 'Launch-week regular'},
+  lumen_lee: {color: 'light-dark(#9333EA, #C084FC)', role: 'sub', months: 3, tagline: 'Design nerd, demo enjoyer'},
+  orbit_ola: {color: 'light-dark(#6D28D9, #C4B5FD)', role: 'sub', months: 15, tagline: 'Day-one subscriber'},
+  vega_v: {color: 'light-dark(#8250DF, #B197FC)', role: 'sub', months: 2, tagline: 'Here for the reveals'},
+  pixel_pat: {color: 'light-dark(#0E7DB8, #38BDF8)', role: 'viewer', tagline: 'First launch week'},
+  torch_talia: {color: 'light-dark(#B45309, #FBBF24)', role: 'viewer', tagline: 'Hardware rumor chaser'},
+  echo_eli: {color: 'light-dark(#D03C74, #F585B4)', role: 'viewer', tagline: 'Asks the pricing questions'},
+  nightowl_nia: {color: 'light-dark(#4D7C0F, #A3E635)', role: 'viewer', tagline: 'Watching from UTC+9'},
+  waveform_wes: {color: 'light-dark(#0F766E, #2DD4BF)', role: 'viewer', tagline: 'Clip curator'},
+  spam_blitz99: {color: 'light-dark(#6B7280, #9CA3AF)', role: 'viewer', tagline: 'Joined 4 minutes ago'},
+  dealz_dropz: {color: 'light-dark(#6B7280, #9CA3AF)', role: 'viewer', tagline: 'Joined 2 minutes ago'},
   you: {color: 'var(--color-accent)', role: 'you', tagline: 'That is you'},
 };
 

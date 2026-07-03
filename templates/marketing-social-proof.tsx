@@ -77,6 +77,17 @@
  *   annual-report rows keep label and number in one wrapping row.
  * - Nothing on this page scrolls horizontally; overflow is handled by
  *   wrapping and column collapse only.
+ *
+ * Color policy: token-first with two deliberately scheme-locked surfaces.
+ * (1) The dark split stats band is an inverted brand band in BOTH schemes:
+ * its navy gradient, white headline/figures, and slate supporting copy are
+ * raw literals with colorScheme locked to 'dark' on the shell so nested
+ * tokens (the CTA Button included) resolve dark on it in either scheme.
+ * (2) Avatar / spotlight photo placeholders are fixed brand-gradient art
+ * with literal white initials, colorScheme-locked so they never invert.
+ * Everything else — surfaces, borders, accents, star gold, logo grayscale,
+ * and the ten brand hues — is a var(--color-*) token or an explicit
+ * light-dark() pair that preserves the light appearance exactly.
  */
 
 import {
@@ -123,16 +134,20 @@ import {
 // ============= STYLES =============
 
 const colors = {
-  surface: 'var(--color-background, #FFFFFF)',
-  surfaceMuted: 'var(--color-background-muted, #F5F5F7)',
-  accent: 'var(--color-accent, #0171E3)',
-  accentMuted: 'var(--color-accent-muted, #EAF2FF)',
-  border: 'var(--color-border, #E2E2E6)',
-  star: '#F5A623',
-  logoGray: '#8A8A93',
+  surface: 'var(--color-background)',
+  surfaceMuted: 'var(--color-background-muted)',
+  accent: 'var(--color-accent)',
+  accentMuted: 'var(--color-accent-muted)',
+  border: 'var(--color-border)',
+  star: 'light-dark(#F5A623, #FDBA45)',
+  logoGray: 'light-dark(#8A8A93, #9A9AA3)',
+  // Scheme-locked literals for the inverted split band — see the header
+  // "Color policy" note. These must stay raw so the band reads identically
+  // in light and dark mode.
   darkBand: '#0F172A',
   darkBandText: '#E2E8F0',
   darkBandMuted: '#94A3B8',
+  darkBandAccent: '#0171E3',
 };
 
 const styles: Record<string, CSSProperties> = {
@@ -144,7 +159,8 @@ const styles: Record<string, CSSProperties> = {
     boxSizing: 'border-box',
   },
   // Gradient avatar / photo placeholders stand in for people photography —
-  // no network assets, ever.
+  // no network assets, ever. Scheme-locked (Color policy): the gradients
+  // are fixed brand art, so the white initials stay literal.
   avatar: {
     width: 40,
     height: 40,
@@ -153,6 +169,7 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: '50%',
+    colorScheme: 'dark',
     color: '#FFFFFF',
     fontSize: 13,
     fontWeight: 600,
@@ -166,6 +183,7 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 'var(--radius-container)',
+    colorScheme: 'dark',
     color: '#FFFFFF',
     fontSize: 28,
     fontWeight: 600,
@@ -299,8 +317,12 @@ const styles: Record<string, CSSProperties> = {
     padding: 'var(--spacing-4)',
   },
   // Dark split band — raw markup inside because the band inverts color.
+  // Scheme-locked (Color policy): the navy gradient and its text literals
+  // are identical in light and dark mode; colorScheme: 'dark' makes any
+  // nested tokens (e.g. the CTA Button) resolve dark on this surface.
   darkBandShell: {
     borderRadius: 'var(--radius-container)',
+    colorScheme: 'dark',
     background: `linear-gradient(135deg, ${colors.darkBand} 0%, #1E293B 100%)`,
     padding: 'var(--spacing-6)',
     color: colors.darkBandText,
@@ -338,7 +360,9 @@ const styles: Record<string, CSSProperties> = {
     color: colors.darkBandMuted,
   },
   darkStatCell: {
-    borderLeft: `2px solid ${colors.accent}`,
+    // Literal accent, not the token: this cell sits on the scheme-locked
+    // navy band, so its rule must not re-resolve with the app scheme.
+    borderLeft: `2px solid ${colors.darkBandAccent}`,
     paddingLeft: 'var(--spacing-3)',
   },
   // Annual-report rows: oversized numerals against a hairline grid.
@@ -368,7 +392,12 @@ type TestimonialVariant = 'grid' | 'spotlight' | 'wall';
 type LogoVariant = 'row' | 'grid' | 'strip';
 type StatsVariant = 'band' | 'split' | 'report';
 
-/** Fixed avatar gradients — reused by initials tiles and photo blocks. */
+/**
+ * Fixed avatar gradients — reused by initials tiles and photo blocks.
+ * Scheme-locked brand art (Color policy): raw literals on purpose; the
+ * tiles that paint them lock colorScheme so they render identically in
+ * light and dark mode.
+ */
 const AVATAR_GRADIENTS = [
   'linear-gradient(135deg, #F97316 0%, #C2410C 100%)',
   'linear-gradient(135deg, #6366F1 0%, #2563EB 100%)',
@@ -484,7 +513,11 @@ type MarkShape = 'dot' | 'ring' | 'square' | 'bars' | 'slash' | 'stack';
 interface Brand {
   id: string;
   name: string;
-  /** Brand hue applied when the tile is lit (hover, focus, pin, or mode). */
+  /**
+   * Brand hue applied when the tile is lit (hover, focus, pin, or mode).
+   * light-dark() pair: the light value is the original brand hue; the
+   * dark value is the same hue lifted for contrast on dark surfaces.
+   */
   hue: string;
   mark: MarkShape;
   /** Per-brand type treatment so every wordmark reads distinct. */
@@ -495,70 +528,70 @@ const BRANDS: Brand[] = [
   {
     id: 'fernwood',
     name: 'Fernwood',
-    hue: '#15803D',
+    hue: 'light-dark(#15803D, #4ADE80)',
     mark: 'dot',
     textStyle: {fontWeight: 700, letterSpacing: '-0.02em'},
   },
   {
     id: 'quanta',
     name: 'QUANTA',
-    hue: '#7C3AED',
+    hue: 'light-dark(#7C3AED, #A78BFA)',
     mark: 'square',
     textStyle: {fontWeight: 800, letterSpacing: '0.18em', fontSize: 14},
   },
   {
     id: 'bluepeak',
     name: 'bluepeak',
-    hue: '#0369A1',
+    hue: 'light-dark(#0369A1, #38BDF8)',
     mark: 'bars',
     textStyle: {fontWeight: 600, letterSpacing: '-0.03em'},
   },
   {
     id: 'helioform',
     name: 'Helioform',
-    hue: '#EA580C',
+    hue: 'light-dark(#EA580C, #FB923C)',
     mark: 'ring',
     textStyle: {fontFamily: 'Georgia, serif', fontWeight: 500},
   },
   {
     id: 'marlin',
     name: 'MARLIN',
-    hue: '#0F766E',
+    hue: 'light-dark(#0F766E, #2DD4BF)',
     mark: 'slash',
     textStyle: {fontWeight: 700, letterSpacing: '0.12em', fontSize: 15},
   },
   {
     id: 'octave',
     name: 'octave',
-    hue: '#BE185D',
+    hue: 'light-dark(#BE185D, #F472B6)',
     mark: 'stack',
     textStyle: {fontWeight: 500, letterSpacing: '0.04em', fontStyle: 'italic'},
   },
   {
     id: 'pinegate',
     name: 'Pinegate',
-    hue: '#4D7C0F',
+    hue: 'light-dark(#4D7C0F, #A3E635)',
     mark: 'ring',
     textStyle: {fontFamily: 'Georgia, serif', fontWeight: 600},
   },
   {
     id: 'coppersmith',
     name: 'Coppersmith & Rowe',
-    hue: '#B45309',
+    hue: 'light-dark(#B45309, #FBBF24)',
     mark: 'square',
     textStyle: {fontFamily: 'Georgia, serif', fontSize: 15, fontWeight: 500},
   },
   {
     id: 'vantablue',
     name: 'vantablue',
-    hue: '#1D4ED8',
+    hue: 'light-dark(#1D4ED8, #60A5FA)',
     mark: 'dot',
     textStyle: {fontWeight: 800, letterSpacing: '-0.04em'},
   },
   {
     id: 'zephyr',
     name: 'Zephyr Labs',
-    hue: '#0891B2',
+    hue: 'light-dark(#0891B2, #22D3EE)',
     mark: 'bars',
     textStyle: {fontWeight: 600, letterSpacing: '0.02em'},
   },

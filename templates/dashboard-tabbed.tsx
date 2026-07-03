@@ -65,15 +65,22 @@ const styles: Record<string, CSSProperties> = {
   chartBody: {minWidth: 0, paddingTop: 'var(--spacing-2)'},
 };
 
-// Chart series colors via Astryx design tokens (CSS custom properties)
+// Chart series colors via Astryx design tokens (CSS custom properties).
+// The categorical data tokens are not defined in every theme, so each
+// fallback is an explicit light-dark() pair: the light value matches the
+// original palette exactly and the dark value is a brighter same-hue
+// variant that stays legible on dark chart surfaces.
 const chartColors = {
-  sessions: 'var(--color-data-categorical-blue, #0171E3)',
-  orders: 'var(--color-data-categorical-green, #0B991F)',
-  channels: 'var(--color-data-categorical-purple, #6B1EFD)',
-  gross: 'var(--color-data-categorical-teal, #0E7E8B)',
-  net: 'var(--color-data-categorical-green, #0B991F)',
-  declines: 'var(--color-data-categorical-orange, #EB6E00)',
-  apiErrors: 'var(--color-data-categorical-pink, #D91E76)',
+  sessions: 'var(--color-data-categorical-blue, light-dark(#0171E3, #4DA3FF))',
+  orders: 'var(--color-data-categorical-green, light-dark(#0B991F, #4CC95D))',
+  channels:
+    'var(--color-data-categorical-purple, light-dark(#6B1EFD, #9D6BFF))',
+  gross: 'var(--color-data-categorical-teal, light-dark(#0E7E8B, #3FB2C1))',
+  net: 'var(--color-data-categorical-green, light-dark(#0B991F, #4CC95D))',
+  declines:
+    'var(--color-data-categorical-orange, light-dark(#EB6E00, #FF963B))',
+  apiErrors:
+    'var(--color-data-categorical-pink, light-dark(#D91E76, #F0619F))',
 };
 
 // ============= DATA =============

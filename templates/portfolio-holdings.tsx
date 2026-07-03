@@ -150,7 +150,9 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 1,
   },
   // Donut ring: conic-gradient with a radial-gradient mask cutting the
-  // hole, so the center stays transparent on any card background.
+  // hole, so the center stays transparent on any card background. The
+  // mask consumes alpha only, so the opaque stop uses the scheme-neutral
+  // `black` keyword — no color literal, identical in light and dark.
   donutWrap: {
     position: 'relative',
     flex: 'none',
@@ -158,8 +160,8 @@ const styles: Record<string, CSSProperties> = {
   donutRing: {
     borderRadius: '50%',
     WebkitMask:
-      'radial-gradient(farthest-side, transparent calc(100% - 30px), #000 calc(100% - 29px))',
-    mask: 'radial-gradient(farthest-side, transparent calc(100% - 30px), #000 calc(100% - 29px))',
+      'radial-gradient(farthest-side, transparent calc(100% - 30px), black calc(100% - 29px))',
+    mask: 'radial-gradient(farthest-side, transparent calc(100% - 30px), black calc(100% - 29px))',
   },
   donutCenter: {
     position: 'absolute',
@@ -192,16 +194,19 @@ const styles: Record<string, CSSProperties> = {
 };
 
 // Allocation palette via Astryx categorical data tokens; segments are
-// assigned in descending-value order so colors stay deterministic.
+// assigned in descending-value order so colors stay deterministic. Each
+// fallback is a light-dark() pair: the light value is the original hue,
+// the dark value keeps the hue but lifts lightness so segments stay
+// legible on dark card surfaces.
 const SEGMENT_COLORS = [
-  'var(--color-data-categorical-blue, #0171E3)',
-  'var(--color-data-categorical-purple, #6B1EFD)',
-  'var(--color-data-categorical-orange, #EB6E00)',
-  'var(--color-data-categorical-green, #0B991F)',
-  'var(--color-data-categorical-teal, #0E7E8B)',
-  'var(--color-data-categorical-pink, #D91E76)',
-  'var(--color-data-categorical-red, #D92D20)',
-  'var(--color-data-categorical-yellow, #B78103)',
+  'var(--color-data-categorical-blue, light-dark(#0171E3, #4C9EFF))',
+  'var(--color-data-categorical-purple, light-dark(#6B1EFD, #9D7BFF))',
+  'var(--color-data-categorical-orange, light-dark(#EB6E00, #FF9A45))',
+  'var(--color-data-categorical-green, light-dark(#0B991F, #3DD65A))',
+  'var(--color-data-categorical-teal, light-dark(#0E7E8B, #33B8C7))',
+  'var(--color-data-categorical-pink, light-dark(#D91E76, #FF6AA9))',
+  'var(--color-data-categorical-red, light-dark(#D92D20, #FF6B5E))',
+  'var(--color-data-categorical-yellow, light-dark(#B78103, #E8B94A))',
 ];
 
 const TREND_COLORS = {

@@ -111,6 +111,11 @@ import {
 
 // ============= STYLES =============
 
+// Check-off checks and glyph icons sit on solid categorical fills, which
+// stay saturated in both schemes — an explicit light-dark pair keeps this
+// text white on those fills instead of flipping with the scheme tokens.
+const ON_FILL_TEXT = 'light-dark(#FFFFFF, #FFFFFF)';
+
 const styles: Record<string, CSSProperties> = {
   // Habit cards ride a deliberate horizontal scroller at every width so
   // cards (and their 40px tap targets) never shrink to fit.
@@ -153,7 +158,7 @@ const styles: Record<string, CSSProperties> = {
     width: 32,
     height: 32,
     borderRadius: 8,
-    color: '#FFFFFF',
+    color: ON_FILL_TEXT,
     flexShrink: 0,
   },
   habitName: {minWidth: 0},
@@ -182,7 +187,9 @@ const styles: Record<string, CSSProperties> = {
   },
   // Flame color rides currentColor: lit orange when today is done, muted
   // secondary while the streak is pending or broken.
-  flameLit: {color: 'var(--color-data-categorical-orange, #EB6E00)'},
+  flameLit: {
+    color: 'var(--color-data-categorical-orange, light-dark(#EB6E00, #FF9A3D))',
+  },
   flameDim: {color: 'var(--color-text-secondary)', opacity: 0.55},
   dotStrip: {
     display: 'flex',
@@ -223,7 +230,7 @@ const styles: Record<string, CSSProperties> = {
     color: 'var(--color-text-secondary)',
     cursor: 'pointer',
   },
-  monthCellDone: {color: '#FFFFFF'},
+  monthCellDone: {color: ON_FILL_TEXT},
   // Days before tracking started: numbered but faint and inert.
   monthCellPre: {
     backgroundColor: 'transparent',
@@ -396,11 +403,15 @@ interface Habit {
   name: string;
   cadence: string;
   icon: HabitIcon;
-  /** Solid glyph / done-cell / dot color — categorical token + fallback. */
+  /**
+   * Solid glyph / done-cell / dot color — categorical token with a
+   * light-dark fallback pair (brighter in dark so fills keep their pop).
+   */
   color: string;
 }
 
-const FREEZE_COLOR = 'var(--color-data-categorical-cyan, #0EA5E9)';
+const FREEZE_COLOR =
+  'var(--color-data-categorical-cyan, light-dark(#0EA5E9, #38BDF8))';
 
 // Six habits. `stretch` starts archived so the collapsed section reads on
 // first paint without any user action.
@@ -410,42 +421,42 @@ const HABITS: readonly Habit[] = [
     name: 'Meditate',
     cadence: '10 min, every morning',
     icon: BrainIcon,
-    color: 'var(--color-data-categorical-purple, #6B1EFD)',
+    color: 'var(--color-data-categorical-purple, light-dark(#6B1EFD, #9E7CFF))',
   },
   {
     id: 'read',
     name: 'Read 20 min',
     cadence: 'Any book, any time',
     icon: BookOpenIcon,
-    color: 'var(--color-data-categorical-blue, #0171E3)',
+    color: 'var(--color-data-categorical-blue, light-dark(#0171E3, #4DA3FF))',
   },
   {
     id: 'no-sugar',
     name: 'No sugar',
     cadence: 'No added sugar all day',
     icon: BanIcon,
-    color: 'var(--color-data-categorical-orange, #EB6E00)',
+    color: 'var(--color-data-categorical-orange, light-dark(#EB6E00, #FF9A3D))',
   },
   {
     id: 'steps',
     name: '10k steps',
     cadence: 'Walk, run, or hike',
     icon: FootprintsIcon,
-    color: 'var(--color-data-categorical-green, #0B991F)',
+    color: 'var(--color-data-categorical-green, light-dark(#0B991F, #3DC552))',
   },
   {
     id: 'journal',
     name: 'Journal',
     cadence: 'Three lines before bed',
     icon: PenLineIcon,
-    color: 'var(--color-data-categorical-teal, #0E7E8B)',
+    color: 'var(--color-data-categorical-teal, light-dark(#0E7E8B, #2CB9CB))',
   },
   {
     id: 'stretch',
     name: 'Stretch 10 min',
     cadence: 'Paused for now',
     icon: ActivityIcon,
-    color: 'var(--color-data-categorical-red, #D0164C)',
+    color: 'var(--color-data-categorical-red, light-dark(#D0164C, #FB5C86))',
   },
 ];
 
@@ -757,7 +768,7 @@ function HabitCard({
         ...styles.checkButton,
         borderColor: habit.color,
         backgroundColor: habit.color,
-        color: '#FFFFFF',
+        color: ON_FILL_TEXT,
       }
     : {...styles.checkButton, borderColor: habit.color};
   const flameStyle = stats.isTodayDone ? styles.flameLit : styles.flameDim;

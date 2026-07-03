@@ -120,7 +120,9 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 'var(--radius-container)',
     padding: 'var(--spacing-3)',
   },
-  scriptIcon: {display: 'inline-flex', color: '#059669'},
+  // Emerald "exec" icon: light-dark pair keeps the light hue exact and
+  // brightens one step for dark surfaces.
+  scriptIcon: {display: 'inline-flex', color: 'light-dark(#059669, #34d399)'},
   narrowSelectorRow: {paddingBottom: 'var(--spacing-3)'},
   // Touch targets: clickable pills grow to ~40px tall on narrow so taps
   // land; minHeight wins over the Token's fixed sm height.
@@ -179,7 +181,9 @@ interface HookRule {
 }
 
 // Exact six-type palette from the navi trigger editor: blue / purple /
-// pink / green / orange / amber.
+// pink / green / orange / amber. Each dot is a light-dark() pair: the
+// light value is the original hue, the dark value the brighter step of
+// the same hue so dots and the active-chip ring stay visible on dark.
 const CONDITION_META: Record<
   ConditionType,
   {
@@ -192,42 +196,42 @@ const CONDITION_META: Record<
 > = {
   tool_call: {
     label: 'tool_call',
-    dot: '#3b82f6',
+    dot: 'light-dark(#3b82f6, #60a5fa)',
     chip: 'blue',
     placeholder: 'bash, ipython',
     hint: 'Exact tool names, comma separated.',
   },
   tool_pattern: {
     label: 'tool_pattern',
-    dot: '#a855f7',
+    dot: 'light-dark(#a855f7, #c084fc)',
     chip: 'purple',
     placeholder: 'bash ~ /\\brm -rf\\b/',
     hint: 'Tool name plus a regex applied to its arguments.',
   },
   keyword: {
     label: 'keyword',
-    dot: '#ec4899',
+    dot: 'light-dark(#ec4899, #f472b6)',
     chip: 'pink',
     placeholder: 'sentry, production error',
     hint: 'Matches when these words appear in the prompt or tool output.',
   },
   channel: {
     label: 'channel',
-    dot: '#22c55e',
+    dot: 'light-dark(#22c55e, #4ade80)',
     chip: 'green',
     placeholder: 'web, gchat',
     hint: 'Limits the rule to specific chat surfaces.',
   },
   node: {
     label: 'node',
-    dot: '#f97316',
+    dot: 'light-dark(#f97316, #fb923c)',
     chip: 'orange',
     placeholder: 'cli, workspace',
     hint: 'Limits the rule to specific runtime nodes.',
   },
   event: {
     label: 'event',
-    dot: '#f59e0b',
+    dot: 'light-dark(#f59e0b, #fbbf24)',
     chip: 'yellow',
     placeholder: 'PreToolUse',
     hint: 'Lifecycle event that evaluates this rule.',

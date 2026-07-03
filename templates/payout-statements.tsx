@@ -61,6 +61,14 @@
  *   shrink fluidly and the page never scrolls sideways at 375px; the
  *   table handles narrow widths by dropping columns (above) rather than
  *   by horizontal panning.
+ *
+ * Color policy: token-pure everywhere except the 36px bank tiles, which
+ * are scheme-locked brand art — literal gradient stops (ACCOUNTS[*].tint)
+ * plus a literal white glyph, with colorScheme pinned to 'light' in
+ * styles.bankTile so the bank-logo placeholders render identically in
+ * light and dark mode (real bank marks would not recolor either). Every
+ * other surface (rows, waterfall rails/bars, selection wash) uses
+ * var(--color-*) tokens and adapts via the theme's light-dark() values.
  */
 
 import {useMemo, useState, type CSSProperties, type KeyboardEvent} from 'react';
@@ -192,6 +200,9 @@ const styles: Record<string, CSSProperties> = {
 
   // ---- destinations ----
   // 36px gradient tile stands in for a bank logo (no network assets).
+  // Scheme-locked brand art (see Color policy above): the gradient fixture
+  // stops and this white glyph are intentional literals, with colorScheme
+  // pinned so the tile never flips in dark mode.
   bankTile: {
     width: 36,
     height: 36,
@@ -200,6 +211,7 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     color: '#fff',
+    colorScheme: 'light',
     flexShrink: 0,
   },
 };
@@ -246,7 +258,11 @@ interface PayoutAccount {
   last4: string;
   currency: string;
   addedOn: string;
-  /** Gradient placeholder standing in for a bank logo. */
+  /**
+   * Gradient placeholder standing in for a bank logo. Intentional literal
+   * hex stops — scheme-locked brand art rendered on styles.bankTile, which
+   * pins colorScheme (see the Color policy in the header comment).
+   */
   tint: string;
 }
 

@@ -72,6 +72,14 @@
  * - Each set table keeps a 520px minimum grid inside its own overflow-x
  *   wrapper, so weight/reps/RPE inputs never crush and the page itself
  *   never scrolls sideways at 375px.
+ *
+ * Color policy: token-pure chrome — every surface, border, and text color
+ * resolves through var(--color-*) tokens, so the whole log adapts to dark
+ * mode automatically. The one scheme-locked surface is the decorative
+ * plate mark next to each exercise name: brand-gradient art with
+ * colorScheme locked to 'light' — its literal hex gradient stops and
+ * literal #FFFFFF glyph are intentional so the mark renders identically
+ * in light and dark mode.
  */
 
 import {
@@ -165,6 +173,9 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: 'var(--color-background)',
   },
   // Decorative plate mark next to each exercise name — CSS only.
+  // Scheme-locked brand art (see Color policy above): literal gradient
+  // stops + literal white glyph on purpose; colorScheme is pinned so the
+  // mark never flips in dark mode.
   plateMark: {
     width: 34,
     height: 34,
@@ -175,6 +186,7 @@ const styles: Record<string, CSSProperties> = {
     justifyContent: 'center',
     background: 'linear-gradient(135deg, #2E6BE6 0%, #5B4DD8 60%, #7C3AB8 100%)',
     color: '#FFFFFF',
+    colorScheme: 'light',
   },
   // Set table: fixed-minimum grid inside its own overflow-x wrapper so
   // the three NumberInputs never crush and the page never pans sideways.

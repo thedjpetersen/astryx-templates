@@ -66,6 +66,17 @@
  * author legend, rail summary) recompute live from suggestion + resolve
  * state — no clocks, randomness, or network assets. Reply submissions append
  * with the fixed literal timestamp 2026-07-02T16:30:00Z.
+ *
+ * Color policy: the paper canvas and rail diff chips are deliberately
+ * scheme-locked light (colorScheme:'light') to read as printed paper in both
+ * schemes, so PAPER_* literals, the anchor amber washes/resolved rule, and
+ * the per-author soft washes stay raw hex — tokens would flip them in dark
+ * mode and break the paper metaphor. Text sitting on that locked paper
+ * (PAPER_TEXT/PAPER_MUTED) is likewise literal so it stays readable. Author
+ * inks and the anchor-amber accent are light-dark() pairs: on the locked
+ * paper they resolve to the exact light values (color-scheme inherits), and
+ * on app chrome (legend dots, active-card rings) they brighten for dark
+ * backgrounds.
  */
 
 import {useRef, useState, type CSSProperties, type ReactNode} from 'react';
@@ -109,8 +120,9 @@ import {
 } from 'lucide-react';
 
 // ============= PAPER PAINT CONSTANTS =============
-// The document canvas is "paper": literal light colors locked with
-// colorScheme:'light' so tracked-change inks look identical in dark mode.
+// Scheme-locked surface (see "Color policy" above): the document canvas is
+// "paper" — literal light colors locked with colorScheme:'light' so
+// tracked-change inks look identical in dark mode. Do not tokenize.
 
 const PAPER_BG = '#FFFFFF';
 const PAPER_TEXT = '#1F2A37';
@@ -118,10 +130,13 @@ const PAPER_MUTED = '#6B7280';
 const PAPER_RULE = '#E5E7EB';
 
 // Comment-anchor amber — deliberately outside the author palette so comment
-// ranges never read as tracked changes.
+// ranges never read as tracked changes. Washes and the resolved rule paint
+// only on the locked paper, so they stay literal; the underline/accent also
+// rings rail cards on app chrome, so it is a light-dark() pair (the locked
+// paper resolves it to the light value).
 const ANCHOR_BG = '#FDF3D0';
 const ANCHOR_BG_ACTIVE = '#F9E7A0';
-const ANCHOR_UNDERLINE = '#D4A72C';
+const ANCHOR_UNDERLINE = 'light-dark(#D4A72C, #E0BB55)';
 const ANCHOR_RESOLVED = '#B7BDC6';
 
 // ============= STYLES =============
@@ -258,6 +273,9 @@ const styles: Record<string, CSSProperties> = {
 // ============= AUTHOR DATA =============
 // Three suggesting authors, each with a fixed ink (underline/strike color)
 // and a soft wash for pending spans. Alex Rivera owns the doc and reviews.
+// Inks are light-dark() pairs: on the locked paper they resolve to the exact
+// light hex; on app chrome (legend dots, card rings) they brighten for dark
+// mode. Soft washes paint only on the locked paper, so they stay literal.
 
 type AuthorId = 'maya' | 'jordan' | 'priya';
 
@@ -269,9 +287,24 @@ interface Author {
 }
 
 const AUTHORS: Author[] = [
-  {id: 'maya', name: 'Maya Chen', ink: '#0B5FAE', soft: '#E3EEF9'},
-  {id: 'jordan', name: 'Jordan Ellis', ink: '#7C3AED', soft: '#F0E9FA'},
-  {id: 'priya', name: 'Priya Nair', ink: '#B45309', soft: '#FBEFDD'},
+  {
+    id: 'maya',
+    name: 'Maya Chen',
+    ink: 'light-dark(#0B5FAE, #5FA4E8)',
+    soft: '#E3EEF9',
+  },
+  {
+    id: 'jordan',
+    name: 'Jordan Ellis',
+    ink: 'light-dark(#7C3AED, #A88BF5)',
+    soft: '#F0E9FA',
+  },
+  {
+    id: 'priya',
+    name: 'Priya Nair',
+    ink: 'light-dark(#B45309, #E09353)',
+    soft: '#FBEFDD',
+  },
 ];
 
 const AUTHOR_BY_ID = Object.fromEntries(

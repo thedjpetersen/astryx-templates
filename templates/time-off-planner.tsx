@@ -111,9 +111,10 @@ import {
 
 // Absence type colors via Astryx data-viz tokens (CSS custom properties).
 const typeColors: Record<string, string> = {
-  vacation: 'var(--color-data-categorical-blue, #0171E3)',
-  sick: 'var(--color-data-categorical-orange, #EB6E00)',
-  personal: 'var(--color-data-categorical-purple, #6B1EFD)',
+  vacation: 'var(--color-data-categorical-blue, light-dark(#0171E3, #4DA3FF))',
+  sick: 'var(--color-data-categorical-orange, light-dark(#EB6E00, #FF963B))',
+  personal:
+    'var(--color-data-categorical-purple, light-dark(#6B1EFD, #9D6BFF))',
 };
 
 // July 2026 strip geometry: 31 fixed-width day columns behind a sticky
@@ -213,7 +214,9 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 6,
     border: 'none',
     cursor: 'pointer',
-    color: '#fff',
+    // Bar-label text over the solid categorical fill: white on the saturated
+    // light-mode fills, near-black on the lighter dark-mode fills.
+    color: 'light-dark(#fff, #0B1220)',
     fontSize: 11,
     lineHeight: '24px',
     overflow: 'hidden',

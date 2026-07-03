@@ -81,6 +81,14 @@
  * themes. No clocks beyond the fixed-budget countdown tick, no randomness,
  * no network assets or real screenshots — the product shot is a CSS-drawn
  * browser mock.
+ *
+ * Color policy: the slim top bar, gradient promo banner, centered dark
+ * panel, and gradient email-capture panel are deliberately scheme-locked
+ * brand surfaces — literal dark/gradient paint plus literal on-dark text
+ * (the PAINT CONSTANTS block), each locked with colorScheme:'dark' so the
+ * marketing art renders identically in light and dark app themes. Every
+ * other surface (privacy banner, Cards, screenshot mock, placeholders)
+ * rides the Astryx tokens or explicit light-dark() pairs.
  */
 
 import {useEffect, useState, type CSSProperties} from 'react';
@@ -260,7 +268,7 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 14,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background)',
-    boxShadow: 'var(--shadow-high, 0 12px 32px rgba(15, 23, 42, 0.18))',
+    boxShadow: 'var(--shadow-high)',
     padding: 'var(--spacing-4)',
   },
   // ---- 40px dismiss buttons (Button caps at 36px) ----
@@ -352,8 +360,8 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
-    backgroundColor: 'rgba(52, 168, 83, 0.14)',
-    color: 'var(--color-success, #1E8E3E)',
+    backgroundColor: 'color-mix(in oklab, var(--color-success) 14%, transparent)',
+    color: 'var(--color-success)',
   },
   // ---- CSS-drawn screenshot mock (no imagery) ----
   mockWindow: {
@@ -401,7 +409,9 @@ const styles: Record<string, CSSProperties> = {
     height: 64,
     borderRadius: 8,
     backgroundImage:
-      'linear-gradient(120deg, rgba(124, 58, 237, 0.30), rgba(219, 39, 119, 0.24))',
+      'linear-gradient(120deg, ' +
+      'light-dark(rgba(124, 58, 237, 0.30), rgba(139, 92, 246, 0.38)), ' +
+      'light-dark(rgba(219, 39, 119, 0.24), rgba(236, 72, 153, 0.32)))',
     border: '1px solid var(--color-border)',
   },
   mockBar: {
@@ -683,9 +693,24 @@ function ScreenshotMock() {
       role="img"
       aria-label="Stylized screenshot of the Astral launch dashboard">
       <div aria-hidden style={styles.mockChrome}>
-        <span style={{...styles.mockDot, backgroundColor: '#F87171'}} />
-        <span style={{...styles.mockDot, backgroundColor: '#FBBF24'}} />
-        <span style={{...styles.mockDot, backgroundColor: '#34D399'}} />
+        <span
+          style={{
+            ...styles.mockDot,
+            backgroundColor: 'light-dark(#F87171, #E05C5C)',
+          }}
+        />
+        <span
+          style={{
+            ...styles.mockDot,
+            backgroundColor: 'light-dark(#FBBF24, #D9A521)',
+          }}
+        />
+        <span
+          style={{
+            ...styles.mockDot,
+            backgroundColor: 'light-dark(#34D399, #2CB586)',
+          }}
+        />
         <span style={styles.mockUrl}>astral.app/launches/summer-3-0</span>
       </div>
       <div aria-hidden style={styles.mockBody}>

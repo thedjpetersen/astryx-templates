@@ -65,6 +65,16 @@
  * around them (request bar, tabs, key-value rows, sidebar) is plain
  * frame rows and list components, not Cards.
  *
+ * Color policy: the two code surfaces (resolved-request strip and
+ * response JSON body) are deliberately scheme-locked terminal panels —
+ * they reproduce wire-format text, so they pin colorScheme: 'dark' on
+ * their styles and keep the raw CODE / METHOD_COLORS literals so the
+ * syntax tints render the same pixels in both themes. All themed chrome
+ * literals are converted: the sidebar/history method labels use
+ * METHOD_LABEL_COLORS light-dark() pairs (light side matches the prior
+ * light appearance exactly; dark side brightens one step for contrast),
+ * and the dirty-state dot uses a light-dark() amber pair.
+ *
  * Fixture policy: fixed data only — no Date.now, no Math.random, no
  * network assets. Canned responses are per-request constants, latency is
  * base-plus-environment-offset arithmetic, response sizes derive from
@@ -127,7 +137,9 @@ import {
 // ============= CODE PALETTE =============
 // The resolved-request strip and the response body reproduce wire-format
 // text, so they keep a fixed dark palette instead of themed Text colors
-// (dark in both themes).
+// (dark in both themes). Scheme-locked: the surfaces pin
+// colorScheme: 'dark' (see styles.resolvedStrip / styles.responseBody),
+// so these literals are intentional — see the Color policy note above.
 
 const CODE = {
   bg: '#0d1117',
@@ -148,13 +160,25 @@ const CODE = {
 const MONO_FONT =
   "ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace";
 
-// HTTP method tints used for the mono method labels in the tree/history.
+// HTTP method tints on the scheme-locked resolved-request strip. Locked
+// surface, so these stay raw literals (see Color policy above).
 const METHOD_COLORS: Record<string, string> = {
   GET: '#3fb950',
   POST: '#d29922',
   PUT: '#58a6ff',
   PATCH: '#d2a8ff',
   DELETE: '#f47067',
+};
+
+// The same method hues for the themed sidebar tree / history labels:
+// light values match the prior light appearance exactly; dark values
+// brighten one step so the labels keep contrast on dark app chrome.
+const METHOD_LABEL_COLORS: Record<string, string> = {
+  GET: 'light-dark(#3fb950, #57d364)',
+  POST: 'light-dark(#d29922, #e3b341)',
+  PUT: 'light-dark(#58a6ff, #79c0ff)',
+  PATCH: 'light-dark(#d2a8ff, #dcbdff)',
+  DELETE: 'light-dark(#f47067, #ff938a)',
 };
 
 // ============= STYLES =============
@@ -190,7 +214,7 @@ const styles: Record<string, CSSProperties> = {
     width: 8,
     height: 8,
     borderRadius: '50%',
-    backgroundColor: '#d29922',
+    backgroundColor: 'light-dark(#d29922, #e3b341)',
   },
   // Request bar: wraps onto a second row before clipping at 375px.
   requestBar: {
@@ -201,7 +225,9 @@ const styles: Record<string, CSSProperties> = {
   methodCell: {flex: 'none', width: 112},
   urlCell: {flex: '1 1 220px', minWidth: 0},
   // Dark resolved-request strip: mono, one line, scrolls in x.
+  // Scheme-locked terminal surface: stays dark in both themes.
   resolvedStrip: {
+    colorScheme: 'dark',
     margin: '0 var(--spacing-4) var(--spacing-2)',
     padding: 'var(--spacing-2) var(--spacing-3)',
     borderRadius: 6,
@@ -236,7 +262,9 @@ const styles: Record<string, CSSProperties> = {
     padding: 'var(--spacing-3) var(--spacing-4) var(--spacing-2)',
   },
   // Dark response body: mono JSON tree, scrolls in x, never widens page.
+  // Scheme-locked terminal surface: stays dark in both themes.
   responseBody: {
+    colorScheme: 'dark',
     margin: '0 var(--spacing-4) var(--spacing-4)',
     borderRadius: 6,
     backgroundColor: CODE.bg,
@@ -1262,7 +1290,7 @@ export default function ApiRequestExplorerTemplate() {
             <span
               style={{
                 ...styles.methodLabel,
-                color: METHOD_COLORS[rowDraft.method],
+                color: METHOD_LABEL_COLORS[rowDraft.method],
               }}
               aria-hidden>
               {rowDraft.method}
@@ -1331,7 +1359,7 @@ export default function ApiRequestExplorerTemplate() {
                     <span
                       style={{
                         ...styles.methodLabel,
-                        color: METHOD_COLORS[entry.snapshot.method],
+                        color: METHOD_LABEL_COLORS[entry.snapshot.method],
                       }}
                       aria-hidden>
                       {entry.snapshot.method}

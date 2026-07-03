@@ -58,6 +58,15 @@
  *   checklist rows stack their controls. The diagram is presentational
  *   (role="img" + aria-label) and every debt it encodes is restated as
  *   text rows below it, so nothing is pointer- or hover-only.
+ *
+ * Color policy: token/light-dark hybrid. Chrome, status text, and the
+ * arrow diagram (traveler strokes/fills, labels, halo) use var(--color-*)
+ * tokens — traveler colors are the categorical data palette, so they flip
+ * with the scheme; node initials use an explicit light-dark() pair to stay
+ * readable on the brighter dark-mode fills. Two surfaces are deliberately
+ * scheme-locked with colorScheme pinned in their styles: the header trip
+ * mark and the category icon chips — both are saturated brand-gradient
+ * tiles whose stops and white glyphs stay identical in both schemes.
  */
 
 import {useMemo, useState, type CSSProperties} from 'react';
@@ -119,11 +128,14 @@ const styles: Record<string, CSSProperties> = {
   board: {maxWidth: 760, marginInline: 'auto', width: '100%'},
   numeric: {fontVariantNumeric: 'tabular-nums'},
   // Header trip mark — gradient placeholder, white glyph, no image asset.
+  // Scheme-locked brand art (see Color policy): the blue→teal stops and
+  // white glyph stay literal in both schemes, so colorScheme is pinned.
   brandChip: {
     width: 32,
     height: 32,
     borderRadius: 'var(--radius-control, 8px)',
     background: 'linear-gradient(135deg, #0171E3, #0D9488)',
+    colorScheme: 'dark',
     color: '#fff',
     display: 'flex',
     alignItems: 'center',
@@ -150,10 +162,13 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: 'var(--color-accent-muted)',
   },
   // Category icon chip: deterministic gradient tile, white glyph.
+  // Scheme-locked (see Color policy): the CATEGORY_META gradients and the
+  // white glyph stay literal in both schemes, so colorScheme is pinned.
   chip: {
     width: 32,
     height: 32,
     borderRadius: 'var(--radius-control, 8px)',
+    colorScheme: 'dark',
     color: '#fff',
     display: 'flex',
     alignItems: 'center',
@@ -162,22 +177,22 @@ const styles: Record<string, CSSProperties> = {
   },
   fxGlyph: {
     display: 'flex',
-    color: 'var(--color-text-secondary, #667085)',
+    color: 'var(--color-text-secondary)',
     flexShrink: 0,
   },
   // The arrow diagram scales with its container through the viewBox; block
   // display kills the inline-SVG baseline gap.
   diagram: {width: '100%', height: 'auto', display: 'block'},
-  positiveText: {color: 'var(--color-success, #0B991F)'},
-  negativeText: {color: 'var(--color-critical, #D92D20)'},
+  positiveText: {color: 'var(--color-success)'},
+  negativeText: {color: 'var(--color-critical)'},
   staleIcon: {
     display: 'flex',
-    color: 'var(--color-data-categorical-orange, #EB6E00)',
+    color: 'var(--color-data-categorical-orange)',
     flexShrink: 0,
   },
   settledIcon: {
     display: 'flex',
-    color: 'var(--color-success, #0B991F)',
+    color: 'var(--color-success)',
     flexShrink: 0,
   },
   paidRow: {opacity: 0.55, textDecoration: 'line-through'},
@@ -208,11 +223,33 @@ interface Traveler {
   color: string;
 }
 
+// Traveler colors are categorical data tokens (light values match the
+// previous literals exactly) so the diagram flips with the scheme.
 const TRAVELERS: Traveler[] = [
-  {id: 'maya', name: 'Maya Chen', short: 'Maya', color: '#0171E3'},
-  {id: 'josh', name: 'Josh Rivera', short: 'Josh', color: '#EB6E00'},
-  {id: 'priya', name: 'Priya Nair', short: 'Priya', color: '#6B1EFD'},
-  {id: 'devon', name: 'Devon Park', short: 'Devon', color: '#0B991F'},
+  {
+    id: 'maya',
+    name: 'Maya Chen',
+    short: 'Maya',
+    color: 'var(--color-data-categorical-blue)',
+  },
+  {
+    id: 'josh',
+    name: 'Josh Rivera',
+    short: 'Josh',
+    color: 'var(--color-data-categorical-orange)',
+  },
+  {
+    id: 'priya',
+    name: 'Priya Nair',
+    short: 'Priya',
+    color: 'var(--color-data-categorical-purple)',
+  },
+  {
+    id: 'devon',
+    name: 'Devon Park',
+    short: 'Devon',
+    color: 'var(--color-data-categorical-green)',
+  },
 ];
 
 const TRAVELER_BY_ID = new Map(TRAVELERS.map(t => [t.id, t]));
@@ -227,6 +264,8 @@ function traveler(id: string): Traveler {
 
 type Category = 'lodging' | 'food' | 'transport' | 'activities';
 
+// Scheme-locked gradient stops (see Color policy): rendered on the
+// colorScheme-pinned styles.chip tile, identical in both schemes.
 const CATEGORY_META: Record<
   Category,
   {label: string; icon: LucideIcon; gradient: string}
@@ -816,7 +855,7 @@ function BalanceDiagram({
               fontSize={13}
               fontWeight={600}
               fill={color}
-              stroke="var(--color-background, #fff)"
+              stroke="var(--color-background)"
               strokeWidth={4}
               paintOrder="stroke"
               style={{fontVariantNumeric: 'tabular-nums'}}>
@@ -834,13 +873,14 @@ function BalanceDiagram({
         return (
           <g key={t.id}>
             <circle cx={pos.x} cy={pos.y} r={NODE_R} fill={t.color} />
+            {/* Dark categorical fills are brighter, so initials go dark. */}
             <text
               x={pos.x}
               y={pos.y + 5}
               textAnchor="middle"
               fontSize={14}
               fontWeight={600}
-              fill="#fff">
+              fill="light-dark(#fff, #15110C)">
               {initials}
             </text>
             <text
@@ -848,7 +888,7 @@ function BalanceDiagram({
               y={pos.y + NODE_R + 18}
               textAnchor="middle"
               fontSize={12}
-              fill="var(--color-text-secondary, #667085)">
+              fill="var(--color-text-secondary)">
               {t.short}
             </text>
           </g>

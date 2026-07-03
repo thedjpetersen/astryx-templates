@@ -49,6 +49,14 @@
  * - Wide content: the label-placeholder barcode is a fixed ~200px bar row
  *   and the QR grid is 7x7 at 10px cells, so neither can force horizontal
  *   scroll at 375px; address lines wrap normally.
+ *
+ * Color policy: token/light-dark hybrid. Chrome, text, borders, and the
+ * label paper all use var(--color-*) tokens. Two surfaces are deliberately
+ * scheme-locked with literal colors and a pinned colorScheme: (1) the
+ * gradient item-art tiles (ItemThumb) are brand product art — same pixels
+ * in both themes, white monogram literal on top; (2) the QR placeholder is
+ * scannable "paper" — dark cells on a white grid in both themes, like a
+ * real printed code. Everything else adapts to light/dark via tokens.
  */
 
 import {useMemo, useState, type CSSProperties} from 'react';
@@ -159,7 +167,7 @@ const styles: Record<string, CSSProperties> = {
   },
   circleDone: {
     backgroundColor: 'var(--color-accent)',
-    color: 'var(--color-text-inverse, #fff)',
+    color: 'var(--color-on-accent)',
   },
   circleCurrent: {
     border: '2px solid var(--color-accent)',
@@ -182,6 +190,8 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: 'var(--color-accent)',
   },
   // Gradient placeholder art for line items (no network images).
+  // Scheme-locked brand product art: identical pixels in both themes (see
+  // header "Color policy"), so the monogram stays a literal white too.
   itemThumb: {
     width: 44,
     height: 44,
@@ -190,6 +200,7 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 'var(--radius-container)',
+    colorScheme: 'dark',
     color: '#fff',
     fontSize: 'var(--font-size-sm)',
     fontWeight: 'var(--font-weight-semibold)',
@@ -241,6 +252,9 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: 'var(--color-text)',
   },
   // Deterministic QR placeholder: 7x7 grid of 10px cells.
+  // Scheme-locked "paper": a QR code stays dark-on-white in both themes
+  // like a real printed code (see header "Color policy"); the pinned
+  // colorScheme resolves the border token to its light value here.
   qrGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(7, 10px)',
@@ -249,9 +263,11 @@ const styles: Record<string, CSSProperties> = {
     padding: 6,
     border: 'var(--border-width) solid var(--color-border)',
     borderRadius: 'var(--radius-container)',
+    colorScheme: 'light',
     backgroundColor: '#fff',
   },
   qrCellOn: {
+    // Literal dark cells on the locked white paper above.
     backgroundColor: '#111',
     borderRadius: 1,
   },
@@ -284,6 +300,10 @@ interface OrderItem {
   gradient: string;
   isFinalSale?: boolean;
 }
+
+// Scheme-locked brand art: the gradient stops below are deliberate hex
+// literals — product art keeps the same pixels in light and dark (see the
+// header "Color policy"; ItemThumb pins colorScheme).
 
 const ORDER_ITEMS: OrderItem[] = [
   {

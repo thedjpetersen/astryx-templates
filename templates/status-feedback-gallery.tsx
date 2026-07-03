@@ -302,7 +302,7 @@ const styles: Record<string, CSSProperties> = {
     display: 'grid',
     placeItems: 'center',
     backgroundColor: 'var(--color-success)',
-    color: 'var(--color-text-inverse, #fff)',
+    color: 'var(--color-on-success)',
     flexShrink: 0,
   },
   // Numbered pager: wraps at narrow widths; buttons keep 40px targets.

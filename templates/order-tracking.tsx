@@ -59,6 +59,14 @@
  * end panel is sectioned with Dividers, not nested cards; Banners confirm
  * the return and issue-report flows. All fixtures are fixed — no clocks,
  * randomness, or network assets; item thumbnails are gradient placeholders.
+ *
+ * Color policy: token-pure except the line-item thumbnail art. Every chrome
+ * color is a var(--color-*) token (accent fills use --color-on-accent for
+ * their glyphs) or an explicit light-dark() pair (the truck-badge shadow).
+ * The three item-thumbnail gradients are deliberately scheme-locked
+ * (colorScheme: 'light' on itemArt): they stand in for fixed product
+ * photography/brand art and must not reflow with the scheme, so both the
+ * gradient stops and the white icon sitting on them stay raw literals.
  */
 
 import {useMemo, useState, type CSSProperties} from 'react';
@@ -175,7 +183,7 @@ const styles: Record<string, CSSProperties> = {
   },
   stepNodeDone: {
     backgroundColor: 'var(--color-accent)',
-    color: '#FFFFFF',
+    color: 'var(--color-on-accent)',
   },
   stepNodeActive: {
     border: '2px solid var(--color-accent)',
@@ -251,7 +259,7 @@ const styles: Record<string, CSSProperties> = {
   },
   routeNodeDone: {
     backgroundColor: 'var(--color-accent)',
-    color: '#FFFFFF',
+    color: 'var(--color-on-accent)',
   },
   routeNodeUpcoming: {
     border: '2px dashed var(--color-border)',
@@ -295,11 +303,11 @@ const styles: Record<string, CSSProperties> = {
     height: 28,
     borderRadius: '50%',
     backgroundColor: 'var(--color-accent)',
-    color: '#FFFFFF',
+    color: 'var(--color-on-accent)',
     flexShrink: 0,
     margin: '0 var(--spacing-1)',
     marginTop: -13, // recenter the badge on the rail line
-    boxShadow: '0 1px 3px rgba(15, 23, 42, 0.25)',
+    boxShadow: '0 1px 3px light-dark(rgba(15, 23, 42, 0.25), rgba(0, 0, 0, 0.55))',
   },
 
   // ---- carrier event timeline ----
@@ -326,7 +334,7 @@ const styles: Record<string, CSSProperties> = {
   },
   eventMarkerCurrent: {
     backgroundColor: 'var(--color-accent)',
-    color: '#FFFFFF',
+    color: 'var(--color-on-accent)',
   },
   eventConnector: {
     flex: 1,
@@ -351,7 +359,11 @@ const styles: Record<string, CSSProperties> = {
     padding: 'var(--spacing-4)',
   },
   // Gradient placeholder thumbnails stand in for product photography.
+  // Scheme-locked (see "Color policy" in the header doc): the gradients are
+  // fixed brand/product art, so colorScheme is pinned and the icon stays a
+  // literal white that reads on all three gradients in both schemes.
   itemArt: {
+    colorScheme: 'light',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

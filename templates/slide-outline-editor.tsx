@@ -56,6 +56,14 @@
  * paper). Fixtures are fixed strings; counters, numbering, the preview
  * shapes, and all metadata derive live from the edited row state — no
  * clocks, randomness, or network assets.
+ *
+ * Color policy: the mini slide canvas is deliberately scheme-locked —
+ * real slide paper stays white in dark mode, so styles.canvas pins
+ * colorScheme:'light' with a literal #FFFFFF background, and the paint
+ * constants (SLIDE_TEXT / SLIDE_MUTED / SLIDE_ACCENT) are literals too so
+ * the ink never flips against the locked paper. Everything outside the
+ * canvas (row rails, hover washes, shadows) uses Astryx tokens and adapts
+ * to dark mode automatically.
  */
 
 import {useState, type CSSProperties} from 'react';

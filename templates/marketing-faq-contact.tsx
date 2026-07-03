@@ -68,6 +68,13 @@
  *   hover-only. Buttons in card footers stretch via display:grid slots
  *   for generous tap targets. No horizontal overflow anywhere: the map
  *   and grids shrink with their containers.
+ *
+ * Color policy: token/light-dark hybrid. Chrome colors are var(--color-*)
+ * tokens (with light-dark() fallbacks) or explicit light-dark() pairs; the
+ * schematic map's graticule scrims are color-mix over --color-text-primary.
+ * The four support-channel glyph tiles are deliberately scheme-locked brand
+ * art: their gradient stops and white glyph stay literal in both themes,
+ * pinned with colorScheme: 'dark' (white foreground on a fixed gradient).
  */
 
 import {useState, type CSSProperties, type ReactNode} from 'react';
@@ -115,12 +122,12 @@ import {
 // ============= STYLES =============
 
 const colors = {
-  surface: 'var(--color-background, #FFFFFF)',
-  surfaceMuted: 'var(--color-background-muted, #F5F5F7)',
-  accent: 'var(--color-accent, #0171E3)',
-  accentMuted: 'var(--color-accent-muted, #EAF2FF)',
-  border: 'var(--color-border, #E2E2E6)',
-  success: 'var(--color-data-categorical-green, #0B991F)',
+  surface: 'var(--color-background, light-dark(#FFFFFF, #1E2027))',
+  surfaceMuted: 'var(--color-background-muted, light-dark(#F5F5F7, #232329))',
+  accent: 'var(--color-accent, light-dark(#0171E3, #4C9EFF))',
+  accentMuted: 'var(--color-accent-muted, light-dark(#EAF2FF, #1B2A40))',
+  border: 'var(--color-border, light-dark(#E2E2E6, #3A3D45))',
+  success: 'var(--color-data-categorical-green, light-dark(#0B991F, #3DBD52))',
 };
 
 const styles: Record<string, CSSProperties> = {
@@ -156,18 +163,18 @@ const styles: Record<string, CSSProperties> = {
     border: `1px solid ${colors.border}`,
     overflow: 'hidden',
     background:
-      'radial-gradient(ellipse 42% 34% at 18% 34%, rgba(1, 113, 227, 0.14) 0%, transparent 70%), ' +
-      'radial-gradient(ellipse 36% 30% at 52% 26%, rgba(1, 113, 227, 0.12) 0%, transparent 70%), ' +
-      'radial-gradient(ellipse 40% 32% at 80% 60%, rgba(1, 113, 227, 0.12) 0%, transparent 70%), ' +
-      'linear-gradient(180deg, #F3F7FD 0%, #EAF1F9 100%)',
+      'radial-gradient(ellipse 42% 34% at 18% 34%, light-dark(rgba(1, 113, 227, 0.14), rgba(76, 158, 255, 0.18)) 0%, transparent 70%), ' +
+      'radial-gradient(ellipse 36% 30% at 52% 26%, light-dark(rgba(1, 113, 227, 0.12), rgba(76, 158, 255, 0.15)) 0%, transparent 70%), ' +
+      'radial-gradient(ellipse 40% 32% at 80% 60%, light-dark(rgba(1, 113, 227, 0.12), rgba(76, 158, 255, 0.15)) 0%, transparent 70%), ' +
+      'linear-gradient(180deg, light-dark(#F3F7FD, #171E2B) 0%, light-dark(#EAF1F9, #121924) 100%)',
   },
   // Faint graticule so the surface reads as a map, not a blank panel.
   mapGrid: {
     position: 'absolute',
     inset: 0,
     backgroundImage:
-      'repeating-linear-gradient(0deg, rgba(15, 23, 42, 0.05) 0, rgba(15, 23, 42, 0.05) 1px, transparent 1px, transparent 40px), ' +
-      'repeating-linear-gradient(90deg, rgba(15, 23, 42, 0.05) 0, rgba(15, 23, 42, 0.05) 1px, transparent 1px, transparent 40px)',
+      'repeating-linear-gradient(0deg, color-mix(in oklab, var(--color-text-primary) 5%, transparent) 0, color-mix(in oklab, var(--color-text-primary) 5%, transparent) 1px, transparent 1px, transparent 40px), ' +
+      'repeating-linear-gradient(90deg, color-mix(in oklab, var(--color-text-primary) 5%, transparent) 0, color-mix(in oklab, var(--color-text-primary) 5%, transparent) 1px, transparent 1px, transparent 40px)',
   },
   mapDot: {
     position: 'absolute',
@@ -175,14 +182,18 @@ const styles: Record<string, CSSProperties> = {
     height: 12,
     borderRadius: '50%',
     backgroundColor: colors.accent,
-    border: '2px solid #FFFFFF',
-    boxShadow: '0 1px 3px rgba(15, 23, 42, 0.3)',
+    // Ring matches the map base so dots read as cutouts in both schemes.
+    border: '2px solid light-dark(#FFFFFF, #121924)',
+    boxShadow:
+      '0 1px 3px light-dark(rgba(15, 23, 42, 0.3), rgba(0, 0, 0, 0.5))',
     transform: 'translate(-50%, -50%)',
   },
   mapDotSelected: {
     width: 16,
     height: 16,
-    boxShadow: `0 0 0 4px rgba(1, 113, 227, 0.25), 0 1px 3px rgba(15, 23, 42, 0.3)`,
+    boxShadow:
+      '0 0 0 4px light-dark(rgba(1, 113, 227, 0.25), rgba(76, 158, 255, 0.35)), ' +
+      '0 1px 3px light-dark(rgba(15, 23, 42, 0.3), rgba(0, 0, 0, 0.5))',
   },
   // City label chip pinned above the selected dot.
   mapChip: {
@@ -193,10 +204,14 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 999,
     backgroundColor: colors.surface,
     border: `1px solid ${colors.border}`,
-    boxShadow: '0 1px 3px rgba(15, 23, 42, 0.14)',
+    boxShadow:
+      '0 1px 3px light-dark(rgba(15, 23, 42, 0.14), rgba(0, 0, 0, 0.4))',
     whiteSpace: 'nowrap',
   },
   // Gradient glyph tiles stand in for channel art — no network assets.
+  // Scheme-locked brand art (see the Color policy header note): the
+  // gradients and white glyph stay literal in both themes, and
+  // colorScheme: 'dark' pins anything nested inside the tile.
   glyphTile: {
     width: 44,
     height: 44,
@@ -206,6 +221,7 @@ const styles: Record<string, CSSProperties> = {
     justifyContent: 'center',
     borderRadius: 'var(--radius-container)',
     color: '#FFFFFF',
+    colorScheme: 'dark',
   },
   glyphChat: {
     background: 'linear-gradient(135deg, #6366F1 0%, #2563EB 100%)',
@@ -234,7 +250,8 @@ const styles: Record<string, CSSProperties> = {
     justifyContent: 'center',
     borderRadius: '50%',
     backgroundColor: colors.success,
-    color: '#FFFFFF',
+    // White check on the light green; flips dark on the brighter dark green.
+    color: 'light-dark(#FFFFFF, #0A2F12)',
   },
   // Muted band separating the FAQ half from the contact half.
   halfBand: {

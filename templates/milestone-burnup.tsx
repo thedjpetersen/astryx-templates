@@ -69,6 +69,10 @@
  *   drops from padding 6 to 3. Scope-change markers are 40x40 at every
  *   width, and annotation detail opens on tap, not hover.
  *
+ * Color policy: token-pure — every color is a var(--color-*) token or a
+ * color-mix() over tokens, so the whole surface tracks light-dark()
+ * automatically. No scheme-locked surfaces.
+ *
  * Container policy (analytics archetype): frame-first page chrome; Cards
  * wrap the KPI Stats, the chart widget, and the milestone table. The
  * chart is styled divs/buttons plus one static SVG — CSS colors and
@@ -124,12 +128,12 @@ import {
 
 // Chart palette via Astryx data tokens (CSS custom properties).
 const chartColors = {
-  scope: 'var(--color-data-categorical-blue, #0171E3)',
-  completed: 'var(--color-data-categorical-green, #0B991F)',
-  forecast: 'var(--color-data-categorical-purple, #6B1EFD)',
-  grid: 'var(--color-border, #E4E4E7)',
-  axisText: 'var(--color-text-secondary, #6E6E76)',
-  target: 'var(--color-error, #D92D20)',
+  scope: 'var(--color-data-categorical-blue)',
+  completed: 'var(--color-data-categorical-green)',
+  forecast: 'var(--color-data-categorical-purple)',
+  grid: 'var(--color-border)',
+  axisText: 'var(--color-text-secondary)',
+  target: 'var(--color-error)',
 };
 
 const styles: Record<string, CSSProperties> = {
@@ -171,7 +175,7 @@ const styles: Record<string, CSSProperties> = {
     width: 14,
     height: 14,
     borderRadius: '50%',
-    backgroundColor: 'var(--color-surface, #FFFFFF)',
+    backgroundColor: 'var(--color-background-card)',
     border: `3px solid ${chartColors.scope}`,
     boxSizing: 'border-box',
   },
@@ -180,7 +184,7 @@ const styles: Record<string, CSSProperties> = {
     height: 16,
     borderRadius: '50%',
     backgroundColor: chartColors.scope,
-    border: '3px solid var(--color-surface, #FFFFFF)',
+    border: '3px solid var(--color-background-card)',
     boxShadow: `0 0 0 2px ${chartColors.scope}`,
     boxSizing: 'border-box',
   },
@@ -200,7 +204,7 @@ const styles: Record<string, CSSProperties> = {
     width: 16,
     height: 10,
     borderRadius: 2,
-    backgroundColor: 'color-mix(in srgb, #0B991F 25%, transparent)',
+    backgroundColor: `color-mix(in srgb, ${chartColors.completed} 25%, transparent)`,
     border: `1px solid ${chartColors.completed}`,
     boxSizing: 'border-box',
   },
@@ -208,7 +212,7 @@ const styles: Record<string, CSSProperties> = {
     width: 16,
     height: 10,
     borderRadius: 2,
-    backgroundColor: 'color-mix(in srgb, #6B1EFD 18%, transparent)',
+    backgroundColor: `color-mix(in srgb, ${chartColors.forecast} 18%, transparent)`,
     border: `1px dashed ${chartColors.forecast}`,
     boxSizing: 'border-box',
   },
@@ -224,7 +228,7 @@ const styles: Record<string, CSSProperties> = {
     minWidth: 140,
   },
   detailCell: {
-    backgroundColor: 'var(--color-surface-sunken, #F7F7F8)',
+    backgroundColor: 'var(--color-background-muted)',
   },
   workItemRow: {
     display: 'flex',

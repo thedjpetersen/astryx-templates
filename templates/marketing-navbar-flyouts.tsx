@@ -81,6 +81,16 @@
  * for the dark surfaces) standing in for page content. Fixtures are
  * fixed — no Date.now, no randomness, no network assets or real imagery;
  * the featured-post thumb and hero art are gradient panels.
+ *
+ * Color policy: token/light-dark hybrid. The dark-variant surfaces (the
+ * overlay bar, gradient hero, mega menu, eyebrow row, and dark drawer —
+ * all the DARK_* / EYEBROW_BG constants) are deliberately scheme-locked
+ * with colorScheme:'dark' so the "dark navbar over hero" exhibit reads
+ * identically in both app themes; text and hairlines on those surfaces
+ * use literals too so they stay readable. The Nimbus brand-mark gradient
+ * (indigo→sky with a white glyph) is brand art, likewise locked. All
+ * other chrome — light bars, flyout panels, icon discs, scrims, and
+ * shadows — uses Astryx tokens or explicit light-dark() pairs.
  */
 
 import {useEffect, useRef, useState, type CSSProperties} from 'react';
@@ -127,7 +137,8 @@ import type {ComponentType, SVGProps} from 'react';
 
 // ============= PAINT CONSTANTS =============
 // Dark navbar/hero/mega surfaces use literal fixture colors locked with
-// colorScheme:'dark' so they read identically in both app themes.
+// colorScheme:'dark' so they read identically in both app themes (see
+// the Color policy note in the header doc).
 
 const DARK_TEXT = '#FFFFFF';
 const DARK_TEXT_SOFT = 'rgba(226, 232, 240, 0.84)';
@@ -135,8 +146,12 @@ const DARK_TEXT_FAINT = 'rgba(226, 232, 240, 0.62)';
 const DARK_SURFACE = '#0B1220';
 const DARK_HAIRLINE = 'rgba(148, 163, 184, 0.22)';
 const EYEBROW_BG = '#0F172A';
-const ACCENT_DISC_LIGHT_BG = 'rgba(99, 102, 241, 0.12)';
-const ACCENT_DISC_LIGHT_FG = '#4F46E5';
+// The "light-tone" disc sits on scheme-adaptive token surfaces, so it
+// carries an explicit light-dark() pair; the DARK variants live only on
+// the colorScheme:'dark' locked surfaces above and stay literal.
+const ACCENT_DISC_LIGHT_BG =
+  'light-dark(rgba(99, 102, 241, 0.12), rgba(129, 140, 248, 0.18))';
+const ACCENT_DISC_LIGHT_FG = 'light-dark(#4F46E5, #A5B4FC)';
 const ACCENT_DISC_DARK_BG = 'rgba(255, 255, 255, 0.08)';
 const ACCENT_DISC_DARK_FG = '#A5B4FC';
 
@@ -240,6 +255,8 @@ const styles: Record<string, CSSProperties> = {
     whiteSpace: 'nowrap',
     color: 'inherit',
   },
+  // Brand art: the Nimbus gradient mark is scheme-locked so the logo is
+  // identical in both themes (see Color policy); glyph literal to match.
   brandMark: {
     width: 28,
     height: 28,
@@ -247,6 +264,7 @@ const styles: Record<string, CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    colorScheme: 'dark',
     color: '#FFFFFF',
     backgroundImage: 'linear-gradient(135deg, #6366F1, #0EA5E9)',
     flexShrink: 0,
@@ -316,7 +334,8 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 14,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background)',
-    boxShadow: 'var(--shadow-high, 0 18px 40px rgba(15, 23, 42, 0.16))',
+    boxShadow:
+      'var(--shadow-high, 0 18px 40px light-dark(rgba(15, 23, 42, 0.16), rgba(0, 0, 0, 0.5)))',
     padding: 'var(--spacing-2)',
     zIndex: 30,
     display: 'flex',
@@ -526,7 +545,8 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 14,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background)',
-    boxShadow: 'var(--shadow-high, 0 18px 40px rgba(15, 23, 42, 0.16))',
+    boxShadow:
+      'var(--shadow-high, 0 18px 40px light-dark(rgba(15, 23, 42, 0.16), rgba(0, 0, 0, 0.5)))',
     overflow: 'hidden',
     zIndex: 30,
   },
@@ -579,7 +599,7 @@ const styles: Record<string, CSSProperties> = {
   drawerScrim: {
     position: 'absolute',
     inset: 0,
-    backgroundColor: 'rgba(15, 23, 42, 0.48)',
+    backgroundColor: 'light-dark(rgba(15, 23, 42, 0.48), rgba(2, 6, 23, 0.64))',
   },
   drawerPanel: {
     position: 'relative',
@@ -587,7 +607,7 @@ const styles: Record<string, CSSProperties> = {
     height: '100%',
     boxSizing: 'border-box',
     backgroundColor: 'var(--color-background)',
-    boxShadow: '-16px 0 40px rgba(2, 6, 23, 0.3)',
+    boxShadow: '-16px 0 40px light-dark(rgba(2, 6, 23, 0.3), rgba(0, 0, 0, 0.55))',
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-2)',

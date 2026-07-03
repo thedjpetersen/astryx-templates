@@ -91,7 +91,7 @@ const styles: Record<string, CSSProperties> = {
     border: '1px solid var(--color-border)',
     borderRadius: 'var(--radius-container)',
     backgroundColor: 'var(--color-background-card)',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+    boxShadow: '0 2px 8px light-dark(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.45))',
     opacity: 0,
     transition: 'opacity 120ms ease',
     pointerEvents: 'none',
@@ -139,10 +139,13 @@ const styles: Record<string, CSSProperties> = {
   chartBody: {minWidth: 0},
 };
 
-// Chart series colors via Astryx design tokens (CSS custom properties)
+// Chart series colors via Astryx design tokens (CSS custom properties);
+// fallbacks are light-dark() pairs so the chart stays legible in dark mode
+// even when the categorical tokens are absent.
 const chartColors = {
-  selfServe: 'var(--color-data-categorical-blue, #0171E3)',
-  salesAssisted: 'var(--color-data-categorical-green, #0B991F)',
+  selfServe: 'var(--color-data-categorical-blue, light-dark(#0171E3, #4C9EFF))',
+  salesAssisted:
+    'var(--color-data-categorical-green, light-dark(#0B991F, #3FCF57))',
 };
 
 // ============= DATA =============

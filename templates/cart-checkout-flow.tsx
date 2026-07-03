@@ -66,6 +66,13 @@
  * interactions — steppers, remove, promo apply/remove, address + method +
  * card selection, billing toggle, edit links, place order, restore cart —
  * are wired to useState against the fixtures.
+ *
+ * Color policy: the product-art gradient swatches in INITIAL_CART are
+ * deliberately scheme-locked — they stand in for product photography
+ * (which never re-renders for dark mode), so their hex gradient stops stay
+ * literal and the thumb styles pin colorScheme: 'light'. No text sits on
+ * the swatches (they are aria-hidden decoration). Every other color in
+ * this file is an Astryx token and inherits light-dark() from the theme.
  */
 
 import {useState, type CSSProperties, type ReactNode} from 'react';
@@ -172,7 +179,7 @@ const styles: Record<string, CSSProperties> = {
   },
   circleDone: {
     backgroundColor: 'var(--color-accent)',
-    color: 'var(--color-text-inverse, #fff)',
+    color: 'var(--color-on-accent, var(--color-text-inverse))',
   },
   circleCurrent: {
     border: '2px solid var(--color-accent)',
@@ -194,18 +201,23 @@ const styles: Record<string, CSSProperties> = {
   connectorDone: {
     backgroundColor: 'var(--color-accent)',
   },
-  // Product art: fixed gradient swatches, never network images.
+  // Product art: fixed gradient swatches, never network images. Scheme-
+  // locked (see "Color policy" in the header doc): the gradients emulate
+  // product photos, so they keep literal hex stops and a pinned light
+  // colorScheme instead of adapting to dark mode.
   thumb: {
     width: 56,
     height: 56,
     borderRadius: 'var(--radius-md, 8px)',
     flexShrink: 0,
+    colorScheme: 'light',
   },
   thumbSmall: {
     width: 32,
     height: 32,
     borderRadius: 'var(--radius-sm, 6px)',
     flexShrink: 0,
+    colorScheme: 'light',
   },
   cartRow: {
     paddingBlock: 'var(--spacing-3)',

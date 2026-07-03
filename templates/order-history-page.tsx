@@ -91,6 +91,14 @@
  * pills, not Cards, so they read as summary chrome rather than widgets.
  * All fixtures are fixed — no clocks, randomness, or network assets; item
  * thumbnails and the invoice header are styled gradient placeholders.
+ *
+ * Color policy: all chrome uses semantic tokens and adapts to light/dark.
+ * The ONLY scheme-locked surfaces are the product-thumbnail gradient tiles
+ * (each item's `gradient` literal + styles.itemArt): they stand in for
+ * product photography, so like real images they keep identical brand
+ * gradients in both schemes (colorScheme locked to 'light' on the tile),
+ * and the overlaid icon stays a literal #FFFFFF — not a token — so it
+ * remains readable on the fixed gradient regardless of scheme.
  */
 
 import {useMemo, useState, type CSSProperties} from 'react';
@@ -192,7 +200,11 @@ const styles: Record<string, CSSProperties> = {
   },
 
   // ---- detailed order cards ----
-  // Gradient placeholder thumbnails stand in for product photography.
+  // Scheme-locked surface (see header Color policy): gradient placeholder
+  // thumbnails stand in for product photography, so their fixture gradients
+  // never flip with the color scheme; colorScheme is pinned and the overlay
+  // icon stays literal white so it reads on the fixed gradient in both
+  // schemes.
   itemArt: {
     display: 'flex',
     alignItems: 'center',
@@ -200,6 +212,7 @@ const styles: Record<string, CSSProperties> = {
     width: 48,
     height: 48,
     borderRadius: 10,
+    colorScheme: 'light',
     color: '#FFFFFF',
     flexShrink: 0,
   },
@@ -239,7 +252,7 @@ const styles: Record<string, CSSProperties> = {
   },
   stripNodeDone: {
     backgroundColor: 'var(--color-accent)',
-    color: '#FFFFFF',
+    color: 'var(--color-on-accent)',
   },
   stripNodeActive: {
     border: '2px solid var(--color-accent)',
@@ -253,7 +266,7 @@ const styles: Record<string, CSSProperties> = {
   },
   stripNodeError: {
     backgroundColor: 'var(--color-error)',
-    color: '#FFFFFF',
+    color: 'var(--color-on-error)',
   },
   stripBar: {
     flex: 1,

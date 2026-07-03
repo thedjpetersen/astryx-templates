@@ -50,6 +50,16 @@
  *   shape fixtures paint at 96px thumbnails and the 800px stage; markers
  *   paint as fixed 24px circles at every stage width.
  *
+ * Color policy: the slide canvas is scheme-locked "paper" — presentation
+ * slides render as white print surfaces in every color scheme, so
+ * styles.canvas pins colorScheme:'light' and everything painted on the paper
+ * (SLIDE_* constants: text, bullets, stat tiles, image placeholders, accent
+ * bars) stays a raw literal, never a token. Comment markers overlay that same
+ * white paper, so styles.markerDot also pins colorScheme:'light': its white
+ * ring stays a literal and its accent/on-accent tokens resolve to their light
+ * values in both schemes. All chrome outside the paper (rail, stage backdrop,
+ * thread panel, header) is token-pure and follows the app scheme.
+ *
  * Container policy (review-workbench archetype): the page chrome is
  * frame-first rows and panels; Cards are reserved for the slide paper and the
  * comment threads. All counts (rail Badges, header totals) recompute live
@@ -101,7 +111,9 @@ import {
 
 // ============= SLIDE PAINT CONSTANTS =============
 // Slide surfaces are "paper": literal light colors locked with
-// colorScheme:'light' so the deck looks identical in dark mode.
+// colorScheme:'light' (styles.canvas) so the deck looks identical in dark
+// mode. Intentional raw literals — see the "Color policy" note in the header
+// doc comment; do not convert these to tokens.
 
 const SLIDE_TEXT = '#1C2733';
 const SLIDE_MUTED = '#6E7D8B';
@@ -173,6 +185,8 @@ const styles: Record<string, CSSProperties> = {
   // Marker host wraps the slide canvas so markers share its coordinate space.
   markerHost: {position: 'relative', width: '100%', height: '100%'},
   // The slide surface: white paper, container for cqw type sizing.
+  // Scheme-locked (see "Color policy" in the header doc): literal white
+  // paper in both schemes, colorScheme:'light' pinned below.
   canvas: {
     position: 'relative',
     width: '100%',
@@ -207,12 +221,16 @@ const styles: Record<string, CSSProperties> = {
     marginLeft: -20,
     marginTop: -20,
   },
-  // The visible 24px circle inside the marker button.
+  // The visible 24px circle inside the marker button. It paints over the
+  // scheme-locked white paper, so it is locked too (see "Color policy" in
+  // the header doc): the ring stays literal white against the paper and the
+  // pinned colorScheme keeps its accent tokens on light values.
   markerDot: {
     width: 24,
     height: 24,
     borderRadius: '50%',
     border: '2px solid #FFFFFF',
+    colorScheme: 'light',
     boxShadow: 'var(--shadow-med)',
     display: 'flex',
     alignItems: 'center',

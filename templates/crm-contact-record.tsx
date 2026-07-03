@@ -176,18 +176,22 @@ const styles: Record<string, CSSProperties> = {
   },
   timestampCell: {whiteSpace: 'nowrap'},
   // Gradient placeholder monogram for the company — no network images.
+  // Accent fallback and monogram text use light-dark() pairs: the indigo
+  // stop brightens slightly in dark mode and the glyph softens off pure
+  // white, keeping contrast against both gradient ends in either scheme.
   companyMark: {
     width: 40,
     height: 40,
     borderRadius: 'var(--radius-container)',
     background:
-      'linear-gradient(135deg, var(--color-background-accent, #4f46e5), ' +
+      'linear-gradient(135deg, ' +
+      'var(--color-background-accent, light-dark(#4f46e5, #6366f1)), ' +
       'var(--color-background-muted))',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
-    color: '#fff',
+    color: 'light-dark(#fff, #eef2ff)',
     fontWeight: 700,
   },
 };

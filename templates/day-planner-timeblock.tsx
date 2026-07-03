@@ -234,7 +234,7 @@ const styles: Record<string, CSSProperties> = {
   },
   blockConflict: {
     boxShadow:
-      'inset 0 0 0 2px var(--color-data-categorical-orange, #EB6E00)',
+      'inset 0 0 0 2px var(--color-data-categorical-orange, light-dark(#EB6E00, #FF9330))',
   },
   blockDragging: {
     opacity: 0.5,
@@ -275,7 +275,8 @@ const styles: Record<string, CSSProperties> = {
     left: 0,
     right: 0,
     height: 2,
-    backgroundColor: 'var(--color-data-categorical-red, #E5484D)',
+    backgroundColor:
+      'var(--color-data-categorical-red, light-dark(#E5484D, #FF6369))',
     opacity: 0.9,
     pointerEvents: 'none',
     zIndex: 3,
@@ -287,7 +288,8 @@ const styles: Record<string, CSSProperties> = {
     width: 8,
     height: 8,
     borderRadius: '50%',
-    backgroundColor: 'var(--color-data-categorical-red, #E5484D)',
+    backgroundColor:
+      'var(--color-data-categorical-red, light-dark(#E5484D, #FF6369))',
   },
   // Backlog rail: pinned header, independently scrolling task list; the
   // whole pane doubles as the un-schedule drop target.
@@ -389,25 +391,27 @@ const AREAS: readonly LifeArea[] = [
   {
     id: 'deep-work',
     label: 'Deep work',
-    color: 'var(--color-data-categorical-blue, #0171E3)',
+    color: 'var(--color-data-categorical-blue, light-dark(#0171E3, #409CFF))',
     token: 'blue',
   },
   {
     id: 'health',
     label: 'Health',
-    color: 'var(--color-data-categorical-green, #0B991F)',
+    color: 'var(--color-data-categorical-green, light-dark(#0B991F, #34C759))',
     token: 'green',
   },
   {
     id: 'errands',
     label: 'Errands',
-    color: 'var(--color-data-categorical-orange, #EB6E00)',
+    color:
+      'var(--color-data-categorical-orange, light-dark(#EB6E00, #FF9330))',
     token: 'orange',
   },
   {
     id: 'personal',
     label: 'Personal',
-    color: 'var(--color-data-categorical-purple, #6B1EFD)',
+    color:
+      'var(--color-data-categorical-purple, light-dark(#6B1EFD, #9D6BFF))',
     token: 'purple',
   },
 ];

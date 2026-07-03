@@ -82,6 +82,18 @@
  * colorScheme:'dark' so they read identically in light and dark app
  * themes. All art is layered CSS — monogram tiles, bar charts, phone
  * frames, and the terminal are divs and spans, never images.
+ *
+ * Color policy: three families of surfaces are deliberately scheme-locked
+ * and keep literal colors — (1) the dark variant-2 panel, its cells, the
+ * terminal, chips, and the dark phone mock (colorScheme:'dark' on
+ * cellDark/darkPanel, inherited by their insets) so the painted dark
+ * fixture reads identically in both app themes; (2) the brand-gradient
+ * phone-mock header (colorScheme:'dark', white label on a saturated
+ * purple→sky wash); (3) the integration monogram tiles, whose fixture
+ * brand colors and white monograms are brand-locked. Everything else —
+ * brand accent discs, hero washes, latency/status fills, the lift
+ * shadow — uses Astryx tokens or explicit light-dark() pairs that keep
+ * the light appearance exact and supply brighter dark equivalents.
  */
 
 import {
@@ -139,6 +151,22 @@ const CHIP_BG = 'rgba(255, 255, 255, 0.12)';
 const CHIP_BORDER = 'rgba(255, 255, 255, 0.22)';
 const TERMINAL_GREEN = '#6EE7B7';
 const TERMINAL_DIM = 'rgba(148, 163, 184, 0.9)';
+
+// Brand accents that sit on token (scheme-flipping) surfaces use explicit
+// light-dark() pairs: light values unchanged, dark values brightened so
+// hue and contrast intent survive the flip.
+const BRAND_PURPLE = 'light-dark(#7C3AED, #A78BFA)';
+const BRAND_PURPLE_TINT =
+  'light-dark(rgba(124, 58, 237, 0.12), rgba(167, 139, 250, 0.16))';
+const BRAND_SKY = 'light-dark(#0EA5E9, #38BDF8)';
+const BRAND_SKY_TINT =
+  'light-dark(rgba(14, 165, 233, 0.12), rgba(56, 189, 248, 0.16))';
+const BRAND_GREEN = 'light-dark(#16A34A, #4ADE80)';
+const BRAND_GREEN_TINT =
+  'light-dark(rgba(22, 163, 74, 0.12), rgba(74, 222, 128, 0.16))';
+const BRAND_ORANGE = 'light-dark(#EA580C, #FB923C)';
+const BRAND_ORANGE_TINT =
+  'light-dark(rgba(249, 115, 22, 0.12), rgba(251, 146, 60, 0.16))';
 
 // ============= STYLES =============
 
@@ -223,7 +251,9 @@ const styles: Record<string, CSSProperties> = {
   },
   cellLifted: {
     transform: 'translateY(-3px)',
-    boxShadow: 'var(--shadow-high, 0 12px 28px rgba(15, 23, 42, 0.16))',
+    boxShadow:
+      'var(--shadow-high, 0 12px 28px ' +
+      'light-dark(rgba(15, 23, 42, 0.16), rgba(0, 0, 0, 0.55)))',
   },
   cellDark: {
     colorScheme: 'dark',
@@ -260,8 +290,12 @@ const styles: Record<string, CSSProperties> = {
     inset: 0,
     borderRadius: 16,
     backgroundImage: [
-      'radial-gradient(70% 60% at 100% 0%, rgba(124, 58, 237, 0.10), transparent 60%)',
-      'radial-gradient(60% 55% at 0% 100%, rgba(14, 165, 233, 0.08), transparent 55%)',
+      'radial-gradient(70% 60% at 100% 0%, ' +
+        'light-dark(rgba(124, 58, 237, 0.10), rgba(167, 139, 250, 0.12)), ' +
+        'transparent 60%)',
+      'radial-gradient(60% 55% at 0% 100%, ' +
+        'light-dark(rgba(14, 165, 233, 0.08), rgba(56, 189, 248, 0.10)), ' +
+        'transparent 55%)',
     ].join(', '),
     pointerEvents: 'none',
   },
@@ -299,7 +333,7 @@ const styles: Record<string, CSSProperties> = {
   latencyFill: {
     height: '100%',
     borderRadius: 5,
-    backgroundImage: 'linear-gradient(90deg, #7C3AED, #0EA5E9)',
+    backgroundImage: `linear-gradient(90deg, ${BRAND_PURPLE}, ${BRAND_SKY})`,
   },
   latencyValue: {
     width: 48,
@@ -323,6 +357,8 @@ const styles: Record<string, CSSProperties> = {
     flexWrap: 'wrap',
     gap: 10,
   },
+  // Scheme-locked (see Color policy): fixture brand tile colors and white
+  // monograms stay literal in both app themes.
   logoTile: {
     width: 44,
     height: 44,
@@ -330,6 +366,7 @@ const styles: Record<string, CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    colorScheme: 'dark',
     color: '#FFFFFF',
     fontSize: 15,
     fontWeight: 700,
@@ -361,8 +398,11 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: 'var(--color-background)',
     overflow: 'hidden',
   },
+  // Scheme-locked (see Color policy): brand gradient art with a literal
+  // white label; identical in both app themes.
   phoneHeader: {
     height: 44,
+    colorScheme: 'dark',
     backgroundImage: 'linear-gradient(120deg, #7C3AED, #0EA5E9)',
     display: 'flex',
     alignItems: 'center',
@@ -396,7 +436,10 @@ const styles: Record<string, CSSProperties> = {
     flex: 1,
     minWidth: 0,
   },
+  // Scheme-locked (see Color policy): the dark phone mock renders only
+  // inside a colorScheme:'dark' cell, so its literals never flip.
   phoneFrameDark: {
+    colorScheme: 'dark',
     border: `1.5px solid ${DARK_CELL_BORDER}`,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
   },
@@ -436,12 +479,16 @@ const styles: Record<string, CSSProperties> = {
     gap: 6,
     height: 96,
   },
+  // Scheme-locked (see Color policy): brand gradient bars on the
+  // colorScheme:'dark' panel.
   chartBar: {
     flex: 1,
     minWidth: 0,
     borderRadius: 4,
     backgroundImage: 'linear-gradient(180deg, #38BDF8, #6366F1)',
   },
+  // Scheme-locked (see Color policy): terminal-dark inset on the
+  // colorScheme:'dark' panel.
   terminal: {
     borderRadius: 10,
     border: `1px solid ${DARK_CELL_BORDER}`,
@@ -565,7 +612,9 @@ const LATENCY_MAX_MS = 48;
 const SECURITY_TOKENS: readonly string[] = ['SSO', 'Encrypted', 'Audit logs'];
 
 // Three integration logo sets — CSS monogram tiles, cycled by clicking
-// the integrations cell. Fixed brand-agnostic fixtures.
+// the integrations cell. Fixed brand-agnostic fixtures; tile backgrounds
+// are brand-locked literals (see Color policy) rendered on the
+// colorScheme:'dark' logoTile style.
 interface LogoFixture {
   name: string;
   monogram: string;
@@ -605,13 +654,17 @@ const LOGO_SETS: readonly {label: string; logos: readonly LogoFixture[]}[] = [
   },
 ];
 
-// Light phone preview: delivery-feed rows (dot color + bar width).
+// Light phone preview: delivery-feed rows (dot color + bar width). The
+// preview screen flips with the app theme, so dots carry light-dark()
+// pairs (light values unchanged, brightened dark equivalents).
+const PHONE_DOT_OK = 'light-dark(#34D399, #6EE7B7)';
+const PHONE_DOT_WARN = 'light-dark(#FBBF24, #FCD34D)';
 const PHONE_ROWS: readonly {dot: string; width: string}[] = [
-  {dot: '#34D399', width: '84%'},
-  {dot: '#34D399', width: '68%'},
-  {dot: '#FBBF24', width: '76%'},
-  {dot: '#34D399', width: '58%'},
-  {dot: '#34D399', width: '72%'},
+  {dot: PHONE_DOT_OK, width: '84%'},
+  {dot: PHONE_DOT_OK, width: '68%'},
+  {dot: PHONE_DOT_WARN, width: '76%'},
+  {dot: PHONE_DOT_OK, width: '58%'},
+  {dot: PHONE_DOT_OK, width: '72%'},
 ];
 
 const TESTIMONIAL = {
@@ -766,7 +819,7 @@ function BentoCell({
   );
 }
 
-/** Icon disc used by callout cells; tint via literal fixture colors. */
+/** Icon disc used by callout cells; tint via light-dark() brand pairs. */
 function IconDisc({
   icon,
   background,
@@ -964,8 +1017,8 @@ export default function MarketingBentoGridTemplate() {
       <HStack gap={2} vAlign="center" wrap="wrap">
         <IconDisc
           icon={ZapIcon}
-          background="rgba(124, 58, 237, 0.12)"
-          color="#7C3AED"
+          background={BRAND_PURPLE_TINT}
+          color={BRAND_PURPLE}
         />
         <Token label="Performance" size="sm" color="purple" />
       </HStack>
@@ -1010,8 +1063,8 @@ export default function MarketingBentoGridTemplate() {
       <HStack gap={2} vAlign="center">
         <IconDisc
           icon={SmartphoneIcon}
-          background="rgba(14, 165, 233, 0.12)"
-          color="#0EA5E9"
+          background={BRAND_SKY_TINT}
+          color={BRAND_SKY}
         />
         <Text weight="semibold">On-call, on your phone</Text>
       </HStack>
@@ -1033,8 +1086,8 @@ export default function MarketingBentoGridTemplate() {
       <HStack gap={2} vAlign="center">
         <IconDisc
           icon={ShieldCheckIcon}
-          background="rgba(22, 163, 74, 0.12)"
-          color="#16A34A"
+          background={BRAND_GREEN_TINT}
+          color={BRAND_GREEN}
         />
         <Text weight="semibold">SOC 2 Type II</Text>
       </HStack>
@@ -1067,8 +1120,8 @@ export default function MarketingBentoGridTemplate() {
       <HStack gap={2} vAlign="center" wrap="wrap">
         <IconDisc
           icon={BlocksIcon}
-          background="rgba(249, 115, 22, 0.12)"
-          color="#EA580C"
+          background={BRAND_ORANGE_TINT}
+          color={BRAND_ORANGE}
         />
         <StackItem size="fill">
           <Text weight="semibold">Drops into your stack</Text>
@@ -1106,8 +1159,8 @@ export default function MarketingBentoGridTemplate() {
       <HStack gap={3} vAlign="start" wrap="wrap">
         <IconDisc
           icon={QuoteIcon}
-          background="rgba(124, 58, 237, 0.12)"
-          color="#7C3AED"
+          background={BRAND_PURPLE_TINT}
+          color={BRAND_PURPLE}
         />
         <StackItem size="fill">
           <VStack gap={2}>
@@ -1295,8 +1348,8 @@ export default function MarketingBentoGridTemplate() {
       <HStack gap={2} vAlign="center">
         <IconDisc
           icon={GlobeIcon}
-          background="rgba(14, 165, 233, 0.12)"
-          color="#0EA5E9"
+          background={BRAND_SKY_TINT}
+          color={BRAND_SKY}
         />
         <Text weight="semibold">34 edge regions</Text>
       </HStack>
@@ -1312,8 +1365,8 @@ export default function MarketingBentoGridTemplate() {
       <HStack gap={2} vAlign="center">
         <IconDisc
           icon={SparklesIcon}
-          background="rgba(124, 58, 237, 0.12)"
-          color="#7C3AED"
+          background={BRAND_PURPLE_TINT}
+          color={BRAND_PURPLE}
         />
         <Text weight="semibold">Start building free</Text>
       </HStack>

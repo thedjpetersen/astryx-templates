@@ -61,6 +61,13 @@
  * variants, Button variants, and semantic tokens — raw hex appears only
  * inside the deliberately decorative avatar gradient fixtures.
  *
+ * Color policy: the eight avatar gradient fixtures and the white initials
+ * text sitting on them are deliberately scheme-locked decorative brand
+ * art — they render identically in light and dark mode, so they keep raw
+ * literals with colorScheme locked to 'light' on the gradientAvatar
+ * surface. Every other color on the page arrives via Astryx
+ * light-dark() tokens and semantic component variants.
+ *
  * Fixture policy: fixed data only; no clocks, no randomness, no network
  * assets or real images — avatars are initials or gradient placeholders.
  * The only timer is the explicit 1.5s loading-button demo.
@@ -148,11 +155,15 @@ const styles: Record<string, CSSProperties> = {
   iconTapTarget: {width: 40, height: 40},
   buttonTapTarget: {height: 40},
   // Gradient-initials avatar placeholders (decorative fixture gradients).
+  // Scheme-locked surface (see Color policy above): the vivid gradients do
+  // not adapt to dark mode, so colorScheme is pinned and the initials text
+  // stays a literal white — a token here would flip against the fixed art.
   gradientAvatar: {
     borderRadius: 999,
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
+    colorScheme: 'light',
     color: '#fff',
     fontWeight: 600,
     flexShrink: 0,
@@ -215,7 +226,8 @@ interface Person {
 }
 
 // Fixed, hand-picked gradient pairs (decorative placeholders — the one
-// sanctioned use of raw hex on this page).
+// sanctioned use of raw hex on this page; scheme-locked, see the header
+// Color policy — these render identically in light and dark mode).
 const PEOPLE: Person[] = [
   {
     id: 'p-1',

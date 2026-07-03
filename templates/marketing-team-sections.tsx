@@ -67,6 +67,16 @@
  * - All member interactions are click/tap (popovers, toasts, collapses) —
  *   no hover-only affordances; the page has no horizontal overflow, only
  *   LayoutContent scrolls vertically (height="fill").
+ *
+ * Color policy: page chrome (cards, directory surface, group headers,
+ * fun-fact well) is token-driven and follows the light/dark scheme. Two
+ * surfaces are deliberately scheme-locked with literal colors and
+ * colorScheme: 'dark' pinned in their styles: (1) the gradient-initial
+ * avatar tiles/chips — brand two-stop gradients with white initials that
+ * must render identically in both schemes; (2) the "We are hiring" band —
+ * a dark marketing panel (#17171c) whose light-on-dark card literals and
+ * green "Open role" pill stay dark in both schemes by design, so text on
+ * those surfaces uses literals, not tokens.
  */
 
 import {useMemo, useState, type CSSProperties, type ReactNode} from 'react';
@@ -117,10 +127,10 @@ const styles: Record<string, CSSProperties> = {
   // is one tap target; the social row lives outside it (no nesting).
   memberCard: {
     boxSizing: 'border-box',
-    border: '1px solid var(--color-border, #d2d2d7)',
+    border: '1px solid var(--color-border)',
     borderRadius: 14,
     padding: 12,
-    background: 'var(--color-background-primary, #ffffff)',
+    background: 'var(--color-background-primary)',
     display: 'flex',
     flexDirection: 'column',
     gap: 10,
@@ -138,13 +148,16 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 10,
   },
   // Deterministic gradient-initial "photo" tiles — square in the grid,
-  // wide banner in the spotlight, small squares in lists.
+  // wide banner in the spotlight, small squares in lists. Scheme-locked:
+  // brand gradients with literal white initials render identically in
+  // both schemes, so colorScheme is pinned (see header Color policy).
   photoTile: {
     aspectRatio: '1 / 1',
     borderRadius: 10,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    colorScheme: 'dark',
     color: '#ffffff',
     fontSize: 40,
     fontWeight: 700,
@@ -157,6 +170,7 @@ const styles: Record<string, CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    colorScheme: 'dark',
     color: '#ffffff',
     fontSize: 56,
     fontWeight: 700,
@@ -171,6 +185,7 @@ const styles: Record<string, CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    colorScheme: 'dark',
     color: '#ffffff',
     fontSize: 13,
     fontWeight: 700,
@@ -180,10 +195,10 @@ const styles: Record<string, CSSProperties> = {
   // Spotlight cards share the grid-card surface but breathe more.
   spotlightCard: {
     boxSizing: 'border-box',
-    border: '1px solid var(--color-border, #d2d2d7)',
+    border: '1px solid var(--color-border)',
     borderRadius: 16,
     padding: 16,
-    background: 'var(--color-background-primary, #ffffff)',
+    background: 'var(--color-background-primary)',
     display: 'flex',
     flexDirection: 'column',
     gap: 12,
@@ -191,9 +206,9 @@ const styles: Record<string, CSSProperties> = {
   // Directory: one bordered surface; group headers and rows are buttons
   // with >=44px tap heights.
   directorySurface: {
-    border: '1px solid var(--color-border, #d2d2d7)',
+    border: '1px solid var(--color-border)',
     borderRadius: 14,
-    background: 'var(--color-background-primary, #ffffff)',
+    background: 'var(--color-background-primary)',
     overflow: 'hidden',
   },
   groupHeader: {
@@ -204,8 +219,8 @@ const styles: Record<string, CSSProperties> = {
     minHeight: 48,
     padding: '8px 14px',
     border: 'none',
-    borderTop: '1px solid var(--color-border, #d2d2d7)',
-    background: 'var(--color-background-secondary, #f5f5f7)',
+    borderTop: '1px solid var(--color-border)',
+    background: 'var(--color-background-secondary)',
     font: 'inherit',
     color: 'inherit',
     textAlign: 'start',
@@ -220,7 +235,7 @@ const styles: Record<string, CSSProperties> = {
     minHeight: 52,
     padding: '8px 14px',
     border: 'none',
-    borderTop: '1px solid var(--color-border, #d2d2d7)',
+    borderTop: '1px solid var(--color-border)',
     background: 'none',
     font: 'inherit',
     color: 'inherit',
@@ -228,11 +243,14 @@ const styles: Record<string, CSSProperties> = {
     cursor: 'pointer',
   },
   directoryRowText: {minWidth: 0, flex: 1},
-  // Dark hiring band + light-on-dark mini cards. Colors are explicit so
-  // the band stays dark in both themes.
+  // Dark hiring band + light-on-dark mini cards. Scheme-locked: colors
+  // are explicit literals and colorScheme is pinned to 'dark' so the band
+  // (and any tokens inside it) stays dark in both themes (see header
+  // Color policy).
   hiringBand: {
     borderRadius: 16,
     padding: 20,
+    colorScheme: 'dark',
     background: '#17171c',
     display: 'flex',
     flexDirection: 'column',
@@ -293,7 +311,7 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'flex-start',
     borderRadius: 10,
     padding: 10,
-    background: 'var(--color-background-secondary, #f5f5f7)',
+    background: 'var(--color-background-secondary)',
   },
   // Link-toast: fixed bottom-right, above everything.
   toastWrap: {

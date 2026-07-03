@@ -57,6 +57,14 @@
  * theme because they reproduce wire-format text. MetadataList carries
  * response headers and signature fields.
  *
+ * Color policy: token-first — chrome colors come from var(--color-*) tokens
+ * or explicit light-dark() pairs. The ONLY scheme-locked surfaces are the
+ * two terminal-dark code blocks (payload JSON tree and raw response body):
+ * they reproduce wire-format text on a fixed dark palette (CODE below),
+ * stay dark in both themes, and lock `colorScheme: 'dark'` in the codeBlock
+ * style; all text/highlights sitting on them use CODE literals, not tokens,
+ * so contrast is guaranteed regardless of theme.
+ *
  * Fixture policy: fixed data only — no Date.now, no Math.random, no
  * network assets. Attempt clocks are pre-formatted strings; retry clocks
  * inside a run derive from the previous attempt plus its fixed backoff;
@@ -116,9 +124,12 @@ import {
 } from 'lucide-react';
 
 // ============= CODE PALETTE =============
-// The payload JSON tree and the raw response body reproduce wire-format
-// text, so they keep a fixed dark palette instead of themed Text colors
-// (dark in both themes).
+// Scheme-locked surface (see "Color policy" in the header): the payload
+// JSON tree and the raw response body reproduce wire-format text, so they
+// keep this fixed dark palette instead of themed Text colors in BOTH
+// themes — the codeBlock style locks `colorScheme: 'dark'` to match, and
+// every color painted on the surface (including the selection highlight)
+// is a deliberate literal from this table, never a theme token.
 
 const CODE = {
   bg: '#0d1117',
@@ -184,8 +195,10 @@ const styles: Record<string, CSSProperties> = {
     cursor: 'pointer',
   },
   chipActive: {
-    border: '1px solid var(--color-border-accent, #388bfd)',
-    background: 'var(--color-background-accent-subtle, rgba(56,139,253,0.12))',
+    border:
+      '1px solid var(--color-border-accent, light-dark(#388bfd, #58a6ff))',
+    background:
+      'var(--color-background-accent-subtle, light-dark(rgba(56, 139, 253, 0.12), rgba(56, 139, 253, 0.24)))',
     color: 'var(--color-text)',
   },
   chipCompact: {minHeight: 40},
@@ -202,7 +215,10 @@ const styles: Record<string, CSSProperties> = {
   detailTabs: {paddingInline: 'var(--spacing-3)'},
   detailSection: {padding: 'var(--spacing-3)'},
   // Dark code surfaces: mono, scroll in x inside their own bodies.
+  // Scheme-locked (stays dark in light mode too) — colorScheme pinned so
+  // native UI (scrollbars, selection) matches the fixed CODE palette.
   codeBlock: {
+    colorScheme: 'dark',
     borderRadius: 6,
     backgroundColor: CODE.bg,
     border: `1px solid ${CODE.border}`,

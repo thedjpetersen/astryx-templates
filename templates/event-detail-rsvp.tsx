@@ -71,6 +71,13 @@
  * discussion. The hero band and map placeholder are painted with literal
  * fixture gradients (colorScheme-locked) — no clocks, no randomness, no
  * network assets or real imagery anywhere.
+ *
+ * Color policy: the hero band is the only scheme-locked surface — its dusk
+ * indigo gradient stack, decorative rings, chips, and on-gradient text are
+ * literal colors under colorScheme:'dark' so the hero art reads identically
+ * in light and dark app themes (brand gradient poster art, not a themable
+ * surface). Everything else is tokens, color-mix() over tokens, or explicit
+ * light-dark() pairs (schematic map park/water tints).
  */
 
 import {useState, type CSSProperties} from 'react';
@@ -391,8 +398,10 @@ const styles: Record<string, CSSProperties> = {
     width: '16%',
     height: '30%',
     borderRadius: 8,
-    backgroundColor: 'rgba(52, 168, 83, 0.18)',
-    border: '1px solid rgba(52, 168, 83, 0.35)',
+    backgroundColor:
+      'light-dark(rgba(52, 168, 83, 0.18), rgba(52, 168, 83, 0.26))',
+    border:
+      '1px solid light-dark(rgba(52, 168, 83, 0.35), rgba(129, 201, 149, 0.40))',
   },
   mapWater: {
     position: 'absolute',
@@ -401,8 +410,10 @@ const styles: Record<string, CSSProperties> = {
     width: '34%',
     height: '52%',
     borderRadius: '50%',
-    backgroundColor: 'rgba(66, 133, 244, 0.16)',
-    border: '1px solid rgba(66, 133, 244, 0.30)',
+    backgroundColor:
+      'light-dark(rgba(66, 133, 244, 0.16), rgba(66, 133, 244, 0.24))',
+    border:
+      '1px solid light-dark(rgba(66, 133, 244, 0.30), rgba(138, 180, 248, 0.40))',
   },
   // Venue pin: accent disc centered on the block east of the avenue
   // crossing, with a label chip pinned beneath it.
@@ -1115,8 +1126,8 @@ export default function EventDetailRsvpTemplate() {
         <VStack gap={3}>
           <ResponseCountRow
             icon={CheckIcon}
-            tint="var(--color-success, #1E8E3E)"
-            tintBg="rgba(52, 168, 83, 0.14)"
+            tint="var(--color-success)"
+            tintBg="color-mix(in srgb, var(--color-success) 14%, transparent)"
             label="Going"
             count={goingTotal}
             isYou={rsvp === 'going'}
@@ -1124,8 +1135,8 @@ export default function EventDetailRsvpTemplate() {
           />
           <ResponseCountRow
             icon={CircleHelpIcon}
-            tint="var(--color-warning, #B26A00)"
-            tintBg="rgba(249, 171, 0, 0.16)"
+            tint="var(--color-warning)"
+            tintBg="color-mix(in srgb, var(--color-warning) 16%, transparent)"
             label="Maybe"
             count={maybeTotal}
             isYou={rsvp === 'maybe'}
@@ -1133,8 +1144,8 @@ export default function EventDetailRsvpTemplate() {
           />
           <ResponseCountRow
             icon={XIcon}
-            tint="var(--color-error, #C5221F)"
-            tintBg="rgba(217, 48, 37, 0.12)"
+            tint="var(--color-error)"
+            tintBg="color-mix(in srgb, var(--color-error) 12%, transparent)"
             label="Cannot go"
             count={declinedTotal}
             isYou={rsvp === 'declined'}

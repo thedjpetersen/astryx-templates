@@ -55,6 +55,16 @@
  * surface, so they never use themed Text colors). All chrome around them
  * (toolbars, tabs, footers) is plain frame rows, not Cards.
  *
+ * Color policy: the editor body and console body are deliberately
+ * scheme-locked terminal-dark surfaces — they keep the raw CODE hex
+ * palette and set `colorScheme: 'dark'` inline so scrollbars and any
+ * light-dark() tokens inside resolve dark in both themes. Everything
+ * rendered on those surfaces (gutter, syntax spans, console entries,
+ * table grid, error block, hint) uses CODE literals, never themed
+ * tokens, so it stays readable regardless of the page scheme. All
+ * chrome outside the two dark bodies uses only themed components and
+ * tokens, so it follows light/dark automatically.
+ *
  * Fixture policy: fixed data only — no Date.now, no Math.random, no
  * network assets. Entry timestamps are frozen strings, durations are
  * per-example constants, run numbers advance deterministically from
@@ -98,6 +108,9 @@ import {
 // ============= CODE PALETTE =============
 // The editor and console reproduce a code surface, so they keep a fixed
 // dark palette instead of themed Text colors (dark in both themes).
+// Scheme-locked on purpose: these literals stay raw hex — do NOT swap
+// them for theme tokens. The surfaces that use them declare
+// `colorScheme: 'dark'` (see editorBody / consoleBody below).
 
 const CODE = {
   bg: '#0d1117',
@@ -138,9 +151,11 @@ const styles: Record<string, CSSProperties> = {
   // The Selector cell gives way (truncates) before the actions clip.
   toolbarSelector: {minWidth: 0},
   // Dark editor body: mono, scrolls both axes, lines never wrap.
+  // Scheme-locked terminal surface (see Color policy in the header).
   editorBody: {
     minHeight: 0,
     overflow: 'auto',
+    colorScheme: 'dark',
     backgroundColor: CODE.bg,
     fontFamily: MONO_FONT,
     fontSize: 12.5,
@@ -178,9 +193,11 @@ const styles: Record<string, CSSProperties> = {
   },
   consoleTabs: {paddingInline: 'var(--spacing-2)'},
   // Dark console body: mono output stream, scrolls independently.
+  // Scheme-locked terminal surface (see Color policy in the header).
   consoleBody: {
     minHeight: 0,
     overflow: 'auto',
+    colorScheme: 'dark',
     backgroundColor: CODE.bg,
     fontFamily: MONO_FONT,
     fontSize: 12.5,
@@ -1271,7 +1288,9 @@ export default function ReplPlaygroundTemplate() {
           style={{...styles.consoleBody, height: '100%'}}>
           {!isRun ? (
             <div style={styles.consoleHint}>
-              <Icon icon={TerminalIcon} size="lg" color="secondary" />
+              {/* Inherits CODE.dim — themed colors are off-limits on the
+                  scheme-locked dark console surface. */}
+              <Icon icon={TerminalIcon} size="lg" color="inherit" />
               <span>
                 Press Run to execute {example.file} — its captured output
                 will appear here.

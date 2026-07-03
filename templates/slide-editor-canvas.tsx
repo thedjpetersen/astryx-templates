@@ -58,6 +58,15 @@
  * Container policy (edit-canvas archetype): the page chrome is frame-first
  * rows and panels; the only Cards are the slide surfaces themselves — white
  * regardless of theme (colorScheme locked to light, like real slide paper).
+ *
+ * Color policy: the slide canvas is deliberately scheme-locked — the canvas
+ * style sets colorScheme:'light' and paints literal light colors (#FFFFFF
+ * paper, the SLIDE_* ink/muted/accent palette, and the selection
+ * ring/handle/guide chrome) so slides render as print paper in dark mode
+ * too, exactly like exported PPTX pages. Every raw color literal in this
+ * file sits on that locked surface and must stay a literal (not a token)
+ * to remain readable there; all chrome outside the canvas uses Astryx
+ * light-dark() tokens and follows the app scheme.
  * All edits flow through one history stack so Undo/Redo replay property
  * changes deterministically — no clocks, randomness, or network assets.
  */

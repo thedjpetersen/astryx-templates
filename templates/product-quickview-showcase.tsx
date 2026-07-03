@@ -68,6 +68,14 @@
  * and dismissal semantics); Collapsibles for the wide variant's
  * accordion; layered CSS gradient weaves keyed to each colorway keep the
  * lookbook deterministic and asset-free.
+ *
+ * Color policy: all chrome (chips, error ring, badges, backgrounds) uses
+ * Astryx tokens and adapts to light/dark automatically. The garment art
+ * itself — the colorway-keyed hsl gradient weaves, the near-black
+ * rgba(10, 10, 12, 0.16) panel-stitch overlay, and the #FFFFFF check on
+ * the swatch gradients — is deliberately scheme-locked product imagery
+ * (a camel coat stays camel in dark mode), so those surfaces set
+ * colorScheme: 'light' and keep raw literals for anything drawn on them.
  */
 
 import {useState, type CSSProperties, type ReactNode} from 'react';
@@ -166,7 +174,10 @@ const styles: Record<string, CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    // Scheme-locked: the check sits on the fixed colorway gradient art
+    // (see header color policy), so it stays literal white in both modes.
     color: '#FFFFFF',
+    colorScheme: 'light',
   },
   swatchSelected: {
     borderColor: 'var(--color-accent)',
@@ -536,18 +547,23 @@ function weaveArtStyle(color: ColorOption, weave: WeaveId): CSSProperties {
       pattern = `repeating-linear-gradient(90deg, hsla(${h1}, ${s}%, 90%, 0.18) 0 4px, transparent 4px 11px)`;
       break;
     case 'panel':
+      // Scheme-locked stitch shadow on the fixed colorway gradient (see
+      // header color policy) — quilting seams stay dark in both modes.
       pattern = `repeating-linear-gradient(0deg, rgba(10, 10, 12, 0.16) 0 2px, transparent 2px 34px)`;
       break;
     case 'pleat':
       pattern = `repeating-linear-gradient(100deg, hsla(${h2}, ${s}%, 14%, 0.22) 0 6px, transparent 6px 18px)`;
       break;
   }
-  return {background: [keyLight, pattern, base].join(', ')};
+  // colorScheme: 'light' locks the art surface — garment colorways are
+  // product imagery and must not shift with the page scheme.
+  return {background: [keyLight, pattern, base].join(', '), colorScheme: 'light'};
 }
 
 function swatchArtStyle(color: ColorOption): CSSProperties {
   return {
     background: `linear-gradient(135deg, hsl(${color.h1}, ${color.s}%, 55%) 0%, hsl(${color.h2}, ${color.s}%, 32%) 100%)`,
+    colorScheme: 'light',
   };
 }
 

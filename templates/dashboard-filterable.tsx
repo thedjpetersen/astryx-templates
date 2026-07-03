@@ -85,7 +85,7 @@ const styles: Record<string, CSSProperties> = {
 
 // Chart series colors via Astryx design tokens (CSS custom properties)
 const chartColors = {
-  revenue: 'var(--color-data-categorical-blue, #0171E3)',
+  revenue: 'var(--color-data-categorical-blue, light-dark(#0171E3, #4C9FFF))',
 };
 
 // ============= DATA =============

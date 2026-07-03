@@ -57,6 +57,13 @@
  * - The summary Toolbar is sticky at the bottom of the content scroller
  *   at every width, so the cleared/statement readout stays visible while
  *   the register scrolls underneath.
+ *
+ * Color policy: token-pure except the merchant "logo" tiles, which are
+ * scheme-locked brand art — each category keeps its literal two-stop
+ * gradient with literal white initials (`colorScheme: 'light'` is set on
+ * the tile) so the tiles render identically in light and dark mode, like
+ * real merchant logos would. Every other raw value is an explicit
+ * light-dark() pair (the receipt-scan paper stand-in and its stripes).
  */
 
 import {
@@ -178,7 +185,9 @@ const styles: Record<string, CSSProperties> = {
     overflowY: 'auto',
   },
   // Merchant "logo": a deterministic gradient tile with initials — no
-  // network images.
+  // network images. Scheme-locked brand art (see header Color policy):
+  // the category gradients and the white initials are literal on purpose
+  // so the tile looks the same in both color schemes.
   merchantTile: {
     width: 48,
     height: 48,
@@ -186,6 +195,7 @@ const styles: Record<string, CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    colorScheme: 'light',
     color: '#ffffff',
     fontWeight: 600,
     fontSize: 16,
@@ -203,17 +213,19 @@ const styles: Record<string, CSSProperties> = {
     textAlign: 'center',
   },
   // …and a styled gradient block standing in for the scan once attached.
+  // Slate "paper" in light mode flips to a deep slate panel in dark mode.
   receiptAttached: {
     borderRadius: 'var(--radius-container)',
     padding: 'var(--spacing-3)',
-    background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+    background:
+      'linear-gradient(135deg, light-dark(#f8fafc, #1e293b) 0%, light-dark(#e2e8f0, #334155) 100%)',
     border: '1px solid var(--color-border)',
   },
   receiptRule: {
     height: 6,
     borderRadius: 3,
     background:
-      'repeating-linear-gradient(90deg, #cbd5e1 0 24px, transparent 24px 32px)',
+      'repeating-linear-gradient(90deg, light-dark(#cbd5e1, #475569) 0 24px, transparent 24px 32px)',
   },
   // ~40px touch targets on phones (size="sm" renders 28px).
   buttonTapTarget: {height: 40},

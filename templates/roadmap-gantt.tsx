@@ -205,35 +205,38 @@ interface StatusMeta {
 const STATUS_ORDER: StatusId[] = ['on-track', 'at-risk', 'blocked', 'done'];
 
 const STATUS_META: Record<StatusId, StatusMeta> = {
+  // Status hues are explicit light-dark() pairs (500-weight light, 400-weight
+  // dark) so bars stay saturated-but-legible over the dark canvas; the
+  // translucent track/fill alphas ride the same hue in both schemes.
   'on-track': {
     label: 'On track',
-    line: '#3B82F6',
-    track: 'rgba(59, 130, 246, 0.16)',
-    fill: 'rgba(59, 130, 246, 0.45)',
+    line: 'light-dark(#3B82F6, #60A5FA)',
+    track: 'light-dark(rgba(59, 130, 246, 0.16), rgba(96, 165, 250, 0.2))',
+    fill: 'light-dark(rgba(59, 130, 246, 0.45), rgba(96, 165, 250, 0.45))',
     badge: 'info',
     progressVariant: 'accent',
   },
   'at-risk': {
     label: 'At risk',
-    line: '#F59E0B',
-    track: 'rgba(245, 158, 11, 0.16)',
-    fill: 'rgba(245, 158, 11, 0.45)',
+    line: 'light-dark(#F59E0B, #FBBF24)',
+    track: 'light-dark(rgba(245, 158, 11, 0.16), rgba(251, 191, 36, 0.2))',
+    fill: 'light-dark(rgba(245, 158, 11, 0.45), rgba(251, 191, 36, 0.45))',
     badge: 'warning',
     progressVariant: 'warning',
   },
   blocked: {
     label: 'Blocked',
-    line: '#EF4444',
-    track: 'rgba(239, 68, 68, 0.16)',
-    fill: 'rgba(239, 68, 68, 0.45)',
+    line: 'light-dark(#EF4444, #F87171)',
+    track: 'light-dark(rgba(239, 68, 68, 0.16), rgba(248, 113, 113, 0.2))',
+    fill: 'light-dark(rgba(239, 68, 68, 0.45), rgba(248, 113, 113, 0.45))',
     badge: 'error',
     progressVariant: 'error',
   },
   done: {
     label: 'Done',
-    line: '#22C55E',
-    track: 'rgba(34, 197, 94, 0.16)',
-    fill: 'rgba(34, 197, 94, 0.45)',
+    line: 'light-dark(#22C55E, #4ADE80)',
+    track: 'light-dark(rgba(34, 197, 94, 0.16), rgba(74, 222, 128, 0.2))',
+    fill: 'light-dark(rgba(34, 197, 94, 0.45), rgba(74, 222, 128, 0.45))',
     badge: 'success',
     progressVariant: 'success',
   },
@@ -272,7 +275,7 @@ const TEAMS: Team[] = [
   {
     id: 'platform',
     name: 'Platform',
-    color: '#6366F1',
+    color: 'light-dark(#6366F1, #818CF8)',
     initiatives: [
       {
         id: 'plat-auth',
@@ -328,7 +331,7 @@ const TEAMS: Team[] = [
   {
     id: 'growth',
     name: 'Growth',
-    color: '#EC4899',
+    color: 'light-dark(#EC4899, #F472B6)',
     initiatives: [
       {
         id: 'gro-onboard',
@@ -381,7 +384,7 @@ const TEAMS: Team[] = [
   {
     id: 'mobile',
     name: 'Mobile',
-    color: '#14B8A6',
+    color: 'light-dark(#14B8A6, #2DD4BF)',
     initiatives: [
       {
         id: 'mob-rewrite',
@@ -433,7 +436,7 @@ const TEAMS: Team[] = [
   {
     id: 'infra',
     name: 'Infrastructure',
-    color: '#F97316',
+    color: 'light-dark(#F97316, #FB923C)',
     initiatives: [
       {
         id: 'inf-obs',
@@ -974,7 +977,10 @@ function DependencyArrows({
           refX="6"
           refY="3.5"
           orient="auto">
-          <path d="M0,0 L7,3.5 L0,7 Z" fill="rgba(100, 116, 139, 0.9)" />
+          <path
+            d="M0,0 L7,3.5 L0,7 Z"
+            fill="light-dark(rgba(100, 116, 139, 0.9), rgba(148, 163, 184, 0.9))"
+          />
         </marker>
         <marker
           id="roadmap-dep-arrow-active"
@@ -1009,7 +1015,11 @@ function DependencyArrows({
             key={dep.id}
             d={`M ${x1} ${y1} L ${elbowX} ${y1} L ${elbowX} ${y2} L ${x2 - 2} ${y2}`}
             fill="none"
-            stroke={isActive ? 'var(--color-accent)' : 'rgba(100, 116, 139, 0.7)'}
+            stroke={
+              isActive
+                ? 'var(--color-accent)'
+                : 'light-dark(rgba(100, 116, 139, 0.7), rgba(148, 163, 184, 0.7))'
+            }
             strokeWidth={isActive ? 2 : 1.5}
             markerEnd={
               isActive

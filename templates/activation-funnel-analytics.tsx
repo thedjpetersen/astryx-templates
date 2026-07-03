@@ -75,17 +75,21 @@ import {RefreshCwIcon} from 'lucide-react';
 
 // ============= STYLES =============
 
-// Data colors via Astryx tokens with hex fallbacks (heatmap tints are
-// intentionally translucent literals so they read on any card surface).
+// Data colors via Astryx tokens; fallbacks are light-dark() pairs so the
+// palette still adapts if a token is missing. Heatmap tints are color-mix()
+// over the same tokens, so they track the scheme automatically.
 const colors = {
-  bar: 'var(--color-data-categorical-blue, #0171E3)',
-  indigo: 'var(--color-data-categorical-purple, #6B1EFD)',
-  green: 'var(--color-data-categorical-green, #0B991F)',
-  amber: 'var(--color-data-categorical-orange, #EB6E00)',
-  red: 'var(--color-data-categorical-red, #D92D20)',
-  tintGreen: 'rgba(11, 153, 31, 0.16)',
-  tintAmber: 'rgba(235, 110, 0, 0.16)',
-  tintRed: 'rgba(217, 45, 32, 0.14)',
+  bar: 'var(--color-data-categorical-blue, light-dark(#0171E3, #4C9FFF))',
+  indigo: 'var(--color-data-categorical-purple, light-dark(#6B1EFD, #9E7BFF))',
+  green: 'var(--color-data-categorical-green, light-dark(#0B991F, #3DBF51))',
+  amber: 'var(--color-data-categorical-orange, light-dark(#EB6E00, #FF9838))',
+  red: 'var(--color-data-categorical-red, light-dark(#D92D20, #F2655A))',
+  tintGreen:
+    'color-mix(in srgb, var(--color-data-categorical-green, light-dark(#0B991F, #3DBF51)) 16%, transparent)',
+  tintAmber:
+    'color-mix(in srgb, var(--color-data-categorical-orange, light-dark(#EB6E00, #FF9838)) 16%, transparent)',
+  tintRed:
+    'color-mix(in srgb, var(--color-data-categorical-red, light-dark(#D92D20, #F2655A)) 14%, transparent)',
 };
 
 const styles: Record<string, CSSProperties> = {
@@ -121,7 +125,9 @@ const styles: Record<string, CSSProperties> = {
     paddingInlineStart: 8,
   },
   barCount: {
-    color: '#fff',
+    // Sits on the saturated categorical-blue bar in both schemes; stays a
+    // near-white light-dark() pair (slightly softened in dark) for contrast.
+    color: 'light-dark(#fff, #F2F6FF)',
     fontSize: 12,
     fontVariantNumeric: 'tabular-nums',
     whiteSpace: 'nowrap',

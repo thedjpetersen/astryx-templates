@@ -21,6 +21,13 @@
  *   and repaint a dashed overlay line on the chart
  * @position Page template; emitted by `astryx template cloud-cost-analyzer`
  *
+ * Color policy: every data-series, badge, shadow, and chrome color is an
+ * Astryx token (var(--color-*)) or an explicit light-dark() pair, so the
+ * page adapts to the demo's System/Light/Dark toggle. The one scheme-locked
+ * surface is the header brand chip: its blue→teal brand gradient and white
+ * glyph are intentional literals with colorScheme pinned to "light" so the
+ * mark renders identically in both schemes.
+ *
  * Frame: Layout height="fill". LayoutHeader carries the chrome (cloud mark,
  * title, total-spend KPI with MoM Badge, period Selector). LayoutContent
  * scrolls a centered max-width 1040 column: scope row (Breadcrumbs +
@@ -104,31 +111,34 @@ import {
 // cycles by group index; red is reserved for the anomaly marker and
 // spend-up deltas so it never doubles as a series color.
 const colors = {
-  green: 'var(--color-data-categorical-green, #0B991F)',
-  red: 'var(--color-data-categorical-red, #D92D20)',
-  overlay: 'var(--color-data-categorical-green, #0B991F)',
+  green: 'var(--color-data-categorical-green, light-dark(#0B991F, #34C759))',
+  red: 'var(--color-data-categorical-red, light-dark(#D92D20, #F97066))',
+  overlay: 'var(--color-data-categorical-green, light-dark(#0B991F, #34C759))',
 };
 
 const STACK_PALETTE = [
-  'var(--color-data-categorical-blue, #0171E3)',
-  'var(--color-data-categorical-purple, #6B1EFD)',
-  'var(--color-data-categorical-green, #0B991F)',
-  'var(--color-data-categorical-orange, #EB6E00)',
-  '#0D9488',
-  '#CA8A04',
+  'var(--color-data-categorical-blue, light-dark(#0171E3, #409CFF))',
+  'var(--color-data-categorical-purple, light-dark(#6B1EFD, #9D6BFF))',
+  'var(--color-data-categorical-green, light-dark(#0B991F, #34C759))',
+  'var(--color-data-categorical-orange, light-dark(#EB6E00, #FF9330))',
+  'light-dark(#0D9488, #2DD4BF)',
+  'light-dark(#CA8A04, #EAB308)',
 ];
 
 const styles: Record<string, CSSProperties> = {
   // Centered scrollable page column.
   page: {maxWidth: 1040, marginInline: 'auto', width: '100%'},
   numeric: {fontVariantNumeric: 'tabular-nums'},
-  // Header cloud mark — gradient placeholder, white glyph.
+  // Header cloud mark — brand gradient placeholder, white glyph. Scheme-
+  // locked: the blue→teal brand gradient renders identically in both
+  // schemes, so colorScheme is pinned and the glyph stays a literal white.
   brandChip: {
     width: 32,
     height: 32,
     borderRadius: 'var(--radius-control, 8px)',
     background: 'linear-gradient(135deg, #0171E3, #0D9488)',
     color: '#fff',
+    colorScheme: 'light',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -160,11 +170,12 @@ const styles: Record<string, CSSProperties> = {
     height: 24,
     borderRadius: 999,
     backgroundColor: colors.red,
-    color: '#fff',
+    // White glyph reads on the saturated red/green face in both schemes.
+    color: 'light-dark(#fff, #fff)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    boxShadow: '0 1px 4px rgba(0, 0, 0, 0.35)',
+    boxShadow: '0 1px 4px light-dark(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.55))',
   },
   anomalyFaceAcked: {
     backgroundColor: colors.green,
@@ -215,7 +226,7 @@ const styles: Record<string, CSSProperties> = {
   chevron: {
     display: 'flex',
     flexShrink: 0,
-    color: 'var(--color-content-secondary, #666)',
+    color: 'var(--color-content-secondary, light-dark(#666, #A1A1AA))',
   },
   chevronSpacer: {width: 20, flexShrink: 0},
   upText: {color: colors.red, fontVariantNumeric: 'tabular-nums'},
@@ -578,7 +589,7 @@ function StackedSpendChart({
               x2={100}
               y1={gridY}
               y2={gridY}
-              stroke="var(--color-border-primary, #E4E4E7)"
+              stroke="var(--color-border-primary, light-dark(#E4E4E7, #3F3F46))"
               strokeWidth={1}
               vectorEffect="non-scaling-stroke"
             />

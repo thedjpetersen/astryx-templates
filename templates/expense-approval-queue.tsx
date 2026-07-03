@@ -71,6 +71,14 @@
  *   overflowX: thumbnails keep a fixed 108px tile). Nothing is hover-only:
  *   flag Tooltips restate text already visible in the detail warnings, and
  *   the disabled bulk checkbox is explained by the visible flag Badges.
+ *
+ * Color policy: all chrome uses semantic tokens and adapts to light/dark.
+ * The ONLY scheme-locked surfaces are the receipt-placeholder gradient
+ * tiles (RECEIPT_GRADIENTS + styles.receiptTile): they stand in for photo
+ * thumbnails of receipts, so like real images they keep identical brand
+ * gradients in both schemes (colorScheme locked to 'light' on the tile),
+ * and their overlaid text/icon stays a literal #FFFFFF — not a token — so
+ * it remains readable on the fixed gradient regardless of scheme.
  */
 
 import {useMemo, useState, type CSSProperties} from 'react';
@@ -130,7 +138,8 @@ import {
 
 // ---------------------------------------------------------------------------
 // STYLES — plain CSS properties with semantic tokens; the only literal colors
-// are the receipt-placeholder gradients (fixture art, not chrome).
+// are the receipt-placeholder gradients (fixture art, not chrome) and the
+// white text sitting on them — scheme-locked, see the header Color policy.
 // ---------------------------------------------------------------------------
 
 const styles: Record<string, CSSProperties> = {
@@ -243,6 +252,10 @@ const styles: Record<string, CSSProperties> = {
     overflowX: 'auto',
     paddingBottom: 'var(--spacing-2)',
   },
+  // Scheme-locked surface (see header Color policy): the tile is a stand-in
+  // for a receipt photo, so its RECEIPT_GRADIENTS background never flips
+  // with the color scheme; colorScheme is pinned and the overlay text stays
+  // literal white so it reads on the fixed gradient in both schemes.
   receiptTile: {
     width: 108,
     minWidth: 108,
@@ -252,6 +265,7 @@ const styles: Record<string, CSSProperties> = {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
+    colorScheme: 'light',
     color: '#FFFFFF',
   },
   // Missing receipt: dashed warning tile instead of a gradient thumbnail.
@@ -796,7 +810,12 @@ const REPORTS: ExpenseReport[] = [
   },
 ];
 
-/** Receipt-placeholder art: fixed gradient rotation, no network images. */
+/**
+ * Receipt-placeholder art: fixed gradient rotation, no network images.
+ * Scheme-locked literals (see header Color policy): these tiles play the
+ * role of receipt photos, so the gradients stay identical in dark mode —
+ * styles.receiptTile pins colorScheme and carries the literal white text.
+ */
 const RECEIPT_GRADIENTS = [
   'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
   'linear-gradient(135deg, #0E7490 0%, #38BDF8 100%)',

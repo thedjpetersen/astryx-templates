@@ -62,17 +62,21 @@ import {CheckIcon} from 'lucide-react';
 // ============= STYLES =============
 
 const colors = {
-  surface: 'var(--color-background, #FFFFFF)',
-  surfaceMuted: 'var(--color-background-muted, #F5F5F7)',
-  accent: 'var(--color-accent, #0171E3)',
-  accentMuted: 'var(--color-accent-muted, #EAF2FF)',
-  border: 'var(--color-border, #E2E2E6)',
-  success: 'var(--color-data-categorical-green, #0B991F)',
+  surface: 'var(--color-background)',
+  surfaceMuted: 'var(--color-background-muted)',
+  accent: 'var(--color-accent)',
+  accentMuted: 'var(--color-accent-muted)',
+  border: 'var(--color-border)',
+  success: 'var(--color-data-categorical-green)',
 };
 
 // Edge shadows only render after the matching axis has actually scrolled.
-const COLUMN_SHADOW = '8px 0 8px -8px rgba(15, 23, 42, 0.18)';
-const HEADER_SHADOW = '0 8px 8px -8px rgba(15, 23, 42, 0.18)';
+// light-dark(): the light value is unchanged; dark mode gets a subtler
+// pure-black shadow so sticky edges read as depth, not a glow.
+const COLUMN_SHADOW =
+  '8px 0 8px -8px light-dark(rgba(15, 23, 42, 0.18), rgba(0, 0, 0, 0.5))';
+const HEADER_SHADOW =
+  '0 8px 8px -8px light-dark(rgba(15, 23, 42, 0.18), rgba(0, 0, 0, 0.5))';
 
 const styles: Record<string, CSSProperties> = {
   // Layout content is padding 0; this wrapper owns the page padding and

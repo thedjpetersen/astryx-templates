@@ -70,6 +70,18 @@
  *   every interaction is click/keyboard driven.
  * - Demo readout tiles: Grid columns={{minWidth: 200, max: 3}} collapses
  *   3 → 2 → 1 without horizontal overflow at 375px.
+ *
+ * Color policy: token/light-dark hybrid. App chrome (stage borders, light
+ * footer surfaces, readout tiles) uses var(--color-*) tokens; the
+ * newsletter success row uses explicit light-dark() pairs. Three surfaces
+ * are deliberately scheme-locked with colorScheme pinned in their styles:
+ * (1) the faux page-bottom backdrops + skeleton bars — the SegmentedControl
+ * previews literal light vs dark page ends, so they must not flip with the
+ * app theme; (2) the dark mega-footer (darkSurface/darkBorder/darkText/
+ * statusGreen literals) — it showcases a dark brand surface in both
+ * schemes; (3) the gradient brand tile — brand art keeps its indigo→sky
+ * stops and white glyph in both schemes. Text on locked surfaces uses
+ * literals, not tokens, so it stays readable when the app scheme flips.
  */
 
 import {useState, type CSSProperties, type FormEvent} from 'react';
@@ -115,12 +127,13 @@ import {
 // ============= STYLES =============
 
 const colors = {
-  surface: 'var(--color-background, #FFFFFF)',
-  surfaceMuted: 'var(--color-background-muted, #F5F5F7)',
-  border: 'var(--color-border, #E2E2E6)',
-  accent: 'var(--color-accent, #0171E3)',
-  // Dark mega-footer palette — intentionally hardcoded so the variant
-  // stays dark regardless of app theme; it previews a dark brand surface.
+  surface: 'var(--color-background)',
+  surfaceMuted: 'var(--color-background-muted)',
+  border: 'var(--color-border)',
+  accent: 'var(--color-accent)',
+  // Dark mega-footer palette — intentionally hardcoded literals so the
+  // variant stays dark regardless of app theme (scheme-locked via
+  // colorScheme: 'dark' on styles.footerDark; see Color policy above).
   darkSurface: '#0B1220',
   darkSurfaceRaised: '#131C2E',
   darkBorder: '#26324A',
@@ -153,16 +166,22 @@ const styles: Record<string, CSSProperties> = {
   },
   // Faux end-of-page content: skeleton copy bars fading toward the
   // footer so each variant reads in situ, not floating in a void.
+  // Scheme-locked literals (see Color policy): the SegmentedControl
+  // previews a literal light or dark page end, so these surfaces pin
+  // colorScheme and must never flip with the app theme.
   pageBottomLight: {
+    colorScheme: 'light',
     backgroundColor: '#FBFBFD',
     padding:
       'var(--spacing-6) var(--spacing-6) var(--spacing-5)',
   },
   pageBottomDark: {
+    colorScheme: 'dark',
     backgroundColor: '#0F172A',
     padding:
       'var(--spacing-6) var(--spacing-6) var(--spacing-5)',
   },
+  // Skeleton bars sit on the locked backdrops above — literals on purpose.
   skeletonBarLight: {
     height: 10,
     borderRadius: 5,
@@ -185,7 +204,10 @@ const styles: Record<string, CSSProperties> = {
     padding: 'var(--spacing-5) var(--spacing-6)',
   },
   // Dark mega-footer surface. color cascades to `inherit` Text/Link.
+  // colorScheme pinned: this variant is a scheme-locked dark brand
+  // surface in both app themes (see Color policy above).
   footerDark: {
+    colorScheme: 'dark',
     backgroundColor: colors.darkSurface,
     borderTop: `1px solid ${colors.darkBorder}`,
     padding: 'var(--spacing-6)',
@@ -195,6 +217,8 @@ const styles: Record<string, CSSProperties> = {
     color: colors.darkTextMuted,
   },
   // Gradient brand tile — styled placeholder, never a network asset.
+  // Scheme-locked brand art (see Color policy): the indigo→sky gradient
+  // and white glyph are the Relay mark in both schemes, so literals stay.
   brandTile: {
     width: 36,
     height: 36,
@@ -203,6 +227,7 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,
+    colorScheme: 'dark',
     background: 'linear-gradient(135deg, #6366F1 0%, #0EA5E9 100%)',
     color: '#FFFFFF',
   },
@@ -239,7 +264,9 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: colors.statusGreen,
     flexShrink: 0,
   },
-  // Inline confirmation row for the newsletter mini-form.
+  // Inline confirmation row for the newsletter mini-form. Explicit
+  // light-dark() pairs: same pale-green tint in light mode, deep-green
+  // surface with a brighter glyph in dark mode.
   subscribeConfirm: {
     display: 'flex',
     alignItems: 'center',
@@ -247,13 +274,13 @@ const styles: Record<string, CSSProperties> = {
     minHeight: 40,
     padding: '0 var(--spacing-3)',
     borderRadius: 'var(--radius-container)',
-    backgroundColor: '#EBF9EE',
-    border: '1px solid #BEE8C8',
+    backgroundColor: 'light-dark(#EBF9EE, #13291B)',
+    border: '1px solid light-dark(#BEE8C8, #24512F)',
   },
   confirmGlyph: {
     display: 'inline-flex',
     flexShrink: 0,
-    color: '#0B991F',
+    color: 'light-dark(#0B991F, #4ADE80)',
   },
   // Centered minimal footer content column.
   centeredStack: {

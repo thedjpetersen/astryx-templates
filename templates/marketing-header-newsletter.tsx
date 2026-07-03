@@ -82,6 +82,16 @@
  * with colorScheme:'dark' so they read identically in light and dark app
  * themes. No clocks, no randomness, no network assets or real imagery —
  * the dark header's texture is a pure CSS grid pattern.
+ *
+ * Color policy: everything on Card/frame surfaces is token-driven
+ * (var(--color-*)) and adapts to the app scheme. The two painted marketing
+ * panels — the dark pattern header (variant 2) and the dark newsletter
+ * card (variant 7) — are deliberately scheme-locked brand art: their
+ * gradients, chip fills/borders, and on-panel text/error literals
+ * (DARK_TEXT*, CHIP_*, ERROR_ON_DARK) stay raw hex/rgba with
+ * colorScheme:'dark' set on the panel style so they render identically in
+ * both app themes and the literal text keeps its contrast on the locked
+ * paint.
  */
 
 import {useRef, useState, type CSSProperties} from 'react';
@@ -357,7 +367,7 @@ const styles: Record<string, CSSProperties> = {
     minWidth: 0,
   },
   fieldError: {
-    color: 'var(--color-error, #C5221F)',
+    color: 'var(--color-error)',
     fontSize: 13,
     margin: 0,
   },
@@ -374,7 +384,7 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
-    backgroundColor: 'var(--color-accent-muted, rgba(66, 133, 244, 0.12))',
+    backgroundColor: 'var(--color-accent-muted)',
     color: 'var(--color-accent)',
   },
   successDisc: {
@@ -385,8 +395,8 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
-    backgroundColor: 'rgba(52, 168, 83, 0.14)',
-    color: 'var(--color-success, #1E8E3E)',
+    backgroundColor: 'var(--color-success-muted)',
+    color: 'var(--color-success)',
   },
   successDiscOnDark: {
     width: 44,
@@ -407,8 +417,8 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
-    backgroundColor: 'rgba(52, 168, 83, 0.14)',
-    color: 'var(--color-success, #1E8E3E)',
+    backgroundColor: 'var(--color-success-muted)',
+    color: 'var(--color-success)',
   },
   privacyNote: {
     display: 'flex',

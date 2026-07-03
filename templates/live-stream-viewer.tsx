@@ -54,6 +54,16 @@
  * mocked — no <video>/<audio>/<iframe>, no network assets; the stage is a
  * CSS gradient with fixture-driven streak divs, and every counter (viewers,
  * uptime, bitrate, lap) is a fixed fixture value.
+ *
+ * Color policy: the 16:9 stage is "broadcast glass" — its gradient, caption
+ * text, viewer chip, speed lines, and bottom scrim are literal dark colors
+ * locked with colorScheme:'dark' on the stage frame so the video canvas
+ * looks identical in both themes (STAGE_* / speedLine / stageChrome
+ * literals stay literals on purpose). Everything outside the stage is
+ * token-pure: chrome uses var(--color-*) tokens, the live avatar ring uses
+ * var(--color-error), and the role-colored chat usernames are explicit
+ * light-dark() pairs (dark shades on the light chat surface, lifted shades
+ * of the same hue in dark mode).
  */
 
 import {useEffect, useRef, useState, type CSSProperties} from 'react';
@@ -119,7 +129,10 @@ const STAGE_GRADIENT =
 const STAGE_TEXT = '#EEF1FA';
 const STAGE_MUTED = '#8B93B8';
 const STAGE_CHIP_BG = 'rgba(9, 12, 26, 0.72)';
-const LIVE_RING = '#E5484D';
+
+// Outside the locked stage: the live avatar ring rides the error token so
+// it tracks the theme like the LIVE Badge does.
+const LIVE_RING = 'var(--color-error)';
 
 // ============= STYLES =============
 
@@ -305,18 +318,19 @@ interface ChatAuthor {
 }
 
 // Role-colored usernames: mods green, subs purple-family, viewers a fixed
-// per-author palette, "you" the accent color. Shades are darkened for
-// AA-ish contrast against the light chat surface.
+// per-author palette, "you" the accent color. Explicit light-dark() pairs:
+// the light shades are darkened for AA-ish contrast against the light chat
+// surface; the dark shades lift the same hue for the dark surface.
 const AUTHORS: Record<string, ChatAuthor> = {
-  nova_kestrel: {color: '#1F8A4C', role: 'mod'},
-  gridline_sam: {color: '#7C3AED', role: 'sub', months: 14},
-  apex_andy: {color: '#9333EA', role: 'sub', months: 3},
-  quasar_dot: {color: '#6D28D9', role: 'sub', months: 7},
-  boost_bunny: {color: '#8250DF', role: 'sub', months: 2},
-  pit_lane_pia: {color: '#0E7DB8', role: 'viewer'},
-  turn9_tessa: {color: '#B45309', role: 'viewer'},
-  drs_dan: {color: '#D03C74', role: 'viewer'},
-  slipstream_ko: {color: '#4D7C0F', role: 'viewer'},
+  nova_kestrel: {color: 'light-dark(#1F8A4C, #4CC38A)', role: 'mod'},
+  gridline_sam: {color: 'light-dark(#7C3AED, #A78BFA)', role: 'sub', months: 14},
+  apex_andy: {color: 'light-dark(#9333EA, #C084FC)', role: 'sub', months: 3},
+  quasar_dot: {color: 'light-dark(#6D28D9, #B197FC)', role: 'sub', months: 7},
+  boost_bunny: {color: 'light-dark(#8250DF, #B392F0)', role: 'sub', months: 2},
+  pit_lane_pia: {color: 'light-dark(#0E7DB8, #4CB8E8)', role: 'viewer'},
+  turn9_tessa: {color: 'light-dark(#B45309, #E8A33D)', role: 'viewer'},
+  drs_dan: {color: 'light-dark(#D03C74, #F27DA6)', role: 'viewer'},
+  slipstream_ko: {color: 'light-dark(#4D7C0F, #9BC53D)', role: 'viewer'},
   you: {color: 'var(--color-accent)', role: 'you'},
 };
 

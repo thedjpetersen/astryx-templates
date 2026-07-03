@@ -67,6 +67,15 @@
  * Curriculum rows, transcript lines, and notes are plain rows — no
  * card-in-card nesting. The stage is locked colorScheme dark so its chrome
  * reads correctly in both themes.
+ *
+ * Color policy: the lesson stage is a deliberately scheme-locked dark
+ * surface (mock video art) — `colorScheme: 'dark'` is set on styles.stage,
+ * and every raw hex/rgba literal in styles.stage, slideCode, playBubble,
+ * chrome, and timecode is intentional: the gradient art, code-slide
+ * vignette, play bubble, and bottom chrome/timecode must stay dark in both
+ * themes like a real video frame, so they (and the text sitting on them)
+ * use literals, not tokens, to keep contrast stable. Everything outside
+ * the stage uses Astryx tokens and adapts via light-dark().
  */
 
 import {
@@ -126,6 +135,9 @@ const styles: Record<string, CSSProperties> = {
   stageCard: {overflow: 'hidden', boxShadow: 'var(--shadow-high)'},
   // The mock frame: layered gradients stand in for the lecture video.
   // Locked to colorScheme dark so chrome tokens read on the dark art.
+  // Scheme-locked surface (see "Color policy" in the header): all raw
+  // hex/rgba literals in the stage subtree are intentional and must not
+  // be converted to theme tokens.
   stage: {
     position: 'relative',
     width: '100%',
