@@ -1594,6 +1594,13 @@ export const templates: TemplateEntry[] = [
     'Single-requisition ATS board: req header with panel facepile, funnel pass-through strip, and five stage columns of candidate cards with drag-and-drop, stalled rings, and conversion footers.',
   ),
   entry(
+    'hr-candidate-profile',
+    'Candidate Profile & Scorecards',
+    'page',
+    'Workforce HR',
+    'Onsite-stage candidate detail: identity band with stage stepper, resume-excerpt card, four-interview loop panel with scorecard statuses, competency-rated scorecard detail, offer-prep card vs band, and an activity timeline.',
+  ),
+  entry(
     'hr-compensation-bands',
     'Compensation Bands',
     'page',
