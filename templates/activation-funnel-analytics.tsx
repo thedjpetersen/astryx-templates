@@ -151,8 +151,6 @@ const styles: Record<string, CSSProperties> = {
   colOfTotal: {width: 56, textAlign: 'end'},
   colCvr: {width: 64, textAlign: 'end'},
   colDelta: {width: 64, display: 'flex', justifyContent: 'flex-end'},
-  // Heatmap: horizontal scroll wrapper; pixel columns keep cell tints stable.
-  heatScroll: {overflowX: 'auto', minWidth: 0},
   heatCell: {
     borderRadius: 'var(--radius-control, 6px)',
     paddingBlock: 3,
@@ -1011,17 +1009,19 @@ export default function ActivationFunnelAnalyticsTemplate() {
                       Weekly cohorts · % of cohort reaching each milestone
                     </Text>
                   </HStack>
-                  <div style={styles.heatScroll}>
-                    <Table<CohortRow>
-                      data={COHORTS}
-                      columns={cohortColumns}
-                      idKey="id"
-                      density="compact"
-                      dividers="rows"
-                      hasHover
-                      plugins={{stickyColumns: stickyCohortColumn}}
-                    />
-                  </div>
+                  {/* No extra scroll wrapper: the Table's built-in scroll
+                      wrapper handles horizontal overflow and bleeds to the
+                      Card's padding edges; nesting it in an overflow div
+                      clips the header and last row vertically. */}
+                  <Table<CohortRow>
+                    data={COHORTS}
+                    columns={cohortColumns}
+                    idKey="id"
+                    density="compact"
+                    dividers="rows"
+                    hasHover
+                    plugins={{stickyColumns: stickyCohortColumn}}
+                  />
                 </VStack>
               </Card>
 

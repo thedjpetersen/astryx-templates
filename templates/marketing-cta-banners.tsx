@@ -210,6 +210,8 @@ const styles: Record<string, CSSProperties> = {
     fontWeight: 600,
     lineHeight: '20px',
     whiteSpace: 'nowrap',
+    // Hug the label even as a stretched flex-column child.
+    width: 'fit-content',
   },
   countdownRow: {
     display: 'flex',
@@ -259,7 +261,10 @@ const styles: Record<string, CSSProperties> = {
     display: 'flex',
     justifyContent: 'center',
     pointerEvents: 'none',
-    zIndex: 40,
+    // Above all page content (toast stays higher at 60); isolate so the
+    // banner paints atomically and page text can never interleave with it.
+    zIndex: 50,
+    isolation: 'isolate',
   },
   privacy: {
     pointerEvents: 'auto',
@@ -267,7 +272,9 @@ const styles: Record<string, CSSProperties> = {
     maxWidth: 680,
     borderRadius: 14,
     border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-background-body)',
+    // Opaque floating surface (not the page-body token, which matches the
+    // document background in dark mode and reads see-through).
+    backgroundColor: 'var(--color-background-popover)',
     boxShadow: 'var(--shadow-high)',
     padding: 'var(--spacing-4)',
   },
@@ -1083,7 +1090,10 @@ export default function MarketingCtaBannersTemplate() {
           ...(isStacked ? styles.splitRowStacked : null),
         }}>
         <div style={styles.splitText}>
-          <Token label="Split with screenshot" size="sm" color="blue" />
+          {/* HStack keeps the Token hugging its label (column stretches). */}
+          <HStack>
+            <Token label="Split with screenshot" size="sm" color="blue" />
+          </HStack>
           <Heading level={3}>Everything your launch team needs</Heading>
           <VStack gap={2}>
             {SPLIT_BULLETS.map(bullet => (
@@ -1210,7 +1220,10 @@ export default function MarketingCtaBannersTemplate() {
             ...(isStacked ? styles.splitRowStacked : null),
           }}>
           <div style={styles.splitText}>
-            <Token label="Boxed trial" size="sm" color="green" />
+            {/* HStack keeps the Token hugging its label (column stretches). */}
+            <HStack>
+              <Token label="Boxed trial" size="sm" color="green" />
+            </HStack>
             <Heading level={3}>Start your 30-day Pro trial</Heading>
             <Text type="supporting" color="secondary">
               Full Pro features for a month — unlimited launches, SSO, and

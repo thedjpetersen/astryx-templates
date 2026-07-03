@@ -187,7 +187,7 @@ const styles: Record<string, CSSProperties> = {
   negativeText: {color: 'var(--color-critical)'},
   staleIcon: {
     display: 'flex',
-    color: 'var(--color-data-categorical-orange)',
+    color: 'var(--color-data-categorical-orange, light-dark(#EB6E00, #FF9838))',
     flexShrink: 0,
   },
   settledIcon: {
@@ -224,31 +224,33 @@ interface Traveler {
 }
 
 // Traveler colors are categorical data tokens (light values match the
-// previous literals exactly) so the diagram flips with the scheme.
+// previous literals exactly) so the diagram flips with the scheme. The
+// light-dark() fallbacks matter: without them an unset token makes SVG
+// stroke compute to none (edges vanish) and fill compute to black.
 const TRAVELERS: Traveler[] = [
   {
     id: 'maya',
     name: 'Maya Chen',
     short: 'Maya',
-    color: 'var(--color-data-categorical-blue)',
+    color: 'var(--color-data-categorical-blue, light-dark(#0171E3, #4C9FFF))',
   },
   {
     id: 'josh',
     name: 'Josh Rivera',
     short: 'Josh',
-    color: 'var(--color-data-categorical-orange)',
+    color: 'var(--color-data-categorical-orange, light-dark(#EB6E00, #FF9838))',
   },
   {
     id: 'priya',
     name: 'Priya Nair',
     short: 'Priya',
-    color: 'var(--color-data-categorical-purple)',
+    color: 'var(--color-data-categorical-purple, light-dark(#6B1EFD, #9D7BFF))',
   },
   {
     id: 'devon',
     name: 'Devon Park',
     short: 'Devon',
-    color: 'var(--color-data-categorical-green)',
+    color: 'var(--color-data-categorical-green, light-dark(#0B991F, #3DBF51))',
   },
 ];
 
@@ -870,6 +872,10 @@ function BalanceDiagram({
           .split(' ')
           .map(word => word[0])
           .join('');
+        // Top-row names sit above their nodes so edges arriving from
+        // below (and their arrowheads/amount labels) never cross them.
+        const nameY =
+          pos.y < 150 ? pos.y - NODE_R - 10 : pos.y + NODE_R + 18;
         return (
           <g key={t.id}>
             <circle cx={pos.x} cy={pos.y} r={NODE_R} fill={t.color} />
@@ -885,7 +891,7 @@ function BalanceDiagram({
             </text>
             <text
               x={pos.x}
-              y={pos.y + NODE_R + 18}
+              y={nameY}
               textAnchor="middle"
               fontSize={12}
               fill="var(--color-text-secondary)">
@@ -932,10 +938,10 @@ function ExpenseRow({
             </div>
             <StackItem size="fill">
               <VStack gap={0}>
-                <Text type="label" maxLines={1}>
+                <Text type="label" maxLines={2}>
                   {expense.description}
                 </Text>
-                <Text type="supporting" color="secondary" maxLines={1}>
+                <Text type="supporting" color="secondary" maxLines={2}>
                   {expense.date} · {traveler(expense.payerId).short} paid ·{' '}
                   {splitSummary(expense)}
                 </Text>

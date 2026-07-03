@@ -11,8 +11,9 @@
  * @position Page template; emitted by `astryx template kpi-dashboard`
  *
  * Responsive contract:
- * - KPI row: Grid columns={{minWidth: 240, max: 4}} — 4-up on wide viewports,
- *   reflowing to 2-up and 1-up as the viewport narrows.
+ * - KPI row: Grid columns={{minWidth: 220, repeat: 'fit'}} — the four cards
+ *   stretch to fill the row (4-up on wide viewports), reflowing to 2-up and
+ *   1-up as the viewport narrows.
  * - Chart widgets: Grid columns={{minWidth: 320, repeat: 'fit'}} — side by
  *   side when space allows, stacked on narrow viewports.
  * - Table: proportional columns absorb remaining width; pixel columns keep
@@ -251,6 +252,7 @@ const endpointColumns: TableColumn<EndpointRow>[] = [
     key: 'requests',
     header: 'Requests',
     width: pixel(120),
+    align: 'end',
     renderCell: (item: EndpointRow) => (
       <span style={styles.numericCell}>
         <Text type="body">{item.requests}</Text>
@@ -261,6 +263,7 @@ const endpointColumns: TableColumn<EndpointRow>[] = [
     key: 'errorRate',
     header: 'Error rate',
     width: pixel(100),
+    align: 'end',
     renderCell: (item: EndpointRow) => (
       <span style={styles.numericCell}>
         <Text type="body">{item.errorRate}</Text>
@@ -271,6 +274,7 @@ const endpointColumns: TableColumn<EndpointRow>[] = [
     key: 'p95',
     header: 'P95',
     width: pixel(100),
+    align: 'end',
     renderCell: (item: EndpointRow) => (
       <span style={styles.numericCell}>
         <Text type="body">{item.p95}</Text>
@@ -373,7 +377,7 @@ export default function KpiDashboardTemplate() {
         <LayoutContent padding={6}>
           <VStack gap={6}>
             {/* KPI row — 4-up Stat cards with deltas and sparklines */}
-            <Grid columns={{minWidth: 240, max: 4}} gap={4}>
+            <Grid columns={{minWidth: 220, repeat: 'fit'}} gap={4}>
               {kpis.map(kpi => (
                 <Card key={kpi.label}>
                   <Stat

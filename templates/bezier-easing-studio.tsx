@@ -303,6 +303,9 @@ const styles: Record<string, CSSProperties> = {
     width: '100%',
     height: '100%',
     display: 'block',
+    // Endpoint anchors and the playhead dot sit exactly on the viewBox
+    // edges — let them render whole instead of clipping to half-shapes.
+    overflow: 'visible',
   },
   // Handle buttons: 44px transparent halos around a 16px visible dot, so
   // touch grabs land at every width. Positioned in plot percentages.
@@ -446,7 +449,9 @@ const styles: Record<string, CSSProperties> = {
   },
   transportRow: {flexWrap: 'wrap', rowGap: 8},
   transportTapTarget: {width: 40, height: 40},
-  scrubItem: {minWidth: 180},
+  // The Slider thumb overhangs the track edge at t=0 — reserve room so it
+  // never sits on top of the tick counter to its left.
+  scrubItem: {minWidth: 180, paddingInlineStart: 12},
   tickCounter: {whiteSpace: 'nowrap'},
   visuallyHidden: {
     position: 'absolute',

@@ -352,7 +352,11 @@ export default function DeploymentDetailPage() {
                     <LogStream
                       entries={buildEntries}
                       variant="terminal"
-                      maxHeight={420}
+                      // Sized to the full 19-line fixture (~760px incl. the
+                      // expanded warn detail) so the terminal never slices a
+                      // row in half at its rounded bottom edge; the page
+                      // scrolls instead of the log clipping.
+                      maxHeight={800}
                       isFollowing={isFollowing}
                       onFollowChange={setIsFollowing}
                       label="Build logs"

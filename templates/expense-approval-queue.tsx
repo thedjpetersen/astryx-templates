@@ -143,6 +143,14 @@ import {
 // ---------------------------------------------------------------------------
 
 const styles: Record<string, CSSProperties> = {
+  // Definite height so Layout height="fill" resolves even when the host
+  // container is auto-height; without it the detail scroll region collapses
+  // to its minHeight floor and clips the receipt strip, while the pinned
+  // action bar floats above the bottom of the host frame.
+  root: {
+    height: '100dvh',
+    width: '100%',
+  },
   // Positioning context for the floating bulk Toolbar; the list scrolls
   // inside it.
   queueWrap: {
@@ -1642,37 +1650,43 @@ export default function ExpenseApprovalQueueTemplate() {
   );
 
   return (
-    <Layout
-      height="fill"
-      header={header}
-      start={
-        isSinglePane ? undefined : (
-          <LayoutPanel width={360} padding={0} hasDivider label="Report queue">
-            {queuePane}
-          </LayoutPanel>
-        )
-      }
-      content={
-        <LayoutContent padding={0}>
-          <Stack direction="vertical" style={styles.detailColumn}>
-            {banner != null && (
-              <div style={styles.bannerRow}>
-                <Banner
-                  status={banner.status}
-                  title={banner.title}
-                  isDismissable
-                  onDismiss={() => setBanner(null)}
-                />
-              </div>
-            )}
-            <StackItem size="fill" style={{minHeight: 0}}>
-              {/* <=760px the queue owns the content region until a row is
-                  tapped; deciding a report routes back to the queue. */}
-              {isSinglePane && !isDetailShownOnMobile ? queuePane : detailPane}
-            </StackItem>
-          </Stack>
-        </LayoutContent>
-      }
-    />
+    <div style={styles.root}>
+      <Layout
+        height="fill"
+        header={header}
+        start={
+          isSinglePane ? undefined : (
+            <LayoutPanel
+              width={360}
+              padding={0}
+              hasDivider
+              label="Report queue">
+              {queuePane}
+            </LayoutPanel>
+          )
+        }
+        content={
+          <LayoutContent padding={0}>
+            <Stack direction="vertical" style={styles.detailColumn}>
+              {banner != null && (
+                <div style={styles.bannerRow}>
+                  <Banner
+                    status={banner.status}
+                    title={banner.title}
+                    isDismissable
+                    onDismiss={() => setBanner(null)}
+                  />
+                </div>
+              )}
+              <StackItem size="fill" style={{minHeight: 0}}>
+                {/* <=760px the queue owns the content region until a row is
+                    tapped; deciding a report routes back to the queue. */}
+                {isSinglePane && !isDetailShownOnMobile ? queuePane : detailPane}
+              </StackItem>
+            </Stack>
+          </LayoutContent>
+        }
+      />
+    </div>
   );
 }

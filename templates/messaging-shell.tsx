@@ -117,6 +117,11 @@ const styles: Record<string, CSSProperties> = {
     paddingInline: 'var(--spacing-4)',
     paddingBlock: 'var(--spacing-3)',
   },
+  streamChannelName: {
+    // Channel names are hyphenated slugs — never let them break mid-name.
+    whiteSpace: 'nowrap',
+    flexShrink: 0,
+  },
   streamTopic: {
     minWidth: 0,
   },
@@ -128,6 +133,10 @@ const styles: Record<string, CSSProperties> = {
   chatFill: {
     flex: 1,
     minHeight: 0,
+    // ChatLayout sizes itself with flex: 1 and docks its composer to the
+    // bottom of a height-constrained scroll container — give it one.
+    display: 'flex',
+    flexDirection: 'column',
   },
   threadColumn: {
     height: '100%',
@@ -136,7 +145,8 @@ const styles: Record<string, CSSProperties> = {
   threadHeader: {
     alignItems: 'center',
     paddingInline: 'var(--spacing-3)',
-    paddingBlock: 'var(--spacing-2)',
+    // Match streamHeader so the two header bottom borders sit on one line.
+    paddingBlock: 'var(--spacing-3)',
   },
   threadScroll: {
     minHeight: 0,
@@ -525,7 +535,7 @@ export default function MessagingShellPage() {
     <Stack direction="vertical" style={styles.streamColumn}>
       <HStack gap={3} style={styles.streamHeader}>
         <Icon icon={HashIcon} size="sm" color="secondary" />
-        <Heading level={5} accessibilityLevel={1}>
+        <Heading level={5} accessibilityLevel={1} style={styles.streamChannelName}>
           {selectedChannel.name}
         </Heading>
         <StackItem size="fill" style={styles.streamTopic}>

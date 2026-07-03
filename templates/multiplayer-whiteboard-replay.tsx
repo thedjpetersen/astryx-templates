@@ -368,7 +368,9 @@ const styles: Record<string, CSSProperties> = {
   },
   transportRow: {flexWrap: 'wrap', rowGap: 8},
   transportTapTarget: {width: 40, height: 40},
-  scrubItem: {minWidth: 200},
+  // paddingInline reserves room for the thumb's overhang at 0/max so it
+  // never overlaps the tick counter or the speed control.
+  scrubItem: {minWidth: 200, paddingInline: 10},
   tickCounter: {whiteSpace: 'nowrap'},
   panelScroll: {height: '100%', overflowY: 'auto'},
   eventDot: {width: 10, height: 10, borderRadius: '50%', flexShrink: 0},

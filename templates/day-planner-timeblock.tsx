@@ -225,12 +225,22 @@ const styles: Record<string, CSSProperties> = {
     overflow: 'hidden',
     borderRadius: 6,
     borderLeft: '4px solid transparent',
-    backgroundColor: 'var(--color-background-muted)',
+    // --color-background-muted is translucent, so overlapping blocks would
+    // ghost each other's borders through the block on top (the seeded
+    // conflict's orange rule read as a strikethrough across the later
+    // block's title). Layer it over the opaque body surface instead so a
+    // block fully occludes whatever it overlaps.
+    backgroundColor: 'var(--color-background-body)',
+    backgroundImage:
+      'linear-gradient(var(--color-background-muted), ' +
+      'var(--color-background-muted))',
     boxShadow: 'inset 0 0 0 1px var(--color-border)',
     padding: '2px 4px 2px 6px',
   },
+  // Dim done blocks, but not so far that the struck title drops below
+  // readable contrast on the near-black dark-mode block surface.
   blockDone: {
-    opacity: 0.55,
+    opacity: 0.72,
   },
   blockConflict: {
     boxShadow:

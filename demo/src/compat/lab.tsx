@@ -288,6 +288,18 @@ const levelColor: Record<LogStreamLevel, string> = {
   debug: 'var(--color-text-disabled)',
 };
 
+// The terminal variant paints a fixed dark background (#0b1020) in both
+// schemes, so its level labels and row dividers must be scheme-agnostic —
+// theme tokens would go low-contrast in light mode and leak zebra banding.
+const terminalLevelColor: Record<LogStreamLevel, string> = {
+  info: '#94a3b8',
+  warn: '#fbbf24',
+  error: '#f87171',
+  debug: '#64748b',
+};
+
+const terminalRowBorder = '1px solid rgba(148, 163, 184, 0.16)';
+
 export function LogStream({
   entries,
   variant = 'default',
@@ -316,10 +328,17 @@ export function LogStream({
             gridTemplateColumns: '88px 64px 140px minmax(0, 1fr)',
             gap: 'var(--spacing-2)',
             padding: 'var(--spacing-2) var(--spacing-3)',
-            borderBottom: '1px solid var(--color-border)',
+            borderBottom: terminal
+              ? terminalRowBorder
+              : '1px solid var(--color-border)',
           }}>
           <span>{entry.timestamp}</span>
-          <span style={{color: levelColor[entry.level]}}>{entry.level}</span>
+          <span
+            style={{
+              color: (terminal ? terminalLevelColor : levelColor)[entry.level],
+            }}>
+            {entry.level}
+          </span>
           <span>{entry.source}</span>
           <span>
             {entry.message}

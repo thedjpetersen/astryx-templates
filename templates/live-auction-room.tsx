@@ -396,7 +396,9 @@ const styles: Record<string, CSSProperties> = {
     padding: 'var(--spacing-3)',
   },
   transportRow: {flexWrap: 'wrap', rowGap: 8},
-  scrubItem: {minWidth: 180},
+  // paddingInline reserves room for the thumb's overhang at 0/max so it
+  // never overlaps the timecode text or the speed control.
+  scrubItem: {minWidth: 180, paddingInline: 10},
   clockText: {whiteSpace: 'nowrap'},
   headerChip: {
     display: 'flex',

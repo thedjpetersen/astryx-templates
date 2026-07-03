@@ -365,7 +365,12 @@ button:focus-visible,
 .template-stage {
   min-width: 920px;
   min-height: calc(100dvh - 130px);
-  overflow: auto;
+  /* clip (not auto): still crops square template corners to the card
+     radius, but without creating a scroll container — the stage never
+     scrolls itself (it grows with content), and an overflow:auto here
+     re-scopes templates' position:sticky panels away from .preview-wrap,
+     silently disabling them. */
+  overflow: clip;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-container, 16px);
   background: var(--color-background-card);

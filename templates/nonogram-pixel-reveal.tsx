@@ -246,17 +246,26 @@ const styles: Record<string, CSSProperties> = {
       'color-mix(in srgb, var(--color-success) 8%, var(--color-background-card))',
   },
   shareRow: {flexWrap: 'wrap'},
-  // Solve-log panel internals.
+  // Solve-log panel internals. Sticky (with the panel's own scroll disabled)
+  // so that in auto-height embeds the log rides the outer scroll like the
+  // board column instead of clipping mid-glyph at the scrollport top;
+  // maxHeight + overflow keep long logs reachable when the height chain is
+  // intact.
   panelScroll: {
-    height: '100%',
-    minHeight: 0,
+    position: 'sticky',
+    insetBlockStart: 0,
+    maxHeight: '100%',
     overflowY: 'auto',
     padding: 'var(--spacing-4)',
   },
   progressTrack: {
     height: 8,
     borderRadius: 4,
-    backgroundColor: 'var(--color-background-muted)',
+    // Mixed over the muted token: --color-background-muted sits within a
+    // couple of steps of the card surface in dark mode, so an unmixed track
+    // is invisible at 0%.
+    backgroundColor:
+      'color-mix(in srgb, var(--color-text-secondary) 14%, var(--color-background-muted))',
     overflow: 'hidden',
   },
   progressFill: {
@@ -1660,7 +1669,12 @@ export default function NonogramPixelRevealTemplate() {
       }
       end={
         isStacked ? undefined : (
-          <LayoutPanel width={320} padding={0} hasDivider label="Solve log">
+          <LayoutPanel
+            width={320}
+            padding={0}
+            hasDivider
+            isScrollable={false}
+            label="Solve log">
             <div style={styles.panelScroll}>{solveLog}</div>
           </LayoutPanel>
         )

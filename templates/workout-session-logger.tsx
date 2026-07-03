@@ -838,7 +838,10 @@ function ExerciseBlock({
       style={isActive ? styles.exerciseBlockActive : styles.exerciseBlock}
       onFocusCapture={() => onSelect(slot.slotId)}>
       <VStack gap={3}>
-        <HStack gap={3} vAlign="center" wrap="wrap">
+        {/* Phone tier only: allow the header row to wrap. On wider tiers it
+            stays a single row — long names shrink and wrap inside the fill
+            item instead of pushing Swap onto its own line. */}
+        <HStack gap={3} vAlign="center" wrap={isPhone ? 'wrap' : 'nowrap'}>
           <div style={styles.plateMark} aria-hidden>
             <Icon icon={DumbbellIcon} size="sm" color="inherit" />
           </div>

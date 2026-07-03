@@ -17,7 +17,7 @@
  *   and refresh control drop below the title instead of clipping when the
  *   row runs out of width; the TabList sits on its own row below so tabs
  *   never collide with the Selector at narrow widths.
- * - KPI row: Grid columns={{minWidth: 240, max: 4}} — 4-up on wide
+ * - KPI row: Grid columns={{minWidth: 200, max: 4}} — 4-up on wide
  *   viewports, reflowing to 2-up and 1-up as the viewport narrows.
  * - Chart + table pair: Grid columns={{minWidth: 320, repeat: 'fit'}} —
  *   side by side on wide viewports, stacked on narrow ones; 320px tracks
@@ -63,6 +63,16 @@ const styles: Record<string, CSSProperties> = {
   numericCell: {fontVariantNumeric: 'tabular-nums'},
   // Keep charts from collapsing when their card flexes below min width.
   chartBody: {minWidth: 0, paddingTop: 'var(--spacing-2)'},
+  // Pin the title + tab bar to the top of the scroll context. The opaque
+  // card background and low shadow give the bar elevation, so content
+  // sliding beneath the tabs reads intentional instead of clipped.
+  stickyHeader: {
+    position: 'sticky',
+    top: 0,
+    zIndex: 2,
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: 'var(--shadow-low)',
+  },
 };
 
 // Chart series colors via Astryx design tokens (CSS custom properties).
@@ -216,6 +226,7 @@ const landingPageColumns: TableColumn<LandingPageRow>[] = [
     key: 'sessions',
     header: 'Sessions',
     width: pixel(100),
+    align: 'end',
     renderCell: (item: LandingPageRow) => (
       <span style={styles.numericCell}>
         <Text type="body">{item.sessions}</Text>
@@ -226,6 +237,7 @@ const landingPageColumns: TableColumn<LandingPageRow>[] = [
     key: 'conversion',
     header: 'Conv.',
     width: pixel(80),
+    align: 'end',
     renderCell: (item: LandingPageRow) => (
       <span style={styles.numericCell}>
         <Text type="body">{item.conversion}</Text>
@@ -236,6 +248,7 @@ const landingPageColumns: TableColumn<LandingPageRow>[] = [
     key: 'revenue',
     header: 'Revenue',
     width: pixel(100),
+    align: 'end',
     renderCell: (item: LandingPageRow) => (
       <span style={styles.numericCell}>
         <Text type="body">{item.revenue}</Text>
@@ -347,6 +360,7 @@ const referrerColumns: TableColumn<ReferrerRow>[] = [
     key: 'sessions',
     header: 'Sessions',
     width: pixel(100),
+    align: 'end',
     renderCell: (item: ReferrerRow) => (
       <span style={styles.numericCell}>
         <Text type="body">{item.sessions}</Text>
@@ -357,6 +371,7 @@ const referrerColumns: TableColumn<ReferrerRow>[] = [
     key: 'bounce',
     header: 'Bounce',
     width: pixel(80),
+    align: 'end',
     renderCell: (item: ReferrerRow) => (
       <span style={styles.numericCell}>
         <Text type="body">{item.bounce}</Text>
@@ -367,6 +382,7 @@ const referrerColumns: TableColumn<ReferrerRow>[] = [
     key: 'conversion',
     header: 'Conv.',
     width: pixel(80),
+    align: 'end',
     renderCell: (item: ReferrerRow) => (
       <span style={styles.numericCell}>
         <Text type="body">{item.conversion}</Text>
@@ -486,6 +502,7 @@ const productColumns: TableColumn<ProductRow>[] = [
     key: 'units',
     header: 'Units',
     width: pixel(80),
+    align: 'end',
     renderCell: (item: ProductRow) => (
       <span style={styles.numericCell}>
         <Text type="body">{item.units}</Text>
@@ -496,6 +513,7 @@ const productColumns: TableColumn<ProductRow>[] = [
     key: 'revenue',
     header: 'Revenue',
     width: pixel(100),
+    align: 'end',
     renderCell: (item: ProductRow) => (
       <span style={styles.numericCell}>
         <Text type="body">{item.revenue}</Text>
@@ -506,6 +524,7 @@ const productColumns: TableColumn<ProductRow>[] = [
     key: 'refunds',
     header: 'Refunds',
     width: pixel(90),
+    align: 'end',
     renderCell: (item: ProductRow) => (
       <span style={styles.numericCell}>
         <Text type="body">{item.refunds}</Text>
@@ -643,6 +662,7 @@ const issueColumns: TableColumn<IssueRow>[] = [
     key: 'occurrences',
     header: '24h count',
     width: pixel(90),
+    align: 'end',
     renderCell: (item: IssueRow) => (
       <span style={styles.numericCell}>
         <Text type="body">{item.occurrences}</Text>
@@ -901,7 +921,7 @@ export default function DashboardTabbedTemplate() {
     <Layout
       height="fill"
       header={
-        <LayoutHeader hasDivider>
+        <LayoutHeader hasDivider style={styles.stickyHeader}>
           <VStack gap={3}>
             <HStack gap={2} vAlign="center" wrap="wrap">
               <StackItem size="fill">
@@ -950,7 +970,7 @@ export default function DashboardTabbedTemplate() {
         <LayoutContent padding={6}>
           <VStack gap={6}>
             {/* KPI row — 4-up Stat cards for the active tab */}
-            <Grid columns={{minWidth: 240, max: 4}} gap={4}>
+            <Grid columns={{minWidth: 200, max: 4}} gap={4}>
               {view.kpis.map(kpi => (
                 <Card key={kpi.label}>
                   <Stat

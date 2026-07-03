@@ -314,6 +314,10 @@ const styles: Record<string, CSSProperties> = {
     minWidth: 48,
     textAlign: 'center',
   },
+  // RSVP segments: labels must never wrap — a wrapped "Can't go" spills
+  // out of the pill in the 340px panel. whiteSpace inherits into the
+  // segment buttons.
+  rsvpSegments: {whiteSpace: 'nowrap'},
   // Response-count rows: small tinted icon discs keyed to each response.
   responseDisc: {
     width: 32,
@@ -480,6 +484,12 @@ const EVENT = {
   hostTeam: 'Developer Platform',
   hosts: ['Dana Whitfield', 'Alex Kim'],
 };
+
+// "Maybe" disc tint: --color-warning barely dims in dark mode, so at full
+// strength the yellow glyph glows next to the muted Going/Cannot-go discs —
+// mute it toward the card surface in dark only.
+const MAYBE_TINT =
+  'light-dark(var(--color-warning), color-mix(in srgb, var(--color-warning) 70%, var(--color-background-surface)))';
 
 const CURRENT_USER = 'Maya Chen';
 const CAPACITY = 180;
@@ -992,27 +1002,19 @@ export default function EventDetailRsvpTemplate() {
           </Text>
         </VStack>
 
+        {/* Text-only segments: icon + label cannot fit three-up on one
+            line inside the 340px panel at size="lg", so the segments carry
+            labels alone (the response rows keep the icons). */}
         <SegmentedControl
           label="Your RSVP"
           value={rsvp}
           onChange={changeRsvp}
           size="lg"
-          layout="fill">
-          <SegmentedControlItem
-            value="going"
-            label="Going"
-            icon={<Icon icon={CheckIcon} size="sm" color="inherit" />}
-          />
-          <SegmentedControlItem
-            value="maybe"
-            label="Maybe"
-            icon={<Icon icon={CircleHelpIcon} size="sm" color="inherit" />}
-          />
-          <SegmentedControlItem
-            value="declined"
-            label="Cannot go"
-            icon={<Icon icon={XIcon} size="sm" color="inherit" />}
-          />
+          layout="fill"
+          style={styles.rsvpSegments}>
+          <SegmentedControlItem value="going" label="Going" />
+          <SegmentedControlItem value="maybe" label="Maybe" />
+          <SegmentedControlItem value="declined" label="Can't go" />
         </SegmentedControl>
 
         {/* Guest stepper — enabled only while Going; counts into totals. */}
@@ -1135,7 +1137,7 @@ export default function EventDetailRsvpTemplate() {
           />
           <ResponseCountRow
             icon={CircleHelpIcon}
-            tint="var(--color-warning)"
+            tint={MAYBE_TINT}
             tintBg="color-mix(in srgb, var(--color-warning) 16%, transparent)"
             label="Maybe"
             count={maybeTotal}

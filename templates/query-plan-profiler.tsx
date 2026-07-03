@@ -166,10 +166,17 @@ const styles: Record<string, CSSProperties> = {
     flexShrink: 0,
     color: 'var(--color-text-secondary)',
   },
+  // Metrics drop one type step below the query name and never wrap inside
+  // a stat — if the rail runs out of room a whole stat moves down as a unit
+  // instead of orphaning its label from its value.
   railMetrics: {
     ...mono,
+    fontSize: 'var(--text-supporting-size)',
+    lineHeight: 'var(--text-supporting-leading)',
     display: 'flex',
-    gap: 'var(--spacing-3)',
+    flexWrap: 'wrap',
+    gap: 'var(--spacing-1) var(--spacing-3)',
+    whiteSpace: 'nowrap',
     color: 'var(--color-text-secondary)',
     paddingLeft: 28,
   },
@@ -265,6 +272,7 @@ const styles: Record<string, CSSProperties> = {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
+    containerType: 'inline-size',
   },
   nodeMetric: {
     ...mono,
@@ -273,13 +281,16 @@ const styles: Record<string, CSSProperties> = {
     textAlign: 'right',
   },
   nodeRows: {minWidth: 88},
-  nodeCost: {minWidth: 64},
-  // Per-node inclusive-cost bar: fixed 72px track, fill = cost / plan total.
+  nodeCost: {minWidth: 52},
+  // Per-node inclusive-cost bar: 56px track, fill = cost / plan total. The
+  // track is the row's sacrificial element — it shrinks (down to 16px)
+  // before the right-aligned metrics can overflow the panel's padding.
   nodeTrack: {
-    width: 72,
+    width: 56,
+    minWidth: 16,
     height: 4,
     borderRadius: 2,
-    flexShrink: 0,
+    flexShrink: 1,
     backgroundColor: 'var(--color-background-muted)',
     overflow: 'hidden',
   },
@@ -325,7 +336,18 @@ const styles: Record<string, CSSProperties> = {
 };
 
 /** Per-level indent for plan-tree rows, in pixels. */
-const INDENT_PER_LEVEL = 18;
+const INDENT_PER_LEVEL = 12;
+
+// Container-query step for the node target/detail text: in tightly indented
+// rows the flexible slot can collapse to a few pixels, and an ellipsized
+// one-character fragment ("S.") reads as a rendering glitch — below 56px the
+// text hides entirely and the metrics columns carry the row.
+const PROFILER_CSS = `
+.qpp-node-detail { display: none; }
+@container (min-width: 56px) {
+  .qpp-node-detail { display: block; min-width: 0; }
+}
+`;
 
 // ============= DATA =============
 // Deterministic fixtures: fixed costs, row estimates, p95s, and call
@@ -934,9 +956,11 @@ function PlanNodeRow({
       </span>
       <Badge variant={CATEGORY_BADGE[category]} label={node.operator} />
       <span style={styles.nodeTarget}>
-        <Text type="body" maxLines={1}>
-          {node.target ?? node.detail ?? ''}
-        </Text>
+        <span className="qpp-node-detail">
+          <Text type="body" maxLines={1}>
+            {node.target ?? node.detail ?? ''}
+          </Text>
+        </span>
       </span>
       <span style={{...styles.nodeMetric, ...styles.nodeRows}}>
         ~{formatCost(node.rows)} rows
@@ -1533,6 +1557,8 @@ export default function QueryPlanProfilerTemplate() {
       }
       content={
         <LayoutContent padding={4} label="Query detail">
+          {/* Hides squeezed node detail text below its readable minimum. */}
+          <style>{PROFILER_CSS}</style>
           <VStack gap={3}>
             {isCompact && queryPicker}
 

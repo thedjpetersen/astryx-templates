@@ -19,10 +19,21 @@ export interface StatProps {
 
 function deltaStyle(delta?: Delta) {
   if (!delta) return undefined;
-  if (delta.sentiment === 'positive' || delta.direction === 'up') {
-    return {color: 'var(--color-success)'};
+  // An explicit sentiment wins over the arrow direction: for inverted metrics
+  // (error rate, latency) "up" is bad and "down" is good.
+  const sentiment =
+    delta.sentiment ??
+    (delta.direction === 'up'
+      ? 'positive'
+      : delta.direction === 'down'
+        ? 'negative'
+        : 'neutral');
+  if (sentiment === 'positive') {
+    // --color-success is the same dark green in both schemes; --color-icon-green
+    // matches it in light mode but lifts for contrast on dark surfaces.
+    return {color: 'var(--color-icon-green, var(--color-success))'};
   }
-  if (delta.sentiment === 'negative' || delta.direction === 'down') {
+  if (sentiment === 'negative') {
     return {color: 'var(--color-error)'};
   }
   return undefined;

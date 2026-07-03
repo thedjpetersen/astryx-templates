@@ -274,6 +274,9 @@ const styles: Record<string, CSSProperties> = {
     transitionDuration: '200ms',
     transitionTimingFunction: 'linear',
   },
+  // paddingInline reserves room for the slider thumb's overhang at 0/max so
+  // it never overlaps the elapsed/total timecode labels beside it.
+  scrubItem: {paddingInline: 10},
   speakerDot: {
     width: 8,
     height: 8,
@@ -1525,7 +1528,7 @@ export default function PodcastWordSplicerTemplate() {
       <Text type="supporting" color="secondary" hasTabularNumbers>
         {formatTime(elapsedSec)}
       </Text>
-      <StackItem size="fill">
+      <StackItem size="fill" style={styles.scrubItem}>
         <Slider
           label="Scrub the edited timeline"
           isLabelHidden
