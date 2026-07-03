@@ -8,6 +8,8 @@ import AiChatToolStream from '../../templates/ai-chat-tool-stream';
 import aiChatToolStreamSource from '../../templates/ai-chat-tool-stream.tsx?raw';
 import AlbumTracklistPlayer from '../../templates/album-tracklist-player';
 import albumTracklistPlayerSource from '../../templates/album-tracklist-player.tsx?raw';
+import ApiRequestExplorer from '../../templates/api-request-explorer';
+import apiRequestExplorerSource from '../../templates/api-request-explorer.tsx?raw';
 import ArtifactPinDock from '../../templates/artifact-pin-dock';
 import artifactPinDockSource from '../../templates/artifact-pin-dock.tsx?raw';
 import AutomationRuleBuilder from '../../templates/automation-rule-builder';
@@ -24,8 +26,12 @@ import CalendarWeekAgenda from '../../templates/calendar-week-agenda';
 import calendarWeekAgendaSource from '../../templates/calendar-week-agenda.tsx?raw';
 import CartCheckoutFlow from '../../templates/cart-checkout-flow';
 import cartCheckoutFlowSource from '../../templates/cart-checkout-flow.tsx?raw';
+import CertKeyInventory from '../../templates/cert-key-inventory';
+import certKeyInventorySource from '../../templates/cert-key-inventory.tsx?raw';
 import CliPairingConsole from '../../templates/cli-pairing-console';
 import cliPairingConsoleSource from '../../templates/cli-pairing-console.tsx?raw';
+import CloudCostAnalyzer from '../../templates/cloud-cost-analyzer';
+import cloudCostAnalyzerSource from '../../templates/cloud-cost-analyzer.tsx?raw';
 import CodeReviewDiffQueue from '../../templates/code-review-diff-queue';
 import codeReviewDiffQueueSource from '../../templates/code-review-diff-queue.tsx?raw';
 import CodeBlockTerminal from '../../templates/codeblock-terminal';
@@ -38,6 +44,12 @@ import CompactionInspector from '../../templates/compaction-inspector';
 import compactionInspectorSource from '../../templates/compaction-inspector.tsx?raw';
 import ComposerStateGallery from '../../templates/composer-state-gallery';
 import composerStateGallerySource from '../../templates/composer-state-gallery.tsx?raw';
+import CourseLessonPlayer from '../../templates/course-lesson-player';
+import courseLessonPlayerSource from '../../templates/course-lesson-player.tsx?raw';
+import CrmContactRecord from '../../templates/crm-contact-record';
+import crmContactRecordSource from '../../templates/crm-contact-record.tsx?raw';
+import DagRunVisualizer from '../../templates/dag-run-visualizer';
+import dagRunVisualizerSource from '../../templates/dag-run-visualizer.tsx?raw';
 import DashboardExecutiveSummary from '../../templates/dashboard-executive-summary';
 import dashboardExecutiveSummarySource from '../../templates/dashboard-executive-summary.tsx?raw';
 import DashboardFilterable from '../../templates/dashboard-filterable';
@@ -48,6 +60,12 @@ import DashboardTabbed from '../../templates/dashboard-tabbed';
 import dashboardTabbedSource from '../../templates/dashboard-tabbed.tsx?raw';
 import DashboardWidgetGrid from '../../templates/dashboard-widget-grid';
 import dashboardWidgetGridSource from '../../templates/dashboard-widget-grid.tsx?raw';
+import DataCatalogLineage from '../../templates/data-catalog-lineage';
+import dataCatalogLineageSource from '../../templates/data-catalog-lineage.tsx?raw';
+import DataQualityMonitors from '../../templates/data-quality-monitors';
+import dataQualityMonitorsSource from '../../templates/data-quality-monitors.tsx?raw';
+import DayPlannerTimeblock from '../../templates/day-planner-timeblock';
+import dayPlannerTimeblockSource from '../../templates/day-planner-timeblock.tsx?raw';
 import DeckReviewComments from '../../templates/deck-review-comments';
 import deckReviewCommentsSource from '../../templates/deck-review-comments.tsx?raw';
 import DeckThemeDesigner from '../../templates/deck-theme-designer';
@@ -56,8 +74,12 @@ import DeploymentDetail from '../../templates/deployment-detail';
 import deploymentDetailSource from '../../templates/deployment-detail.tsx?raw';
 import DiffViewer from '../../templates/diff-viewer';
 import diffViewerSource from '../../templates/diff-viewer.tsx?raw';
+import DocSuggestionReview from '../../templates/doc-suggestion-review';
+import docSuggestionReviewSource from '../../templates/doc-suggestion-review.tsx?raw';
 import EditorFileTabsShell from '../../templates/editor-file-tabs-shell';
 import editorFileTabsShellSource from '../../templates/editor-file-tabs-shell.tsx?raw';
+import EsignatureEnvelopeFlow from '../../templates/esignature-envelope-flow';
+import esignatureEnvelopeFlowSource from '../../templates/esignature-envelope-flow.tsx?raw';
 import EventDetailRsvp from '../../templates/event-detail-rsvp';
 import eventDetailRsvpSource from '../../templates/event-detail-rsvp.tsx?raw';
 import ExpenseApprovalQueue from '../../templates/expense-approval-queue';
@@ -66,6 +88,10 @@ import FeatureGateConsole from '../../templates/feature-gate-console';
 import featureGateConsoleSource from '../../templates/feature-gate-console.tsx?raw';
 import FileBrowserPreview from '../../templates/file-browser-preview';
 import fileBrowserPreviewSource from '../../templates/file-browser-preview.tsx?raw';
+import FlashcardReviewSession from '../../templates/flashcard-review-session';
+import flashcardReviewSessionSource from '../../templates/flashcard-review-session.tsx?raw';
+import FleetDispatchBoard from '../../templates/fleet-dispatch-board';
+import fleetDispatchBoardSource from '../../templates/fleet-dispatch-board.tsx?raw';
 import FleetNodeStatus from '../../templates/fleet-node-status';
 import fleetNodeStatusSource from '../../templates/fleet-node-status.tsx?raw';
 import FormInlineEdit from '../../templates/form-inline-edit';
@@ -80,6 +106,8 @@ import FormWizard from '../../templates/form-wizard';
 import formWizardSource from '../../templates/form-wizard.tsx?raw';
 import GitBranchGraph from '../../templates/git-branch-graph';
 import gitBranchGraphSource from '../../templates/git-branch-graph.tsx?raw';
+import HabitStreakTracker from '../../templates/habit-streak-tracker';
+import habitStreakTrackerSource from '../../templates/habit-streak-tracker.tsx?raw';
 import Inbox from '../../templates/inbox';
 import inboxSource from '../../templates/inbox.tsx?raw';
 import IncidentConsole from '../../templates/incident-console';
@@ -96,6 +124,8 @@ import KpiDashboard from '../../templates/kpi-dashboard';
 import kpiDashboardSource from '../../templates/kpi-dashboard.tsx?raw';
 import KpiStrip from '../../templates/kpi-strip';
 import kpiStripSource from '../../templates/kpi-strip.tsx?raw';
+import LiveEventChat from '../../templates/live-event-chat';
+import liveEventChatSource from '../../templates/live-event-chat.tsx?raw';
 import LiveStreamViewer from '../../templates/live-stream-viewer';
 import liveStreamViewerSource from '../../templates/live-stream-viewer.tsx?raw';
 import LogsExplorer from '../../templates/logs-explorer';
@@ -128,10 +158,14 @@ import OperationsDashboard from '../../templates/operations-dashboard';
 import operationsDashboardSource from '../../templates/operations-dashboard.tsx?raw';
 import OrderTracking from '../../templates/order-tracking';
 import orderTrackingSource from '../../templates/order-tracking.tsx?raw';
+import OrgChartExplorer from '../../templates/org-chart-explorer';
+import orgChartExplorerSource from '../../templates/org-chart-explorer.tsx?raw';
 import PayoutStatements from '../../templates/payout-statements';
 import payoutStatementsSource from '../../templates/payout-statements.tsx?raw';
 import PodcastEpisodePlayer from '../../templates/podcast-episode-player';
 import podcastEpisodePlayerSource from '../../templates/podcast-episode-player.tsx?raw';
+import PollSurveyBuilder from '../../templates/poll-survey-builder';
+import pollSurveyBuilderSource from '../../templates/poll-survey-builder.tsx?raw';
 import PortfolioHoldings from '../../templates/portfolio-holdings';
 import portfolioHoldingsSource from '../../templates/portfolio-holdings.tsx?raw';
 import PricingPlans from '../../templates/pricing-plans';
@@ -142,18 +176,30 @@ import ProductList from '../../templates/product-list';
 import productListSource from '../../templates/product-list.tsx?raw';
 import ProfilePage from '../../templates/profile-page';
 import profilePageSource from '../../templates/profile-page.tsx?raw';
+import QueryPlanProfiler from '../../templates/query-plan-profiler';
+import queryPlanProfilerSource from '../../templates/query-plan-profiler.tsx?raw';
+import QuizExamRunner from '../../templates/quiz-exam-runner';
+import quizExamRunnerSource from '../../templates/quiz-exam-runner.tsx?raw';
+import ReadLaterLibrary from '../../templates/read-later-library';
+import readLaterLibrarySource from '../../templates/read-later-library.tsx?raw';
+import RecipeCookMode from '../../templates/recipe-cook-mode';
+import recipeCookModeSource from '../../templates/recipe-cook-mode.tsx?raw';
 import ReleaseTrainOverview from '../../templates/release-train-overview';
 import releaseTrainOverviewSource from '../../templates/release-train-overview.tsx?raw';
 import ReplPlayground from '../../templates/repl-playground';
 import replPlaygroundSource from '../../templates/repl-playground.tsx?raw';
 import ReturnsExchangeFlow from '../../templates/returns-exchange-flow';
 import returnsExchangeFlowSource from '../../templates/returns-exchange-flow.tsx?raw';
+import ReviewCycleCalibration from '../../templates/review-cycle-calibration';
+import reviewCycleCalibrationSource from '../../templates/review-cycle-calibration.tsx?raw';
 import RoadmapGantt from '../../templates/roadmap-gantt';
 import roadmapGanttSource from '../../templates/roadmap-gantt.tsx?raw';
 import ScheduledJobsManager from '../../templates/scheduled-jobs-manager';
 import scheduledJobsManagerSource from '../../templates/scheduled-jobs-manager.tsx?raw';
 import ScheduledSendOutbox from '../../templates/scheduled-send-outbox';
 import scheduledSendOutboxSource from '../../templates/scheduled-send-outbox.tsx?raw';
+import SchemaDesignerErd from '../../templates/schema-designer-erd';
+import schemaDesignerErdSource from '../../templates/schema-designer-erd.tsx?raw';
 import SearchResults from '../../templates/search-results';
 import searchResultsSource from '../../templates/search-results.tsx?raw';
 import SenderProfileRail from '../../templates/sender-profile-rail';
@@ -184,10 +230,14 @@ import SlidePresenterView from '../../templates/slide-presenter-view';
 import slidePresenterViewSource from '../../templates/slide-presenter-view.tsx?raw';
 import SlideSorter from '../../templates/slide-sorter';
 import slideSorterSource from '../../templates/slide-sorter.tsx?raw';
+import SocialPostComposer from '../../templates/social-post-composer';
+import socialPostComposerSource from '../../templates/social-post-composer.tsx?raw';
 import SpamQuarantineConsole from '../../templates/spam-quarantine-console';
 import spamQuarantineConsoleSource from '../../templates/spam-quarantine-console.tsx?raw';
 import SprintBoardBacklog from '../../templates/sprint-board-backlog';
 import sprintBoardBacklogSource from '../../templates/sprint-board-backlog.tsx?raw';
+import SqlQueryWorkbench from '../../templates/sql-query-workbench';
+import sqlQueryWorkbenchSource from '../../templates/sql-query-workbench.tsx?raw';
 import StorefrontBrowse from '../../templates/storefront-browse';
 import storefrontBrowseSource from '../../templates/storefront-browse.tsx?raw';
 import StreamingBrowseHome from '../../templates/streaming-browse-home';
@@ -216,6 +266,8 @@ import TeamScheduler from '../../templates/team-scheduler';
 import teamSchedulerSource from '../../templates/team-scheduler.tsx?raw';
 import TestRunnerConsole from '../../templates/test-runner-console';
 import testRunnerConsoleSource from '../../templates/test-runner-console.tsx?raw';
+import ThreadedForumTopic from '../../templates/threaded-forum-topic';
+import threadedForumTopicSource from '../../templates/threaded-forum-topic.tsx?raw';
 import TimeOffPlanner from '../../templates/time-off-planner';
 import timeOffPlannerSource from '../../templates/time-off-planner.tsx?raw';
 import Timeline from '../../templates/timeline';
@@ -224,10 +276,20 @@ import TransactionsLedger from '../../templates/transactions-ledger';
 import transactionsLedgerSource from '../../templates/transactions-ledger.tsx?raw';
 import TranscriptAnnotator from '../../templates/transcript-annotator';
 import transcriptAnnotatorSource from '../../templates/transcript-annotator.tsx?raw';
+import TripExpenseSplitter from '../../templates/trip-expense-splitter';
+import tripExpenseSplitterSource from '../../templates/trip-expense-splitter.tsx?raw';
+import TripItineraryPlanner from '../../templates/trip-itinerary-planner';
+import tripItineraryPlannerSource from '../../templates/trip-itinerary-planner.tsx?raw';
+import VideoCallLayout from '../../templates/video-call-layout';
+import videoCallLayoutSource from '../../templates/video-call-layout.tsx?raw';
 import VideoClipTimeline from '../../templates/video-clip-timeline';
 import videoClipTimelineSource from '../../templates/video-clip-timeline.tsx?raw';
 import VideoWatchPage from '../../templates/video-watch-page';
 import videoWatchPageSource from '../../templates/video-watch-page.tsx?raw';
+import WebhookDeliveryDebugger from '../../templates/webhook-delivery-debugger';
+import webhookDeliveryDebuggerSource from '../../templates/webhook-delivery-debugger.tsx?raw';
+import WorkoutSessionLogger from '../../templates/workout-session-logger';
+import workoutSessionLoggerSource from '../../templates/workout-session-logger.tsx?raw';
 
 export type TemplateKind = 'page' | 'block';
 
@@ -783,6 +845,106 @@ export const templates: TemplateEntry[] = [
     source: cliPairingConsoleSource,
   },
   {
+    id: 'flashcard-review-session',
+    name: 'Flashcard Review Session',
+    kind: 'page',
+    category: 'Learning',
+    description:
+      'Flippable Spanish vocab card with 1–4 grade keys, Again requeueing, deck rail, undo, and a per-grade summary.',
+    component: FlashcardReviewSession,
+    source: flashcardReviewSessionSource,
+  },
+  {
+    id: 'quiz-exam-runner',
+    name: 'Timed Quiz Runner',
+    kind: 'page',
+    category: 'Learning',
+    description:
+      'Countdown-timed 20-question quiz with jump-anywhere palette chips, flag-for-review, unanswered-submit confirm, and graded review with explanations and missed-only filter.',
+    component: QuizExamRunner,
+    source: quizExamRunnerSource,
+  },
+  {
+    id: 'course-lesson-player',
+    name: 'Course Lesson Player',
+    kind: 'page',
+    category: 'Learning',
+    description:
+      'Course player with a collapsible curriculum tree, gated module unlocks, an inline quiz checkpoint, and timestamped personal notes.',
+    component: CourseLessonPlayer,
+    source: courseLessonPlayerSource,
+  },
+  {
+    id: 'read-later-library',
+    name: 'Read-Later Library',
+    kind: 'page',
+    category: 'Learning',
+    description:
+      'Three-pane read-later queue with tag rail, keyboard triage list, and a progress-tracking reader pane.',
+    component: ReadLaterLibrary,
+    source: readLaterLibrarySource,
+  },
+  {
+    id: 'recipe-cook-mode',
+    name: 'Recipe Cook Mode',
+    kind: 'page',
+    category: 'Lifestyle',
+    description:
+      'Fraction-aware servings rescaling, one-step-at-a-time cook view with inline amounts, and stackable step-spawned timers.',
+    component: RecipeCookMode,
+    source: recipeCookModeSource,
+  },
+  {
+    id: 'trip-itinerary-planner',
+    name: 'Trip Itinerary Planner',
+    kind: 'page',
+    category: 'Lifestyle',
+    description:
+      'Three-region trip planner: day rail, reorderable activity cards with drag + menu moves, docked ideas tray, inline cost edits with live budget, and remove-with-undo.',
+    component: TripItineraryPlanner,
+    source: tripItineraryPlannerSource,
+  },
+  {
+    id: 'trip-expense-splitter',
+    name: 'Group Trip Expense Splitter',
+    kind: 'page',
+    category: 'Lifestyle',
+    description:
+      'Group cost splitting: payer-filterable expenses, balance cards, SVG who-owes-whom arrows, equal/percent/exact split editor, and a settle-up checklist.',
+    component: TripExpenseSplitter,
+    source: tripExpenseSplitterSource,
+  },
+  {
+    id: 'workout-session-logger',
+    name: 'Live Workout Session Logger',
+    kind: 'page',
+    category: 'Lifestyle',
+    description:
+      'Live workout logger: editable set tables with ghost previous values, rest timers, live volume and 1RM stats, substitutions, and a finish-summary diff.',
+    component: WorkoutSessionLogger,
+    source: workoutSessionLoggerSource,
+  },
+  {
+    id: 'habit-streak-tracker',
+    name: 'Habit Streak Tracker',
+    kind: 'page',
+    category: 'Lifestyle',
+    description:
+      'Habit tracker with check-offs, flame streaks, a retro-editable completion heatmap, reorder/archive controls, and a derived stats rail.',
+    component: HabitStreakTracker,
+    source: habitStreakTrackerSource,
+  },
+  {
+    id: 'day-planner-timeblock',
+    name: 'Time-Block Day Planner',
+    kind: 'page',
+    category: 'Lifestyle',
+    description:
+      'Time-block planner: movable, resizable, checkable blocks, a backlog rail with drag scheduling, overlap nudge fixes, and a shutdown panel with journal.',
+    component: DayPlannerTimeblock,
+    source: dayPlannerTimeblockSource,
+  },
+  {
     id: 'product-list',
     name: 'Product List',
     kind: 'page',
@@ -984,6 +1146,66 @@ export const templates: TemplateEntry[] = [
     source: videoClipTimelineSource,
   },
   {
+    id: 'live-event-chat',
+    name: 'Live Event Chat',
+    kind: 'page',
+    category: 'Social',
+    description:
+      'Fast-scrolling event chat with mod actions, pinned slot, slow mode, and reaction bursts.',
+    component: LiveEventChat,
+    source: liveEventChatSource,
+  },
+  {
+    id: 'video-call-layout',
+    name: 'Video Call Workspace',
+    kind: 'page',
+    category: 'Social',
+    description:
+      'Meeting surface: speaking-glow tile grid or speaker+filmstrip stage, call control bar, and a chat/roster/breakout side panel.',
+    component: VideoCallLayout,
+    source: videoCallLayoutSource,
+  },
+  {
+    id: 'social-post-composer',
+    name: 'Cross-Platform Post Composer',
+    kind: 'page',
+    category: 'Social',
+    description:
+      'Crosspost editor with per-platform countdowns, live truncating previews, and a schedule queue.',
+    component: SocialPostComposer,
+    source: socialPostComposerSource,
+  },
+  {
+    id: 'doc-suggestion-review',
+    name: 'Doc Suggestions & Comments',
+    kind: 'page',
+    category: 'Social',
+    description:
+      'Doc review canvas with per-author tracked changes, accept/reject/batch-undo controls, and an anchored comment rail.',
+    component: DocSuggestionReview,
+    source: docSuggestionReviewSource,
+  },
+  {
+    id: 'threaded-forum-topic',
+    name: 'Threaded Forum Topic',
+    kind: 'page',
+    category: 'Social',
+    description:
+      'Forum topic with a vote-ranked nested reply tree, collapsible subtrees, live sorting, inline branch composers, and a jump-to-accepted-answer rail.',
+    component: ThreadedForumTopic,
+    source: threadedForumTopicSource,
+  },
+  {
+    id: 'poll-survey-builder',
+    name: 'Poll & Survey Builder',
+    kind: 'page',
+    category: 'Social',
+    description:
+      'Two-pane survey builder: question editor with reorder and branch rules beside a live preview with a branch-honoring test mode and results tab.',
+    component: PollSurveyBuilder,
+    source: pollSurveyBuilderSource,
+  },
+  {
     id: 'cart-checkout-flow',
     name: 'Cart & Checkout',
     kind: 'page',
@@ -1174,6 +1396,56 @@ export const templates: TemplateEntry[] = [
     source: portfolioHoldingsSource,
   },
   {
+    id: 'crm-contact-record',
+    name: 'CRM Contact Record',
+    kind: 'page',
+    category: 'Business',
+    description:
+      '360° contact record: clickable lifecycle stepper, inline-editable field groups, typed Note/Call/Email/Task composer over a filterable timeline, and a deals rail with live open-task count.',
+    component: CrmContactRecord,
+    source: crmContactRecordSource,
+  },
+  {
+    id: 'fleet-dispatch-board',
+    name: 'Fleet Dispatch Board',
+    kind: 'page',
+    category: 'Business',
+    description:
+      'Dispatch queue beside driver time lanes with animated load meters, conflict-override drops, and a route-sequence rail.',
+    component: FleetDispatchBoard,
+    source: fleetDispatchBoardSource,
+  },
+  {
+    id: 'org-chart-explorer',
+    name: 'Org Chart Explorer',
+    kind: 'page',
+    category: 'Business',
+    description:
+      'Pannable org-chart canvas with SVG edges, collapsible branches, search centering, an inline-edit rail, and confirm-guarded re-parenting with undo.',
+    component: OrgChartExplorer,
+    source: orgChartExplorerSource,
+  },
+  {
+    id: 'review-cycle-calibration',
+    name: 'Performance Review Calibration',
+    kind: 'page',
+    category: 'Business',
+    description:
+      '9-box calibration grid with draggable reviewee tiles, a live rating histogram with over-target flags, inline rating edits, and finalize/reset controls.',
+    component: ReviewCycleCalibration,
+    source: reviewCycleCalibrationSource,
+  },
+  {
+    id: 'esignature-envelope-flow',
+    name: 'E-Signature Envelope Builder',
+    kind: 'page',
+    category: 'Business',
+    description:
+      'Four-step envelope wizard with click-to-place signature fields, live signing-order renumbering, and a simulated delivery tracker.',
+    component: EsignatureEnvelopeFlow,
+    source: esignatureEnvelopeFlowSource,
+  },
+  {
     id: 'roadmap-gantt',
     name: 'Roadmap Gantt',
     kind: 'page',
@@ -1294,6 +1566,66 @@ export const templates: TemplateEntry[] = [
     source: editorFileTabsShellSource,
   },
   {
+    id: 'sql-query-workbench',
+    name: 'SQL Query Workbench',
+    kind: 'page',
+    category: 'Data',
+    description:
+      'Database IDE with a connection picker, expandable schema tree, tabbed SQL editors, and a sortable, filterable result grid with canned query results.',
+    component: SqlQueryWorkbench,
+    source: sqlQueryWorkbenchSource,
+  },
+  {
+    id: 'schema-designer-erd',
+    name: 'Schema Designer (ERD)',
+    kind: 'page',
+    category: 'Data',
+    description:
+      'Pannable ERD canvas of draggable table cards with FK lines, in-card column editing, live DDL panel, and a validation strip.',
+    component: SchemaDesignerErd,
+    source: schemaDesignerErdSource,
+  },
+  {
+    id: 'dag-run-visualizer',
+    name: 'Pipeline DAG Run Visualizer',
+    kind: 'page',
+    category: 'Data',
+    description:
+      'Airflow-style orchestration console: run rail, state-colored task DAG, run-history grid, retry/mark-success cascades, and backfill.',
+    component: DagRunVisualizer,
+    source: dagRunVisualizerSource,
+  },
+  {
+    id: 'data-quality-monitors',
+    name: 'Data Quality Monitor Console',
+    kind: 'page',
+    category: 'Data',
+    description:
+      'Pass/warn/fail chip filters, monitor table with SVG sparklines, threshold-slider detail drawer with violation band, snooze/mute section, and incident timeline.',
+    component: DataQualityMonitors,
+    source: dataQualityMonitorsSource,
+  },
+  {
+    id: 'data-catalog-lineage',
+    name: 'Data Catalog & Lineage Explorer',
+    kind: 'page',
+    category: 'Data',
+    description:
+      'Dataset catalog with search and tag rail, editable descriptions and tags, pinnable columns, and a clickable SVG lineage graph with column-level edges.',
+    component: DataCatalogLineage,
+    source: dataCatalogLineageSource,
+  },
+  {
+    id: 'query-plan-profiler',
+    name: 'Query Performance Profiler',
+    kind: 'page',
+    category: 'Data',
+    description:
+      'Slow-query profiler: cost-ranked query rail, collapsible EXPLAIN tree with cost bars, index suggestions that swap in optimized plans, and plan compare.',
+    component: QueryPlanProfiler,
+    source: queryPlanProfilerSource,
+  },
+  {
     id: 'shell-left-sidebar',
     name: 'Shell - Left Sidebar',
     kind: 'page',
@@ -1373,6 +1705,46 @@ export const templates: TemplateEntry[] = [
       'Starter dashboard for this package with KPI cards, review queue, and actions.',
     component: OperationsDashboard,
     source: operationsDashboardSource,
+  },
+  {
+    id: 'cloud-cost-analyzer',
+    name: 'Cloud Cost Analyzer',
+    kind: 'page',
+    category: 'Operations',
+    description:
+      'Group-by-driven stacked spend chart with drill-down ledger, anomaly popover, and what-if commitment slider.',
+    component: CloudCostAnalyzer,
+    source: cloudCostAnalyzerSource,
+  },
+  {
+    id: 'api-request-explorer',
+    name: 'API Request Explorer',
+    kind: 'page',
+    category: 'Operations',
+    description:
+      'Postman-style API client: collection tree with dirty dots, env-variable request builder, canned JSON responses, and a restoring history rail.',
+    component: ApiRequestExplorer,
+    source: apiRequestExplorerSource,
+  },
+  {
+    id: 'webhook-delivery-debugger',
+    name: 'Webhook Delivery Debugger',
+    kind: 'page',
+    category: 'Operations',
+    description:
+      'Endpoint health rail, filterable delivery feed, and JSON-tree detail pane with replay and retry-policy drawer.',
+    component: WebhookDeliveryDebugger,
+    source: webhookDeliveryDebuggerSource,
+  },
+  {
+    id: 'cert-key-inventory',
+    name: 'Certificate & Key Inventory',
+    kind: 'page',
+    category: 'Operations',
+    description:
+      'TLS lifecycle console: filterable cert table and expiry timeline views, a chain-and-deployments drawer, and a rotate wizard with live recompute and undo.',
+    component: CertKeyInventory,
+    source: certKeyInventorySource,
   },
   {
     id: 'kpi-strip',
