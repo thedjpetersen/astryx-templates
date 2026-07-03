@@ -1348,6 +1348,14 @@ export const templates: TemplateEntry[] = [
     'Kiosk NOC wall on a 48-tick fixture tape — tweened oversized numerals over EKG heartbeats, pulsing region grid, auto-cycling spotlight, incident ticker, and a SEV1 takeover banner.',
   ),
   entry(
+    'venue-seat-picker',
+    'Venue Seat Map Picker',
+    'page',
+    'Spatial',
+    'SVG theater seat map with a four-tier price ramp, section tap-to-zoom, a best-available block finder, and a tier-grouped cart — the StyleX pilot.',
+    'Uses @stylexjs/stylex for the hand-rolled seat map — consumers need @stylexjs/unplugin (or another StyleX compiler) in their build.',
+  ),
+  entry(
     'step-sequencer-groovebox',
     'Step Sequencer Groovebox',
     'page',
