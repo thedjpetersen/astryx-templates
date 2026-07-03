@@ -207,6 +207,24 @@ button:focus-visible,
   color: var(--color-on-accent);
 }
 
+/* Color-scheme toggle (System / Light / Dark). Shares the segmented pill
+   look but sizes each button to a ~40px tap target. */
+.scheme-toggle button {
+  min-width: 0;
+  min-height: 40px;
+  padding: 6px 14px;
+}
+
+/* Floating variant for landing/browse, whose page chrome lives in files App
+   does not own. Pinned to the corner, above sticky top bars. */
+.scheme-toggle-floating {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 60;
+  box-shadow: 0 4px 14px var(--color-shadow);
+}
+
 .template-nav {
   min-height: 0;
   overflow: auto;

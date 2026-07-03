@@ -9,6 +9,7 @@ import type {TemplateEntry} from './templateRegistry';
 
 type ViewMode = 'preview' | 'source';
 type Viewport = 'desktop' | 'mobile';
+type SchemePref = 'system' | 'light' | 'dark';
 
 export type Route =
   | {view: 'landing'}
@@ -28,6 +29,58 @@ function parseRoute(hash: string): Route {
 }
 
 const RECENT_KEY = 'astryx-templates:recent';
+const THEME_KEY = 'astryx-templates:theme';
+const SCHEME_OPTIONS = ['system', 'light', 'dark'] as const;
+
+function readSchemePref(): SchemePref {
+  try {
+    const stored = localStorage.getItem(THEME_KEY);
+    if (stored === 'light' || stored === 'dark' || stored === 'system') {
+      return stored;
+    }
+  } catch {
+    // localStorage may be unavailable (private mode) — fall back to system.
+  }
+  return 'system';
+}
+
+/**
+ * Three-state color-scheme toggle (System / Light / Dark), shared across
+ * landing, browse, and detail. Floating variant pins to the viewport corner
+ * on the views whose chrome App does not own.
+ */
+function SchemeToggle({
+  value,
+  onChange,
+  floating = false,
+}: {
+  value: SchemePref;
+  onChange: (next: SchemePref) => void;
+  floating?: boolean;
+}) {
+  return (
+    <div
+      className={
+        floating
+          ? 'segmented scheme-toggle scheme-toggle-floating'
+          : 'segmented scheme-toggle'
+      }
+      role="group"
+      aria-label="Color scheme">
+      {SCHEME_OPTIONS.map(option => (
+        <button
+          key={option}
+          type="button"
+          className={value === option ? 'is-active' : ''}
+          aria-pressed={value === option}
+          aria-label={`${option} color scheme`}
+          onClick={() => onChange(option)}>
+          {option}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 function readRecentIds(): string[] {
   try {
@@ -69,6 +122,7 @@ export function DemoApp() {
     () => new URLSearchParams(window.location.search).get('q') ?? '',
   );
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const [scheme, setScheme] = useState<SchemePref>(readSchemePref);
   const [recentIds, setRecentIds] = useState<string[]>(readRecentIds);
   const [sourceText, setSourceText] = useState<string | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
@@ -95,6 +149,26 @@ export function DemoApp() {
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
+
+  // Apply the scheme preference to <html> (the Astryx theme scope root):
+  // an explicit choice forces both the browser color-scheme (so light-dark()
+  // tokens resolve) and data-astryx-media (so the theme's own overrides
+  // follow); 'system' removes both and lets the OS decide.
+  useEffect(() => {
+    const rootEl = document.documentElement;
+    if (scheme === 'system') {
+      rootEl.style.removeProperty('color-scheme');
+      rootEl.removeAttribute('data-astryx-media');
+    } else {
+      rootEl.style.setProperty('color-scheme', scheme);
+      rootEl.setAttribute('data-astryx-media', scheme);
+    }
+    try {
+      localStorage.setItem(THEME_KEY, scheme);
+    } catch {
+      // Persistence is best-effort; the choice still applies this session.
+    }
+  }, [scheme]);
 
   // Record detail visits for the landing page's "Jump back in" row.
   const detailId = route.view === 'detail' ? route.templateId : null;
@@ -160,29 +234,35 @@ export function DemoApp() {
 
   if (route.view === 'landing') {
     return (
-      <LandingPage
-        templates={templates}
-        query={query}
-        onQueryChange={setQuery}
-        searchInputRef={searchRef}
-        recentIds={recentIds}
-        kind={kind}
-      />
+      <>
+        <LandingPage
+          templates={templates}
+          query={query}
+          onQueryChange={setQuery}
+          searchInputRef={searchRef}
+          recentIds={recentIds}
+          kind={kind}
+        />
+        <SchemeToggle value={scheme} onChange={setScheme} floating />
+      </>
     );
   }
 
   if (route.view === 'browse') {
     return (
-      <BrowseView
-        templates={templates}
-        categorySlug={route.categorySlug}
-        query={query}
-        onQueryChange={setQuery}
-        kind={kind}
-        onKindChange={setKind}
-        searchInputRef={searchRef}
-        onPrefetch={prefetch}
-      />
+      <>
+        <BrowseView
+          templates={templates}
+          categorySlug={route.categorySlug}
+          query={query}
+          onQueryChange={setQuery}
+          kind={kind}
+          onKindChange={setKind}
+          searchInputRef={searchRef}
+          onPrefetch={prefetch}
+        />
+        <SchemeToggle value={scheme} onChange={setScheme} floating />
+      </>
     );
   }
 
@@ -323,6 +403,7 @@ export function DemoApp() {
                 </button>
               ))}
             </div>
+            <SchemeToggle value={scheme} onChange={setScheme} />
           </div>
         </header>
 
