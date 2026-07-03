@@ -144,7 +144,12 @@ const styles: Record<string, CSSProperties> = {
   cellInteractive: {cursor: 'pointer'},
   // Weekend columns and out-of-month days share the muted wash; out-of-month
   // days are additionally distinguished by a faint day number and no chips.
-  cellShaded: {backgroundColor: 'var(--color-background-muted)'},
+  // The wash is layered over the surface fill (not swapped in for it) so the
+  // translucent muted token reads in dark mode too.
+  cellShaded: {
+    backgroundImage:
+      'linear-gradient(var(--color-background-muted), var(--color-background-muted))',
+  },
   cellSelected: {boxShadow: 'inset 0 0 0 2px var(--color-accent)'},
   dayNumberRow: {
     display: 'flex',
@@ -287,31 +292,33 @@ const CATEGORIES: readonly CalendarCategory[] = [
   {
     id: 'work',
     label: 'Work',
-    color: 'var(--color-data-categorical-blue)',
+    color: 'var(--color-data-categorical-blue, light-dark(#0171E3, #4C9EFF))',
     token: 'blue',
   },
   {
     id: 'team',
     label: 'Team',
-    color: 'var(--color-data-categorical-purple)',
+    color:
+      'var(--color-data-categorical-purple, light-dark(#6B1EFD, #9D6BFF))',
     token: 'purple',
   },
   {
     id: 'personal',
     label: 'Personal',
-    color: 'var(--color-data-categorical-green)',
+    color: 'var(--color-data-categorical-green, light-dark(#0B991F, #34C759))',
     token: 'green',
   },
   {
     id: 'deadline',
     label: 'Deadlines',
-    color: 'var(--color-data-categorical-orange)',
+    color:
+      'var(--color-data-categorical-orange, light-dark(#EB6E00, #FF9330))',
     token: 'orange',
   },
   {
     id: 'travel',
     label: 'Travel',
-    color: 'var(--color-data-categorical-teal)',
+    color: 'var(--color-data-categorical-teal, light-dark(#0E7E8B, #33B8C7))',
     token: 'teal',
   },
 ];

@@ -84,9 +84,6 @@ const styles: Record<string, CSSProperties> = {
   chartBody: {minWidth: 0, paddingTop: 'var(--spacing-2)'},
   // Numeric table cells use tabular numerals so digit columns stay aligned.
   numericCell: {fontVariantNumeric: 'tabular-nums'},
-  // Top-products table: horizontal scroll when the card is narrower than the
-  // pixel columns plus the product column's floor; pixel columns keep width.
-  tableScroll: {overflowX: 'auto'},
   // Edit-mode affordances: dashed outline on each widget plus a grab handle.
   cardEditing: {
     outline: '1.5px dashed var(--color-accent)',
@@ -543,17 +540,17 @@ function WidgetBody({widget}: {widget: Widget}) {
         </div>
       );
     case 'table':
+      // Table renders its own horizontal-scroll wrapper; wrapping it in an
+      // extra overflow container clips its container-bleed margins vertically.
       return (
-        <div style={styles.tableScroll}>
-          <Table<ProductRow>
-            data={widget.rows}
-            columns={productColumns}
-            idKey="id"
-            density="compact"
-            dividers="rows"
-            hasHover
-          />
-        </div>
+        <Table<ProductRow>
+          data={widget.rows}
+          columns={productColumns}
+          idKey="id"
+          density="compact"
+          dividers="rows"
+          hasHover
+        />
       );
     case 'activity':
       return (

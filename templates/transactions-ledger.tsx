@@ -37,7 +37,7 @@
  * Responsive contract:
  * - > 1024px: the detail panel is a fixed 380px LayoutPanel on the end
  *   edge with its own vertical scroll; the table keeps the remaining
- *   width. Columns: reconcile 52 | date 110 | merchant (fill) | amount
+ *   width. Columns: reconcile 68 | date 110 | merchant (fill) | amount
  *   110 | balance 122, amounts right-aligned with tabular numerals.
  * - <= 1024px: the end panel is dropped; the detail section renders below
  *   the table inside the shared scroller (index-on-top pattern) with a
@@ -166,6 +166,14 @@ const styles: Record<string, CSSProperties> = {
   numericHeader: {
     textAlign: 'end',
   },
+  // Fixed column widths. The Table's header cells carry a max-width: 0
+  // truncation style; in children mode the table lays out with
+  // table-layout: auto, where that cap would collapse a width-only column
+  // to ~1ch. min-width beats max-width, so each fixed column sets both.
+  colReconcile: {width: 68, minWidth: 68},
+  colDate: {width: 110, minWidth: 110},
+  colAmount: {width: 110, minWidth: 110},
+  colBalance: {width: 122, minWidth: 122},
   creditAmount: {
     color: 'var(--color-success)',
   },
@@ -847,24 +855,24 @@ function LedgerTable({
     <Table density="compact" dividers="rows" hasHover>
       <TableHeader>
         <TableRow isHeaderRow>
-          <TableHeaderCell scope="col" style={{width: 52}}>
+          <TableHeaderCell scope="col" style={styles.colReconcile}>
             Cleared
           </TableHeaderCell>
           {!isPhone && (
-            <TableHeaderCell scope="col" style={{width: 110}}>
+            <TableHeaderCell scope="col" style={styles.colDate}>
               Date
             </TableHeaderCell>
           )}
           <TableHeaderCell scope="col">Merchant</TableHeaderCell>
           <TableHeaderCell
             scope="col"
-            style={{...styles.numericHeader, width: 110}}>
+            style={{...styles.numericHeader, ...styles.colAmount}}>
             Amount
           </TableHeaderCell>
           {!isCompact && (
             <TableHeaderCell
               scope="col"
-              style={{...styles.numericHeader, width: 122}}>
+              style={{...styles.numericHeader, ...styles.colBalance}}>
               Balance
             </TableHeaderCell>
           )}

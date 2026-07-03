@@ -71,7 +71,15 @@
  * var(--color-*) tokens and adapts via the theme's light-dark() values.
  */
 
-import {useMemo, useState, type CSSProperties, type KeyboardEvent} from 'react';
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type RefObject,
+} from 'react';
 
 import {
   HStack,
@@ -133,6 +141,24 @@ const styles: Record<string, CSSProperties> = {
   },
   headerRow: {
     width: '100%',
+  },
+  // Children-mode Table defaults to table-layout auto, where the cells'
+  // truncation styles (max-width: 0) collapse every fixed-width column to
+  // its padding. Fixed layout sizes columns from the header row's widths —
+  // the same scheme the data-driven Table mode uses.
+  table: {
+    tableLayout: 'fixed',
+  },
+  // Docked detail pane: stick to the top of whichever ancestor scrolls so
+  // the pane stays beside the list instead of leaving a void once the page
+  // scrolls past the first viewport. maxHeight bounds it to the panel when
+  // the layout height chain is intact, and overflow keeps long detail
+  // content reachable.
+  detailSticky: {
+    position: 'sticky',
+    insetBlockStart: 0,
+    maxHeight: '100%',
+    overflowY: 'auto',
   },
   row: {
     cursor: 'pointer',
@@ -470,6 +496,31 @@ function accountLabel(account: PayoutAccount): string {
   return `${account.bankName} ••${account.last4}`;
 }
 
+/**
+ * Observe the statements region's real width. The end panel (420px) and any
+ * host chrome shrink the list independently of the viewport, so viewport
+ * media queries alone cannot tell when the table is out of room for the
+ * Fees & refunds column.
+ */
+function useElementWidth(ref: RefObject<HTMLDivElement | null>): number {
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    const element = ref.current;
+    if (element == null) {
+      return undefined;
+    }
+    const observer = new ResizeObserver(entries => {
+      const rect = entries[0]?.contentRect;
+      if (rect != null) {
+        setWidth(rect.width);
+      }
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref]);
+  return width;
+}
+
 // ============= WATERFALL =============
 
 interface WaterfallRow {
@@ -642,11 +693,14 @@ function StatementsTable({
   statements,
   selectedId,
   isCompact,
+  hidesFees,
   onSelect,
 }: {
   statements: PayoutStatement[];
   selectedId: string;
   isCompact: boolean;
+  /** True when the list region is too narrow for the Fees & refunds column. */
+  hidesFees: boolean;
   onSelect: (id: string) => void;
 }) {
   const handleRowKeyDown = (event: KeyboardEvent, id: string) => {
@@ -657,28 +711,35 @@ function StatementsTable({
   };
 
   return (
-    <Table density="compact" dividers="rows" hasHover>
+    <Table density="compact" dividers="rows" hasHover tableProps={{style: styles.table}}>
       <TableHeader>
         <TableRow isHeaderRow>
+          {/* Fixed columns set width AND minWidth (matching the data-driven
+              Table mode) — minWidth outranks the cells' truncation max-width
+              so the columns cannot collapse. */}
           <TableHeaderCell scope="col">Statement</TableHeaderCell>
-          <TableHeaderCell scope="col" style={{width: 130}}>
+          <TableHeaderCell scope="col" style={{width: 100, minWidth: 100}}>
             Status
           </TableHeaderCell>
-          <TableHeaderCell scope="col" style={{...styles.numericHeader, width: 110}}>
+          <TableHeaderCell
+            scope="col"
+            style={{...styles.numericHeader, width: 100, minWidth: 100}}>
             Gross
           </TableHeaderCell>
-          {!isCompact && (
+          {!hidesFees && (
             <TableHeaderCell
               scope="col"
-              style={{...styles.numericHeader, width: 110}}>
+              style={{...styles.numericHeader, width: 110, minWidth: 110}}>
               Fees & refunds
             </TableHeaderCell>
           )}
-          <TableHeaderCell scope="col" style={{...styles.numericHeader, width: 110}}>
+          <TableHeaderCell
+            scope="col"
+            style={{...styles.numericHeader, width: 100, minWidth: 100}}>
             Net
           </TableHeaderCell>
           {!isCompact && (
-            <TableHeaderCell scope="col" style={{width: 130}}>
+            <TableHeaderCell scope="col" style={{width: 104, minWidth: 104}}>
               Arrival
             </TableHeaderCell>
           )}
@@ -721,7 +782,7 @@ function StatementsTable({
               <TableCell style={styles.numericCell}>
                 <Text type="body">{formatUSD(statement.grossCents)}</Text>
               </TableCell>
-              {!isCompact && (
+              {!hidesFees && (
                 <TableCell style={styles.numericCell}>
                   <Text type="body" color="secondary">
                     {formatDelta(deductionsCents)}
@@ -947,6 +1008,14 @@ export default function PayoutStatementsPage() {
   const isPhone = useMediaQuery('(max-width: 640px)');
   const tapTargetStyle = isPhone ? styles.buttonTapTarget : undefined;
 
+  // Measure the list region itself: with the 420px detail panel docked the
+  // table can be starved of width even on wide viewports. Six columns need
+  // roughly 700px; below that the Fees & refunds column folds into the
+  // detail pane's waterfall (same fallback the <=768px contract uses).
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const listWidth = useElementWidth(listRef);
+  const hidesFees = isCompact || (listWidth > 0 && listWidth < 700);
+
   const visible = useMemo(
     () =>
       filter === 'all'
@@ -1051,11 +1120,12 @@ export default function PayoutStatementsPage() {
       content={
         <LayoutContent padding={0}>
           <div style={styles.contentFill}>
-            <div style={styles.scrollRegion}>
+            <div ref={listRef} style={styles.scrollRegion}>
               <StatementsTable
                 statements={visible}
                 selectedId={selected.id}
                 isCompact={isCompact}
+                hidesFees={hidesFees}
                 onSelect={setSelectedId}
               />
               {isNarrow && (
@@ -1076,8 +1146,13 @@ export default function PayoutStatementsPage() {
       }
       end={
         isNarrow ? undefined : (
-          <LayoutPanel width={420} padding={0} hasDivider label="Statement details">
-            {detail}
+          <LayoutPanel
+            width={420}
+            padding={0}
+            hasDivider
+            isScrollable={false}
+            label="Statement details">
+            <div style={styles.detailSticky}>{detail}</div>
           </LayoutPanel>
         )
       }

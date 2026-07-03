@@ -214,9 +214,15 @@ const styles: Record<string, CSSProperties> = {
   recipientRow: {
     paddingBlock: 'var(--spacing-1)',
   },
+  // Top-aligned with a nudge so the label centers on the first chip row
+  // even when the tokenizer wraps to multiple rows.
   rowLabel: {
     width: 44,
     flexShrink: 0,
+    paddingTop: 'var(--spacing-1-5)',
+  },
+  rowEnd: {
+    paddingTop: 'var(--spacing-1-5)',
   },
   attachmentRow: {
     paddingBlock: 'var(--spacing-2)',
@@ -475,7 +481,7 @@ function RecipientRow({
 
   return (
     <div style={styles.recipientRow}>
-      <HStack gap={2} vAlign="center">
+      <HStack gap={2} vAlign="start">
         <div style={styles.rowLabel}>
           <Text type="supporting" color="secondary">
             {rowLabel}
@@ -549,7 +555,7 @@ function RecipientRow({
             }}
           />
         </StackItem>
-        {endContent}
+        {endContent != null && <div style={styles.rowEnd}>{endContent}</div>}
       </HStack>
     </div>
   );
@@ -665,6 +671,9 @@ export default function MailComposeTemplate() {
   const [pickTime, setPickTime] = useState<ISOTimeString>(DEFAULT_PICK_TIME);
 
   const isMobile = useMediaQuery('(max-width: 720px)');
+  // The overlay's dark scrim forces media-dark tokens on the compose
+  // layer; the composer must instead follow the page scheme, so track it.
+  const prefersDark = useMediaQuery('(prefers-color-scheme: dark)');
 
   // --- derived state ---
   const allRecipients = [...toRecipients, ...ccRecipients, ...bccRecipients];
@@ -872,6 +881,9 @@ export default function MailComposeTemplate() {
                 variant: 'primary',
                 size: 'sm',
                 isIconOnly: true,
+                // Disabled in lockstep with Send so the split reads as one
+                // control — an unsendable draft can't be scheduled either.
+                isDisabled: !canSend,
                 icon: <Icon icon={ChevronDownIcon} size="sm" color="inherit" />,
               }}
               hasChevron={false}
@@ -1054,6 +1066,7 @@ export default function MailComposeTemplate() {
                               label={`Uploading ${attachment.name}`}
                               isLabelHidden
                               value={attachment.progress}
+                              variant="neutral"
                             />
                           )}
                         </VStack>
@@ -1214,8 +1227,11 @@ export default function MailComposeTemplate() {
             : styles.composeLayerDocked
       }>
       {/* The dark scrim flips the overlay layer into media-dark theming;
-          the composer is a light surface, so re-anchor it to light. */}
-      <MediaTheme mode="light">{composeCard}</MediaTheme>
+          the composer is a page surface, so re-anchor it to the page's
+          own color scheme rather than the scrim's inverted context. */}
+      <MediaTheme mode={prefersDark ? 'dark' : 'light'}>
+        {composeCard}
+      </MediaTheme>
     </div>
   );
 

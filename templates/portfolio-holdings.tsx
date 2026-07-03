@@ -124,13 +124,35 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: 'var(--color-accent-muted)',
   },
   // Money and share columns keep tabular numerals so digits stay aligned.
+  // maxWidth 'none' lifts the cell-level truncation clamp (maxWidth: 0)
+  // that the auto-layout table would otherwise use to collapse these
+  // columns to their padding; the header minWidth carries the real floor.
   numericCell: {
     textAlign: 'end',
     fontVariantNumeric: 'tabular-nums',
     whiteSpace: 'nowrap',
+    maxWidth: 'none',
   },
   numericHeader: {
     textAlign: 'end',
+    maxWidth: 'none',
+  },
+  // Acquired column of the purchase-lots table: wide enough for a full
+  // ISO date, with the same truncation-clamp lift as the numeric columns.
+  lotDateHeader: {
+    width: 90,
+    minWidth: 90,
+    maxWidth: 'none',
+  },
+  lotDateCell: {
+    whiteSpace: 'nowrap',
+    maxWidth: 'none',
+  },
+  // The 340px rail leaves ~307px for the lots table; the default 8px
+  // inline padding per numeric cell overflows it by ~11px, so the lots
+  // columns halve their inline padding to keep every figure visible.
+  lotTight: {
+    paddingInline: 4,
   },
   // Signed coloring for gains and losses (summary strip, table, detail).
   gain: {color: 'var(--color-success)'},
@@ -671,7 +693,11 @@ function SummaryMetric({
         {label}
       </Text>
       <HStack gap={1.5} vAlign="center">
-        <Text type="body" weight="semibold" hasTabularNumbers>
+        <Text
+          type="body"
+          weight="semibold"
+          hasTabularNumbers
+          style={change !== undefined ? signStyle(change) : undefined}>
           {value}
         </Text>
         {change !== undefined && change !== 0 && (
@@ -682,11 +708,12 @@ function SummaryMetric({
             />
           </span>
         )}
-        {change !== undefined && (
+        {/* The value already carries the signed dollar figure, so the
+            trailing context renders the percent only — never a second
+            copy of the same delta. */}
+        {change !== undefined && changePercent !== undefined && (
           <Text type="body" hasTabularNumbers style={signStyle(change)}>
-            {formatSignedMoney(change)}
-            {changePercent !== undefined &&
-              ` (${formatSignedPercent(changePercent)})`}
+            {`(${formatSignedPercent(changePercent)})`}
           </Text>
         )}
       </HStack>
@@ -824,14 +851,22 @@ function PositionDetail({
         <Table density="compact" dividers="rows">
           <TableHeader>
             <TableRow isHeaderRow>
-              <TableHeaderCell scope="col">Acquired</TableHeaderCell>
-              <TableHeaderCell scope="col" style={styles.numericHeader}>
+              <TableHeaderCell scope="col" style={styles.lotDateHeader}>
+                Acquired
+              </TableHeaderCell>
+              <TableHeaderCell
+                scope="col"
+                style={{...styles.numericHeader, ...styles.lotTight}}>
                 Shares
               </TableHeaderCell>
-              <TableHeaderCell scope="col" style={styles.numericHeader}>
+              <TableHeaderCell
+                scope="col"
+                style={{...styles.numericHeader, ...styles.lotTight}}>
                 Cost/sh
               </TableHeaderCell>
-              <TableHeaderCell scope="col" style={styles.numericHeader}>
+              <TableHeaderCell
+                scope="col"
+                style={{...styles.numericHeader, ...styles.lotTight}}>
                 Gain/loss
               </TableHeaderCell>
             </TableRow>
@@ -841,22 +876,22 @@ function PositionDetail({
               const gainForLot = lotGain(lot, holding);
               return (
                 <TableRow key={lot.id}>
-                  <TableCell scope="row">
+                  <TableCell scope="row" style={styles.lotDateCell}>
                     <Text type="body" hasTabularNumbers>
                       {lot.acquired}
                     </Text>
                   </TableCell>
-                  <TableCell style={styles.numericCell}>
+                  <TableCell style={{...styles.numericCell, ...styles.lotTight}}>
                     <Text type="body" hasTabularNumbers>
                       {formatShares(lot.shares)}
                     </Text>
                   </TableCell>
-                  <TableCell style={styles.numericCell}>
+                  <TableCell style={{...styles.numericCell, ...styles.lotTight}}>
                     <Text type="body" hasTabularNumbers>
                       {formatMoney(lot.costPerShare)}
                     </Text>
                   </TableCell>
-                  <TableCell style={styles.numericCell}>
+                  <TableCell style={{...styles.numericCell, ...styles.lotTight}}>
                     <Text
                       type="body"
                       hasTabularNumbers
@@ -1140,31 +1175,31 @@ export default function PortfolioHoldingsTemplate() {
               {showSharesAndPrice && (
                 <TableHeaderCell
                   scope="col"
-                  style={{...styles.numericHeader, width: 90}}>
+                  style={{...styles.numericHeader, width: 76, minWidth: 76}}>
                   Shares
                 </TableHeaderCell>
               )}
               {showSharesAndPrice && (
                 <TableHeaderCell
                   scope="col"
-                  style={{...styles.numericHeader, width: 100}}>
+                  style={{...styles.numericHeader, width: 88, minWidth: 88}}>
                   Price
                 </TableHeaderCell>
               )}
               <TableHeaderCell
                 scope="col"
-                style={{...styles.numericHeader, width: 120}}>
+                style={{...styles.numericHeader, width: 104, minWidth: 104}}>
                 Value
               </TableHeaderCell>
               <TableHeaderCell
                 scope="col"
-                style={{...styles.numericHeader, width: 130}}>
+                style={{...styles.numericHeader, width: 112, minWidth: 112}}>
                 Gain/loss
               </TableHeaderCell>
               {showSpark && (
                 <TableHeaderCell
                   scope="col"
-                  style={{...styles.numericHeader, width: 90}}>
+                  style={{...styles.numericHeader, width: 72, minWidth: 72}}>
                   12 wk
                 </TableHeaderCell>
               )}

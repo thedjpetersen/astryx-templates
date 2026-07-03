@@ -74,11 +74,13 @@
  *
  * Color policy: token-pure — every color is a var(--color-*) token, and the
  * category palette rides the scheme-stable categorical data tokens (same
- * saturated value in light and dark). The one literal is EVENT_TEXT, an
- * explicit light-dark(#FFFFFF, #FFFFFF) pair for text on those solid
- * categorical blocks/chips: white is the readable choice in both schemes
- * and must never follow the scheme's flipping text color. Nothing here is
- * scheme-locked.
+ * saturated value in light and dark). Each categorical var carries its
+ * canonical dataTokenDefaults hex as a fallback so hosts that do not inject
+ * the data-viz token layer still render solid saturated blocks instead of
+ * transparent ones. The one literal is EVENT_TEXT, an explicit
+ * light-dark(#FFFFFF, #FFFFFF) pair for text on those solid categorical
+ * blocks/chips: white is the readable choice in both schemes and must never
+ * follow the scheme's flipping text color. Nothing here is scheme-locked.
  */
 
 import {useMemo, useState, type CSSProperties} from 'react';
@@ -248,7 +250,9 @@ const styles: Record<string, CSSProperties> = {
   },
   dayColumnWeekend: {backgroundColor: 'var(--color-background-muted)'},
   // Positioned event blocks: solid category color, title over time range,
-  // ellipsis truncation; overlap columns set left/width inline.
+  // ellipsis truncation; overlap columns cascade (each sub-column runs from
+  // its offset to the day's right edge, later columns stacked on top) so
+  // titles keep as much width as possible; left/width/zIndex set inline.
   eventBlock: {
     position: 'absolute',
     display: 'flex',
@@ -296,7 +300,7 @@ const styles: Record<string, CSSProperties> = {
     left: GUTTER_WIDTH,
     right: 0,
     height: 2,
-    backgroundColor: 'var(--color-data-categorical-red)',
+    backgroundColor: 'var(--color-data-categorical-red, #F5394F)',
     opacity: 0.85,
     pointerEvents: 'none',
     zIndex: 3,
@@ -307,7 +311,7 @@ const styles: Record<string, CSSProperties> = {
     width: 8,
     height: 8,
     borderRadius: '50%',
-    backgroundColor: 'var(--color-data-categorical-red)',
+    backgroundColor: 'var(--color-data-categorical-red, #F5394F)',
   },
   // Legend swatches inside the ToggleButton chips: filled while the
   // category is visible, hollow while hidden.
@@ -395,31 +399,31 @@ const CATEGORIES: readonly CalendarCategory[] = [
   {
     id: 'work',
     label: 'Work',
-    color: 'var(--color-data-categorical-blue)',
+    color: 'var(--color-data-categorical-blue, #0171E3)',
     token: 'blue',
   },
   {
     id: 'team',
     label: 'Team',
-    color: 'var(--color-data-categorical-purple)',
+    color: 'var(--color-data-categorical-purple, #6B1EFD)',
     token: 'purple',
   },
   {
     id: 'personal',
     label: 'Personal',
-    color: 'var(--color-data-categorical-green)',
+    color: 'var(--color-data-categorical-green, #0B991F)',
     token: 'green',
   },
   {
     id: 'deadline',
     label: 'Deadlines',
-    color: 'var(--color-data-categorical-orange)',
+    color: 'var(--color-data-categorical-orange, #EB6E00)',
     token: 'orange',
   },
   {
     id: 'travel',
     label: 'Travel',
-    color: 'var(--color-data-categorical-teal)',
+    color: 'var(--color-data-categorical-teal, #08A3A3)',
     token: 'teal',
   },
 ];
@@ -1196,8 +1200,12 @@ function EventBlock({
         ...(isSelected ? styles.eventBlockSelected : undefined),
         top,
         height,
+        // Cascade: run from this sub-column's offset to the day's right
+        // edge; later sub-columns start later and stack on top, so earlier
+        // titles stay wide instead of shrinking to 1/columns slivers.
         left: `calc(${(column / columns) * 100}% + 2px)`,
-        width: `calc(${100 / columns}% - 4px)`,
+        width: `calc(${((columns - column) / columns) * 100}% - 4px)`,
+        zIndex: isSelected ? columns + 1 : column + 1,
         backgroundColor: category?.color,
       }}
       aria-label={label}
@@ -1237,6 +1245,10 @@ function WeekTimeGrid({
             style={{
               ...styles.hourLabel,
               top: ((min - DAY_START_MIN) / 60) * HOUR_HEIGHT,
+              // The first label hangs below its rule instead of centering on
+              // it, so it is not clipped at the top of the scroll area.
+              transform:
+                min === DAY_START_MIN ? 'translateY(2px)' : 'translateY(-50%)',
             }}>
             {formatMin(min)}
           </span>

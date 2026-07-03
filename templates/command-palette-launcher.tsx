@@ -75,6 +75,7 @@ import {StatusDot} from '@astryxdesign/core/StatusDot';
 import {Timestamp} from '@astryxdesign/core/Timestamp';
 import {TopNav, TopNavHeading, TopNavItem} from '@astryxdesign/core/TopNav';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
+import {MediaTheme, useTheme} from '@astryxdesign/core/theme';
 import {
   CommandIcon,
   EraserIcon,
@@ -115,10 +116,25 @@ const styles: Record<string, CSSProperties> = {
   resultList: {
     maxHeight: '48vh',
     overflowY: 'auto',
+    // Breathing room plus a fade mask so a row clipped by the scroll edge
+    // dissolves instead of being sliced against the footer divider.
+    paddingBottom: 'var(--spacing-3)',
+    maskImage:
+      'linear-gradient(to bottom, black calc(100% - var(--spacing-5)), transparent 100%)',
+    WebkitMaskImage:
+      'linear-gradient(to bottom, black calc(100% - var(--spacing-5)), transparent 100%)',
   },
   // Non-selectable async row at the bottom of the sessions section.
   searchingRow: {
     padding: 'var(--spacing-2) var(--spacing-3)',
+  },
+  // Anchor the 8px status dot to the center of the 20px title line.
+  sessionDot: {
+    marginTop: 'var(--spacing-1-5)',
+  },
+  // Align the 16px-leading timestamp with the 20px title line.
+  sessionTimestamp: {
+    marginTop: 'var(--spacing-0-5)',
   },
   // Fuzzy-match highlight — token background, inherits the row's text color.
   matchHighlight: {
@@ -466,8 +482,15 @@ function SessionRow({
 }) {
   const dot = STATUS_DOT[session.status];
   return (
-    <HStack gap={3} vAlign="center">
-      <StatusDot variant={dot.variant} label={dot.label} isPulsing={dot.isPulsing} />
+    // width 100% + vAlign start: timestamps share the row's right edge and
+    // dot/timestamp anchor to the title line instead of floating mid-row.
+    <HStack gap={3} vAlign="start" width="100%">
+      <StatusDot
+        variant={dot.variant}
+        label={dot.label}
+        isPulsing={dot.isPulsing}
+        style={styles.sessionDot}
+      />
       <StackItem size="fill">
         <VStack gap={0}>
           <Text type="body" maxLines={1}>
@@ -483,6 +506,7 @@ function SessionRow({
         format="relative"
         type="supporting"
         color="secondary"
+        style={styles.sessionTimestamp}
       />
     </HStack>
   );
@@ -496,7 +520,7 @@ function CommandRow({
   segments: MatchSegment[];
 }) {
   return (
-    <HStack gap={3} vAlign="center">
+    <HStack gap={3} vAlign="center" width="100%">
       <Icon icon={command.icon} size="sm" color="secondary" />
       <StackItem size="fill">
         <VStack gap={0}>
@@ -515,7 +539,7 @@ function CommandRow({
 
 function HelpRow({topic}: {topic: HelpTopic}) {
   return (
-    <HStack gap={3} vAlign="center">
+    <HStack gap={3} vAlign="center" width="100%">
       <Icon icon={topic.icon} size="sm" color="secondary" />
       <StackItem size="fill">
         <Text type="body">{topic.title}</Text>
@@ -537,6 +561,8 @@ export default function CommandPaletteLauncherPage() {
   const [workspace, setWorkspace] = useState('platform');
   const [announcement, setAnnouncement] = useState('');
   const isNarrow = useMediaQuery('(max-width: 640px)');
+  // Resolved page scheme — re-anchors the palette under the dark scrim.
+  const {mode: colorMode} = useTheme();
 
   const sections = useMemo(() => buildSections(query), [query]);
   const flatEntries = useMemo(
@@ -652,14 +678,10 @@ export default function CommandPaletteLauncherPage() {
                     variant="secondary"
                     size="sm"
                     icon={<Icon icon={SearchIcon} size="sm" />}
-                    endContent={
-                      <HStack gap={2} vAlign="center">
-                        <Text type="inherit">Search</Text>
-                        <Kbd keys="mod+k" />
-                      </HStack>
-                    }
-                    onClick={() => setIsPaletteOpen(true)}
-                  />
+                    endContent={<Kbd keys="mod+k" />}
+                    onClick={() => setIsPaletteOpen(true)}>
+                    Search
+                  </Button>
                 )}
                 <Avatar name="Ana Weiss" size="small" />
               </HStack>
@@ -839,7 +861,9 @@ export default function CommandPaletteLauncherPage() {
           position="fill"
           align="start"
           style={styles.overlay}
-          content={palette}>
+          // The dark scrim flips the overlay layer into media-dark theming;
+          // the palette should follow the page scheme, so re-anchor it.
+          content={<MediaTheme mode={colorMode}>{palette}</MediaTheme>}>
           {workspacePage}
         </Overlay>
       ) : (

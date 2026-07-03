@@ -126,11 +126,14 @@ import {
 
 // ============= STYLES =============
 
-// Chart palette via Astryx data tokens (CSS custom properties).
+// Chart palette via Astryx data tokens (CSS custom properties). Each
+// data token carries its documented default as a fallback so the series
+// keep their hues (and stay visible in dark mode) even when a host theme
+// doesn't inject the data-viz token set.
 const chartColors = {
-  scope: 'var(--color-data-categorical-blue)',
-  completed: 'var(--color-data-categorical-green)',
-  forecast: 'var(--color-data-categorical-purple)',
+  scope: 'var(--color-data-categorical-blue, #0171E3)',
+  completed: 'var(--color-data-categorical-green, #0B991F)',
+  forecast: 'var(--color-data-categorical-purple, #6B1EFD)',
   grid: 'var(--color-border)',
   axisText: 'var(--color-text-secondary)',
   target: 'var(--color-error)',
@@ -223,6 +226,13 @@ const styles: Record<string, CSSProperties> = {
   },
   numericHeader: {
     textAlign: 'end',
+  },
+  // Astryx header cells ship with max-width: 0 (a truncation hack); any
+  // column that sets an explicit width must lift it, or the auto table
+  // layout crushes the fixed columns to one character per line and
+  // pushes the Status column past the card edge.
+  headerCol: {
+    maxWidth: 'none',
   },
   progressCell: {
     minWidth: 140,
@@ -1128,33 +1138,51 @@ export default function MilestoneBurnupTemplate() {
                 <Table density="compact" dividers="rows" hasHover>
                   <TableHeader>
                     <TableRow isHeaderRow>
-                      <TableHeaderCell scope="col" style={{width: 48}}>
+                      <TableHeaderCell
+                        scope="col"
+                        style={{...styles.headerCol, width: 48}}>
                         <Text type="supporting" color="secondary">
                           {''}
                         </Text>
                       </TableHeaderCell>
-                      <TableHeaderCell scope="col">Milestone</TableHeaderCell>
+                      <TableHeaderCell scope="col" style={styles.headerCol}>
+                        Milestone
+                      </TableHeaderCell>
                       {!isCompact && (
-                        <TableHeaderCell scope="col" style={{width: 100}}>
+                        <TableHeaderCell
+                          scope="col"
+                          style={{...styles.headerCol, width: 100}}>
                           Target
                         </TableHeaderCell>
                       )}
                       <TableHeaderCell
                         scope="col"
-                        style={{...styles.numericHeader, width: 90}}>
+                        style={{
+                          ...styles.numericHeader,
+                          ...styles.headerCol,
+                          width: 90,
+                        }}>
                         Scope
                       </TableHeaderCell>
                       <TableHeaderCell
                         scope="col"
-                        style={{...styles.numericHeader, width: 90}}>
+                        style={{
+                          ...styles.numericHeader,
+                          ...styles.headerCol,
+                          width: 90,
+                        }}>
                         Done
                       </TableHeaderCell>
                       {!isCompact && (
-                        <TableHeaderCell scope="col" style={{width: 180}}>
+                        <TableHeaderCell
+                          scope="col"
+                          style={{...styles.headerCol, width: 180}}>
                           Progress
                         </TableHeaderCell>
                       )}
-                      <TableHeaderCell scope="col" style={{width: 110}}>
+                      <TableHeaderCell
+                        scope="col"
+                        style={{...styles.headerCol, width: 110}}>
                         Status
                       </TableHeaderCell>
                     </TableRow>

@@ -141,11 +141,15 @@ const styles: Record<string, CSSProperties> = {
   // <=640px key-result rows keep a comfortable two-line tap target.
   rowPadCompact: {paddingBlock: 10, paddingInline: 12, minHeight: 44},
   // Fixed desktop columns so avatars, bars, badges, and scores align across
-  // both hierarchy levels; the title column flexes and truncates.
-  colOwner: {width: 160, flexShrink: 0},
-  colProgress: {width: 200, flexShrink: 0},
-  colConfidence: {width: 96, flexShrink: 0, display: 'flex'},
-  colScore: {width: 48, flexShrink: 0, textAlign: 'end'},
+  // both hierarchy levels; the title column flexes and truncates. flexBasis 0
+  // (not auto) keeps the flex resolution identical on every row so the fixed
+  // columns stay on one shared grid, and minWidth guarantees titles render
+  // even when the fixed columns consume most of the row.
+  colTitle: {flexBasis: 0, minWidth: 120},
+  colOwner: {width: 112, flexShrink: 0},
+  colProgress: {width: 124, flexShrink: 0},
+  colConfidence: {width: 84, flexShrink: 0, display: 'flex'},
+  colScore: {width: 40, flexShrink: 0, textAlign: 'end'},
   progressTrack: {flex: 1, minWidth: 0},
   progressPct: {width: 40, flexShrink: 0, textAlign: 'end'},
   // Check-in panel scroll region (the docked panel owns its own scrollbar).
@@ -810,7 +814,7 @@ function ObjectiveRow({
       <HStack gap={3} vAlign="center">
         {chevron}
         <Icon icon={TargetIcon} size="sm" color="secondary" />
-        <StackItem size="fill">
+        <StackItem size="fill" style={styles.colTitle}>
           <VStack gap={0}>
             <Text type="label" maxLines={1}>
               {objective.title}
@@ -897,7 +901,7 @@ function KeyResultRow({
     <HStack gap={3} vAlign="center">
       <span style={styles.krIndent} />
       <Icon icon={CrosshairIcon} size="sm" color="secondary" />
-      <StackItem size="fill">
+      <StackItem size="fill" style={styles.colTitle}>
         <VStack gap={0}>
           <Text type="body" maxLines={1}>
             {keyResult.title}
@@ -1219,7 +1223,7 @@ export default function OkrTreeTemplate() {
       <HStack gap={3} vAlign="center">
         <span style={{width: 28, flexShrink: 0}} />
         <span style={{width: 16, flexShrink: 0}} />
-        <StackItem size="fill">
+        <StackItem size="fill" style={styles.colTitle}>
           <Text type="supporting" color="secondary" size="sm">
             Objective / key result
           </Text>

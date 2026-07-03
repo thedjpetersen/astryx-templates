@@ -31,9 +31,11 @@
  *
  * Responsive contract:
  * - >640px: the Table renders inside its own horizontal scroll wrapper:
- *   fixed pixel widths on the toggle/numeric/status columns hold, the
- *   Endpoint column absorbs remaining width, and the whole table scrolls
- *   horizontally rather than crushing columns on narrow viewports. The
+ *   min-width floors on the toggle/numeric/status columns hold (children
+ *   mode lays the table out with table-layout auto, so plain width does
+ *   not), the Endpoint column absorbs remaining width, and the whole
+ *   table scrolls horizontally rather than crushing columns on narrow
+ *   viewports. The
  *   header keeps title + both buttons on one row (StackItem fill gives
  *   the title block priority; buttons keep width and never wrap
  *   mid-label).
@@ -96,7 +98,15 @@ const styles: Record<string, CSSProperties> = {
   // Numeric cells right-align with tabular numerals so digits line up.
   numeric: {textAlign: 'right', fontVariantNumeric: 'tabular-nums'},
   // Fixed-width leading toggle column; keeps the button snug to the edge.
-  toggleHeader: {width: 44},
+  // minWidth is the value that actually holds: the Table renders children
+  // mode with table-layout auto and caps every cell's preferred width, so
+  // width alone lets columns collapse — min-width wins that fight.
+  toggleHeader: {width: 56, minWidth: 56},
+  // Floor for the Endpoint column so method badge + path never crush;
+  // spare panel width still flows here first. On narrow panels the
+  // Table's built-in scroll wrapper pans sideways instead of letting
+  // the columns collapse to one character per line.
+  endpointHeader: {minWidth: 240},
   // The detail row reads as a continuation of its parent row: muted
   // background across the full span, content inset to align under the
   // Endpoint column rather than under the toggle gutter.
@@ -532,30 +542,40 @@ export default function TableInlineExpansionTemplate() {
               <TableRow isHeaderRow>
                 {/* Leading toggle column has no header label. */}
                 <TableHeaderCell style={styles.toggleHeader} />
-                <TableHeaderCell>Endpoint</TableHeaderCell>
+                <TableHeaderCell style={styles.endpointHeader}>
+                  Endpoint
+                </TableHeaderCell>
                 {!isCompact && (
-                  <TableHeaderCell style={{...styles.numeric, width: 140}}>
+                  <TableHeaderCell
+                    style={{...styles.numeric, width: 140, minWidth: 140}}>
                     Requests (24h)
                   </TableHeaderCell>
                 )}
                 {!isCompact && (
-                  <TableHeaderCell style={{...styles.numeric, width: 110}}>
+                  <TableHeaderCell
+                    style={{...styles.numeric, width: 110, minWidth: 110}}>
                     Error rate
                   </TableHeaderCell>
                 )}
                 {!isCompact && (
-                  <TableHeaderCell style={{...styles.numeric, width: 100}}>
+                  <TableHeaderCell
+                    style={{...styles.numeric, width: 100, minWidth: 100}}>
                     P95
                   </TableHeaderCell>
                 )}
                 {/* Fixed width holds on desktop; compact lets the column
                     auto-size to the badge so the Endpoint column keeps
                     every spare pixel. */}
-                <TableHeaderCell style={isCompact ? undefined : {width: 120}}>
+                <TableHeaderCell
+                  style={
+                    isCompact ? undefined : {width: 120, minWidth: 120}
+                  }>
                   Status
                 </TableHeaderCell>
                 {!isCompact && (
-                  <TableHeaderCell style={{width: 150}}>Owner</TableHeaderCell>
+                  <TableHeaderCell style={{width: 150, minWidth: 150}}>
+                    Owner
+                  </TableHeaderCell>
                 )}
               </TableRow>
             </TableHeader>
