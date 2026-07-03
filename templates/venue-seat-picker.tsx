@@ -56,8 +56,12 @@
  * Color policy: token-pure. Seat fills are color-mix() ramps over
  * var(--color-*) tokens, held seats hatch with a token-stroked SVG
  * pattern, sold seats dim through a token mix, and every stroke/ring is a
- * token. The two overlay drop shadows are explicit light-dark() pairs —
- * the only grep hits, documented here.
+ * token. The explicit light-dark() pairs — the two overlay drop shadows
+ * plus the tier-ramp/sold fills (the dark arm needs higher mix
+ * percentages to stay legible over a near-black map) — are the only grep
+ * hits; they ride inline custom properties (SCHEME_VARS) because the
+ * StyleX pipeline's lightningcss pass would otherwise downlevel
+ * light-dark() into an undefined var() polyfill.
  *
  * Responsive contract:
  * - > 960px: map + docked 320px cart rail; the legend floats collapsible
@@ -81,6 +85,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
@@ -198,8 +203,8 @@ type SectionSpec = ArcSectionSpec | BoxSectionSpec;
 // prettier-ignore
 const SECTIONS: SectionSpec[] = [
   {kind: 'arc', id: 'orchestra', label: 'Orchestra', cx: 500, cy: -180, radiusStart: 320, rowGap: 22, rows: 14, seatsBase: 16, seatsDelta: 1, pitch: 21, tierBreaks: [[5, 'premium'], [10, 'preferred'], [14, 'standard']], accessibleRow: 13, preferredRow: 4},
-  {kind: 'arc', id: 'mezzanine', label: 'Mezzanine', cx: 500, cy: -180, radiusStart: 648, rowGap: 21, rows: 5, seatsBase: 26, seatsDelta: 1, pitch: 20, tierBreaks: [[2, 'preferred'], [5, 'standard']], accessibleRow: 0, preferredRow: 0},
-  {kind: 'arc', id: 'balcony', label: 'Balcony', cx: 500, cy: -180, radiusStart: 768, rowGap: 21, rows: 4, seatsBase: 22, seatsDelta: 1, pitch: 20, tierBreaks: [[4, 'value']], preferredRow: 0},
+  {kind: 'arc', id: 'mezzanine', label: 'Mezzanine', cx: 500, cy: -180, radiusStart: 662, rowGap: 21, rows: 5, seatsBase: 26, seatsDelta: 1, pitch: 20, tierBreaks: [[2, 'preferred'], [5, 'standard']], accessibleRow: 0, preferredRow: 0},
+  {kind: 'arc', id: 'balcony', label: 'Balcony', cx: 500, cy: -180, radiusStart: 786, rowGap: 21, rows: 4, seatsBase: 22, seatsDelta: 1, pitch: 20, tierBreaks: [[4, 'value']], preferredRow: 0},
   {kind: 'box', id: 'box-a', label: 'Box A', originX: 96, originY: 168, cols: 2, rows: 4, colGap: 26, rowGap: 24, angleDeg: 12, dir: 1, tier: 'premium', preferredRow: 0},
   {kind: 'box', id: 'box-b', label: 'Box B', originX: 82, originY: 318, cols: 2, rows: 4, colGap: 26, rowGap: 24, angleDeg: 6, dir: 1, tier: 'premium', preferredRow: 0},
   {kind: 'box', id: 'box-c', label: 'Box C', originX: 904, originY: 168, cols: 2, rows: 4, colGap: 26, rowGap: 24, angleDeg: -12, dir: -1, tier: 'premium', preferredRow: 0},
@@ -393,11 +398,20 @@ for (const spec of SECTIONS) {
     30,
   );
 }
-const SECTION_HULLS = SECTIONS.map(spec => ({
-  id: spec.id,
-  label: spec.label,
-  view: SECTION_VIEWS[spec.id],
-}));
+const SECTION_HULLS = SECTIONS.map(spec => {
+  const view = SECTION_VIEWS[spec.id];
+  return {
+    id: spec.id,
+    label: spec.label,
+    view,
+    // Arc labels sit in the cleared radial lane in front of the section's
+    // first row (the section radii leave a seat-free gap for them); box
+    // labels keep riding the hull top, which is clear of dots.
+    labelX: spec.kind === 'arc' ? spec.cx : round1(view.x + view.w / 2),
+    labelY:
+      spec.kind === 'arc' ? spec.cy + spec.radiusStart - 18 : round1(view.y + 16),
+  };
+});
 
 /**
  * Rows ranked for "best available": cheaper tier rank loses to pricier,
@@ -508,7 +522,8 @@ const PHONE_ZOOMS = [1, 1.6, 2.4, 3.6];
 // The combinatorial surface (seat status × tier, each with colocated
 // :hover / :focus-visible, plus @media restructures) is exactly what the
 // StyleX pilot is for. Every color is a var(--color-*) token or a
-// color-mix() over tokens; shadows are explicit light-dark() pairs.
+// color-mix() over tokens; the scheme-split shadows and seat-fill ramp
+// come in through the SCHEME_VARS inline custom properties.
 
 const pulse = stylex.keyframes({
   '0%': {transform: 'scale(1)'},
@@ -522,14 +537,38 @@ const pulse = stylex.keyframes({
 // The categorical chart token is not defined by every theme, and one
 // unresolved var() invalidates the whole color-mix(), so it falls back to
 // the always-defined icon-green token.
-const RAMP_1 = 'color-mix(in oklab, var(--color-data-categorical-green, var(--color-icon-green)) 88%, var(--color-background-body))';
-const RAMP_2 = 'color-mix(in oklab, var(--color-data-categorical-green, var(--color-icon-green)) 62%, var(--color-background-body))';
-const RAMP_3 = 'color-mix(in oklab, var(--color-data-categorical-green, var(--color-icon-green)) 42%, var(--color-background-body))';
-const RAMP_4 = 'color-mix(in oklab, var(--color-data-categorical-green, var(--color-icon-green)) 24%, var(--color-background-body))';
+const GREEN = 'var(--color-data-categorical-green, var(--color-icon-green))';
+
+/**
+ * Scheme-conditional palette, applied as an inline style on the map shell
+ * and the phone sheet (the two ancestors of every consumer below). These
+ * MUST stay in the inline style attribute rather than stylex.create: the
+ * StyleX pipeline's lightningcss pass downlevels light-dark() into a
+ * `--lightningcss-*` var() polyfill nothing defines, which invalidates
+ * the whole declaration (SVG fills fell back to black). The dark arms use
+ * higher mix percentages on the low steps — mixing toward a near-black
+ * background perceptually compresses the ramp, so dark spreads Value away
+ * from Standard and lifts Sold clear of the map background.
+ */
+const SCHEME_VARS = {
+  '--vsp-ramp-1': `light-dark(color-mix(in oklab, ${GREEN} 88%, var(--color-background-body)), color-mix(in oklab, ${GREEN} 92%, var(--color-background-body)))`,
+  '--vsp-ramp-2': `light-dark(color-mix(in oklab, ${GREEN} 62%, var(--color-background-body)), color-mix(in oklab, ${GREEN} 68%, var(--color-background-body)))`,
+  '--vsp-ramp-3': `light-dark(color-mix(in oklab, ${GREEN} 42%, var(--color-background-body)), color-mix(in oklab, ${GREEN} 48%, var(--color-background-body)))`,
+  '--vsp-ramp-4': `light-dark(color-mix(in oklab, ${GREEN} 24%, var(--color-background-body)), color-mix(in oklab, ${GREEN} 32%, var(--color-background-body)))`,
+  '--vsp-sold': `light-dark(color-mix(in oklab, var(--color-text-secondary) 17%, var(--color-background-body)), color-mix(in oklab, var(--color-text-secondary) 46%, var(--color-background-body)))`,
+  '--vsp-overlay-shadow': 'light-dark(rgba(20, 24, 32, 0.14), rgba(0, 0, 0, 0.5))',
+} as CSSProperties;
+
+const RAMP_1 = 'var(--vsp-ramp-1)';
+const RAMP_2 = 'var(--vsp-ramp-2)';
+const RAMP_3 = 'var(--vsp-ramp-3)';
+const RAMP_4 = 'var(--vsp-ramp-4)';
 const HOVER_LIFT = 'color-mix(in oklab, var(--color-text-primary) 20%, ';
-const SOLD_FILL = 'color-mix(in oklab, var(--color-text-secondary) 24%, var(--color-background-body))';
+const SOLD_FILL = 'var(--vsp-sold)';
 const COMPANION_FILL = 'color-mix(in oklab, var(--color-accent) 16%, var(--color-background-body))';
 const FAINT_RIM = 'color-mix(in srgb, var(--color-text-primary) 16%, transparent)';
+/** Overlay-panel edge: lifts --color-border so panels read against the dark map. */
+const PANEL_EDGE = 'color-mix(in srgb, var(--color-text-primary) 14%, var(--color-border))';
 
 const styles = stylex.create({
   mapShell: {
@@ -595,7 +634,7 @@ const styles = stylex.create({
   seatSold: {
     fill: {default: SOLD_FILL, ':hover': SOLD_FILL},
     cursor: 'default',
-    opacity: 0.55,
+    opacity: 0.8,
     transform: {default: 'scale(1)', ':hover': 'scale(1)'},
   },
   seatCompanion: {
@@ -646,9 +685,9 @@ const styles = stylex.create({
     borderRadius: '12px',
     borderWidth: '1px',
     borderStyle: 'solid',
-    borderColor: 'var(--color-border)',
+    borderColor: PANEL_EDGE,
     backgroundColor: 'var(--color-background-body)',
-    boxShadow: '0 8px 24px light-dark(rgba(20, 24, 32, 0.14), rgba(0, 0, 0, 0.5))',
+    boxShadow: '0 8px 24px var(--vsp-overlay-shadow)',
     zIndex: 2,
     // <=640px the legend lives inside the bottom sheet instead.
     display: {default: 'block', '@media (max-width: 640px)': 'none'},
@@ -688,7 +727,7 @@ const styles = stylex.create({
     backgroundImage:
       'repeating-linear-gradient(45deg, var(--color-warning) 0 2px, var(--color-background-muted) 2px 5px)',
   },
-  swatchSold: {backgroundColor: SOLD_FILL, opacity: 0.55},
+  swatchSold: {backgroundColor: SOLD_FILL, opacity: 0.8},
   swatchCompanion: {backgroundColor: COMPANION_FILL, borderStyle: 'dashed', borderColor: 'var(--color-accent)'},
   swatchSelected: {backgroundColor: 'var(--color-accent)'},
   miniMap: {
@@ -699,8 +738,8 @@ const styles = stylex.create({
     borderRadius: '10px',
     borderWidth: '1px',
     borderStyle: 'solid',
-    borderColor: 'var(--color-border)',
-    backgroundColor: 'color-mix(in srgb, var(--color-background-body) 90%, transparent)',
+    borderColor: PANEL_EDGE,
+    backgroundColor: 'color-mix(in srgb, var(--color-background-body) 94%, transparent)',
     cursor: 'pointer',
     zIndex: 2,
     outlineColor: 'var(--color-accent)',
@@ -744,7 +783,7 @@ const styles = stylex.create({
     borderTopStyle: 'solid',
     borderTopColor: 'var(--color-border)',
     backgroundColor: 'var(--color-background-body)',
-    boxShadow: '0 -8px 28px light-dark(rgba(20, 24, 32, 0.16), rgba(0, 0, 0, 0.55))',
+    boxShadow: '0 -8px 28px var(--vsp-overlay-shadow)',
     overflow: 'hidden',
     transitionProperty: 'height',
     transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
@@ -949,6 +988,9 @@ function MiniOverview({
   isZoomed: boolean;
   onExit: () => void;
 }) {
+  // Always trace a viewport rectangle: the current view box when zoomed,
+  // the full house otherwise — the widget's whole job is "where am I".
+  const frame = visible ?? {x: 10, y: 10, w: VIEW_W - 20, h: VIEW_H - 20};
   return (
     <button
       type="button"
@@ -964,8 +1006,9 @@ function MiniOverview({
           width={340}
           height={38}
           rx={10}
-          fill="var(--color-background-muted)"
-          stroke="var(--color-border)"
+          fill="color-mix(in oklab, var(--color-text-secondary) 18%, var(--color-background-muted))"
+          stroke="color-mix(in oklab, var(--color-text-secondary) 40%, var(--color-border))"
+          strokeWidth={3}
         />
         {SECTION_HULLS.map(hull => (
           <rect
@@ -978,24 +1021,22 @@ function MiniOverview({
             fill={
               hull.id === activeSectionId
                 ? 'color-mix(in oklab, var(--color-accent) 45%, var(--color-background-muted))'
-                : 'var(--color-background-muted)'
+                : 'color-mix(in oklab, var(--color-text-secondary) 26%, var(--color-background-muted))'
             }
-            stroke="var(--color-border)"
+            stroke="color-mix(in oklab, var(--color-text-secondary) 40%, var(--color-border))"
             strokeWidth={3}
           />
         ))}
-        {visible != null && (
-          <rect
-            x={visible.x}
-            y={visible.y}
-            width={visible.w}
-            height={visible.h}
-            rx={12}
-            fill="none"
-            stroke="var(--color-accent)"
-            strokeWidth={10}
-          />
-        )}
+        <rect
+          x={frame.x}
+          y={frame.y}
+          width={frame.w}
+          height={frame.h}
+          rx={12}
+          fill="color-mix(in srgb, var(--color-accent) 14%, transparent)"
+          stroke="var(--color-accent)"
+          strokeWidth={14}
+        />
       </svg>
     </button>
   );
@@ -1537,7 +1578,7 @@ export default function VenueSeatPickerTemplate() {
   const hullsInteractive = !isPhone && zoom == null;
 
   const mapStage = (
-    <div {...stylex.props(styles.mapShell)}>
+    <div {...stylex.props(styles.mapShell)} style={SCHEME_VARS}>
       <svg
         ref={svgRef}
         viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
@@ -1621,14 +1662,14 @@ export default function VenueSeatPickerTemplate() {
               onSeatFocus={handleSeatFocus}
             />
           ))}
-          {/* Section labels paint after the seats: the curved sections
-              interleave, so a token-halo keeps the letters readable where
-              a neighboring row runs under them. */}
+          {/* Section labels paint after the seats. Arc labels anchor in the
+              seat-free lane in front of each section's first row; the
+              token-halo stays as insurance for the hull-top box labels. */}
           {SECTION_HULLS.map(hull => (
             <text
               key={hull.id}
-              x={hull.view.x + hull.view.w / 2}
-              y={hull.view.y + 16}
+              x={hull.labelX}
+              y={hull.labelY}
               textAnchor="middle"
               fontSize={12}
               fontWeight={600}
@@ -1802,7 +1843,9 @@ export default function VenueSeatPickerTemplate() {
           {mapStage}
           {/* Snap bottom sheet: peek bar ↔ expanded, phone-only via the
               StyleX @media condition on the sheet styles. */}
-          <div {...stylex.props(styles.sheet, sheetOpen && styles.sheetExpanded)}>
+          <div
+            {...stylex.props(styles.sheet, sheetOpen && styles.sheetExpanded)}
+            style={SCHEME_VARS}>
             <span {...stylex.props(styles.sheetGrip)} aria-hidden />
             <button
               type="button"

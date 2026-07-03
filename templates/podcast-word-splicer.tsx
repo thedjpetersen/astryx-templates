@@ -78,7 +78,7 @@
  * list.
  *
  * Color policy: token-pure. Every color is a var(--color-*) token or a
- * color-mix() over tokens — speaker tints ride the categorical data
+ * color-mix() over tokens — speaker tints ride the blue/purple icon
  * tokens, strike scrims mix --color-icon-red over transparent, filler
  * underlines use --color-icon-orange, and the selection/karaoke washes mix
  * --color-icon-blue — so every pair survives the dark scheme. Motion:
@@ -263,11 +263,14 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: 'var(--color-border)',
     pointerEvents: 'none',
   },
+  // Playhead: inset from the strip's top/bottom edges so the bar never
+  // crosses the container's rounded corners when parked near 0%.
   wavePlayhead: {
     position: 'absolute',
-    top: 0,
-    bottom: 0,
+    top: 6,
+    bottom: 6,
     width: 2,
+    borderRadius: 1,
     backgroundColor: 'var(--color-accent)',
     pointerEvents: 'none',
     transitionProperty: 'left',
@@ -284,6 +287,18 @@ const styles: Record<string, CSSProperties> = {
     flexShrink: 0,
   },
   timeGutter: {width: 44, textAlign: 'right'},
+  // Rail panel: stick to the top of whichever ancestor scrolls so the
+  // Edits | Chapters rail stays beside the transcript instead of leaving
+  // the right column a void once the page scrolls past the first
+  // viewport. maxHeight bounds it to the panel when the layout height
+  // chain is intact, and overflow keeps long rails reachable.
+  railSticky: {
+    position: 'sticky',
+    insetBlockStart: 0,
+    maxHeight: '100%',
+    overflowY: 'auto',
+    padding: 'var(--spacing-4)',
+  },
   // <=640px: transport / toolbar controls grow to 40px tap targets.
   controlTouch: {width: 40, height: 40},
   railScroll: {minHeight: 0},
@@ -309,14 +324,14 @@ const SPEAKER_META: Record<
     name: 'Priya Raman',
     role: 'Host',
     textColor: 'var(--color-text-blue)',
-    barColor: 'var(--color-data-categorical-blue)',
+    barColor: 'var(--color-icon-blue)',
     dotColor: 'var(--color-icon-blue)',
   },
   marcus: {
     name: 'Marcus Webb',
     role: 'Guest',
     textColor: 'var(--color-text-purple)',
-    barColor: 'var(--color-data-categorical-purple)',
+    barColor: 'var(--color-icon-purple)',
     dotColor: 'var(--color-icon-purple)',
   },
 };
@@ -817,7 +832,8 @@ function WaveformStrip({
       <div
         style={{
           ...styles.wavePlayhead,
-          left: `${playheadPct}%`,
+          // Clamp clear of the rounded corners at either extreme.
+          left: `clamp(6px, ${playheadPct}%, calc(100% - 8px))`,
           ...(isReducedMotion ? {transitionDuration: '0ms'} : undefined),
         }}
       />
@@ -1623,8 +1639,13 @@ export default function PodcastWordSplicerTemplate() {
       }
       end={
         isStacked ? undefined : (
-          <LayoutPanel width={300} label="Edits and chapters">
-            {rail}
+          <LayoutPanel
+            width={300}
+            padding={0}
+            hasDivider
+            isScrollable={false}
+            label="Edits and chapters">
+            <div style={styles.railSticky}>{rail}</div>
           </LayoutPanel>
         )
       }

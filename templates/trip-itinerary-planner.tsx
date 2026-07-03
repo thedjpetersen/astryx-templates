@@ -85,15 +85,13 @@
  * fixed dates, fixed minutes, fixed costs; no clocks, no randomness, no
  * real imagery (the map is stylized vector shapes).
  *
- * Color policy: token-first with one scheme-locked surface. All chrome,
- * cards, chips, bars, and the undo-toast shadow use var(--color-*) tokens
- * or light-dark() pairs. The stylized Lisbon map (styles.mapFrame + the
- * inline SVG in LisbonMap) is deliberately scheme-locked as daylight
- * paper-map art: its ocean gradient, landmass/hill fills, bridge, rail
- * line, hub dots, and hub labels are raw literals and colorScheme is
- * pinned to 'light' on the frame so the inset reads as a printed map in
- * both schemes; label/stroke literals stay literals so they remain
- * readable on that locked surface.
+ * Color policy: token-first. All chrome, cards, chips, bars, and the
+ * undo-toast shadow use var(--color-*) tokens or light-dark() pairs. The
+ * stylized Lisbon map (styles.mapFrame + the inline SVG in LisbonMap) is
+ * stylized vector art rather than tokenized chrome, so its ocean
+ * gradient, landmass/hill fills, bridge, rail line, hub dots, and hub
+ * labels are hand-tuned light-dark() literal pairs: daylight paper-map
+ * colors in light mode, a dimmed night-map palette in dark mode.
  */
 
 import {
@@ -302,8 +300,12 @@ const styles: Record<string, CSSProperties> = {
     color: 'var(--color-accent)',
     fontWeight: 600,
   },
+  // Sticky-panel idiom: the rails pin to the top and scroll internally, so
+  // scrolling the long center column never leaves blank voids beside it.
   panelScroll: {
-    height: '100%',
+    position: 'sticky',
+    top: 0,
+    maxHeight: '100dvh',
     overflowY: 'auto',
     padding: 'var(--spacing-3)',
     boxSizing: 'border-box',
@@ -313,16 +315,19 @@ const styles: Record<string, CSSProperties> = {
     overflow: 'hidden',
     border: '1px solid var(--color-border)',
     // Ocean gradient behind the vector landmass — a styled placeholder,
-    // never a real map tile. Scheme-locked daylight paper-map art (see the
-    // header "Color policy"): literals only inside this surface, with
-    // colorScheme pinned so it reads as a printed map inset in dark mode.
-    background: 'linear-gradient(160deg, #B7D9EE 0%, #8FBFDF 100%)',
-    colorScheme: 'light',
+    // never a real map tile. Every literal is a light-dark() pair (see the
+    // header "Color policy") so the inset reads as daylight paper-map art
+    // in light mode and a dimmed night-map inset in dark mode.
+    background:
+      'linear-gradient(160deg, light-dark(#B7D9EE, #24455E) 0%, light-dark(#8FBFDF, #1A3348) 100%)',
   },
+  // Bordered track keeps short fills legible against the panel surface in
+  // both schemes (the muted track alone is near-invisible in dark mode).
   categoryBarTrack: {
     height: 8,
     borderRadius: 4,
     backgroundColor: 'var(--color-background-muted)',
+    boxShadow: 'inset 0 0 0 1px var(--color-border)',
     overflow: 'hidden',
   },
   categoryBarFill: {
@@ -358,25 +363,25 @@ const CATEGORIES: readonly ActivityCategory[] = [
   {
     id: 'transit',
     label: 'Transit',
-    color: 'var(--color-data-categorical-blue)',
+    color: 'var(--color-data-categorical-blue, light-dark(#0171E3, #4C9FFF))',
     token: 'blue',
   },
   {
     id: 'food',
     label: 'Food',
-    color: 'var(--color-data-categorical-orange)',
+    color: 'var(--color-data-categorical-orange, light-dark(#EB6E00, #FF9330))',
     token: 'orange',
   },
   {
     id: 'sights',
     label: 'Sights',
-    color: 'var(--color-data-categorical-purple)',
+    color: 'var(--color-data-categorical-purple, light-dark(#6B1EFD, #9D6BFF))',
     token: 'purple',
   },
   {
     id: 'lodging',
     label: 'Lodging',
-    color: 'var(--color-data-categorical-teal)',
+    color: 'var(--color-data-categorical-teal, light-dark(#0E7E8B, #2CB9CB))',
     token: 'teal',
   },
 ];
@@ -913,6 +918,9 @@ function ActivityCard({
                   : formatMin(activity.startMin)}
               </Text>
             </HStack>
+            <Text type="supporting" color="secondary" aria-hidden="true">
+              ·
+            </Text>
             <Text type="supporting" color="secondary" hasTabularNumbers>
               {formatEUR(activity.cost ?? 0)}
             </Text>
@@ -969,10 +977,9 @@ function ActivityCard({
 }
 
 // ============= MAP PANEL =============
-// Scheme-locked surface: every fill/stroke below is a deliberate raw
-// literal on the daylight paper-map inset (colorScheme: 'light' pinned in
-// styles.mapFrame) — see the header "Color policy". Text/strokes stay
-// literals so they remain readable on the locked art in both schemes.
+// Stylized vector art: every fill/stroke below is a hand-tuned
+// light-dark() literal pair — daylight paper-map colors in light mode, a
+// dimmed night-map palette in dark mode — see the header "Color policy".
 
 function LisbonMap({selectedHubId}: {selectedHubId: string}) {
   return (
@@ -988,19 +995,19 @@ function LisbonMap({selectedHubId}: {selectedHubId: string}) {
         <path
           d="M0 0 H260 V34 C232 40 214 52 198 66 C180 82 160 88 138 92
              C112 96 92 104 74 100 C52 96 30 104 0 96 Z"
-          fill="#DCE8D5"
+          fill="light-dark(#DCE8D5, #2E3B29)"
         />
         {/* South bank sliver. */}
         <path
           d="M96 180 C120 158 156 148 196 146 C220 144 244 150 260 158
              V180 Z"
-          fill="#DCE8D5"
+          fill="light-dark(#DCE8D5, #2E3B29)"
         />
         {/* Tagus river mouth between the banks (the gradient shows through). */}
         {/* Hills west of town. */}
         <path
           d="M18 44 C34 30 58 28 72 40 C60 46 42 52 30 60 Z"
-          fill="#C7DBBB"
+          fill="light-dark(#C7DBBB, #3A4A33)"
         />
         {/* 25 de Abril bridge. */}
         <line
@@ -1008,16 +1015,16 @@ function LisbonMap({selectedHubId}: {selectedHubId: string}) {
           y1={112}
           x2={140}
           y2={152}
-          stroke="#B34734"
+          stroke="light-dark(#B34734, #D97862)"
           strokeWidth={3}
         />
-        <circle cx={126} cy={112} r={2.5} fill="#B34734" />
-        <circle cx={140} cy={152} r={2.5} fill="#B34734" />
+        <circle cx={126} cy={112} r={2.5} fill="light-dark(#B34734, #D97862)" />
+        <circle cx={140} cy={152} r={2.5} fill="light-dark(#B34734, #D97862)" />
         {/* Rail line out to Sintra. */}
         <path
           d="M158 100 C128 84 92 72 52 56"
           fill="none"
-          stroke="#8FA382"
+          stroke="light-dark(#8FA382, #7C9070)"
           strokeWidth={2}
           strokeDasharray="4 3"
         />
@@ -1029,8 +1036,12 @@ function LisbonMap({selectedHubId}: {selectedHubId: string}) {
                 cx={hub.x}
                 cy={hub.y}
                 r={isSelected ? 8 : 5}
-                fill={isSelected ? '#0171E3' : '#5B6B52'}
-                stroke="#FFFFFF"
+                fill={
+                  isSelected
+                    ? 'light-dark(#0171E3, #4C9FFF)'
+                    : 'light-dark(#5B6B52, #9DAE91)'
+                }
+                stroke="light-dark(#FFFFFF, #16232D)"
                 strokeWidth={2}
               />
               <text
@@ -1039,7 +1050,7 @@ function LisbonMap({selectedHubId}: {selectedHubId: string}) {
                 textAnchor="middle"
                 fontSize={10}
                 fontWeight={isSelected ? 700 : 500}
-                fill="#37413A">
+                fill="light-dark(#37413A, #D6E0CE)">
                 {hub.label}
               </text>
             </g>
@@ -1088,7 +1099,7 @@ function BudgetSummary({
             <Heading level={2}>{formatEUR(data.total)}</Heading>
           </VStack>
         </StackItem>
-        <VStack gap={0.5}>
+        <VStack gap={0.5} hAlign="end">
           <Text type="supporting" color="secondary">
             Booked
           </Text>
@@ -1096,7 +1107,9 @@ function BudgetSummary({
             {formatEUR(data.booked)}
           </Text>
         </VStack>
-        <VStack gap={0.5}>
+        {/* hAlign="end" keeps the value flush with the panel's right value
+            column (the €-amounts in the category rows below). */}
+        <VStack gap={0.5} hAlign="end">
           <Text type="supporting" color="secondary">
             Still open
           </Text>
@@ -1691,14 +1704,26 @@ export default function TripItineraryPlannerTemplate() {
       }
       start={
         !isNarrow ? (
-          <LayoutPanel width={224} padding={0} hasDivider label="Trip days">
+          <LayoutPanel
+            width={224}
+            padding={0}
+            hasDivider
+            // The panel opts out of scrolling so styles.panelScroll can
+            // stick against the page scroll (sticky-panel idiom).
+            isScrollable={false}
+            label="Trip days">
             <div style={styles.panelScroll}>{dayRail}</div>
           </LayoutPanel>
         ) : undefined
       }
       end={
         !isNarrow ? (
-          <LayoutPanel width={300} padding={0} hasDivider label="Map and budget">
+          <LayoutPanel
+            width={300}
+            padding={0}
+            hasDivider
+            isScrollable={false}
+            label="Map and budget">
             <div style={styles.panelScroll}>{mapAndBudget}</div>
           </LayoutPanel>
         ) : undefined

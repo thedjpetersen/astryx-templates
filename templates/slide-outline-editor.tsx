@@ -172,6 +172,13 @@ const styles: Record<string, CSSProperties> = {
     overflow: 'hidden',
     boxShadow: 'var(--shadow-high)',
   },
+  // Keeps the live preview in view while the outline scrolls; the panel
+  // itself opts out of scrolling (isScrollable={false}) so sticky works
+  // against the page scroll.
+  previewSticky: {
+    position: 'sticky',
+    top: 'var(--spacing-4)',
+  },
   // The slide surface: white paper, container for cqw type sizing.
   canvas: {
     position: 'relative',
@@ -1039,8 +1046,12 @@ export default function SlideOutlineEditorTemplate() {
       }
       end={
         isCompact ? undefined : (
-          <LayoutPanel width={380} label="Slide preview">
-            {previewBody}
+          <LayoutPanel
+            width={380}
+            hasDivider
+            isScrollable={false}
+            label="Slide preview">
+            <div style={styles.previewSticky}>{previewBody}</div>
           </LayoutPanel>
         )
       }

@@ -147,11 +147,13 @@ const styles: Record<string, CSSProperties> = {
   // even when the fixed columns consume most of the row.
   colTitle: {flexBasis: 0, minWidth: 120},
   colOwner: {width: 112, flexShrink: 0},
-  colProgress: {width: 124, flexShrink: 0},
-  colConfidence: {width: 84, flexShrink: 0, display: 'flex'},
+  colProgress: {width: 116, flexShrink: 0},
+  colConfidence: {width: 72, flexShrink: 0, display: 'flex'},
   colScore: {width: 40, flexShrink: 0, textAlign: 'end'},
   progressTrack: {flex: 1, minWidth: 0},
-  progressPct: {width: 40, flexShrink: 0, textAlign: 'end'},
+  // Percent hugs its bar (start-aligned) so it groups with the progress it
+  // describes instead of drifting toward the Confidence badge.
+  progressPct: {width: 34, flexShrink: 0, textAlign: 'start'},
   // Check-in panel scroll region (the docked panel owns its own scrollbar).
   panelScroll: {
     height: '100%',
@@ -279,7 +281,7 @@ const QUARTERS: Quarter[] = [
   {
     id: 'q2-2026',
     label: 'Q2 2026',
-    timeframe: 'Apr 1 – Jun 30 · week 12 of 13',
+    timeframe: 'Apr 1 – Jun 30 · week 12 of 13',
     status: 'In flight',
     initiallyExpanded: ['q2-o1', 'q2-o2'],
     objectives: [
@@ -484,7 +486,7 @@ const QUARTERS: Quarter[] = [
   {
     id: 'q1-2026',
     label: 'Q1 2026',
-    timeframe: 'Jan 5 – Mar 27 · closed',
+    timeframe: 'Jan 5 – Mar 27 · closed',
     status: 'Scored',
     initiallyExpanded: ['q1-o1'],
     objectives: [
@@ -811,12 +813,12 @@ function ObjectiveRow({
 
   return (
     <div style={styles.rowPad}>
-      <HStack gap={3} vAlign="center">
+      <HStack gap={2} vAlign="center">
         {chevron}
         <Icon icon={TargetIcon} size="sm" color="secondary" />
         <StackItem size="fill" style={styles.colTitle}>
           <VStack gap={0}>
-            <Text type="label" maxLines={1}>
+            <Text type="label" maxLines={2}>
               {objective.title}
             </Text>
             <Text type="supporting" color="secondary" size="sm">
@@ -898,12 +900,12 @@ function KeyResultRow({
       </HStack>
     </VStack>
   ) : (
-    <HStack gap={3} vAlign="center">
+    <HStack gap={2} vAlign="center">
       <span style={styles.krIndent} />
       <Icon icon={CrosshairIcon} size="sm" color="secondary" />
       <StackItem size="fill" style={styles.colTitle}>
         <VStack gap={0}>
-          <Text type="body" maxLines={1}>
+          <Text type="body" maxLines={2}>
             {keyResult.title}
           </Text>
           <Text type="supporting" color="secondary" size="sm" maxLines={1}>
@@ -1154,7 +1156,7 @@ export default function OkrTreeTemplate() {
 
   // ---- summary ----
   const summarySection = (
-    <Grid columns={{minWidth: 240, max: 3}} gap={4}>
+    <Grid columns={{minWidth: 200, max: 3}} gap={4}>
       <Card>
         <VStack gap={1}>
           <Text type="supporting" color="secondary">
@@ -1167,7 +1169,7 @@ export default function OkrTreeTemplate() {
               variant={quarter.status === 'In flight' ? 'info' : 'neutral'}
             />
             <Text type="supporting" color="secondary" hasTabularNumbers>
-              {quarter.label} · {quarter.timeframe}
+              {quarter.label}&nbsp;· {quarter.timeframe}
             </Text>
           </HStack>
         </VStack>
@@ -1220,7 +1222,7 @@ export default function OkrTreeTemplate() {
   // ---- tree ----
   const captionRow = (
     <div style={styles.rowPad}>
-      <HStack gap={3} vAlign="center">
+      <HStack gap={2} vAlign="center">
         <span style={{width: 28, flexShrink: 0}} />
         <span style={{width: 16, flexShrink: 0}} />
         <StackItem size="fill" style={styles.colTitle}>
@@ -1371,7 +1373,7 @@ export default function OkrTreeTemplate() {
               <>
                 <Button
                   label="Expand all"
-                  variant="ghost"
+                  variant="secondary"
                   size="sm"
                   isDisabled={showAtRiskOnly}
                   onClick={() =>
@@ -1380,7 +1382,7 @@ export default function OkrTreeTemplate() {
                 />
                 <Button
                   label="Collapse all"
-                  variant="ghost"
+                  variant="secondary"
                   size="sm"
                   isDisabled={showAtRiskOnly}
                   onClick={() => setExpandedIds(new Set())}

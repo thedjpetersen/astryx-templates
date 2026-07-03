@@ -164,8 +164,14 @@ const styles: Record<string, CSSProperties> = {
     padding: 'var(--spacing-3)',
   },
   // Preview canvas: muted body color so the invoice Card reads as paper.
+  // Sticky so the paper stays beside the form instead of leaving a void
+  // once whichever ancestor scrolls moves past the first viewport;
+  // maxHeight bounds it to the pane when the layout height chain is
+  // intact, and overflow keeps a tall paper reachable.
   previewScroll: {
-    height: '100%',
+    position: 'sticky',
+    insetBlockStart: 0,
+    maxHeight: '100%',
     minHeight: 0,
     overflowY: 'auto',
     backgroundColor: 'var(--color-background-body)',
@@ -996,6 +1002,11 @@ export default function InvoiceBuilderTemplate() {
       {/* Notes */}
       <VStack gap={2}>
         <Heading level={2}>Notes</Heading>
+        {/* Helper above the input, matching the label→description→input
+            order the Tax rate field gets from its description prop. */}
+        <Text type="supporting" color="secondary">
+          Shown at the bottom of the invoice, above the footer.
+        </Text>
         <TextArea
           label="Invoice notes"
           isLabelHidden
@@ -1004,9 +1015,6 @@ export default function InvoiceBuilderTemplate() {
           onChange={setNotes}
           width="100%"
         />
-        <Text type="supporting" color="secondary">
-          Shown at the bottom of the invoice, above the footer.
-        </Text>
       </VStack>
     </VStack>
   );
@@ -1119,7 +1127,10 @@ export default function InvoiceBuilderTemplate() {
         )
       }
       content={
-        <LayoutContent padding={0}>
+        // isScrollable={false}: the panes scroll themselves, and a scroll
+        // container here would re-scope the preview's position:sticky away
+        // from whichever ancestor actually scrolls.
+        <LayoutContent padding={0} isScrollable={false}>
           {isSinglePane ? (activePane === 'edit' ? form : preview) : preview}
         </LayoutContent>
       }

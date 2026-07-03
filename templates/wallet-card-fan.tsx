@@ -191,13 +191,17 @@ interface CardGradient {
  * — so the face is a saturated, dark-enough surface in both schemes.
  */
 const GRADIENTS: Record<string, CardGradient> = {
+  // graphite + ocean are scheme-locked dark (the STRIPE_SURFACE idiom): a
+  // near-black card is near-black in any scheme — their dark arms mix over
+  // --color-background-body (dark there) instead of lightening toward the
+  // scheme's text/accent inks, so the white card ink keeps its contrast.
   graphite: {
-    from: 'light-dark(color-mix(in srgb, var(--color-text-primary) 90%, var(--color-accent)), color-mix(in srgb, var(--color-background-body) 55%, var(--color-text-primary)))',
-    to: 'light-dark(color-mix(in srgb, var(--color-text-primary) 70%, var(--color-accent)), color-mix(in srgb, var(--color-background-body) 30%, var(--color-accent)))',
+    from: 'light-dark(color-mix(in srgb, var(--color-text-primary) 90%, var(--color-accent)), color-mix(in srgb, var(--color-background-body) 88%, var(--color-text-primary)))',
+    to: 'light-dark(color-mix(in srgb, var(--color-text-primary) 70%, var(--color-accent)), color-mix(in srgb, var(--color-background-body) 76%, var(--color-text-primary)))',
   },
   ocean: {
-    from: 'light-dark(color-mix(in srgb, var(--color-accent) 82%, var(--color-text-primary)), color-mix(in srgb, var(--color-accent) 58%, var(--color-background-body)))',
-    to: 'light-dark(color-mix(in srgb, var(--color-accent) 92%, var(--color-success)), color-mix(in srgb, var(--color-accent) 40%, var(--color-background-body)))',
+    from: 'light-dark(color-mix(in srgb, var(--color-accent) 82%, var(--color-text-primary)), color-mix(in srgb, var(--color-background-body) 82%, var(--color-accent)))',
+    to: 'light-dark(color-mix(in srgb, var(--color-accent) 92%, var(--color-success)), color-mix(in srgb, var(--color-background-body) 72%, var(--color-accent)))',
   },
   fern: {
     from: 'light-dark(color-mix(in srgb, var(--color-success) 78%, var(--color-text-primary)), color-mix(in srgb, var(--color-success) 52%, var(--color-background-body)))',
@@ -209,7 +213,7 @@ const GRADIENTS: Record<string, CardGradient> = {
   },
   plum: {
     from: 'light-dark(color-mix(in srgb, var(--color-error) 62%, var(--color-accent)), color-mix(in srgb, var(--color-error) 44%, var(--color-background-body)))',
-    to: 'light-dark(color-mix(in srgb, var(--color-accent) 66%, var(--color-text-primary)), color-mix(in srgb, var(--color-accent) 42%, var(--color-background-body)))',
+    to: 'light-dark(color-mix(in srgb, var(--color-accent) 66%, var(--color-text-primary)), color-mix(in srgb, var(--color-accent) 26%, var(--color-background-body)))',
   },
 };
 
@@ -1201,9 +1205,9 @@ export default function WalletCardFanTemplate() {
   const [defaultId, setDefaultId] = useState('sable');
   const [ledgerFilter, setLedgerFilter] = useState<LedgerFilter>('all');
   const [dragY, setDragY] = useState<number | null>(null);
-  const [statusNote, setStatusNote] = useState(
-    'Tap a card to bring it forward — tap again to flip it over.',
-  );
+  // Starts empty: the static hint above the shortcut pills is the single
+  // resting instruction; this live region only speaks once actions happen.
+  const [statusNote, setStatusNote] = useState('');
   const dragOrigin = useRef<{pointerId: number; y: number} | null>(null);
   const didDrag = useRef(false);
 

@@ -116,9 +116,15 @@ const styles: Record<string, CSSProperties> = {
   resultList: {
     maxHeight: '48vh',
     overflowY: 'auto',
-    // Breathing room plus a fade mask so a row clipped by the scroll edge
-    // dissolves instead of being sliced against the footer divider.
+    // Breathing room so the last row is not sliced flush against the footer.
     paddingBottom: 'var(--spacing-3)',
+  },
+  // Fade mask lives on this NON-scrolling wrapper: a mask on the scroll
+  // container itself stretches over the full scrollHeight and scrolls with
+  // the content, so the fade would sit at the content bottom instead of the
+  // visible clip edge. On the static wrapper it pins to the footer divider,
+  // dissolving whichever row the scroll edge clips.
+  resultListMask: {
     maskImage:
       'linear-gradient(to bottom, black calc(100% - var(--spacing-5)), transparent 100%)',
     WebkitMaskImage:
@@ -775,54 +781,56 @@ export default function CommandPaletteLauncherPage() {
           endContent={<Kbd keys="mod+k" />}
         />
         <Divider />
-        <CommandPaletteList label="Search results" style={styles.resultList}>
-          {flatEntries.length === 0 ? (
-            <CommandPaletteEmpty>
-              No sessions, commands, or help topics match “{query.trim()}”.
-            </CommandPaletteEmpty>
-          ) : (
-            sections.map(section => (
-              <CommandPaletteGroup key={section.id} heading={section.heading}>
-                {section.entries.map(entry => {
-                  flatIndex += 1;
-                  const index = flatIndex;
-                  return (
-                    <CommandPaletteItem
-                      key={entry.id}
-                      value={entry.id}
-                      isHighlighted={index === highlightedIndex}
-                      onSelect={() => runEntry(entry)}
-                      onMouseEnter={() => setSelectedIndex(index)}>
-                      {entry.kind === 'session' ? (
-                        <SessionRow
-                          session={entry.session}
-                          segments={entry.segments}
-                        />
-                      ) : entry.kind === 'command' ? (
-                        <CommandRow
-                          command={entry.command}
-                          segments={entry.segments}
-                        />
-                      ) : (
-                        <HelpRow topic={entry.topic} />
-                      )}
-                    </CommandPaletteItem>
-                  );
-                })}
-                {section.isSearchingRemote && (
-                  <div style={styles.searchingRow}>
-                    <HStack gap={2} vAlign="center">
-                      <Spinner size="sm" shade="subtle" />
-                      <Text type="supporting" color="secondary">
-                        Searching remote sessions…
-                      </Text>
-                    </HStack>
-                  </div>
-                )}
-              </CommandPaletteGroup>
-            ))
-          )}
-        </CommandPaletteList>
+        <div style={styles.resultListMask}>
+          <CommandPaletteList label="Search results" style={styles.resultList}>
+            {flatEntries.length === 0 ? (
+              <CommandPaletteEmpty>
+                No sessions, commands, or help topics match “{query.trim()}”.
+              </CommandPaletteEmpty>
+            ) : (
+              sections.map(section => (
+                <CommandPaletteGroup key={section.id} heading={section.heading}>
+                  {section.entries.map(entry => {
+                    flatIndex += 1;
+                    const index = flatIndex;
+                    return (
+                      <CommandPaletteItem
+                        key={entry.id}
+                        value={entry.id}
+                        isHighlighted={index === highlightedIndex}
+                        onSelect={() => runEntry(entry)}
+                        onMouseEnter={() => setSelectedIndex(index)}>
+                        {entry.kind === 'session' ? (
+                          <SessionRow
+                            session={entry.session}
+                            segments={entry.segments}
+                          />
+                        ) : entry.kind === 'command' ? (
+                          <CommandRow
+                            command={entry.command}
+                            segments={entry.segments}
+                          />
+                        ) : (
+                          <HelpRow topic={entry.topic} />
+                        )}
+                      </CommandPaletteItem>
+                    );
+                  })}
+                  {section.isSearchingRemote && (
+                    <div style={styles.searchingRow}>
+                      <HStack gap={2} vAlign="center">
+                        <Spinner size="sm" shade="subtle" />
+                        <Text type="supporting" color="secondary">
+                          Searching remote sessions…
+                        </Text>
+                      </HStack>
+                    </div>
+                  )}
+                </CommandPaletteGroup>
+              ))
+            )}
+          </CommandPaletteList>
+        </div>
         <Divider />
         <CommandPaletteFooter>
           <HStack gap={3} vAlign="center">
@@ -841,7 +849,20 @@ export default function CommandPaletteLauncherPage() {
             </HStack>
             <StackItem size="fill" />
             {!isNarrow && (
-              <Text type="inherit">: workspace · / commands · ? help</Text>
+              <>
+                <HStack gap={1} vAlign="center">
+                  <Kbd keys=":" />
+                  <Text type="inherit">workspace</Text>
+                </HStack>
+                <HStack gap={1} vAlign="center">
+                  <Kbd keys="/" />
+                  <Text type="inherit">commands</Text>
+                </HStack>
+                <HStack gap={1} vAlign="center">
+                  <Kbd keys="?" />
+                  <Text type="inherit">help</Text>
+                </HStack>
+              </>
             )}
           </HStack>
         </CommandPaletteFooter>

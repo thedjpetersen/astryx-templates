@@ -142,6 +142,17 @@ const styles: Record<string, CSSProperties> = {
   headerRow: {
     width: '100%',
   },
+  // Pin the title + filter row to the top of the scroll context. The opaque
+  // card background and low shadow give the bar elevation, so content
+  // sliding beneath the filters reads intentional instead of clipped
+  // (dashboard-tabbed sticky-header idiom).
+  stickyHeader: {
+    position: 'sticky',
+    top: 0,
+    zIndex: 2,
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: 'var(--shadow-low)',
+  },
   // Children-mode Table defaults to table-layout auto, where the cells'
   // truncation styles (max-width: 0) collapse every fixed-width column to
   // its padding. Fixed layout sizes columns from the header row's widths —
@@ -206,6 +217,9 @@ const styles: Record<string, CSSProperties> = {
     height: 22,
     borderRadius: 'var(--radius-control, 6px)',
     backgroundColor: 'var(--color-background-muted)',
+    // Inset ring keeps the muted rail visible against the detail pane in
+    // light mode (region-tile-cartogram inset-ring idiom).
+    boxShadow: 'inset 0 0 0 1px var(--color-border)',
     overflow: 'hidden',
     flex: 1,
     minWidth: 0,
@@ -1079,7 +1093,7 @@ export default function PayoutStatementsPage() {
     <Layout
       height="fill"
       header={
-        <LayoutHeader hasDivider>
+        <LayoutHeader hasDivider style={styles.stickyHeader}>
           <HStack gap={3} vAlign="center" wrap="wrap" style={styles.headerRow}>
             <StackItem size="fill">
               <VStack gap={0.5}>

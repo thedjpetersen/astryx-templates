@@ -60,7 +60,8 @@
  * Color policy: token-pure. Chrome colors are var(--color-*) tokens; the
  * three choropleth ramps are hand-tuned five-stop fill/ink scales where
  * every stop is an explicit light-dark() pair, so the atlas holds its
- * contrast and its "darker = more" read in both schemes.
+ * contrast and its "stronger = more" read in both schemes (the dark ramp
+ * runs lighter = more, so on-page copy stays scheme-neutral).
  */
 
 import {
@@ -153,6 +154,9 @@ const styles: Record<string, CSSProperties> = {
     // Fallback outline slot so pinning never shifts layout.
     outline: '2px solid transparent',
     outlineOffset: 2,
+    // Subtle inset ring so lowest-bucket tiles (near-white / near-navy)
+    // never dissolve into the panel background.
+    boxShadow: 'inset 0 0 0 1px var(--color-border)',
   },
   tilePinned: {
     outline: '2px solid var(--color-accent)',
@@ -161,11 +165,14 @@ const styles: Record<string, CSSProperties> = {
   // Legend-bucket filter dims non-matching tiles and ranking rows; the
   // elements stay interactive so a dimmed state can still be pinned.
   dimmed: {opacity: 0.25},
+  // Inset ring keeps the extreme ramp stops (near-white / near-navy)
+  // visible against the panel in both schemes.
   legendSwatch: {
     width: 12,
     height: 12,
     borderRadius: 3,
     flexShrink: 0,
+    boxShadow: 'inset 0 0 0 1px var(--color-border)',
   },
   // Comparison chip: bordered mini-card for one pinned state.
   chip: {
@@ -231,22 +238,27 @@ const styles: Record<string, CSSProperties> = {
   rankRowPinned: {
     backgroundColor: 'var(--color-accent-muted)',
   },
+  // Bordered track + inset-ringed fill keep bottom-ranked bars (whose
+  // fill is the near-invisible lowest ramp stop) readable in both schemes.
   rankBarTrack: {
     height: 10,
     borderRadius: 5,
     backgroundColor: 'var(--color-background-muted)',
+    boxShadow: 'inset 0 0 0 1px var(--color-border)',
     overflow: 'hidden',
   },
   rankBarFill: {
     height: '100%',
     borderRadius: 5,
+    boxShadow: 'inset 0 0 0 1px var(--color-border)',
   },
+  rankIndex: {textAlign: 'end'},
   rankValue: {textAlign: 'end'},
 };
 
 // ============= COLOR RAMPS =============
 // Three hand-tuned quantize ramps, five stops each. Every stop is an
-// explicit light-dark() pair (fill + ink) so the "darker = more" read
+// explicit light-dark() pair (fill + ink) so the "stronger = more" read
 // survives scheme flips and tile labels always clear contrast. These are
 // the only literal colors in the file; all chrome uses tokens.
 
@@ -779,9 +791,11 @@ function RankingList({
               ...(isPinned ? styles.rankRowPinned : null),
               ...(isDimmed ? styles.dimmed : null),
             }}>
-            <Text type="supporting" color="secondary" hasTabularNumbers>
-              {entry.rank}
-            </Text>
+            <span style={styles.rankIndex}>
+              <Text type="supporting" color="secondary" hasTabularNumbers>
+                {entry.rank}
+              </Text>
+            </span>
             <Text type="code" size="sm" weight={isPinned ? 'semibold' : undefined}>
               {entry.state.code}
             </Text>
@@ -1051,7 +1065,7 @@ export default function RegionTileCartogramTemplate() {
           </StackItem>
           {!isPhone && (
             <Text type="supporting" color="secondary">
-              Tap a tile to pin · darker = more
+              Tap a tile to pin · stronger = more
             </Text>
           )}
         </HStack>

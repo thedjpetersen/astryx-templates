@@ -19,11 +19,13 @@
  *   scroll-spying rail
  * @position Page template; emitted by `astryx template headings-lists-gallery`
  *
- * Frame: Layout height="fill" owns the page. LayoutHeader carries the
+ * Frame: Layout height="auto" owns the page. LayoutHeader carries the
  * gallery title plus, on <=768px viewports, a horizontally scrolling
- * subnav of panel pills; LayoutContent scrolls the five panels inside a
- * contentWidth={1040} column. On wider viewports the subnav renders as a
- * 200px sticky rail to the left of the panel column instead.
+ * subnav of panel pills; LayoutContent hosts the five panels inside a
+ * contentWidth={1040} column and opts out of its own scroll
+ * (isScrollable={false}) so the rail's position:sticky tracks the page
+ * scroll. On wider viewports the subnav renders as a 200px sticky rail
+ * to the left of the panel column instead.
  *
  * Interaction contract (every affordance works — no dead buttons):
  * - Rail/subnav pills scroll their panel into view; an
@@ -52,8 +54,8 @@
  *   (minWidth 0 so wide rows truncate instead of pushing the rail).
  * - <=768px: the rail moves into LayoutHeader as one horizontally
  *   scrolling pill row (width max-content inside an overflowX scroller);
- *   panels stack full width. The header stays pinned so the subnav is
- *   always reachable; only LayoutContent scrolls (height="fill").
+ *   panels stack full width. The page itself scrolls (height="auto") so
+ *   the rail's sticky positioning works against the page scroll.
  * - <=640px: page-heading action clusters and meta rows wrap below the
  *   title instead of squeezing it; description-list grids collapse from
  *   220px-label/value columns to stacked label-over-value; card-heading
@@ -147,6 +149,9 @@ const styles: Record<string, CSSProperties> = {
     flexDirection: 'column',
     gap: 'var(--spacing-1)',
   },
+  // Vertical rail pills fill the rail width with left-aligned labels so
+  // the nav reads as a column, not a stack of centered chips.
+  railPill: {width: '100%', justifyContent: 'flex-start'},
   panelColumn: {
     flex: 1,
     minWidth: 0,
@@ -199,6 +204,9 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: '50%',
     padding: 3,
     backgroundColor: 'var(--color-background-body)',
+    // Keeps the circle legible where it overlaps the card body (the ring
+    // color matches the card surface, so the avatar dissolves without it).
+    border: '1px solid var(--color-border)',
   },
   // Description-list grids.
   dlRowWide: {
@@ -652,7 +660,9 @@ function statusBadge(status: SprintTask['status']) {
   return status === 'done' ? (
     <Badge variant="success" label="Done" />
   ) : (
-    <Badge variant="info" label="Active" />
+    // Tinted blue (not solid "info") so Active sits at the same visual
+    // weight as the tinted High/Done badges beside it.
+    <Badge variant="blue" label="Active" />
   );
 }
 
@@ -862,16 +872,23 @@ export default function HeadingsListsGalleryTemplate() {
   };
 
   // ---- shared chrome ----
-  const railPills = PANELS.map(panel => (
-    <Button
-      key={panel.id}
-      label={panel.label}
-      size="sm"
-      variant={activePanel === panel.id ? 'secondary' : 'ghost'}
-      style={styles.subnavTapTarget}
-      onClick={() => jumpToPanel(panel.id)}
-    />
-  ));
+  // Vertical rail pills get full-width, left-aligned labels; the
+  // horizontal header subnav keeps content-hugging centered pills.
+  const renderRailPills = (isVerticalRail: boolean) =>
+    PANELS.map(panel => (
+      <Button
+        key={panel.id}
+        label={panel.label}
+        size="sm"
+        variant={activePanel === panel.id ? 'secondary' : 'ghost'}
+        style={
+          isVerticalRail
+            ? {...styles.subnavTapTarget, ...styles.railPill}
+            : styles.subnavTapTarget
+        }
+        onClick={() => jumpToPanel(panel.id)}
+      />
+    ));
 
   const pageHeadingActions = (
     <HStack gap={2} vAlign="center" wrap="wrap">
@@ -905,7 +922,7 @@ export default function HeadingsListsGalleryTemplate() {
 
   return (
     <Layout
-      height="fill"
+      height="auto"
       contentWidth={1040}
       header={
         <LayoutHeader hasDivider>
@@ -926,21 +943,24 @@ export default function HeadingsListsGalleryTemplate() {
             </HStack>
             {isCompactRail && (
               <nav aria-label="Gallery panels" style={styles.subnavScroller}>
-                <div style={styles.subnavRow}>{railPills}</div>
+                <div style={styles.subnavRow}>{renderRailPills(false)}</div>
               </nav>
             )}
           </VStack>
         </LayoutHeader>
       }
       content={
-        <LayoutContent padding={6}>
+        // isScrollable={false}: the page scrolls (height="auto"), so the
+        // rail's position:sticky must scope to the page scroller — an
+        // overflow:auto LayoutContent would capture it and never scroll.
+        <LayoutContent padding={6} isScrollable={false}>
           <div aria-live="polite" style={styles.visuallyHidden}>
             {announcement}
           </div>
           <div style={styles.bodyRow}>
             {!isCompactRail && (
               <nav aria-label="Gallery panels" style={styles.rail}>
-                {railPills}
+                {renderRailPills(true)}
               </nav>
             )}
             <div style={styles.panelColumn}>
@@ -1220,7 +1240,7 @@ export default function HeadingsListsGalleryTemplate() {
                           ]}
                         />
                       </HStack>
-                      <HStack gap={4} vAlign="center" wrap="wrap">
+                      <HStack gap={6} vAlign="center" wrap="wrap">
                         <VStack gap={0}>
                           <Text type="label">42 pts</Text>
                           <Text type="supporting" color="secondary">
@@ -1283,7 +1303,7 @@ export default function HeadingsListsGalleryTemplate() {
                               label={task.label}
                               description={`Due ${task.due}`}
                               endContent={
-                                <Badge variant="info" label="Active" />
+                                <Badge variant="blue" label="Active" />
                               }
                             />
                           ))}

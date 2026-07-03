@@ -18,8 +18,8 @@
  *   bar (draft subject + minimize/expand/close IconButtons), a To field
  *   built on Tokenizer with recipient chips — one invalid-address Token in
  *   error state with a FieldStatus message, and a group-list chip with a
- *   member-count Tooltip — Cc/Bcc reveal Links that add rows, a subject
- *   TextInput, a formatting Toolbar of pressed-state ToggleButtons (bold,
+ *   member-count Tooltip — Cc/Bcc reveal ghost Buttons that add rows, a
+ *   subject TextInput, a formatting Toolbar of pressed-state ToggleButtons (bold,
  *   italic, bulleted list, link), a controlled body TextArea, attachment
  *   rows with one mid-upload ProgressBar, and a footer with a Send +
  *   schedule-send split (ButtonGroup + DropdownMenu whose 'Pick date &
@@ -112,7 +112,6 @@ import {Field} from '@astryxdesign/core/Field';
 import {FieldStatus} from '@astryxdesign/core/FieldStatus';
 import {Icon} from '@astryxdesign/core/Icon';
 import {IconButton} from '@astryxdesign/core/IconButton';
-import {Link} from '@astryxdesign/core/Link';
 import {Overlay} from '@astryxdesign/core/Overlay';
 import {Popover} from '@astryxdesign/core/Popover';
 import {ProgressBar} from '@astryxdesign/core/ProgressBar';
@@ -149,16 +148,18 @@ const styles: Record<string, CSSProperties> = {
     pointerEvents: 'none',
     userSelect: 'none',
   },
+  // border token instead of background-muted: the muted token collapses
+  // into the near-black body in dark mode, leaving the skeleton invisible.
   placeholderBar: {
     borderRadius: 'var(--radius-full)',
-    backgroundColor: 'var(--color-background-muted)',
+    backgroundColor: 'var(--color-border)',
     height: 10,
   },
   placeholderAvatar: {
     width: 32,
     height: 32,
     borderRadius: 'var(--radius-full)',
-    backgroundColor: 'var(--color-background-muted)',
+    backgroundColor: 'var(--color-border)',
     flexShrink: 0,
   },
   placeholderRow: {
@@ -210,19 +211,20 @@ const styles: Record<string, CSSProperties> = {
     overflowY: 'auto',
     paddingInline: 'var(--spacing-4)',
     paddingBlock: 'var(--spacing-2)',
-  },
+    // Dark-mode lift for the invalid chip + error banner pair: remap the
+    // red tokens one step brighter. Light values stay identical
+    // (background-red and error-muted share the same light value; the
+    // light half of the text pair mirrors the token's own light value).
+    '--color-background-red': 'var(--color-error-muted)',
+    '--color-text-red': 'light-dark(#7B0210, #FFC9CF)',
+  } as CSSProperties,
   recipientRow: {
     paddingBlock: 'var(--spacing-1)',
   },
-  // Top-aligned with a nudge so the label centers on the first chip row
-  // even when the tokenizer wraps to multiple rows.
-  rowLabel: {
-    width: 44,
-    flexShrink: 0,
-    paddingTop: 'var(--spacing-1-5)',
-  },
-  rowEnd: {
-    paddingTop: 'var(--spacing-1-5)',
+  // Label sits above the field so the tokenizer's left edge lines up with
+  // the subject input, body textarea, and banner below it.
+  rowLabelLine: {
+    paddingBottom: 'var(--spacing-1)',
   },
   attachmentRow: {
     paddingBlock: 'var(--spacing-2)',
@@ -481,12 +483,12 @@ function RecipientRow({
 
   return (
     <div style={styles.recipientRow}>
-      <HStack gap={2} vAlign="start">
-        <div style={styles.rowLabel}>
-          <Text type="supporting" color="secondary">
-            {rowLabel}
-          </Text>
-        </div>
+      <div style={styles.rowLabelLine}>
+        <Text type="supporting" color="secondary">
+          {rowLabel}
+        </Text>
+      </div>
+      <HStack gap={2} vAlign="center">
         <StackItem size="fill">
           <Tokenizer<RecipientItem>
             label={`${rowLabel} recipients`}
@@ -555,7 +557,7 @@ function RecipientRow({
             }}
           />
         </StackItem>
-        {endContent != null && <div style={styles.rowEnd}>{endContent}</div>}
+        {endContent}
       </HStack>
     </div>
   );
@@ -921,16 +923,22 @@ export default function MailComposeTemplate() {
           onChange={setToRecipients}
           placeholder={toRecipients.length === 0 ? 'Recipients' : undefined}
           endContent={
-            <HStack gap={2} vAlign="center">
+            <HStack gap={1} vAlign="center">
               {!showCc && (
-                <Link type="supporting" onClick={revealCc}>
-                  Cc
-                </Link>
+                <Button
+                  label="Cc"
+                  variant="ghost"
+                  size="sm"
+                  onClick={revealCc}
+                />
               )}
               {!showBcc && (
-                <Link type="supporting" onClick={() => setShowBcc(true)}>
-                  Bcc
-                </Link>
+                <Button
+                  label="Bcc"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowBcc(true)}
+                />
               )}
             </HStack>
           }

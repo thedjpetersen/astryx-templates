@@ -230,7 +230,6 @@ const styles: Record<string, CSSProperties> = {
   },
   chevronSpacer: {width: 20, flexShrink: 0},
   upText: {color: colors.red, fontVariantNumeric: 'tabular-nums'},
-  downText: {color: colors.green, fontVariantNumeric: 'tabular-nums'},
   popoverBody: {maxWidth: 280},
 };
 
@@ -988,9 +987,11 @@ export default function CloudCostAnalyzerTemplate() {
     return best;
   }, null);
 
+  // Non-breaking space keeps "All spend" from orphan-wrapping in the
+  // Run rate stat card's sub-text.
   const scopeCaption =
     drillPath.length === 0
-      ? 'All spend'
+      ? 'All\u00A0spend'
       : drillPath
           .map(step => `${DIMENSION_LABEL[step.dimension]}: ${step.value}`)
           .join(' · ');
@@ -1002,8 +1003,11 @@ export default function CloudCostAnalyzerTemplate() {
   const commitmentPanel = (
     <VStack gap={4}>
       <Text type="supporting" color="secondary">
-        Commit to a baseline of always-on spend in exchange for a discount.
-        The dashed chart line previews the effective monthly bill.
+        Commit to a baseline of always-on spend in exchange for a discount.{' '}
+        {coverage > 0
+          ? 'The dashed chart line previews the effective monthly bill.'
+          : 'Raise coverage to preview the effective monthly bill as a ' +
+            'dashed chart line.'}
       </Text>
       <SegmentedControl
         value={term}
@@ -1060,9 +1064,9 @@ export default function CloudCostAnalyzerTemplate() {
               Projected savings / month
             </Text>
           </StackItem>
-          <Text type="supporting" style={styles.downText}>
+          <Text type="supporting" style={styles.numeric}>
             {plan.savingsPerMonth > 0
-              ? `-${formatUsd(plan.savingsPerMonth).slice(1)}`
+              ? formatUsd(-plan.savingsPerMonth)
               : '$0'}
           </Text>
         </HStack>
@@ -1205,9 +1209,9 @@ export default function CloudCostAnalyzerTemplate() {
                   value={
                     topMover == null
                       ? '—'
-                      : `${topMover.latest - topMover.prior >= 0 ? '+' : '-'}${formatUsd(
-                          Math.abs(topMover.latest - topMover.prior),
-                        ).slice(1)}`
+                      : `${topMover.latest - topMover.prior >= 0 ? '+' : ''}${formatUsd(
+                          topMover.latest - topMover.prior,
+                        )}`
                   }
                   description={
                     topMover == null
@@ -1297,8 +1301,14 @@ export default function CloudCostAnalyzerTemplate() {
                         </Text>
                       </div>
                       <StackItem size="fill">
-                        <Text type="supporting" color="secondary" size="sm">
-                          Share of scope
+                        {/* Single word: the fixed numeric columns leave this
+                            fill column too narrow for a longer header. */}
+                        <Text
+                          type="supporting"
+                          color="secondary"
+                          size="sm"
+                          maxLines={1}>
+                          Share
                         </Text>
                       </StackItem>
                       <div style={styles.colSpend}>
