@@ -65,7 +65,7 @@
  * Color policy: token-pure. Every color is a var(--color-*) token, a
  * color-mix() over tokens, or an explicit light-dark() pair. Card faces
  * are deep token gradients whose light-dark() pairs darken via
- * --color-text-primary in light scheme and via --color-background in dark
+ * --color-text-primary in light scheme and via --color-background-body in dark
  * scheme, so the near-white card ink (itself a light-dark() pair) keeps
  * contrast in both schemes. The magstripe is a documented scheme-locked
  * dark surface (a stripe is black in any scheme) built from the same
@@ -156,28 +156,28 @@ const SETTLE_EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
 // resolves near-white in BOTH schemes (background is white in light,
 // text-primary is white in dark), so embossed numbers always contrast.
 
-const CARD_INK = 'light-dark(var(--color-background), var(--color-text-primary))';
+const CARD_INK = 'light-dark(var(--color-background-body), var(--color-text-primary))';
 const CARD_INK_SOFT =
-  'light-dark(color-mix(in srgb, var(--color-background) 76%, transparent), color-mix(in srgb, var(--color-text-primary) 76%, transparent))';
+  'light-dark(color-mix(in srgb, var(--color-background-body) 76%, transparent), color-mix(in srgb, var(--color-text-primary) 76%, transparent))';
 const CARD_INK_FAINT =
-  'light-dark(color-mix(in srgb, var(--color-background) 42%, transparent), color-mix(in srgb, var(--color-text-primary) 42%, transparent))';
+  'light-dark(color-mix(in srgb, var(--color-background-body) 42%, transparent), color-mix(in srgb, var(--color-text-primary) 42%, transparent))';
 /** Emboss shadow ink — dark in both schemes. */
 const INK_SHADOW =
-  'light-dark(color-mix(in srgb, var(--color-text-primary) 45%, transparent), color-mix(in srgb, var(--color-background) 70%, transparent))';
+  'light-dark(color-mix(in srgb, var(--color-text-primary) 45%, transparent), color-mix(in srgb, var(--color-background-body) 70%, transparent))';
 /**
  * Magstripe: a documented scheme-locked dark surface (stripes are black on
  * any card); the pair keeps it a touch lifted off dark card faces.
  */
 const STRIPE_SURFACE =
-  'light-dark(color-mix(in srgb, var(--color-text-primary) 90%, transparent), color-mix(in srgb, var(--color-background) 72%, transparent))';
+  'light-dark(color-mix(in srgb, var(--color-text-primary) 90%, transparent), color-mix(in srgb, var(--color-background-body) 72%, transparent))';
 /** Signature/CVV panel: near-white in both schemes, like CARD_INK. */
 const PANEL_SURFACE =
-  'light-dark(color-mix(in srgb, var(--color-background) 90%, transparent), color-mix(in srgb, var(--color-text-primary) 88%, transparent))';
+  'light-dark(color-mix(in srgb, var(--color-background-body) 90%, transparent), color-mix(in srgb, var(--color-text-primary) 88%, transparent))';
 /** Ink over PANEL_SURFACE — dark in both schemes. */
-const PANEL_INK = 'light-dark(var(--color-text-primary), var(--color-background))';
+const PANEL_INK = 'light-dark(var(--color-text-primary), var(--color-background-body))';
 /** Frost overlay for frozen cards. */
 const FROST_SURFACE =
-  'light-dark(color-mix(in srgb, var(--color-background) 46%, transparent), color-mix(in srgb, var(--color-background) 52%, transparent))';
+  'light-dark(color-mix(in srgb, var(--color-background-body) 46%, transparent), color-mix(in srgb, var(--color-background-body) 52%, transparent))';
 
 interface CardGradient {
   from: string;
@@ -187,29 +187,29 @@ interface CardGradient {
 /**
  * Five face recipes. Each stop is a light-dark() pair: the light-scheme arm
  * deepens the hue by mixing toward --color-text-primary (dark there), the
- * dark-scheme arm deepens by mixing toward --color-background (dark there)
+ * dark-scheme arm deepens by mixing toward --color-background-body (dark there)
  * — so the face is a saturated, dark-enough surface in both schemes.
  */
 const GRADIENTS: Record<string, CardGradient> = {
   graphite: {
-    from: 'light-dark(color-mix(in srgb, var(--color-text-primary) 90%, var(--color-accent)), color-mix(in srgb, var(--color-background) 55%, var(--color-text-primary)))',
-    to: 'light-dark(color-mix(in srgb, var(--color-text-primary) 70%, var(--color-accent)), color-mix(in srgb, var(--color-background) 30%, var(--color-accent)))',
+    from: 'light-dark(color-mix(in srgb, var(--color-text-primary) 90%, var(--color-accent)), color-mix(in srgb, var(--color-background-body) 55%, var(--color-text-primary)))',
+    to: 'light-dark(color-mix(in srgb, var(--color-text-primary) 70%, var(--color-accent)), color-mix(in srgb, var(--color-background-body) 30%, var(--color-accent)))',
   },
   ocean: {
-    from: 'light-dark(color-mix(in srgb, var(--color-accent) 82%, var(--color-text-primary)), color-mix(in srgb, var(--color-accent) 58%, var(--color-background)))',
-    to: 'light-dark(color-mix(in srgb, var(--color-accent) 92%, var(--color-success)), color-mix(in srgb, var(--color-accent) 40%, var(--color-background)))',
+    from: 'light-dark(color-mix(in srgb, var(--color-accent) 82%, var(--color-text-primary)), color-mix(in srgb, var(--color-accent) 58%, var(--color-background-body)))',
+    to: 'light-dark(color-mix(in srgb, var(--color-accent) 92%, var(--color-success)), color-mix(in srgb, var(--color-accent) 40%, var(--color-background-body)))',
   },
   fern: {
-    from: 'light-dark(color-mix(in srgb, var(--color-success) 78%, var(--color-text-primary)), color-mix(in srgb, var(--color-success) 52%, var(--color-background)))',
-    to: 'light-dark(color-mix(in srgb, var(--color-success) 68%, var(--color-accent)), color-mix(in srgb, var(--color-success) 34%, var(--color-background)))',
+    from: 'light-dark(color-mix(in srgb, var(--color-success) 78%, var(--color-text-primary)), color-mix(in srgb, var(--color-success) 52%, var(--color-background-body)))',
+    to: 'light-dark(color-mix(in srgb, var(--color-success) 68%, var(--color-accent)), color-mix(in srgb, var(--color-success) 34%, var(--color-background-body)))',
   },
   sunset: {
-    from: 'light-dark(color-mix(in srgb, var(--color-warning) 72%, var(--color-error)), color-mix(in srgb, var(--color-warning) 48%, var(--color-background)))',
-    to: 'light-dark(color-mix(in srgb, var(--color-error) 74%, var(--color-text-primary)), color-mix(in srgb, var(--color-error) 46%, var(--color-background)))',
+    from: 'light-dark(color-mix(in srgb, var(--color-warning) 72%, var(--color-error)), color-mix(in srgb, var(--color-warning) 48%, var(--color-background-body)))',
+    to: 'light-dark(color-mix(in srgb, var(--color-error) 74%, var(--color-text-primary)), color-mix(in srgb, var(--color-error) 46%, var(--color-background-body)))',
   },
   plum: {
-    from: 'light-dark(color-mix(in srgb, var(--color-error) 62%, var(--color-accent)), color-mix(in srgb, var(--color-error) 44%, var(--color-background)))',
-    to: 'light-dark(color-mix(in srgb, var(--color-accent) 66%, var(--color-text-primary)), color-mix(in srgb, var(--color-accent) 42%, var(--color-background)))',
+    from: 'light-dark(color-mix(in srgb, var(--color-error) 62%, var(--color-accent)), color-mix(in srgb, var(--color-error) 44%, var(--color-background-body)))',
+    to: 'light-dark(color-mix(in srgb, var(--color-accent) 66%, var(--color-text-primary)), color-mix(in srgb, var(--color-accent) 42%, var(--color-background-body)))',
   },
 };
 
@@ -466,7 +466,7 @@ const styles: Record<string, CSSProperties> = {
   brandChip: {
     width: 32,
     height: 32,
-    borderRadius: 'var(--radius-control)',
+    borderRadius: 'var(--radius-element)',
     background: `linear-gradient(135deg, ${GRADIENTS.ocean.from}, ${GRADIENTS.plum.to})`,
     color: CARD_INK,
     display: 'flex',

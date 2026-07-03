@@ -1,0 +1,1 @@
+import{t as e}from"./jsx-runtime-n5LQ9ujS.js";import{w as t}from"./Text-4txuwGgU.js";var n=e();function r({ref:e,justify:r,align:i,hAlign:a,vAlign:o,...s}){return(0,n.jsx)(t,{...s,direction:`vertical`,hAlign:a??i,vAlign:o??r,ref:e})}r.displayName=`VStack`;export{r as t};

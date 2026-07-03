@@ -66,7 +66,14 @@
  * text stay raw literals with colorScheme: 'dark' pinned on the surface.
  */
 
-import {useState, type CSSProperties, type ReactNode} from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+  type RefObject,
+} from 'react';
 
 import {
   HStack,
@@ -151,7 +158,10 @@ const styles: Record<string, CSSProperties> = {
     minHeight: 0,
   },
   bulkBar: {position: 'sticky', top: 0, zIndex: 2},
-  tableScroll: {flex: 1, minHeight: 0, overflowY: 'auto'},
+  // overflowX backs the horizontal-scroll contract: if the region drops
+  // below even the narrowed table's min-width, the table scrolls inside
+  // this wrapper instead of hard-clipping under the detail panel edge.
+  tableScroll: {flex: 1, minHeight: 0, overflowY: 'auto', overflowX: 'auto'},
   // <=1280px: the detail panel overlays the table from the right.
   overlayPanel: {
     position: 'absolute',
@@ -522,6 +532,31 @@ function matchesStatusFilter(state: PipelineState, filter: StatusFilter): boolea
   }
 }
 
+/**
+ * Observe the content region's real width. The docked 360px detail panel
+ * (plus any host chrome around the template) starves the table region
+ * independently of the viewport, so viewport media queries alone cannot
+ * tell when the table is out of room for the Type and Length columns.
+ */
+function useElementWidth(ref: RefObject<HTMLDivElement | null>): number {
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    const element = ref.current;
+    if (element == null) {
+      return undefined;
+    }
+    const observer = new ResizeObserver(entries => {
+      const rect = entries[0]?.contentRect;
+      if (rect != null) {
+        setWidth(rect.width);
+      }
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref]);
+  return width;
+}
+
 // ============= PIPELINE STATE CELL =============
 
 /**
@@ -876,6 +911,16 @@ export default function MediaAssetPipelineTemplate() {
   const isOverlay = useMediaQuery('(max-width: 1280px)');
   const isCompact = useMediaQuery('(max-width: 768px)');
 
+  // Measure the content region itself: with the 360px detail panel docked
+  // the table can be starved of width even on wide viewports (host chrome
+  // shrinks the template independently of the viewport). Six columns need
+  // roughly 640px; below that the Type and Length columns fold away — both
+  // are echoed in the detail pane (type · size · duration subline), and the
+  // thumbnail tint + glyph already encode type in the row.
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const contentWidth = useElementWidth(contentRef);
+  const isTableNarrow = contentWidth > 0 && contentWidth < 640;
+
   const normalizedQuery = query.trim().toLowerCase();
   const visibleRows = rows.filter(
     row =>
@@ -1001,8 +1046,12 @@ export default function MediaAssetPipelineTemplate() {
       key: 'filename',
       header: 'Asset',
       // Proportions mirror the minWidth ratio so the Table's derived
-      // min-width stays within the narrowest desktop content region.
-      width: proportional(1.62, {minWidth: 210}),
+      // min-width stays within the narrowest desktop content region; when
+      // the measured region is narrow the filename column cedes its extra
+      // share so the derived min-width fits beside the docked panel.
+      width: isTableNarrow
+        ? proportional(1, {minWidth: 150})
+        : proportional(1.62, {minWidth: 210}),
       renderCell: item => {
         const tile = TYPE_TILE[item.type];
         return (
@@ -1029,28 +1078,35 @@ export default function MediaAssetPipelineTemplate() {
         );
       },
     },
-    {
-      key: 'type',
-      header: 'Type',
-      width: pixel(68),
-      renderCell: item => (
-        <Badge
-          label={TYPE_BADGE[item.type].label}
-          variant={TYPE_BADGE[item.type].variant}
-        />
-      ),
-    },
-    {
-      key: 'duration',
-      header: 'Length',
-      width: pixel(72),
-      align: 'end',
-      renderCell: item => (
-        <Text type="body" color="secondary" hasTabularNumbers>
-          {item.duration}
-        </Text>
-      ),
-    },
+    // Type and Length fold away when the measured content region cannot
+    // fit all six columns (e.g. the docked detail panel is open in a
+    // narrow host); both reappear in the detail pane's subline.
+    ...(isTableNarrow
+      ? []
+      : ([
+          {
+            key: 'type',
+            header: 'Type',
+            width: pixel(68),
+            renderCell: item => (
+              <Badge
+                label={TYPE_BADGE[item.type].label}
+                variant={TYPE_BADGE[item.type].variant}
+              />
+            ),
+          },
+          {
+            key: 'duration',
+            header: 'Length',
+            width: pixel(72),
+            align: 'end',
+            renderCell: item => (
+              <Text type="body" color="secondary" hasTabularNumbers>
+                {item.duration}
+              </Text>
+            ),
+          },
+        ] satisfies TableColumn<AssetRow>[])),
     {
       key: 'size',
       header: 'Size',
@@ -1250,7 +1306,7 @@ export default function MediaAssetPipelineTemplate() {
       }
       content={
         <LayoutContent padding={0}>
-          <div style={styles.contentWrap}>
+          <div ref={contentRef} style={styles.contentWrap}>
             <div aria-live="polite" style={styles.visuallyHidden}>
               {announcement}
             </div>

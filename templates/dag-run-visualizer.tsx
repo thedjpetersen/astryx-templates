@@ -27,7 +27,7 @@
  * cron Code chip, colored run-count summary, Paused Switch, Backfill
  * button). LayoutPanel start 264 is the run rail (filter + run rows).
  * LayoutContent stacks the DAG canvas (its own horizontal scroller at an
- * intrinsic 996px) over a Divider and the run-history grid strip (second
+ * intrinsic 1048px) over a Divider and the run-history grid strip (second
  * deliberate horizontal scroller). The end LayoutPanel (340, scrollable)
  * opens on task selection with attempts, logs, and actions.
  *
@@ -56,7 +56,7 @@
  * fixture task order (no clocks read, no randomness).
  */
 
-import {useRef, useState, type CSSProperties} from 'react';
+import {useEffect, useRef, useState, type CSSProperties} from 'react';
 
 import {
   HStack,
@@ -101,9 +101,11 @@ import {
 // underneath and a plain <button> per node on top (buttons keep the nodes
 // focusable and >=40px tall without any SVG hit-testing).
 
-const NODE_W = 148;
+// 168 fits the longest task id (transform_orders, ~135px at the 14px mono
+// label size) beside the swatch without ellipsis.
+const NODE_W = 168;
 const NODE_H = 56; // >=40px tap target by construction
-const COL_GAP = 56;
+const COL_GAP = 44;
 const ROW_GAP = 18;
 const CANVAS_PAD = 16;
 const DAG_COLS = 5;
@@ -127,7 +129,7 @@ const styles: Record<string, CSSProperties> = {
   backfillButton: {minHeight: 40},
   contentFill: {height: '100%', minHeight: 0},
   // Deliberate overflow-x region #1: the DAG canvas pans at narrow widths
-  // (intrinsic 996px); vertical space above the grid strip is flexible.
+  // (intrinsic 1048px); vertical space above the grid strip is flexible.
   canvasScroll: {
     overflow: 'auto',
     minHeight: 0,
@@ -244,7 +246,8 @@ const styles: Record<string, CSSProperties> = {
     flexDirection: 'column',
     gap: 2,
     flexShrink: 0,
-    width: 140,
+    // Wide enough for the longest task id at the 14px mono label size.
+    width: 160,
     position: 'sticky',
     left: 0,
     backgroundColor: 'var(--color-background-body)',
@@ -1259,6 +1262,28 @@ export default function DagRunVisualizerPage() {
   const selectedTask =
     selectedTaskId != null ? (TASK_BY_ID.get(selectedTaskId) ?? null) : null;
 
+  // Keep the selected node fully in view: opening the task panel narrows
+  // the canvas scrollport, so pan the deliberate overflow-x region instead
+  // of letting the panel sit beside a mid-label clip of its own subject.
+  const canvasScrollRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const scroller = canvasScrollRef.current;
+    if (scroller == null || selectedTaskId == null) {
+      return;
+    }
+    const task = TASK_BY_ID.get(selectedTaskId);
+    if (task == null) {
+      return;
+    }
+    const left = nodeX(task.col) - CANVAS_PAD;
+    const right = nodeX(task.col) + NODE_W + CANVAS_PAD;
+    if (right > scroller.scrollLeft + scroller.clientWidth) {
+      scroller.scrollLeft = right - scroller.clientWidth;
+    } else if (left < scroller.scrollLeft) {
+      scroller.scrollLeft = left;
+    }
+  }, [selectedTaskId]);
+
   const selectRun = (id: string) => {
     setSelectedRunId(id);
     setSelectedAttempt(null);
@@ -1413,7 +1438,7 @@ export default function DagRunVisualizerPage() {
   );
 
   const canvas = (
-    <div style={styles.canvasScroll}>
+    <div ref={canvasScrollRef} style={styles.canvasScroll}>
       <div style={styles.canvas} role="group" aria-label="Task DAG">
         <EdgeLayer run={selectedRun} selectedTaskId={selectedTaskId} />
         {TASKS.map(task => (
@@ -1605,7 +1630,7 @@ export default function DagRunVisualizerPage() {
         }
         start={
           isNarrow ? undefined : (
-            <LayoutPanel width={264} label="Recent runs">
+            <LayoutPanel width={264} hasDivider label="Recent runs">
               {runRail}
             </LayoutPanel>
           )
@@ -1627,7 +1652,14 @@ export default function DagRunVisualizerPage() {
         }
         end={
           !isNarrow && selectedTask != null ? (
-            <LayoutPanel width={340} label="Task instance" style={styles.panelScroll}>
+            // hasDivider keeps the panel from collapsing its start margin
+            // over the full-bleed canvas — the content column genuinely
+            // reserves this width while the panel is open.
+            <LayoutPanel
+              width={340}
+              hasDivider
+              label="Task instance"
+              style={styles.panelScroll}>
               {taskDetail}
             </LayoutPanel>
           ) : undefined

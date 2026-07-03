@@ -1,1 +1,0 @@
-import{O as e}from"./index-DL4HiPRy.js";var t=e(`minus`,[[`path`,{d:`M5 12h14`,key:`1ays0h`}]]);export{t};

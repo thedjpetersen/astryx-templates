@@ -25,7 +25,8 @@
  *   reflecting subscription changes immediately.
  * @position Page template; emitted by `astryx template webhook-delivery-debugger`
  *
- * Frame: Layout height="fill". LayoutHeader carries the console title, a
+ * Frame: a 100dvh root div gives Layout height="fill" a definite height in
+ * auto-height hosts. LayoutHeader carries the console title, a
  * delivered-count summary, and (in single-pane mode) the Endpoints / Feed /
  * Detail SegmentedControl. The endpoints rail is a fixed-width start
  * LayoutPanel; LayoutContent owns the feed column (filter bar pinned above
@@ -46,24 +47,22 @@
  *   copy, collapse) is click/tap driven.
  * - Usable at 375px: the header sheds the summary badge and truncates the
  *   title; the filter bar wraps; feed rows keep single-line truncated
- *   labels; the dark payload/response code blocks scroll horizontally
+ *   labels; the payload/response code blocks scroll horizontally
  *   inside their own bodies (whiteSpace pre + overflowX auto) rather than
  *   widening the page; the attempt timeline wraps its metadata line.
  *
  * Container policy (operations console archetype): dense rows and panels,
  * not Cards — the rail and feed are List rows, the detail pane is plain
- * frame rows with two dark code surfaces (payload JSON tree and raw
- * response body) on a fixed terminal palette that stays dark in either
- * theme because they reproduce wire-format text. MetadataList carries
- * response headers and signature fields.
+ * frame rows with two code surfaces (payload JSON tree and raw response
+ * body) on a syntax palette that follows the active scheme. MetadataList
+ * carries response headers and signature fields.
  *
  * Color policy: token-first — chrome colors come from var(--color-*) tokens
- * or explicit light-dark() pairs. The ONLY scheme-locked surfaces are the
- * two terminal-dark code blocks (payload JSON tree and raw response body):
- * they reproduce wire-format text on a fixed dark palette (CODE below),
- * stay dark in both themes, and lock `colorScheme: 'dark'` in the codeBlock
- * style; all text/highlights sitting on them use CODE literals, not tokens,
- * so contrast is guaranteed regardless of theme.
+ * or explicit light-dark() pairs. The two code blocks (payload JSON tree
+ * and raw response body) paint from the CODE table below, whose entries are
+ * all light-dark() pairs (paper-light editor colors in light mode,
+ * terminal-dark in dark mode), so syntax contrast is guaranteed in either
+ * theme without scheme-locking the surface.
  *
  * Fixture policy: fixed data only — no Date.now, no Math.random, no
  * network assets. Attempt clocks are pre-formatted strings; retry clocks
@@ -124,23 +123,23 @@ import {
 } from 'lucide-react';
 
 // ============= CODE PALETTE =============
-// Scheme-locked surface (see "Color policy" in the header): the payload
-// JSON tree and the raw response body reproduce wire-format text, so they
-// keep this fixed dark palette instead of themed Text colors in BOTH
-// themes — the codeBlock style locks `colorScheme: 'dark'` to match, and
-// every color painted on the surface (including the selection highlight)
-// is a deliberate literal from this table, never a theme token.
+// Themed code surface (see "Color policy" in the header): the payload JSON
+// tree and the raw response body follow the active scheme via light-dark()
+// pairs — a paper-light editor palette in light mode, terminal-dark in dark
+// mode. Every color painted on the surface (including the selection
+// highlight) comes from this table so syntax contrast is guaranteed on
+// both backgrounds.
 
 const CODE = {
-  bg: '#0d1117',
-  border: '#22272e',
-  base: '#c9d1d9',
-  dim: '#768390',
-  string: '#a5d6ff',
-  number: '#79c0ff',
-  keyword: '#ff7b72',
-  prop: '#7ee787',
-  selected: 'rgba(56, 139, 253, 0.22)',
+  bg: 'light-dark(#f6f8fa, #0d1117)',
+  border: 'light-dark(#d0d7de, #22272e)',
+  base: 'light-dark(#1f2328, #c9d1d9)',
+  dim: 'light-dark(#59636e, #768390)',
+  string: 'light-dark(#0a3069, #a5d6ff)',
+  number: 'light-dark(#0550ae, #79c0ff)',
+  keyword: 'light-dark(#cf222e, #ff7b72)',
+  prop: 'light-dark(#116329, #7ee787)',
+  selected: 'light-dark(rgba(84, 174, 255, 0.28), rgba(56, 139, 253, 0.22))',
 } as const;
 
 const MONO_FONT =
@@ -149,6 +148,13 @@ const MONO_FONT =
 // ============= STYLES =============
 
 const styles: Record<string, CSSProperties> = {
+  // Definite height so Layout height="fill" resolves even when the host
+  // container is auto-height; the rail, feed, and detail columns scroll
+  // internally instead of the page stretching to the full feed length.
+  root: {
+    height: '100dvh',
+    width: '100%',
+  },
   // Rail / feed / detail columns fill their region; bodies scroll inside.
   pane: {
     display: 'flex',
@@ -202,6 +208,10 @@ const styles: Record<string, CSSProperties> = {
     color: 'var(--color-text)',
   },
   chipCompact: {minHeight: 40},
+  // Segment labels must never wrap — a wrapped label spills below the
+  // active pill (the item has a fixed height). whiteSpace inherits into
+  // the segment buttons.
+  statusSegments: {whiteSpace: 'nowrap'},
   mono: {fontFamily: MONO_FONT},
   monoSmall: {fontFamily: MONO_FONT, fontSize: 11.5},
   eventId: {
@@ -214,11 +224,10 @@ const styles: Record<string, CSSProperties> = {
   },
   detailTabs: {paddingInline: 'var(--spacing-3)'},
   detailSection: {padding: 'var(--spacing-3)'},
-  // Dark code surfaces: mono, scroll in x inside their own bodies.
-  // Scheme-locked (stays dark in light mode too) — colorScheme pinned so
-  // native UI (scrollbars, selection) matches the fixed CODE palette.
+  // Code surfaces: mono, scroll in x inside their own bodies. Colors come
+  // from the CODE light-dark() table, so the block (and its native
+  // scrollbars/selection) follows the ambient color-scheme.
   codeBlock: {
-    colorScheme: 'dark',
     borderRadius: 6,
     backgroundColor: CODE.bg,
     border: `1px solid ${CODE.border}`,
@@ -1759,16 +1768,16 @@ export default function WebhookDeliveryDebuggerTemplate() {
             value={statusFilter}
             onChange={value => setStatusFilter(value as 'all' | StatusClass)}
             size="sm"
-            style={isSinglePane ? styles.segmentedTapTarget : undefined}>
-            <SegmentedControlItem
-              value="all"
-              label={`All (${typedDeliveries.length})`}
-            />
+            style={{
+              ...styles.statusSegments,
+              ...(isSinglePane ? styles.segmentedTapTarget : undefined),
+            }}>
+            <SegmentedControlItem value="all" label="All" />
             {STATUS_CLASSES.map(statusClass => (
               <SegmentedControlItem
                 key={statusClass}
                 value={statusClass}
-                label={`${statusClass} (${statusCounts[statusClass]})`}
+                label={statusClass}
               />
             ))}
           </SegmentedControl>
@@ -2279,88 +2288,94 @@ export default function WebhookDeliveryDebuggerTemplate() {
   // ---- frame ----
 
   return (
-    <Layout
-      height="fill"
-      header={
-        <LayoutHeader hasDivider>
-          <HStack gap={3} vAlign="center">
-            <StackItem size="fill" style={styles.headerTitle}>
-              <HStack gap={2} vAlign="center">
-                <Icon icon={WebhookIcon} size="md" color="secondary" />
-                <Heading level={1} maxLines={1}>
-                  Webhook Deliveries
-                </Heading>
-                {!isSinglePane && (
-                  <Badge
-                    label={`${deliveredCount}/${DELIVERIES.length} delivered`}
-                    variant={
-                      deliveredCount === DELIVERIES.length
-                        ? 'success'
-                        : 'neutral'
-                    }
-                  />
-                )}
-              </HStack>
-            </StackItem>
-            {isSinglePane && (
-              <SegmentedControl
-                label="Console view"
-                value={mobileView}
-                onChange={setMobileView}
-                size="sm"
-                style={styles.segmentedTapTarget}>
-                <SegmentedControlItem label="Endpoints" value="endpoints" />
-                <SegmentedControlItem label="Feed" value="feed" />
-                <SegmentedControlItem label="Detail" value="detail" />
-              </SegmentedControl>
-            )}
-          </HStack>
-        </LayoutHeader>
-      }
-      start={
-        !isSinglePane ? (
-          <LayoutPanel
-            hasDivider
-            width={isNarrow ? 230 : 260}
-            padding={0}
-            label="Endpoints">
-            {endpointsRail}
-          </LayoutPanel>
-        ) : undefined
-      }
-      end={
-        !isSinglePane ? (
-          <LayoutPanel
-            hasDivider
-            width={isNarrow ? 360 : 440}
-            padding={0}
-            label={
-              panelMode === 'settings' ? 'Endpoint settings' : 'Delivery detail'
-            }>
-            {endPanelContent}
-          </LayoutPanel>
-        ) : undefined
-      }
-      content={
-        <LayoutContent padding={0}>
-          <div aria-live="polite" style={styles.visuallyHidden}>
-            {announcement}
-          </div>
-          {isSinglePane ? (
-            <Stack direction="vertical" style={{height: '100%', minHeight: 0}}>
-              <StackItem size="fill" style={{minHeight: 0}}>
-                {mobileView === 'endpoints'
-                  ? endpointsRail
-                  : mobileView === 'detail'
-                    ? endPanelContent
-                    : feedPane}
+    <div style={styles.root}>
+      <Layout
+        height="fill"
+        header={
+          <LayoutHeader hasDivider>
+            <HStack gap={3} vAlign="center">
+              <StackItem size="fill" style={styles.headerTitle}>
+                <HStack gap={2} vAlign="center">
+                  <Icon icon={WebhookIcon} size="md" color="secondary" />
+                  <Heading level={1} maxLines={1}>
+                    Webhook Deliveries
+                  </Heading>
+                  {!isSinglePane && (
+                    <Badge
+                      label={`${deliveredCount}/${DELIVERIES.length} delivered`}
+                      variant={
+                        deliveredCount === DELIVERIES.length
+                          ? 'success'
+                          : 'neutral'
+                      }
+                    />
+                  )}
+                </HStack>
               </StackItem>
-            </Stack>
-          ) : (
-            feedPane
-          )}
-        </LayoutContent>
-      }
-    />
+              {isSinglePane && (
+                <SegmentedControl
+                  label="Console view"
+                  value={mobileView}
+                  onChange={setMobileView}
+                  size="sm"
+                  style={styles.segmentedTapTarget}>
+                  <SegmentedControlItem label="Endpoints" value="endpoints" />
+                  <SegmentedControlItem label="Feed" value="feed" />
+                  <SegmentedControlItem label="Detail" value="detail" />
+                </SegmentedControl>
+              )}
+            </HStack>
+          </LayoutHeader>
+        }
+        start={
+          !isSinglePane ? (
+            <LayoutPanel
+              hasDivider
+              width={isNarrow ? 230 : 260}
+              padding={0}
+              label="Endpoints">
+              {endpointsRail}
+            </LayoutPanel>
+          ) : undefined
+        }
+        end={
+          !isSinglePane ? (
+            <LayoutPanel
+              hasDivider
+              width={isNarrow ? 360 : 440}
+              padding={0}
+              label={
+                panelMode === 'settings'
+                  ? 'Endpoint settings'
+                  : 'Delivery detail'
+              }>
+              {endPanelContent}
+            </LayoutPanel>
+          ) : undefined
+        }
+        content={
+          <LayoutContent padding={0}>
+            <div aria-live="polite" style={styles.visuallyHidden}>
+              {announcement}
+            </div>
+            {isSinglePane ? (
+              <Stack
+                direction="vertical"
+                style={{height: '100%', minHeight: 0}}>
+                <StackItem size="fill" style={{minHeight: 0}}>
+                  {mobileView === 'endpoints'
+                    ? endpointsRail
+                    : mobileView === 'detail'
+                      ? endPanelContent
+                      : feedPane}
+                </StackItem>
+              </Stack>
+            ) : (
+              feedPane
+            )}
+          </LayoutContent>
+        }
+      />
+    </div>
   );
 }

@@ -1,1 +1,0 @@
-import{O as e}from"./index-DL4HiPRy.js";var t=e(`chevrons-up`,[[`path`,{d:`m17 11-5-5-5 5`,key:`e8nh98`}],[`path`,{d:`m17 18-5-5-5 5`,key:`2avn1x`}]]);export{t};

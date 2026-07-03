@@ -166,3 +166,15 @@ kanban-board
 search-results
 form-inline-edit
 table-inline-expansion
+dashboard-filterable
+notification-center
+form-wizard
+ai-chat-artifact
+incident-console
+table-bulk-actions
+table-index-detail
+diff-viewer
+table-chart
+form-modal
+shell-breadcrumb
+timeline

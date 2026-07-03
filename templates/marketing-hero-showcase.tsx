@@ -114,6 +114,7 @@ import {
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
 import {TextInput} from '@astryxdesign/core/TextInput';
+import {useTheme} from '@astryxdesign/core/theme';
 import {Toast} from '@astryxdesign/core/Toast';
 import {Token} from '@astryxdesign/core/Token';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
@@ -359,7 +360,7 @@ const styles: Record<string, CSSProperties> = {
     display: 'flex',
   },
   mockSidebar: {
-    width: 128,
+    width: 96,
     flexShrink: 0,
     borderRight: '1px solid var(--color-border)',
     padding: 'var(--spacing-2)',
@@ -405,9 +406,6 @@ const styles: Record<string, CSSProperties> = {
     letterSpacing: '0.04em',
     textTransform: 'uppercase',
     color: 'var(--color-text-secondary)',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
   },
   mockMetricValue: {
     fontSize: 16,
@@ -439,6 +437,7 @@ const styles: Record<string, CSSProperties> = {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
+    fontSize: 11,
     fontFamily:
       "ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace",
   },
@@ -735,12 +734,13 @@ interface MockLogRow {
   status: 'ok' | 'retry';
 }
 
+// Topics stay ≤22 monospace chars so no row truncates at desktop width.
 const MOCK_LOG: readonly MockLogRow[] = [
-  {topic: 'orders.created → edge/iad', ms: '31ms', status: 'ok'},
-  {topic: 'billing.invoice.paid → edge/fra', ms: '44ms', status: 'ok'},
-  {topic: 'deploy.finished → hooks/slack', ms: '52ms', status: 'ok'},
-  {topic: 'user.signup → crm/sync', ms: '2.1s', status: 'retry'},
-  {topic: 'orders.refunded → edge/sin', ms: '39ms', status: 'ok'},
+  {topic: 'orders.created → iad', ms: '31ms', status: 'ok'},
+  {topic: 'invoice.paid → fra', ms: '44ms', status: 'ok'},
+  {topic: 'deploy.done → slack', ms: '52ms', status: 'ok'},
+  {topic: 'user.signup → crm', ms: '2.1s', status: 'retry'},
+  {topic: 'orders.refunded → sin', ms: '39ms', status: 'ok'},
 ];
 
 const MOCK_STATUS_COLOR: Record<MockLogRow['status'], string> = {
@@ -914,7 +914,11 @@ function ConsoleMock({showSidebar}: {showSidebar: boolean}) {
 
 export default function MarketingHeroShowcaseTemplate() {
   // ---- scheme: restyles every token surface inside the scroller ----
-  const [scheme, setScheme] = useState<Scheme>('light');
+  // Defaults to the app-level resolved scheme so the heroes match the
+  // surrounding chrome; the header toggle overrides it on demand.
+  const {mode: appScheme} = useTheme();
+  const [schemeOverride, setSchemeOverride] = useState<Scheme | null>(null);
+  const scheme: Scheme = schemeOverride ?? appScheme;
 
   // ---- scroll-spy state ----
   const [activeVariantId, setActiveVariantId] = useState<VariantId>('mesh');
@@ -1367,7 +1371,7 @@ export default function MarketingHeroShowcaseTemplate() {
               <SegmentedControl
                 label="Color scheme"
                 value={scheme}
-                onChange={value => setScheme(value as Scheme)}
+                onChange={value => setSchemeOverride(value as Scheme)}
                 size="sm">
                 <SegmentedControlItem
                   value="light"

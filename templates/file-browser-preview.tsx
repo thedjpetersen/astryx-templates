@@ -76,7 +76,7 @@ import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
   DownloadIcon,
   FileCodeIcon,
-  FileCogIcon,
+  FileJsonIcon,
   FileTextIcon,
   FolderIcon,
   HistoryIcon,
@@ -505,7 +505,7 @@ const FILE_HISTORY: Record<string, FileVersion[]> = {
 const FILE_KIND_ICON: Record<FileKind, typeof FileCodeIcon> = {
   code: FileCodeIcon,
   markdown: FileTextIcon,
-  config: FileCogIcon,
+  config: FileJsonIcon,
 };
 
 function fileName(path: string): string {
@@ -842,6 +842,7 @@ export default function FileBrowserPreviewTemplate() {
         title={fileName(selectedFile.path)}
         hasLineNumbers
         hasCopyButton
+        isWrapped
         width="100%"
       />
     );
@@ -894,16 +895,19 @@ export default function FileBrowserPreviewTemplate() {
                 key={version.id}
                 label={version.label}
                 description={
-                  <HStack gap={1} vAlign="center">
+                  // Wrap as whole tokens (date / author / size) so narrow
+                  // widths never split a name mid-word or orphan a middot.
+                  <HStack gap={1} vAlign="center" wrap="wrap">
                     <Timestamp value={version.savedAt} format="date_time" />
-                    <Text type="supporting" color="secondary">
-                      · {version.author} ·
+                    <Text type="supporting" color="secondary" maxLines={1}>
+                      · {version.author}
                     </Text>
                     <Text
                       type="supporting"
                       color="secondary"
-                      hasTabularNumbers>
-                      {version.size}
+                      hasTabularNumbers
+                      maxLines={1}>
+                      · {version.size}
                     </Text>
                   </HStack>
                 }

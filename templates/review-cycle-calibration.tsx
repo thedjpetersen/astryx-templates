@@ -23,11 +23,12 @@
  *   rating inline-editable) plus an appendable calibration-notes log
  * @position Page template; emitted by `astryx template review-cycle-calibration`
  *
- * Frame: Layout height="fill" owns the page. LayoutHeader carries the cycle
+ * Frame: a 100dvh root div gives Layout height="fill" a definite height in
+ * auto-height hosts. LayoutHeader carries the cycle
  * title + scope caption, a reviews-complete ProgressBar, and (when the
  * roster undocks) a roster toggle IconButton. The `start` slot docks a
- * 280px roster LayoutPanel (filter header pinned, reviewee list scrolls);
- * the `end` slot docks a 340px packet LayoutPanel. LayoutContent scrolls
+ * 260px roster LayoutPanel (filter header pinned, reviewee list scrolls);
+ * the `end` slot docks a 320px packet LayoutPanel. LayoutContent scrolls
  * the finalize banner, the distribution histogram, and the 9-box grid as
  * one column.
  *
@@ -67,8 +68,9 @@
  *   "Manager rating saved", …).
  *
  * Responsive contract:
- * - >1024px: roster (280px start) and packet (340px end) both dock; the
- *   grid renders three minmax(180px, 1fr) columns.
+ * - >1024px: roster (260px start) and packet (320px end) both dock; the
+ *   grid renders three minmax(0, 1fr) columns that shrink with the content
+ *   region so the docked panels never occlude the third column.
  * - <=1024px: the roster undocks behind a ~40px header toggle IconButton
  *   that swaps the content region between roster and grid; the packet
  *   stays docked at 320px.
@@ -133,6 +135,13 @@ import {
 // ============= STYLES =============
 
 const styles: Record<string, CSSProperties> = {
+  // Definite height so Layout height="fill" resolves even when the host
+  // container is auto-height; panels and the grid column scroll internally
+  // instead of the end panel stretching past the content as a blank column.
+  root: {
+    height: '100dvh',
+    width: '100%',
+  },
   contentColumn: {
     display: 'flex',
     flexDirection: 'column',
@@ -189,12 +198,16 @@ const styles: Record<string, CSSProperties> = {
   },
   histogramLabel: {
     textAlign: 'center',
+    width: '100%',
+    minWidth: 0,
   },
   // 9-box grid: three columns of cell wells on wide viewports, one
   // stacked column at phone width (row-group labels keep the axis).
+  // minmax(0, 1fr) lets the columns shrink with the content region so the
+  // grid never slides under the docked packet panel; tiles truncate.
   grid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(3, minmax(180px, 1fr))',
+    gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
     gap: 'var(--spacing-3)',
   },
   gridSingleColumn: {
@@ -246,7 +259,7 @@ const styles: Record<string, CSSProperties> = {
     flex: 1,
     minWidth: 0,
     minHeight: 40,
-    padding: 'var(--spacing-1) var(--spacing-2)',
+    padding: 'var(--spacing-1) var(--spacing-1) var(--spacing-1) var(--spacing-2)',
     border: 'none',
     borderRadius: 'var(--radius-container)',
     backgroundColor: 'transparent',
@@ -997,7 +1010,9 @@ function GridCell({
         ...(isDropTarget ? styles.cellDropTarget : undefined),
       }}>
       <VStack gap={1}>
-        <HStack gap={2} vAlign="center">
+        {/* wrap="wrap" drops the over-target badge under the label when a
+            cell is narrow instead of overlapping it. */}
+        <HStack gap={1} vAlign="center" wrap="wrap">
           <StackItem size="fill">
             <Text type="label">{cell.label}</Text>
           </StackItem>
@@ -1756,99 +1771,101 @@ export default function ReviewCycleCalibrationTemplate() {
         : gridPane;
 
   return (
-    <Layout
-      height="fill"
-      header={
-        <LayoutHeader hasDivider>
-          {/* wrap="wrap" drops the meter and controls under the title on
-              narrow viewports instead of clipping. */}
-          <HStack gap={3} vAlign="center" wrap="wrap">
-            <StackItem size={isSinglePane ? 'static' : 'fill'}>
-              <HStack gap={2} vAlign="center" wrap="wrap">
-                <Heading level={1}>{CYCLE.title}</Heading>
-                {isSinglePane ? null : (
-                  <Text type="supporting" color="secondary" maxLines={1}>
-                    {CYCLE.scope}
-                  </Text>
-                )}
-              </HStack>
-            </StackItem>
-            <StackItem size={isSinglePane ? 'fill' : 'static'}>
-              <div style={isSinglePane ? styles.meterBlockFill : styles.meterBlock}>
-                <VStack gap={1}>
-                  <HStack gap={2} vAlign="center">
-                    <StackItem size="fill">
-                      <Text type="supporting" color="secondary">
-                        Reviews complete
-                      </Text>
-                    </StackItem>
-                    <Text type="supporting" hasTabularNumbers>
-                      {completeCount} / {CYCLE.totalPeople}
+    <div style={styles.root}>
+      <Layout
+        height="fill"
+        header={
+          <LayoutHeader hasDivider>
+            {/* wrap="wrap" drops the meter and controls under the title on
+                narrow viewports instead of clipping. */}
+            <HStack gap={3} vAlign="center" wrap="wrap">
+              <StackItem size={isSinglePane ? 'static' : 'fill'}>
+                <HStack gap={2} vAlign="center" wrap="wrap">
+                  <Heading level={1}>{CYCLE.title}</Heading>
+                  {isSinglePane ? null : (
+                    <Text type="supporting" color="secondary" maxLines={1}>
+                      {CYCLE.scope}
                     </Text>
-                  </HStack>
-                  <ProgressBar
-                    label={`${completeCount} of ${CYCLE.totalPeople} reviews complete`}
-                    isLabelHidden
-                    value={completeCount}
-                    max={CYCLE.totalPeople}
-                    variant="accent"
-                  />
-                </VStack>
-              </div>
-            </StackItem>
-            {isRosterUndocked ? (
-              // Roster undocks below 1024px; this ~40px toggle swaps the
-              // content region between the roster and the grid.
-              <IconButton
-                label={
-                  isRosterOpenOnMobile
-                    ? 'Show calibration grid'
-                    : `Show roster (${EMPLOYEES.length} reviewees)`
-                }
-                tooltip={isRosterOpenOnMobile ? 'Show grid' : 'Show roster'}
-                icon={
-                  <Icon
-                    icon={isRosterOpenOnMobile ? LayoutGridIcon : UsersIcon}
-                    size="sm"
-                  />
-                }
-                variant={isRosterOpenOnMobile ? 'secondary' : 'ghost'}
-                style={styles.iconTapTarget}
-                onClick={() => {
-                  setIsRosterOpenOnMobile(prev => !prev);
-                  setIsPacketOpenOnMobile(false);
-                }}
-              />
-            ) : null}
-          </HStack>
-        </LayoutHeader>
-      }
-      start={
-        isRosterUndocked ? undefined : (
-          <LayoutPanel width={280} padding={0} hasDivider label="Roster">
-            {rosterPane}
-          </LayoutPanel>
-        )
-      }
-      end={
-        isSinglePane ? undefined : (
-          <LayoutPanel
-            width={isRosterUndocked ? 320 : 340}
-            padding={0}
-            hasDivider
-            label="Review packet">
-            {packetPane}
-          </LayoutPanel>
-        )
-      }
-      content={
-        <LayoutContent padding={0}>
-          <div aria-live="polite" style={styles.visuallyHidden}>
-            {announcement}
-          </div>
-          {contentPane}
-        </LayoutContent>
-      }
-    />
+                  )}
+                </HStack>
+              </StackItem>
+              <StackItem size={isSinglePane ? 'fill' : 'static'}>
+                <div style={isSinglePane ? styles.meterBlockFill : styles.meterBlock}>
+                  <VStack gap={1}>
+                    <HStack gap={2} vAlign="center">
+                      <StackItem size="fill">
+                        <Text type="supporting" color="secondary">
+                          Reviews complete
+                        </Text>
+                      </StackItem>
+                      <Text type="supporting" hasTabularNumbers>
+                        {completeCount} / {CYCLE.totalPeople}
+                      </Text>
+                    </HStack>
+                    <ProgressBar
+                      label={`${completeCount} of ${CYCLE.totalPeople} reviews complete`}
+                      isLabelHidden
+                      value={completeCount}
+                      max={CYCLE.totalPeople}
+                      variant="accent"
+                    />
+                  </VStack>
+                </div>
+              </StackItem>
+              {isRosterUndocked ? (
+                // Roster undocks below 1024px; this ~40px toggle swaps the
+                // content region between the roster and the grid.
+                <IconButton
+                  label={
+                    isRosterOpenOnMobile
+                      ? 'Show calibration grid'
+                      : `Show roster (${EMPLOYEES.length} reviewees)`
+                  }
+                  tooltip={isRosterOpenOnMobile ? 'Show grid' : 'Show roster'}
+                  icon={
+                    <Icon
+                      icon={isRosterOpenOnMobile ? LayoutGridIcon : UsersIcon}
+                      size="sm"
+                    />
+                  }
+                  variant={isRosterOpenOnMobile ? 'secondary' : 'ghost'}
+                  style={styles.iconTapTarget}
+                  onClick={() => {
+                    setIsRosterOpenOnMobile(prev => !prev);
+                    setIsPacketOpenOnMobile(false);
+                  }}
+                />
+              ) : null}
+            </HStack>
+          </LayoutHeader>
+        }
+        start={
+          isRosterUndocked ? undefined : (
+            <LayoutPanel width={260} padding={0} hasDivider label="Roster">
+              {rosterPane}
+            </LayoutPanel>
+          )
+        }
+        end={
+          isSinglePane ? undefined : (
+            <LayoutPanel
+              width={320}
+              padding={0}
+              hasDivider
+              label="Review packet">
+              {packetPane}
+            </LayoutPanel>
+          )
+        }
+        content={
+          <LayoutContent padding={0}>
+            <div aria-live="polite" style={styles.visuallyHidden}>
+              {announcement}
+            </div>
+            {contentPane}
+          </LayoutContent>
+        }
+      />
+    </div>
   );
 }

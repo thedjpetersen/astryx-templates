@@ -97,14 +97,12 @@ import {Timestamp} from '@astryxdesign/core/Timestamp';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
 import {
   CalendarDaysIcon,
-  CheckIcon,
   CoffeeIcon,
   HeartPulseIcon,
   PalmtreeIcon,
   ScrollTextIcon,
   SendIcon,
   UsersIcon,
-  XIcon,
 } from 'lucide-react';
 
 // ============= STYLES =============
@@ -628,7 +626,7 @@ function BalanceCard({
             <Heading level={2}>{formatDays(remaining)}</Heading>
           </span>
           <Text type="supporting" color="secondary">
-            days available
+            {remaining === 1 ? 'day' : 'days'} available
           </Text>
         </HStack>
         <ProgressBar
@@ -697,6 +695,9 @@ function AbsenceBar({
 }) {
   const color = typeColors[segment.type];
   const pending = segment.status === 'pending';
+  // Single-day bars (~26px) can't fit a readable label — a clipped "P…"
+  // reads as broken, so rely on the aria-label alone for those.
+  const showLabel = segment.to - segment.from >= 1;
   return (
     <button
       type="button"
@@ -711,7 +712,7 @@ function AbsenceBar({
       aria-label={segment.label}
       aria-pressed={isSelected}
       onClick={() => onSelect(segment.requestId)}>
-      {TYPE_LABEL[segment.type]}
+      {showLabel ? TYPE_LABEL[segment.type] : null}
     </button>
   );
 }
@@ -1108,14 +1109,12 @@ function RequestActions({
           label="Approve"
           variant="secondary"
           size={size}
-          icon={<Icon icon={CheckIcon} size="sm" color="inherit" />}
           onClick={() => onApprove(request.id)}
         />
         <Button
           label="Deny"
           variant="ghost"
           size={size}
-          icon={<Icon icon={XIcon} size="sm" color="inherit" />}
           onClick={() => onDenyRequest(request.id)}
         />
       </HStack>
@@ -1357,10 +1356,20 @@ export default function TimeOffPlannerPage() {
         return (
           <HStack gap={2} vAlign="center">
             <Avatar name={person.name} size={24} />
-            <Text type="body" maxLines={1}>
-              {person.name}
-            </Text>
-            {person.isReport && <Badge label="report" variant="neutral" />}
+            <StackItem size="fill">
+              {/* Name on its own line, badge below — an inline badge would
+                  squeeze the name out at this column width. */}
+              <VStack gap={1}>
+                <Text type="body" maxLines={1}>
+                  {person.name}
+                </Text>
+                {person.isReport && (
+                  <HStack gap={1}>
+                    <Badge label="report" variant="neutral" />
+                  </HStack>
+                )}
+              </VStack>
+            </StackItem>
           </HStack>
         );
       },
@@ -1368,7 +1377,7 @@ export default function TimeOffPlannerPage() {
     {
       key: 'type',
       header: 'Type',
-      width: pixel(110),
+      width: pixel(92),
       renderCell: (item: TimeOffRequest) => (
         <Badge label={TYPE_LABEL[item.type]} variant={TYPE_BADGE[item.type]} />
       ),
@@ -1376,7 +1385,7 @@ export default function TimeOffPlannerPage() {
     {
       key: 'dates',
       header: 'Dates',
-      width: pixel(150),
+      width: pixel(120),
       renderCell: (item: TimeOffRequest) => (
         <span style={styles.numericCell}>
           <Text type="body">{formatIsoRange(item.start, item.end)}</Text>
@@ -1386,20 +1395,17 @@ export default function TimeOffPlannerPage() {
     {
       key: 'days',
       header: 'Days',
-      width: pixel(70),
+      width: pixel(52),
       renderCell: (item: TimeOffRequest) => (
         <span style={styles.numericCell}>
-          <Text type="body">
-            {formatDays(item.days)}
-            {item.isHalfDay ? ' ½' : ''}
-          </Text>
+          <Text type="body">{formatDays(item.days)}</Text>
         </span>
       ),
     },
     {
       key: 'status',
       header: 'Status',
-      width: pixel(110),
+      width: pixel(100),
       renderCell: (item: TimeOffRequest) => (
         <Badge
           label={STATUS_LABEL[item.status]}
@@ -1410,7 +1416,7 @@ export default function TimeOffPlannerPage() {
     {
       key: 'actions',
       header: 'Actions',
-      width: pixel(200),
+      width: pixel(156),
       renderCell: (item: TimeOffRequest) => (
         <RequestActions
           request={item}

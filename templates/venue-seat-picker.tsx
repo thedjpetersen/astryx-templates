@@ -519,10 +519,13 @@ const pulse = stylex.keyframes({
 // Token-pure color constants (StyleX constant-folds these at build time).
 // The four-step ramp mixes one chart token toward the page background so
 // every step re-derives per color scheme; hovers lift toward text-primary.
-const RAMP_1 = 'color-mix(in oklab, var(--color-data-categorical-green) 88%, var(--color-background-body))';
-const RAMP_2 = 'color-mix(in oklab, var(--color-data-categorical-green) 62%, var(--color-background-body))';
-const RAMP_3 = 'color-mix(in oklab, var(--color-data-categorical-green) 42%, var(--color-background-body))';
-const RAMP_4 = 'color-mix(in oklab, var(--color-data-categorical-green) 24%, var(--color-background-body))';
+// The categorical chart token is not defined by every theme, and one
+// unresolved var() invalidates the whole color-mix(), so it falls back to
+// the always-defined icon-green token.
+const RAMP_1 = 'color-mix(in oklab, var(--color-data-categorical-green, var(--color-icon-green)) 88%, var(--color-background-body))';
+const RAMP_2 = 'color-mix(in oklab, var(--color-data-categorical-green, var(--color-icon-green)) 62%, var(--color-background-body))';
+const RAMP_3 = 'color-mix(in oklab, var(--color-data-categorical-green, var(--color-icon-green)) 42%, var(--color-background-body))';
+const RAMP_4 = 'color-mix(in oklab, var(--color-data-categorical-green, var(--color-icon-green)) 24%, var(--color-background-body))';
 const HOVER_LIFT = 'color-mix(in oklab, var(--color-text-primary) 20%, ';
 const SOLD_FILL = 'color-mix(in oklab, var(--color-text-secondary) 24%, var(--color-background-body))';
 const COMPANION_FILL = 'color-mix(in oklab, var(--color-accent) 16%, var(--color-background-body))';
@@ -1590,30 +1593,18 @@ export default function VenueSeatPickerTemplate() {
           </text>
           {/* Section hulls: tap-to-zoom targets, silhouettes, and labels. */}
           {SECTION_HULLS.map(hull => (
-            <g key={hull.id}>
-              <rect
-                x={hull.view.x}
-                y={hull.view.y}
-                width={hull.view.w}
-                height={hull.view.h}
-                rx={14}
-                aria-label={`Zoom to ${hull.label}`}
-                role={hullsInteractive ? 'button' : undefined}
-                onClick={hullsInteractive ? () => zoomToSection(hull.id) : undefined}
-                {...stylex.props(styles.hull, !hullsInteractive && styles.hullInactive)}
-              />
-              <text
-                x={hull.view.x + hull.view.w / 2}
-                y={hull.view.y + 16}
-                textAnchor="middle"
-                fontSize={12}
-                fontWeight={600}
-                letterSpacing={1.2}
-                fill="var(--color-text-secondary)"
-                pointerEvents="none">
-                {hull.label.toUpperCase()}
-              </text>
-            </g>
+            <rect
+              key={hull.id}
+              x={hull.view.x}
+              y={hull.view.y}
+              width={hull.view.w}
+              height={hull.view.h}
+              rx={14}
+              aria-label={`Zoom to ${hull.label}`}
+              role={hullsInteractive ? 'button' : undefined}
+              onClick={hullsInteractive ? () => zoomToSection(hull.id) : undefined}
+              {...stylex.props(styles.hull, !hullsInteractive && styles.hullInactive)}
+            />
           ))}
           {/* Seats */}
           {SEATS.map(seat => (
@@ -1629,6 +1620,26 @@ export default function VenueSeatPickerTemplate() {
               onHoverEnd={handleHoverEnd}
               onSeatFocus={handleSeatFocus}
             />
+          ))}
+          {/* Section labels paint after the seats: the curved sections
+              interleave, so a token-halo keeps the letters readable where
+              a neighboring row runs under them. */}
+          {SECTION_HULLS.map(hull => (
+            <text
+              key={hull.id}
+              x={hull.view.x + hull.view.w / 2}
+              y={hull.view.y + 16}
+              textAnchor="middle"
+              fontSize={12}
+              fontWeight={600}
+              letterSpacing={1.2}
+              fill="var(--color-text-secondary)"
+              stroke="var(--color-background-body)"
+              strokeWidth={3}
+              paintOrder="stroke"
+              pointerEvents="none">
+              {hull.label.toUpperCase()}
+            </text>
           ))}
         </g>
       </svg>

@@ -132,6 +132,7 @@ import {TextInput} from '@astryxdesign/core/TextInput';
 import {ToggleButton} from '@astryxdesign/core/ToggleButton';
 import {Tooltip} from '@astryxdesign/core/Tooltip';
 import {useMediaQuery} from '@astryxdesign/core/hooks';
+import {MediaTheme, useTheme} from '@astryxdesign/core/theme';
 
 import {
   CheckCheckIcon,
@@ -472,6 +473,10 @@ const styles: Record<string, CSSProperties> = {
   paletteCard: {
     overflow: 'hidden',
   },
+  // The header pill's keycaps sit on the secondary Button surface, where
+  // dark-mode secondary text on the translucent neutral keycap lands near
+  // 2:1; re-pin the Kbd glyphs to primary text so ⌘K stays legible.
+  headerKbd: {'--color-text-secondary': 'var(--color-text-primary)'} as CSSProperties,
   resultList: {
     maxHeight: '48vh',
     overflowY: 'auto',
@@ -1095,7 +1100,9 @@ function SessionListRow({
             maxLines={1}>
             {session.name}
           </Text>
-          <Text type="supporting" color="secondary" maxLines={1}>
+          {/* Primary at supporting size: secondary gray reads ~3:1 at this
+              size in light mode; the smaller type keeps the hierarchy. */}
+          <Text type="supporting" color="primary" maxLines={1}>
             {session.command} · pid {session.pid}
           </Text>
         </VStack>
@@ -1262,6 +1269,8 @@ export default function CodingTerminalWorkspaceTemplate() {
   const [announcement, setAnnouncement] = useState('');
 
   const isNarrow = useMediaQuery('(max-width: 640px)');
+  // Resolved page scheme — re-anchors the palette under the dark scrim.
+  const {mode: colorMode} = useTheme();
 
   const activeSession =
     sessions.find(session => session.id === activeSessionId) ?? sessions[0];
@@ -1703,14 +1712,10 @@ export default function CodingTerminalWorkspaceTemplate() {
         variant="secondary"
         size="sm"
         icon={<Icon icon={CommandIcon} size="sm" />}
-        endContent={
-          <HStack gap={2} vAlign="center">
-            <Text type="inherit">Commands</Text>
-            <Kbd keys="mod+k" />
-          </HStack>
-        }
-        onClick={openPalette}
-      />
+        endContent={<Kbd keys="mod+k" style={styles.headerKbd} />}
+        onClick={openPalette}>
+        Commands
+      </Button>
     </HStack>
   );
 
@@ -1892,7 +1897,9 @@ export default function CodingTerminalWorkspaceTemplate() {
           position="fill"
           align="start"
           style={styles.overlay}
-          content={palette}>
+          // The dark scrim flips the overlay layer into media-dark theming;
+          // the palette should follow the page scheme, so re-anchor it.
+          content={<MediaTheme mode={colorMode}>{palette}</MediaTheme>}>
           {workspacePage}
         </Overlay>
       ) : (

@@ -1048,8 +1048,9 @@ const COPY_RESET_MS = 1800;
 // Table grid templates. Desktop: cert | team | issuer | key | expires |
 // deploys. <=960px drops Key and Deployments; <=640px restacks entirely.
 const GRID_FULL =
-  'minmax(200px, 2fr) minmax(110px, 1fr) minmax(120px, 1fr) 88px 170px 72px';
-const GRID_NARROW = 'minmax(160px, 2fr) minmax(96px, 1fr) 150px';
+  'minmax(150px, 2fr) minmax(90px, 1fr) minmax(96px, 1fr) 80px minmax(132px, max-content) 64px';
+const GRID_NARROW =
+  'minmax(160px, 2fr) minmax(96px, 1fr) minmax(132px, max-content)';
 
 // ============= SMALL PIECES =============
 

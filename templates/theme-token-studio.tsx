@@ -963,6 +963,9 @@ function MiniApp({draft}: {draft: Draft}) {
         backgroundColor: surface,
         color: text,
         padding: spaceCard,
+        // Clear the floating '+ New deal' action so it never sits on top of
+        // the last table row.
+        paddingBottom: spaceCard * 2 + 40,
         display: 'flex',
         flexDirection: 'column',
         gap: spaceStack,
@@ -1089,7 +1092,8 @@ function MiniApp({draft}: {draft: Draft}) {
         </div>
       </div>
 
-      {/* Table snippet */}
+      {/* Table snippet — the panes are narrow, so each row stacks the stage
+          pill under a deal + amount line instead of forcing three columns. */}
       <div style={{...card, padding: 0, overflow: 'hidden'}}>
         <div
           style={{
@@ -1100,43 +1104,44 @@ function MiniApp({draft}: {draft: Draft}) {
             fontSize: 11,
             borderBottom: `1px solid ${border}`,
           }}>
-          <span style={{flex: 1.4}}>Deal</span>
-          <span style={{flex: 1}}>Stage</span>
-          <span style={{flex: 0.8, textAlign: 'right'}}>Amount</span>
+          <span style={{flex: 1, minWidth: 0}}>Deal</span>
+          <span style={{whiteSpace: 'nowrap'}}>Amount</span>
         </div>
         {MINI_DEALS.map((row, index) => (
           <div
             key={row.deal}
             style={{
               display: 'flex',
-              alignItems: 'center',
-              gap: 8,
+              flexDirection: 'column',
+              gap: 4,
               padding: `${Math.max(6, spaceControl - 4)}px ${spaceCard}px`,
               borderBottom:
                 index === MINI_DEALS.length - 1 ? undefined : `1px solid ${border}`,
             }}>
-            <span style={{flex: 1.4, fontWeight: 600, minWidth: 0}}>{row.deal}</span>
-            <span style={{flex: 1, minWidth: 0}}>
+            <div style={{display: 'flex', alignItems: 'baseline', gap: 8}}>
+              <span style={{flex: 1, fontWeight: 600, minWidth: 0}}>
+                {row.deal}
+              </span>
               <span
                 style={{
-                  display: 'inline-block',
-                  color: chipTone(row.tone),
-                  border: `1px solid ${chipTone(row.tone)}`,
-                  borderRadius: Math.max(radiusControl, 4),
-                  padding: '1px 8px',
-                  fontSize: 11,
-                  fontWeight: 600,
+                  whiteSpace: 'nowrap',
+                  fontVariantNumeric: 'tabular-nums',
                 }}>
-                {row.stage}
+                {row.amount}
               </span>
-            </span>
+            </div>
             <span
               style={{
-                flex: 0.8,
-                textAlign: 'right',
-                fontVariantNumeric: 'tabular-nums',
+                alignSelf: 'flex-start',
+                color: chipTone(row.tone),
+                border: `1px solid ${chipTone(row.tone)}`,
+                borderRadius: Math.max(radiusControl, 4),
+                padding: '1px 8px',
+                fontSize: 11,
+                fontWeight: 600,
+                whiteSpace: 'nowrap',
               }}>
-              {row.amount}
+              {row.stage}
             </span>
           </div>
         ))}
@@ -1167,25 +1172,22 @@ function MiniApp({draft}: {draft: Draft}) {
 // every light-dark() pair — fixture and Astryx token alike — resolves to
 // that side) AND data-astryx-media (so the Astryx theme's own scheme
 // overrides follow), exactly like the demo site's toggle does at the root.
+// Only the MiniApp artwork sits inside the forced wrapper — the pane chrome
+// stays in the HOST scheme so its label and badge remain legible either way.
 
 function PreviewPane({scheme, draft}: {scheme: 'light' | 'dark'; draft: Draft}) {
   return (
-    <div
-      data-astryx-media={scheme}
-      style={{...styles.paneFrame, colorScheme: scheme}}>
+    <div style={styles.paneFrame}>
       <div style={styles.paneChrome}>
         <Icon icon={scheme === 'light' ? SunIcon : MoonIcon} size="sm" color="secondary" />
         <Text type="label" size="sm">
           {scheme === 'light' ? 'Light' : 'Dark'}
         </Text>
         <Badge label="forced" variant="neutral" />
-        <StackItem size="fill">
-          <Text type="supporting" color="secondary" justify="end" maxLines={1}>
-            light-dark({scheme === 'light' ? 'this, _' : '_, this'})
-          </Text>
-        </StackItem>
       </div>
-      <MiniApp draft={draft} />
+      <div data-astryx-media={scheme} style={{colorScheme: scheme}}>
+        <MiniApp draft={draft} />
+      </div>
     </div>
   );
 }
