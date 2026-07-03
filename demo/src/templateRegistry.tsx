@@ -12,12 +12,26 @@ import ArtifactPinDock from '../../templates/artifact-pin-dock';
 import artifactPinDockSource from '../../templates/artifact-pin-dock.tsx?raw';
 import AutomationRuleBuilder from '../../templates/automation-rule-builder';
 import automationRuleBuilderSource from '../../templates/automation-rule-builder.tsx?raw';
+import BookingAvailabilityPicker from '../../templates/booking-availability-picker';
+import bookingAvailabilityPickerSource from '../../templates/booking-availability-picker.tsx?raw';
 import BrowserSessionReplay from '../../templates/browser-session-replay';
 import browserSessionReplaySource from '../../templates/browser-session-replay.tsx?raw';
+import BudgetTracker from '../../templates/budget-tracker';
+import budgetTrackerSource from '../../templates/budget-tracker.tsx?raw';
+import CalendarMonthGrid from '../../templates/calendar-month-grid';
+import calendarMonthGridSource from '../../templates/calendar-month-grid.tsx?raw';
+import CalendarWeekAgenda from '../../templates/calendar-week-agenda';
+import calendarWeekAgendaSource from '../../templates/calendar-week-agenda.tsx?raw';
+import CartCheckoutFlow from '../../templates/cart-checkout-flow';
+import cartCheckoutFlowSource from '../../templates/cart-checkout-flow.tsx?raw';
 import CliPairingConsole from '../../templates/cli-pairing-console';
 import cliPairingConsoleSource from '../../templates/cli-pairing-console.tsx?raw';
+import CodeReviewDiffQueue from '../../templates/code-review-diff-queue';
+import codeReviewDiffQueueSource from '../../templates/code-review-diff-queue.tsx?raw';
 import CodeBlockTerminal from '../../templates/codeblock-terminal';
 import codeblockTerminalSource from '../../templates/codeblock-terminal.tsx?raw';
+import CodingTerminalWorkspace from '../../templates/coding-terminal-workspace';
+import codingTerminalWorkspaceSource from '../../templates/coding-terminal-workspace.tsx?raw';
 import CommandPaletteLauncher from '../../templates/command-palette-launcher';
 import commandPaletteLauncherSource from '../../templates/command-palette-launcher.tsx?raw';
 import CompactionInspector from '../../templates/compaction-inspector';
@@ -42,6 +56,12 @@ import DeploymentDetail from '../../templates/deployment-detail';
 import deploymentDetailSource from '../../templates/deployment-detail.tsx?raw';
 import DiffViewer from '../../templates/diff-viewer';
 import diffViewerSource from '../../templates/diff-viewer.tsx?raw';
+import EditorFileTabsShell from '../../templates/editor-file-tabs-shell';
+import editorFileTabsShellSource from '../../templates/editor-file-tabs-shell.tsx?raw';
+import EventDetailRsvp from '../../templates/event-detail-rsvp';
+import eventDetailRsvpSource from '../../templates/event-detail-rsvp.tsx?raw';
+import ExpenseApprovalQueue from '../../templates/expense-approval-queue';
+import expenseApprovalQueueSource from '../../templates/expense-approval-queue.tsx?raw';
 import FeatureGateConsole from '../../templates/feature-gate-console';
 import featureGateConsoleSource from '../../templates/feature-gate-console.tsx?raw';
 import FileBrowserPreview from '../../templates/file-browser-preview';
@@ -58,12 +78,18 @@ import FormSideSheet from '../../templates/form-side-sheet';
 import formSideSheetSource from '../../templates/form-side-sheet.tsx?raw';
 import FormWizard from '../../templates/form-wizard';
 import formWizardSource from '../../templates/form-wizard.tsx?raw';
+import GitBranchGraph from '../../templates/git-branch-graph';
+import gitBranchGraphSource from '../../templates/git-branch-graph.tsx?raw';
 import Inbox from '../../templates/inbox';
 import inboxSource from '../../templates/inbox.tsx?raw';
 import IncidentConsole from '../../templates/incident-console';
 import incidentConsoleSource from '../../templates/incident-console.tsx?raw';
 import InfiniteScrollFeed from '../../templates/infinite-scroll-feed';
 import infiniteScrollFeedSource from '../../templates/infinite-scroll-feed.tsx?raw';
+import InvoiceBuilder from '../../templates/invoice-builder';
+import invoiceBuilderSource from '../../templates/invoice-builder.tsx?raw';
+import IssueDetail from '../../templates/issue-detail';
+import issueDetailSource from '../../templates/issue-detail.tsx?raw';
 import KanbanBoard from '../../templates/kanban-board';
 import kanbanBoardSource from '../../templates/kanban-board.tsx?raw';
 import KpiDashboard from '../../templates/kpi-dashboard';
@@ -86,22 +112,44 @@ import MemoryRelationExplorer from '../../templates/memory-relation-explorer';
 import memoryRelationExplorerSource from '../../templates/memory-relation-explorer.tsx?raw';
 import MessagingShell from '../../templates/messaging-shell';
 import messagingShellSource from '../../templates/messaging-shell.tsx?raw';
+import MilestoneBurnup from '../../templates/milestone-burnup';
+import milestoneBurnupSource from '../../templates/milestone-burnup.tsx?raw';
 import NewsletterComposer from '../../templates/newsletter-composer';
 import newsletterComposerSource from '../../templates/newsletter-composer.tsx?raw';
 import NotebookReport from '../../templates/notebook-report';
 import notebookReportSource from '../../templates/notebook-report.tsx?raw';
 import NotificationCenter from '../../templates/notification-center';
 import notificationCenterSource from '../../templates/notification-center.tsx?raw';
+import OkrTree from '../../templates/okr-tree';
+import okrTreeSource from '../../templates/okr-tree.tsx?raw';
 import OnboardingGuidedInstall from '../../templates/onboarding-guided-install';
 import onboardingGuidedInstallSource from '../../templates/onboarding-guided-install.tsx?raw';
 import OperationsDashboard from '../../templates/operations-dashboard';
 import operationsDashboardSource from '../../templates/operations-dashboard.tsx?raw';
+import OrderTracking from '../../templates/order-tracking';
+import orderTrackingSource from '../../templates/order-tracking.tsx?raw';
+import PayoutStatements from '../../templates/payout-statements';
+import payoutStatementsSource from '../../templates/payout-statements.tsx?raw';
 import PodcastEpisodePlayer from '../../templates/podcast-episode-player';
 import podcastEpisodePlayerSource from '../../templates/podcast-episode-player.tsx?raw';
+import PortfolioHoldings from '../../templates/portfolio-holdings';
+import portfolioHoldingsSource from '../../templates/portfolio-holdings.tsx?raw';
+import PricingPlans from '../../templates/pricing-plans';
+import pricingPlansSource from '../../templates/pricing-plans.tsx?raw';
+import ProductDetailGallery from '../../templates/product-detail-gallery';
+import productDetailGallerySource from '../../templates/product-detail-gallery.tsx?raw';
 import ProductList from '../../templates/product-list';
 import productListSource from '../../templates/product-list.tsx?raw';
 import ProfilePage from '../../templates/profile-page';
 import profilePageSource from '../../templates/profile-page.tsx?raw';
+import ReleaseTrainOverview from '../../templates/release-train-overview';
+import releaseTrainOverviewSource from '../../templates/release-train-overview.tsx?raw';
+import ReplPlayground from '../../templates/repl-playground';
+import replPlaygroundSource from '../../templates/repl-playground.tsx?raw';
+import ReturnsExchangeFlow from '../../templates/returns-exchange-flow';
+import returnsExchangeFlowSource from '../../templates/returns-exchange-flow.tsx?raw';
+import RoadmapGantt from '../../templates/roadmap-gantt';
+import roadmapGanttSource from '../../templates/roadmap-gantt.tsx?raw';
 import ScheduledJobsManager from '../../templates/scheduled-jobs-manager';
 import scheduledJobsManagerSource from '../../templates/scheduled-jobs-manager.tsx?raw';
 import ScheduledSendOutbox from '../../templates/scheduled-send-outbox';
@@ -138,10 +186,16 @@ import SlideSorter from '../../templates/slide-sorter';
 import slideSorterSource from '../../templates/slide-sorter.tsx?raw';
 import SpamQuarantineConsole from '../../templates/spam-quarantine-console';
 import spamQuarantineConsoleSource from '../../templates/spam-quarantine-console.tsx?raw';
+import SprintBoardBacklog from '../../templates/sprint-board-backlog';
+import sprintBoardBacklogSource from '../../templates/sprint-board-backlog.tsx?raw';
+import StorefrontBrowse from '../../templates/storefront-browse';
+import storefrontBrowseSource from '../../templates/storefront-browse.tsx?raw';
 import StreamingBrowseHome from '../../templates/streaming-browse-home';
 import streamingBrowseHomeSource from '../../templates/streaming-browse-home.tsx?raw';
 import SubAgentMonitor from '../../templates/sub-agent-monitor';
 import subAgentMonitorSource from '../../templates/sub-agent-monitor.tsx?raw';
+import SubscriptionBillingPortal from '../../templates/subscription-billing-portal';
+import subscriptionBillingPortalSource from '../../templates/subscription-billing-portal.tsx?raw';
 import SubtitleCueEditor from '../../templates/subtitle-cue-editor';
 import subtitleCueEditorSource from '../../templates/subtitle-cue-editor.tsx?raw';
 import TableBulkActions from '../../templates/table-bulk-actions';
@@ -158,8 +212,16 @@ import TableSplitPane from '../../templates/table-split-pane';
 import tableSplitPaneSource from '../../templates/table-split-pane.tsx?raw';
 import TableTree from '../../templates/table-tree';
 import tableTreeSource from '../../templates/table-tree.tsx?raw';
+import TeamScheduler from '../../templates/team-scheduler';
+import teamSchedulerSource from '../../templates/team-scheduler.tsx?raw';
+import TestRunnerConsole from '../../templates/test-runner-console';
+import testRunnerConsoleSource from '../../templates/test-runner-console.tsx?raw';
+import TimeOffPlanner from '../../templates/time-off-planner';
+import timeOffPlannerSource from '../../templates/time-off-planner.tsx?raw';
 import Timeline from '../../templates/timeline';
 import timelineSource from '../../templates/timeline.tsx?raw';
+import TransactionsLedger from '../../templates/transactions-ledger';
+import transactionsLedgerSource from '../../templates/transactions-ledger.tsx?raw';
 import TranscriptAnnotator from '../../templates/transcript-annotator';
 import transcriptAnnotatorSource from '../../templates/transcript-annotator.tsx?raw';
 import VideoClipTimeline from '../../templates/video-clip-timeline';
@@ -920,6 +982,316 @@ export const templates: TemplateEntry[] = [
       'NLE-style editor with tool rail, program monitor, and multi-track timeline dock.',
     component: VideoClipTimeline,
     source: videoClipTimelineSource,
+  },
+  {
+    id: 'cart-checkout-flow',
+    name: 'Cart & Checkout',
+    kind: 'page',
+    category: 'Commerce',
+    description:
+      'Four-step checkout: qty steppers, working promo code, saved addresses and cards, and a live-totals order-summary rail.',
+    component: CartCheckoutFlow,
+    source: cartCheckoutFlowSource,
+  },
+  {
+    id: 'order-tracking',
+    name: 'Order Tracking',
+    kind: 'page',
+    category: 'Commerce',
+    description:
+      'Post-purchase parcel tracker: five-stage progress stepper, schematic route strip with truck marker, carrier scan timeline, and an items/address/support panel with return and report-issue flows.',
+    component: OrderTracking,
+    source: orderTrackingSource,
+  },
+  {
+    id: 'product-detail-gallery',
+    name: 'Product Detail',
+    kind: 'page',
+    category: 'Commerce',
+    description:
+      'PDP with gradient gallery stage and thumb rail, color/size selectors, sticky buy box with stepper, spec/shipping collapsibles, rating histogram, and related row.',
+    component: ProductDetailGallery,
+    source: productDetailGallerySource,
+  },
+  {
+    id: 'storefront-browse',
+    name: 'Storefront Browse',
+    kind: 'page',
+    category: 'Commerce',
+    description:
+      'Faceted storefront grid with filter rail, applied-filter tokens, wishlist toggles, quick-view dialog, and load-more footer.',
+    component: StorefrontBrowse,
+    source: storefrontBrowseSource,
+  },
+  {
+    id: 'pricing-plans',
+    name: 'Pricing Plans',
+    kind: 'page',
+    category: 'Commerce',
+    description:
+      'Billing toggle with savings badges, 3-up plan cards, seat estimator, frozen-column feature table, and FAQ collapsibles.',
+    component: PricingPlans,
+    source: pricingPlansSource,
+  },
+  {
+    id: 'subscription-billing-portal',
+    name: 'Billing Portal',
+    kind: 'page',
+    category: 'Commerce',
+    description:
+      'Current-plan card with retention-offer cancel dialog, usage meters vs plan limits, payment methods, and invoice table.',
+    component: SubscriptionBillingPortal,
+    source: subscriptionBillingPortalSource,
+  },
+  {
+    id: 'returns-exchange-flow',
+    name: 'Returns & Exchange',
+    kind: 'page',
+    category: 'Commerce',
+    description:
+      'Guided return flow: item picker with qty steppers, per-item reasons, refund/credit/exchange resolution, drop-off fees, printable label.',
+    component: ReturnsExchangeFlow,
+    source: returnsExchangeFlowSource,
+  },
+  {
+    id: 'calendar-month-grid',
+    name: 'Month Calendar',
+    kind: 'page',
+    category: 'Calendar',
+    description:
+      'Month day grid with category-colored event chips, filter legend toggles, and a selected-day panel.',
+    component: CalendarMonthGrid,
+    source: calendarMonthGridSource,
+  },
+  {
+    id: 'calendar-week-agenda',
+    name: 'Week Agenda',
+    kind: 'page',
+    category: 'Calendar',
+    description:
+      'Week time-grid with side-by-side overlap columns, an all-day row, a fixed now line, and a click-to-open event detail panel.',
+    component: CalendarWeekAgenda,
+    source: calendarWeekAgendaSource,
+  },
+  {
+    id: 'booking-availability-picker',
+    name: 'Booking Picker',
+    kind: 'page',
+    category: 'Calendar',
+    description:
+      'Calendly-style scheduler: host rail, availability-dot date strip, timezone-shifted slot grid, and confirm form with success state.',
+    component: BookingAvailabilityPicker,
+    source: bookingAvailabilityPickerSource,
+  },
+  {
+    id: 'event-detail-rsvp',
+    name: 'Event RSVP',
+    kind: 'page',
+    category: 'Calendar',
+    description:
+      'Gradient event hero with a sticky Going/Maybe/Cannot-go RSVP card, guest stepper, attendee counts, agenda, schematic map, and discussion.',
+    component: EventDetailRsvp,
+    source: eventDetailRsvpSource,
+  },
+  {
+    id: 'team-scheduler',
+    name: 'Team Scheduler',
+    kind: 'page',
+    category: 'Calendar',
+    description:
+      'Cross-timezone meeting matrix: member-by-hour free/busy cells, a sliding slot highlight, ranked best-slot cards, and a local-times invite summary.',
+    component: TeamScheduler,
+    source: teamSchedulerSource,
+  },
+  {
+    id: 'time-off-planner',
+    name: 'Time-Off Planner',
+    kind: 'page',
+    category: 'Calendar',
+    description:
+      'PTO balance cards with accrual notes, business-day request form, team absence strip, and approve/deny requests table.',
+    component: TimeOffPlanner,
+    source: timeOffPlannerSource,
+  },
+  {
+    id: 'transactions-ledger',
+    name: 'Transactions Ledger',
+    kind: 'page',
+    category: 'Finance',
+    description:
+      'Running-balance account register with pending/posted groups, reconcile checkboxes feeding a sticky summary bar, filters, and a transaction detail panel.',
+    component: TransactionsLedger,
+    source: transactionsLedgerSource,
+  },
+  {
+    id: 'invoice-builder',
+    name: 'Invoice Builder',
+    kind: 'page',
+    category: 'Finance',
+    description:
+      'Split invoice form with a line-item editor beside a live paper preview computing subtotal, tax, and discount.',
+    component: InvoiceBuilder,
+    source: invoiceBuilderSource,
+  },
+  {
+    id: 'expense-approval-queue',
+    name: 'Expense Approvals',
+    kind: 'page',
+    category: 'Finance',
+    description:
+      'Approvals inbox: flagged expense-report queue with bulk-approve for clean reports, line-item detail with receipt tiles, and reject-with-required-comment.',
+    component: ExpenseApprovalQueue,
+    source: expenseApprovalQueueSource,
+  },
+  {
+    id: 'budget-tracker',
+    name: 'Budget Tracker',
+    kind: 'page',
+    category: 'Finance',
+    description:
+      'Envelope budgeting: month switcher, over-budget alert envelopes, safe-to-spend math, CSS-only burn-down strip, and inline per-envelope transactions.',
+    component: BudgetTracker,
+    source: budgetTrackerSource,
+  },
+  {
+    id: 'payout-statements',
+    name: 'Payout Statements',
+    kind: 'page',
+    category: 'Finance',
+    description:
+      'Period payout statements with a gross-to-net waterfall detail pane, destination accounts, and CSV/PDF export toasts.',
+    component: PayoutStatements,
+    source: payoutStatementsSource,
+  },
+  {
+    id: 'portfolio-holdings',
+    name: 'Portfolio Holdings',
+    kind: 'page',
+    category: 'Finance',
+    description:
+      'Signed-summary portfolio: conic-gradient allocation donut, holdings table with lot-level detail panel, and watchlist rail.',
+    component: PortfolioHoldings,
+    source: portfolioHoldingsSource,
+  },
+  {
+    id: 'roadmap-gantt',
+    name: 'Roadmap Gantt',
+    kind: 'page',
+    category: 'Planning',
+    description:
+      'Quarter roadmap: zoomable quarter/month axis, team swimlanes with progress-filled bars, milestone diamonds, and SVG dependency arrows.',
+    component: RoadmapGantt,
+    source: roadmapGanttSource,
+  },
+  {
+    id: 'sprint-board-backlog',
+    name: 'Sprint Board',
+    kind: 'page',
+    category: 'Planning',
+    description:
+      'Sprint board with a backlog rail, capacity meter, and accessible story moves.',
+    component: SprintBoardBacklog,
+    source: sprintBoardBacklogSource,
+  },
+  {
+    id: 'issue-detail',
+    name: 'Issue Detail',
+    kind: 'page',
+    category: 'Planning',
+    description:
+      'Ticket page with editable status, sub-task progress, CI-dotted linked PRs, a metadata rail, and threaded activity.',
+    component: IssueDetail,
+    source: issueDetailSource,
+  },
+  {
+    id: 'okr-tree',
+    name: 'OKR Tree',
+    kind: 'page',
+    category: 'Planning',
+    description:
+      'Objectives-to-key-results tree: quarter selector, confidence-colored progress rows, at-risk filter, check-in history panel.',
+    component: OkrTree,
+    source: okrTreeSource,
+  },
+  {
+    id: 'release-train-overview',
+    name: 'Release Train',
+    kind: 'page',
+    category: 'Planning',
+    description:
+      'Horizontal release-train rail with per-train feature flags, blocking issues, go/no-go sign-offs, and a cherry-pick approval queue.',
+    component: ReleaseTrainOverview,
+    source: releaseTrainOverviewSource,
+  },
+  {
+    id: 'milestone-burnup',
+    name: 'Milestone Burnup',
+    kind: 'page',
+    category: 'Planning',
+    description:
+      'Delivery burnup: stepped scope line over completed area with forecast band, tappable scope-change markers, KPI stats, and expandable milestone table.',
+    component: MilestoneBurnup,
+    source: milestoneBurnupSource,
+  },
+  {
+    id: 'coding-terminal-workspace',
+    name: 'Terminal Workspace',
+    kind: 'page',
+    category: 'Coding',
+    description:
+      'Multi-tab terminal: session sidebar with activity dots, typed-record scrollback, split panes, scrollback search, and a mod+K palette.',
+    component: CodingTerminalWorkspace,
+    source: codingTerminalWorkspaceSource,
+  },
+  {
+    id: 'repl-playground',
+    name: 'REPL Playground',
+    kind: 'page',
+    category: 'Coding',
+    description:
+      'Two-pane code playground with a tokenized editor, example snippets, and a filterable run console.',
+    component: ReplPlayground,
+    source: replPlaygroundSource,
+  },
+  {
+    id: 'code-review-diff-queue',
+    name: 'Review Queue',
+    kind: 'page',
+    category: 'Coding',
+    description:
+      'Multi-file PR review with a file tree, viewed progress, inline threads, and a verdict dialog.',
+    component: CodeReviewDiffQueue,
+    source: codeReviewDiffQueueSource,
+  },
+  {
+    id: 'git-branch-graph',
+    name: 'Branch Graph',
+    kind: 'page',
+    category: 'Coding',
+    description:
+      'Lane-drawn commit DAG with colored rails, ref badges, branch filter, diffstat detail panel, and a compare-range mode.',
+    component: GitBranchGraph,
+    source: gitBranchGraphSource,
+  },
+  {
+    id: 'test-runner-console',
+    name: 'Test Runner',
+    kind: 'page',
+    category: 'Coding',
+    description:
+      'Suite tree with per-describe counts, filterable run stream with spinner rows, and a failure panel with stack trace and expected/received diff.',
+    component: TestRunnerConsole,
+    source: testRunnerConsoleSource,
+  },
+  {
+    id: 'editor-file-tabs-shell',
+    name: 'Editor Shell',
+    kind: 'page',
+    category: 'Coding',
+    description:
+      'IDE frame: explorer rail with git-status dots, dirty-dot tab strip, token-tinted code viewport with minimap, jump-to-line problems panel, and status bar.',
+    component: EditorFileTabsShell,
+    source: editorFileTabsShellSource,
   },
   {
     id: 'shell-left-sidebar',
