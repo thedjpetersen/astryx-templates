@@ -2209,4 +2209,32 @@ export const templates: TemplateEntry[] = [
     'Vertical Ops',
     'Stackleaf grow-room elevation view: 44px tier rows with PPFD/EC/pH micro-gauges and spectral photoperiod bars; shift-select tiers, stage a light recipe, watch the +4.2 kWh/day pill, push to controllers.',
   ),
+  entry(
+    'festival-screening-grid',
+    'Festival Screening Grid',
+    'page',
+    'Vertical Ops',
+    'Marquee Row five-venue festival board: screening blocks whose width is runtime, hatched Q&A buffers, print-traffic threads that flip red when a 35mm print cannot travel, guest-window ribbons, and a drag constraint engine that rewrites the health checklist live.',
+  ),
+  entry(
+    'pharmacy-verification-queue',
+    'Pharmacy Verification Queue',
+    'page',
+    'Vertical Ops',
+    "Pestle pharmacist release gate: 40px Rx queue rows against a working aside with a confidence-underlined sig translation, an upper-triangle interaction severity matrix with hatched severity-3 overrides, keyboard-acked regulatory flags, and an append-only audit ticker.",
+  ),
+  entry(
+    'ev-site-power-console',
+    'EV Site Power Console',
+    'page',
+    'Vertical Ops',
+    'Ampara depot power console: a 750 kVA budget ladder with hatched reserve, 72px stall-glyph canvas (SOC arc + connector silhouette + fault notch + curtailment striping), annotated session curves, and a detented site-cap slider whose 600→400 kW drag re-allocates every pane at once.',
+  ),
+  entry(
+    'ttrpg-encounter-tracker',
+    'TTRPG Encounter Tracker',
+    'page',
+    'Vertical Ops',
+    "Torchward GM combat console: a cyclic initiative ribbon with a sliding ember caret and HOLD rail, depleting-hexagon condition rings, a ledger of parsed dice rows with struck dropped dice, and one End Turn action that fans out expiries, scripted rolls, and HP re-derivation everywhere at once.",
+  ),
 ];
