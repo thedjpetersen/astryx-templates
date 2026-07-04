@@ -2153,4 +2153,32 @@ export const templates: TemplateEntry[] = [
     'Legal AI',
     'New-matter conflicts run in three specimens — scanning databases, amber potential-conflict with a relationship mini-diagram, and cleared-to-engage — with escalate and log actions.',
   ),
+  entry(
+    'claims-adjudication-workbench',
+    'Claims Adjudication Workbench',
+    'page',
+    'Vertical Ops',
+    'Payer-side claims examiner cockpit: pended-claims rail, CPT lines with scrubable billed-to-paid EOB waterfalls, and a rule-trace ladder that re-fires on every what-if.',
+  ),
+  entry(
+    'lims-plate-workbench',
+    'LIMS Plate Workbench',
+    'page',
+    'Vertical Ops',
+    'Bench-scientist LIMS console: inline-SVG 96-well plate beside the sample manifest, spatial selection filters the table, and a QC flag cascades holds through lineage to the release gate.',
+  ),
+  entry(
+    'grid-feeder-console',
+    'Grid Feeder Console',
+    'page',
+    'Vertical Ops',
+    'Distribution-grid SCADA console: one-line diagram with toggleable breakers, feeder load-headroom rail, and an interlocked switching order — tripping BKR-4 backfeeds the tie and floods the alarm bar.',
+  ),
+  entry(
+    'ham-contest-logger',
+    'Ham Contest Logger',
+    'page',
+    'Vertical Ops',
+    'Contest-weekend logging cockpit: type-to-resolve callsign entry with dupe/mult tinting, 32px QSO log, multiplier grid, beam-heading dial, and a live score derived from the same fold.',
+  ),
 ];
