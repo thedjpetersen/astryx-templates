@@ -2321,4 +2321,32 @@ export const templates: TemplateEntry[] = [
     'Mobile',
     "Wayline maps-free transit companion: inset-grouped departure boards with 64x48 tabular-nums countdown pills and crowd meters under a 4-tab shell — 'Start trip' reshapes four surfaces at once (large-detent LineStrand sheet, Line 4 ETA navBar, Alerts badge 2→3, Boarded pill) and a deterministic 'Next stop' stepper walks the bead to Fern St.",
   ),
+  entry(
+    'mobile-prescription-pickup',
+    'Larkspur Rx — Prescription Pickup',
+    'page',
+    'Mobile',
+    "Larkspur Rx pickup as a composable order: six 72px rx rows with capsule refill gauges and dual insurance/cash pricing feed a sticky cost footer, a ready-window day band, and a conditional interaction warning — the large-detent pickup pass's 6-char code and pseudo-barcode are pure functions of the selection (LK6248→LK9958 on one deselect).",
+  ),
+  entry(
+    'mobile-meditation-breath-player',
+    'Stillpoint — Breath Player',
+    'page',
+    'Mobile',
+    "Stillpoint 390px meditation player where one positionSec is the whole instrument: a 196px BreathOrb (phase arc + 34px beat countdown + 1.0→1.18 transform scale), a duration-weighted bead timeline, and chapter-tinted gradients — crossing any chapter boundary swaps the breathing pattern, retitles the navBar, and audibly ducks the Chimes layer for 8 s.",
+  ),
+  entry(
+    'mobile-sleep-morning-report',
+    'Somnary — Morning Sleep Report',
+    'page',
+    'Mobile',
+    "Somnary morning report where the hypnogram is the navigation spine: one cursorIndex scrubs 14 stepped stage segments and the '84 GOOD' four-factor ring, detail card, legend chips, navBar subtitle, and MEDIUM-detent stage sheet all answer for that moment — the 6-minute 3:14 AM waking stays tappable via 24px hit clamps, chevrons, and slider arrow keys.",
+  ),
+  entry(
+    'mobile-camera-roll-organizer',
+    'Shoebox — Camera Roll Organizer',
+    'page',
+    'Mobile',
+    "Shoebox 390px camera-roll triage: a full-bleed month-sectioned contact sheet with 2×2 feature tiles and derived day-chip counts — Select 3 thumbs into the 72px tray, file them to Hikes through the 55%-detent picker sheet and the tiles dissolve (7→4, 47→44, Hikes 24→27, badge 3), while fanned dupeStacks' 'Keep best' frees 7.8 MB from a live 20.2 MB summary.",
+  ),
 ];
