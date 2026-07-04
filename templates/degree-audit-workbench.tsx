@@ -450,7 +450,10 @@ const styles: Record<string, CSSProperties> = {
     inset: 0,
     borderRadius: 999,
     backgroundColor: BRAND_FILL,
-    transformOrigin: 'left center',
+    // Translated, not scaled: scaleX squashes the pill's right cap into a
+    // near-flat edge. Sliding a full-width pill left keeps the true rounded
+    // right cap while the track's overflow:hidden shapes the left edge —
+    // and translateX is still a transform, so the 300ms motion rule holds.
   },
   meterNotch: {
     position: 'absolute',
@@ -1358,7 +1361,7 @@ function CreditMeter({counted, required, surplus}: {counted: number; required: n
   const ratio = required > 0 ? Math.min(counted / required, 1) : 0;
   return (
     <div style={styles.meterTrack} aria-hidden>
-      <div className="daw-meter" style={{...styles.meterFill, transform: `scaleX(${ratio})`}} />
+      <div className="daw-meter" style={{...styles.meterFill, transform: `translateX(${(ratio - 1) * 100}%)`}} />
       {surplus > 0 ? <div style={styles.meterNotch} /> : null}
     </div>
   );

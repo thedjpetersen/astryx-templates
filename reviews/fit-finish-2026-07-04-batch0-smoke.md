@@ -103,3 +103,14 @@ Notable refutations: pharmacy VERIFY chip "burns in dark" (properly inverted), f
 - festival + ttrpg: fixed inline earlier this pass (recorded above).
 
 Batch 3 closed: 31 claims → 6 fixed, 25 refuted. Day total across 3 batches: 84 claims adjudicated, 23 fixed, 1 by-design, 60 refuted (71%).
+
+# Batch 4 analyze pass (workflow wf_ddb8c576-163, 2026-07-04)
+
+4 confirmed / 28 refuted (87.5%). court-docketing-console CLEAN (0/8).
+
+- **HIGH→FIXED** election [both]: gauge panel content (~148px: wrapped caption 43 + SVG 36 + baseline-inflated readouts 46) overflowed the 132px panel — GAUGE_H 132→152, readouts row made font-metric-deterministic (flex-end + explicit line heights = exactly 32px); DOM-proved 3.3px slack.
+- **MEDIUM→FIXED** election [both]: 92px county label column at exactly zero slack flipped truncation onto the percent under harness font metrics — LABEL_W 92→96, pct nowrap+flexShrink:0, name owns the ellipsis; DOM-proved pct scrollWidth==clientWidth.
+- **MEDIUM→FIXED** rundown [both]: ghost backtime ran under RESTORE — ghostHit now shrinkable (minWidth 0 + ellipsis); verified "was 18…" clear of the button.
+- **LOW→FIXED** degree [both]: scaleX squashed the meter fill's right cap — switched to translateX of a full-width pill (still transform-animated); rounded cap verified at 6x zoom.
+
+Day totals (4 batches): 116 claims adjudicated — 27 fixed, 1 by-design, 88 refuted (76%).

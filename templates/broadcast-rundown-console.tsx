@@ -548,6 +548,11 @@ const styles: Record<string, CSSProperties> = {
     textDecoration: 'line-through',
     opacity: 0.5,
     whiteSpace: 'nowrap',
+    // Shrinkable flex item: without these the nowrap ghost time runs under
+    // the RESTORE button at narrow shelf-card widths.
+    minWidth: 0,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   },
   restoreButton: {
     display: 'inline-flex',

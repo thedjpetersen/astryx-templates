@@ -36,7 +36,7 @@
  *   CallDeskBar 64px. Left RaceRail 300px wide, rail rows 84px. Right
  *   BatchLedgerTape 340px wide, tape entries 96px collapsed / auto
  *   expanded. Matrix rows 32px, matrix cells 20px wide x 24px tall, 2px
- *   cell gap, 92px county-label column. Gauge panel 132px tall, envelope
+ *   cell gap, 96px county-label column. Gauge panel 152px tall, envelope
  *   band 12px, margin marker 4px. Panel padding 16px, inter-panel gutter
  *   16px. Font scale: 11 (micro labels), 12 (body/meta), 13 (controls),
  *   15 (row titles), 20 (ticker leads + gauge margin readout). All
@@ -207,8 +207,8 @@ const MATRIX_ROW_H = 32;
 const CELL_W = 20; // >=1024 band budget; 24 at 860–1023 (see cellWidth calc)
 const CELL_H = 24;
 const CELL_GAP = 2;
-const LABEL_W = 92;
-const GAUGE_H = 132;
+const LABEL_W = 96;
+const GAUGE_H = 152;
 const BAND_H = 12;
 const MARKER_W = 4;
 const PAD = 16;
@@ -417,7 +417,7 @@ const styles: Record<string, CSSProperties> = {
   },
   countyHeader: {
     // +8 compensates the button's own 4px side padding (border-box) so the
-    // visible label column stays exactly 92px wide.
+    // visible label column stays exactly 96px wide.
     width: LABEL_W + 8,
     flexShrink: 0,
     display: 'flex',
@@ -435,7 +435,10 @@ const styles: Record<string, CSSProperties> = {
     textAlign: 'start',
   },
   // Flex pair: the name ellipsizes, the integer % is pinned — "Brightwater
-  // 45%" is the width stress for the fixed 92px column.
+  // 45%" is the width stress for the fixed 96px column. The % span must
+  // stay flexShrink 0 + nowrap with NO overflow clipping so digit-width
+  // variance across host fonts can only ever truncate the name, never the
+  // percent.
   countyName: {
     display: 'flex',
     alignItems: 'baseline',
@@ -495,7 +498,11 @@ const styles: Record<string, CSSProperties> = {
     overflow: 'hidden',
   },
   // Gauge -----------------------------------------------------------------------
-  // 132px budget: 32 padding + 16 title + 36 svg + 30 readouts + 2×4 gaps.
+  // 152px budget: 32 padding + 2 border + title row 43 (the axis caption
+  // wraps to a second line at the desk-width panel; −4 margin cancels the
+  // panel gap) + 36 svg + 4 gap + 32 readouts (explicit line heights below
+  // keep the row at max(24, 14+18) = 32 regardless of host font metrics)
+  // = ~149, leaving ~3px of metric slack.
   gaugePanel: {
     height: GAUGE_H,
     flexShrink: 0,
@@ -503,16 +510,19 @@ const styles: Record<string, CSSProperties> = {
     gap: 4,
   },
   gaugeBody: {position: 'relative', height: 36, flexShrink: 0},
+  // flex-end (not baseline): baseline-aligning the 20px margin readout
+  // against the label-over-value columns inflated the row to ~46px and
+  // spilled past the fixed panel; bottom alignment caps it at 32px.
   gaugeReadouts: {
     display: 'flex',
-    alignItems: 'baseline',
+    alignItems: 'flex-end',
     gap: PAD,
     fontVariantNumeric: 'tabular-nums',
     whiteSpace: 'nowrap',
   },
-  gaugeMarginReadout: {fontSize: 20, fontWeight: 700},
-  readoutLabel: {fontSize: 11, color: 'var(--color-text-secondary)'},
-  readoutValue: {fontSize: 13, fontWeight: 600},
+  gaugeMarginReadout: {fontSize: 20, fontWeight: 700, lineHeight: '24px'},
+  readoutLabel: {fontSize: 11, lineHeight: '14px', color: 'var(--color-text-secondary)'},
+  readoutValue: {fontSize: 13, fontWeight: 600, lineHeight: '18px'},
   gaugeOverlay: {position: 'absolute', top: 0, height: '100%'},
   // Tally table -------------------------------------------------------------
   tallyRow: {
@@ -1369,14 +1379,14 @@ function CountyHeaderButton({row, isFiltered, onToggleFilter}: {
           backgroundColor: isFiltered ? BRAND_SOFT : undefined,
         }}
         onClick={() => onToggleFilter(row.county.id)}>
-        {/* Integer % in the 92px header (one-decimal value lives in the
+        {/* Integer % in the 96px header (one-decimal value lives in the
             aria-label + tooltip). "Brightwater" is the column's width
-            stress: the name ellipsizes a few px against the fixed 92px
+            stress: the name ellipsizes a few px against the fixed 96px
             label column while the % stays pinned — full name + exact
             figures always recoverable from the tooltip and aria-label. */}
         <span style={{...styles.countyName, color: isFiltered ? BRAND_TEXT : undefined}}>
           <span style={styles.countyNameText}>{row.county.name}</span>
-          <span style={{fontSize: 11, fontWeight: 400, flexShrink: 0, fontVariantNumeric: 'tabular-nums'}}>
+          <span style={{fontSize: 11, fontWeight: 400, flexShrink: 0, whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums'}}>
             {Math.round(pct)}%
           </span>
         </span>
