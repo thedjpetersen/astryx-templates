@@ -1,0 +1,14 @@
+// Copyright (c) Meta Platforms, Inc. and affiliates.
+
+import type {AstryxPageTemplate} from '@astryxdesign/cli/template';
+
+const template = {
+  type: 'page',
+  name: 'Wayline — Transit Companion',
+  description:
+    "Maps-free MOBILE transit companion for the fictional Wayline network, anchored at 7:59 AM: a sticky 52px navBar (stop name + RefreshCw over a blur hairline surface) above inset-grouped headsign departure boards — 52px header rows (28x28 line badge, ellipsizing headsign, bay meta) over 64px horizontal pill rails of 64x48 tabular-nums countdown buttons ('3 min' over a 3-cell crowd meter; the soonest pill brand-filled with a pulsing dot, static under reduced motion) — framed by an exactly-64px 4-tab tabBar (Nearby / Lines / Saved / Alerts with a derived badge). Twelve cross-checked departures (Cedar Junction 8 + Alder & 3rd 4; every mins value = clock − 7:59; crowd legend 5 light · 4 moderate · 3 full sums to the same 12) include a delay amendment (Line 12's 8:05 shows struck '8:01' + '+4 min') and the Line 22 long-headsign truncation fixture. Tapping any departure opens a two-detent bottom sheet (36x5 grabber is a real Resize button; medium 55% / large calc(100%−56px)); pressing the 48px 'Start trip' flips ONE trip state that reshapes four surfaces at once — the sheet takes the large detent with the 7-stop LineStrand spine (Willow Park skipped: dashed rail span, hollow bead, 44px italic row), the navBar swaps to a Line 4 badge + 'ETA 8:14 / to Fern St', the Alerts badge grows 2 → 3 with a reroute advisory row, and the Nearby 8:02 pill turns Boarded (brand outline + check) — while the deterministic 'Next stop' stepper advances the current bead and announces 'Two stops to Fern St' from the single polite live region; 'End trip' restores all four, and X/scrim/Escape merely collapse the sheet, leaving a bottom-right 'Resume · ETA 8:14' pill. Saved rows swipe to reveal a −72px Remove action AND carry a visible 44x44 ellipsis opening the same action as an anchored menu (full keyboard path; deleting all three yields the empty-state card whose 'Browse lines' button switches tabs). Desktop stage renders the phone experience as a centered 430px column via a ResizeObserver container query. Choose over bottom-sheet-snap-explorer when the surface is a complete phone APP SHELL — navBar + tabBar + tab views whose chrome reshapes around a live trip — not a single sheet-mechanics demo; choose over boarding-pass-wallet when the job is live departures, crowding, and in-trip stop-by-stop guidance, not stored passes and QR presentation; choose over grid-feeder-console or any desktop ops console when the 390px stage is the viewport and every interaction must survive a thumb — 44x44 targets, gesture-with-button-path, push-stack navigation, no asides, no data tables.",
+  category: 'Mobile',
+  componentsUsed: ['Icon'],
+} satisfies AstryxPageTemplate;
+
+export default template;

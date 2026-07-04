@@ -1,0 +1,14 @@
+// Copyright (c) Meta Platforms, Inc. and affiliates.
+
+import type {AstryxPageTemplate} from '@astryxdesign/cli/template';
+
+const template = {
+  type: 'page',
+  name: 'Lunara Cycle Wheel',
+  description:
+    "MOBILE template (390px shell, no simulated OS chrome) — Lunara cycle tracking as a single readable dial on day 16 of a 28-day cycle: a 320px 28-day circular wheel whose four phase-band arcs (menstrual 1–5, follicular 6–13, ovulatory 14–16, luteal 17–28; 5+8+3+12 = 28) render at strokeWidth 28 on r=118, with predicted days 17–28 at 45% opacity under a 6×6 45° hatch pattern; 28 rotated 26×64px day-tick <button>s (role=radio radiogroup with roving tabindex, Home=1/End=28 — the documented sub-44 exception, covered by 44×44 prev/next chevrons), a today ring on 16, a brand disc on the selected day, 4px log dots at r=142 on exactly the 11 logged days, and a 176px hub reading phase overline / 'Day 16' 28px tabular / 'of 28' / '2 logged'; picking any day swaps a phase insight card (2-line clamped copy, 'Predicted - hatched on the wheel' banner past day 16), re-anchors a 14-segment days-9–22 fertile-window band (solid core 12–16, ±2d hatched confidence caps 10–11 and 17–18, needle marker with out-of-window caption), and reloads a 3×2 tri-level symptom chip grid (none→mild→strong with 0/50/100% interior fill and 0/1/2 dot clusters) whose taps echo log dots straight back onto the wheel; a recent-days listCard (60px rows: Day 16 'Headache strong - Poor sleep mild' ·2, 15, 14, 12, 10 — counts 2,1,2,1,1) re-selects the wheel from below; an Insights view derives stat tiles (16 entries · 11/16 days · 5 strong), per-symptom frequency bars (Cramps 5 days · 2 strong at full scale), and a cycle-length card averaging (29+27+28)/3 = 28d — every aggregate recomputed live from the one logs record; a 64px tab bar (Today · Log action tab with aria-haspopup · Insights) opens a medium/large two-detent log sheet whose None/Mild/Strong segmented radiogroups write through the identical update path, with sentinel focus trap, Escape/scrim/X close, and a single polite live-region toast ('Day 16 log saved - 2 symptoms'). One state owner useLunara() with update(id, patch); deterministic date-free fixtures (no month names, no Date objects). Choose over place-explorer-sheet-map when the hero is a cyclical DIAL with per-day radial selection and phase arcs, not a map under a draggable sheet; choose over subscription-paywall-sheet when the bottom sheet EDITS tri-level log state that ripples into wheel dots and derived stats, not a plan-picker specimen; choose over habit-tracker-streaks (if present) or any desktop dashboard when the surface must be a thumb-first 390px phone shell with a tab bar, 44×44 targets, and gesture-with-button-path law rather than a wide multi-pane console.",
+  category: 'Health, fitness and lifestyle',
+  componentsUsed: ['Icon'],
+} satisfies AstryxPageTemplate;
+
+export default template;

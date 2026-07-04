@@ -2293,4 +2293,32 @@ export const templates: TemplateEntry[] = [
     'Vertical Ops',
     "Ottavo print-pagination board: 96 pages as facing-page spreads under six signature brackets with dog-ear proof glyphs and covenant-notched ad/edit gauges — dragging Meridian's RHP-guaranteed ad onto a verso renumbers folios, raises the red RHP chip, drops Features to 59% amber, and blocks 'Export forms'.",
   ),
+  entry(
+    'mobile-p2p-payment-flow',
+    'Mobile P2P Payment Flow',
+    'page',
+    'Mobile',
+    "Zinnia Pay thumb-first send flow (Contacts → Amount → Confirm sheet): one amountCents integer drives a rolling 44px display, 64px-key keypad, three-way split math with remainder-cent locking, a threshold-flipping fee pill, and a torn-edge receipt — 'Send now' unshifts the activity feed and the balance visibly recomputes $1,362.60 → $1,311.85.",
+  ),
+  entry(
+    'mobile-cycle-phase-wheel',
+    'Lunara Cycle Wheel',
+    'page',
+    'Mobile',
+    'Lunara cycle tracker as one readable dial: a 28-day wheel with per-day tick buttons, hatched prediction bands, a graded-confidence fertile window, and tri-level symptom chips whose edits echo log dots back onto the wheel via a two-detent log sheet.',
+  ),
+  entry(
+    'mobile-parking-session',
+    'Curbit — Parking Session',
+    'page',
+    'Mobile',
+    "Curbit 390px parking-meter surface: a 270° sessionDial with paid-until and zone-max ticks over a posted-sign rate card and swipeable receipts — the extend sheet's one pendingMinutes value draws a ghost arc behind the sheet, straddles rate tiers in the price breakdown, and rewrites confirm to 'Extend to 3:45 PM · $2.50'.",
+  ),
+  entry(
+    'mobile-transit-companion',
+    'Wayline — Transit Companion',
+    'page',
+    'Mobile',
+    "Wayline maps-free transit companion: inset-grouped departure boards with 64x48 tabular-nums countdown pills and crowd meters under a 4-tab shell — 'Start trip' reshapes four surfaces at once (large-detent LineStrand sheet, Line 4 ETA navBar, Alerts badge 2→3, Boarded pill) and a deterministic 'Next stop' stepper walks the bead to Fern St.",
+  ),
 ];

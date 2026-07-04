@@ -1,0 +1,14 @@
+// Copyright (c) Meta Platforms, Inc. and affiliates.
+
+import type {AstryxPageTemplate} from '@astryxdesign/cli/template';
+
+const template = {
+  type: 'page',
+  name: 'Curbit — Parking Session',
+  description:
+    "MOBILE (390px shell) parking-meter session surface for Curbit, frozen at 2:12 PM: a 52px navBar (28px Curbit meter mark, ZONE D · Meridian Ave pill, 44×44 Help) over a 220px radial sessionDial — a 270° gauge (−135°→+135°, 1.5°/min against the 3 h zone cap) with the elapsed arc at −49.5° (57 min), the paid-until tick at 12 o'clock (90 paid minutes, 2:45 PM), a red MAX tick at +135°, and a 34px tabular '0:33' countdown — then a 44px Started/Ends/Zone-max statusStrip, a municipal-signage zoneRateCard (40px 'D' block, Sign #D-114, two 44px tier rows — $2.00/hr to 2 h with a brand-tint NOW pill, $3.00/hr after — a 36px enforcement band, and a tow-away warning row, every row a real affordance), a 72px vehicle media row (Blue Fit · 7KDM214 · Visa ··4417) with an anchored two-vehicle change menu, four swipeable 60px receipt rows summing live to the 'THIS WEEK · $11.25' header (72px brand Email block at −72px plus the mandatory 44×44 ellipsis fallback menu), and a sticky End-session/Extend footer. The signature move is extension-with-consequences: the medium-detent (55%) extend sheet's presets (+30 min / +1 hour / To max) and ±15 stepper write ONE pendingMinutes value that simultaneously draws a dashed ghost arc on the dial visible above the sheet, recomputes the tiered price breakdown line-by-line (+45 straddles tiers: $1.00 + $0.75), flags the rate card's tier-2 row PREVIEW, enforces the 3 h cap (capNotice + disabled steppers at 'To max'), and rewrites the confirm button to 'Extend to 3:45 PM · $2.50'; confirming rotates the paid tick to +90°, appends receipt rcpt_04b, bumps the weekly header to $13.75, and announces via the single aria-live toast. End-session flows through a confirm sheet to an 'Ended / at 2:12 PM' dial state with an honest fixture-reset 'Start new session' footer. At desktop container widths (≥720px) it renders as a centered 430px phone column with hairline borders, never a stretched relayout. Choose over bottom-sheet-snap-explorer when the surface is a real consumer parking app whose sheet drives cross-surface consequences (ghost arc, rate-card chips, receipts ledger), not a sheet-mechanics playground; choose over boarding-pass-wallet when the object is a LIVE metered session with countdown gauge, tiered pricing math, and extend/end verbs, not a static pass to present; choose over dashboard-executive-summary or any desktop template when the brief calls for a phone-first 390px shell with sticky navBar/footer, bottom sheets, swipe-reveal rows, and 44×44 touch targets.",
+  category: 'Mobile',
+  componentsUsed: ['Icon'],
+} satisfies AstryxPageTemplate;
+
+export default template;

@@ -49,3 +49,23 @@ Produced by the 3-lens ideation workflow (physical ops / regulated verticals / c
 | cold-chain-lane-monitor | 21.00 | Tools - Cold-Chain Monitoring | backlog |
 | rare-sighting-vetting | 20.67 | Science - Birding & Citizen Science | backlog |
 | permit-plan-review | 18.00 | Built Environment / Gov | VETOED |
+
+## Mobile kit ideation (2026-07-04 pivot; foundations in /tmp/mobile-foundations.json + workflow wf_ad54cf1b-9fd)
+
+| Slug | Score | Category | Status |
+|---|---|---|---|
+| mobile-parking-session | 24.67 | Money & Logistics — Urban Parking | IN BUILD (mobile batch 1) |
+| mobile-transit-companion | 23.67 | Travel & Transit | IN BUILD (mobile batch 1) |
+| mobile-p2p-payment-flow | 23.67 | Money & Logistics — P2P Payments | IN BUILD (mobile batch 1) |
+| mobile-cycle-phase-wheel | 23.33 | Health, fitness and lifestyle | IN BUILD (mobile batch 1) |
+| mobile-prescription-pickup | 23.00 | Money & Logistics — Pharmacy Pickup | backlog |
+| mobile-meditation-breath-player | 22.33 | Health, fitness and lifestyle | backlog |
+| mobile-camera-roll-organizer | 22.00 | Media & Photos | backlog |
+| mobile-sleep-morning-report | 22.00 | Health, fitness and lifestyle | backlog |
+| mobile-meal-quickadd-log | 22.00 | Health, fitness and lifestyle | backlog |
+| mobile-run-route-recap | 21.33 | Health, fitness and lifestyle | backlog |
+| mobile-podcast-queue | 20.33 | Audio | backlog |
+| mobile-calendar-day-sheet | 19.67 | Productivity | VETOED |
+| mobile-banking-home-insights | 19.67 | Money & Logistics — Consumer Banking | backlog |
+| mobile-messaging-thread | 18.67 | Communication | VETOED |
+| mobile-food-delivery-tracking | 18.33 | Money & Logistics — Food Delivery | VETOED |
