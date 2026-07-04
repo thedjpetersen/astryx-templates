@@ -2265,4 +2265,32 @@ export const templates: TemplateEntry[] = [
     'Vertical Ops',
     "Rotunda canvass-night desk: verify pre-scripted ballot batches on an append-only ledger tape and watch three races re-tally at once — matrix cells saturate, the call-confidence envelope narrows, and Senate flips CALLABLE by exactly 80 votes at B-09.",
   ),
+  entry(
+    'public-records-console',
+    'Public Records Console',
+    'page',
+    'Vertical Ops',
+    "Daylight FOIA officer console: a 20-business-day statutory clock with hatched tolling spans excluded from the sum, scrubbable page-level exemption maps, and a fee-reconciling disposition ledger — one 'Request clarification' action tolls the clock, flips the queue chip to TOLLED ⏸, decrements the at-risk counter, and files the templated letter.",
+  ),
+  entry(
+    'crane-lift-planner',
+    'Crane Lift Planner',
+    'page',
+    'Vertical Ops',
+    "Hoistwell lift-planning workbench: drag the set point on a top-down radius plot and the boom-sweep annulus, load-chart matrix crosshair, 180° capacity gauge, and required-signoff list all re-derive live — crossing 75% of chart flips the plan to amber CRITICAL LIFT and injects two PE/safety signoff rows.",
+  ),
+  entry(
+    'elevator-compliance-console',
+    'Elevator Compliance Console',
+    'page',
+    'Vertical Ops',
+    "Liftledger portfolio elevator-compliance console: true vertical shaft-bank SVGs with a dashed skipped 13th floor, per-car regulatory-window bands (valid → due → hatched grace → violation with a hard cutoff tick), and a cure-path stepper — logging one CAT1 test ripples band, shaft dot, rail chip, 71%→76% meter, and stepper in one beat.",
+  ),
+  entry(
+    'magazine-flatplan-board',
+    'Magazine Flatplan Board',
+    'page',
+    'Vertical Ops',
+    "Ottavo print-pagination board: 96 pages as facing-page spreads under six signature brackets with dog-ear proof glyphs and covenant-notched ad/edit gauges — dragging Meridian's RHP-guaranteed ad onto a verso renumbers folios, raises the red RHP chip, drops Features to 59% amber, and blocks 'Export forms'.",
+  ),
 ];
