@@ -2181,4 +2181,32 @@ export const templates: TemplateEntry[] = [
     'Vertical Ops',
     'Contest-weekend logging cockpit: type-to-resolve callsign entry with dupe/mult tinting, 32px QSO log, multiplier grid, beam-heading dial, and a live score derived from the same fold.',
   ),
+  entry(
+    'kds-expo-line',
+    'KDS Expo Line',
+    'page',
+    'Vertical Ops',
+    "Expeditor's kitchen display: horizontally scrolling rail of 244px fire tickets with tri-state hold/fire/plate rows, radial ticket-age chips, station load meters, and an expo aside whose all-day counts re-derive on every plate.",
+  ),
+  entry(
+    'trial-site-monitor',
+    'Trial Site Monitor',
+    'page',
+    'Vertical Ops',
+    'CRA site-monitoring cockpit: participants-by-visits window matrix with bracket-relative date dots, a CTCAE grade selector whose Grade>=3 + related threshold cascades the full SAE workflow, and query lifecycle chips on cells.',
+  ),
+  entry(
+    'ramp-turnaround-console',
+    'Ramp Turnaround Console',
+    'page',
+    'Vertical Ops',
+    'Ramp coordinator stand board: 56px turnaround gantt rows with draggable fuel bars, a dependency solver that re-routes the critical-path glow, delay-attribution log rows, and a sequential-arming pushback clearance stack.',
+  ),
+  entry(
+    'vertical-farm-rack-console',
+    'Vertical Farm Rack Console',
+    'page',
+    'Vertical Ops',
+    'Stackleaf grow-room elevation view: 44px tier rows with PPFD/EC/pH micro-gauges and spectral photoperiod bars; shift-select tiers, stage a light recipe, watch the +4.2 kWh/day pill, push to controllers.',
+  ),
 ];
