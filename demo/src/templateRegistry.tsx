@@ -2349,4 +2349,25 @@ export const templates: TemplateEntry[] = [
     'Mobile',
     "Shoebox 390px camera-roll triage: a full-bleed month-sectioned contact sheet with 2×2 feature tiles and derived day-chip counts — Select 3 thumbs into the 72px tray, file them to Hikes through the 55%-detent picker sheet and the tiles dissolve (7→4, 47→44, Hikes 24→27, badge 3), while fanned dupeStacks' 'Keep best' frees 7.8 MB from a live 20.2 MB summary.",
   ),
+  entry(
+    'mobile-list-input-gallery',
+    'Lists & Inputs — Specimen Gallery',
+    'page',
+    'Mobile',
+    "The mobile kit's annotated px contract in 13 specimens: 44/60/72 rows, frozen swipe-reveal at −152px, a letter-•-letter A–Z scrubber with 56px HUD, load-more to 'All 12 items', exact empty/skeleton anatomy, 51×31 switch, 96×32 stepper, validate-on-blur email, 32px chips, frozen search recents, and a snap carousel — every state under an 11px tabular-nums annotation.",
+  ),
+  entry(
+    'mobile-overlay-gallery',
+    'Overlay & Feedback Gallery',
+    'page',
+    'Mobile',
+    "The mobile overlay/feedback contracts as citable specimens: a frozen open action sheet (56px rows, destructive last, panic-safe Cancel card) with the sheet/alert/actionSheet decision table, a LIVE anchored menu with focus-restore narration, a real archive→Undo toast round-trip proving the one-toast law, the centered alert, severity banners, 99+ badges, a shared-pct ring+bar, and the ten-rung z ladder — frozen states aria-hidden, every number in 11px annotations.",
+  ),
+  entry(
+    'mobile-chrome-gallery',
+    'Kestrel — Mobile Chrome Gallery',
+    'page',
+    'Mobile',
+    "The mobile kit's shell-chrome contract as 17 annotated specimens: four navBar variants, the 64px tabBar (LIVE 5-tab tint + 99+ badges + editToolbar swap), a LIVE 200ms segmented radiogroup, FAB and footer-CTA stills (incl. the one legal 16px spinner), frozen 55%/large sheet detents, a z50 cover, and the zIndex/motion legend — with a navBar Sun/Moon switch that flips the shell's colorScheme to prove both themes per frame.",
+  ),
 ];
