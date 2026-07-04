@@ -2237,4 +2237,32 @@ export const templates: TemplateEntry[] = [
     'Vertical Ops',
     "Torchward GM combat console: a cyclic initiative ribbon with a sliding ember caret and HOLD rail, depleting-hexagon condition rings, a ledger of parsed dice rows with struck dropped dice, and one End Turn action that fans out expiries, scripted rolls, and HP re-derivation everywhere at once.",
   ),
+  entry(
+    'broadcast-rundown-console',
+    'Broadcast Rundown Console',
+    'page',
+    'Vertical Ops',
+    "Cuelight producer rundown for 'The Six': a clockless timing table whose cascading BacktimeSpine, tri-lamp readiness matrix, and FloatShelf of excluded rows all re-derive when floating a 1:00 VO flips the show from +0:42 HEAVY to -0:18 LIGHT against the 18:28:30 hard out.",
+  ),
+  entry(
+    'court-docketing-console',
+    'Court Docketing Console',
+    'page',
+    'Vertical Ops',
+    'Sessions clerk-of-court console: an e-filing intake queue feeding a legally-numbered docket sequencer, a deadline chain rail that shows its offset arithmetic, and a judge-by-slot session grid — accepting one proof of service stamps entry #13, cascades +11d deltas, books two sessions, and flips the header flags.',
+  ),
+  entry(
+    'degree-audit-workbench',
+    'Degree Audit Workbench',
+    'page',
+    'Vertical Ops',
+    "Laurel registrar degree-audit board: drag course chips from an 8-row tray into a gate-badged requirement tree where n-of-m gates and credit pools recompute per drop, dashed exclusivity arcs auto-vacate double-counted buckets, List B overflow routes surplus to Free Electives, and approving EXC-1057 places three transfer fragments at once (78→82 cr, ring 65.0%→68.3%).",
+  ),
+  entry(
+    'election-returns-desk',
+    'Election Returns Desk',
+    'page',
+    'Vertical Ops',
+    "Rotunda canvass-night desk: verify pre-scripted ballot batches on an append-only ledger tape and watch three races re-tally at once — matrix cells saturate, the call-confidence envelope narrows, and Senate flips CALLABLE by exactly 80 votes at B-09.",
+  ),
 ];

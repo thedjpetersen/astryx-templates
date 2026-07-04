@@ -26,3 +26,26 @@ Produced by the 3-lens ideation workflow (physical ops / regulated verticals / c
 | league-fixture-console | 23.3 | Community - Sports League ("Groundsheet") | League table as live consequence of fixture decisions; standings-ripple preview; tiebreak-aware table |
 | cold-chain-lane-monitor | 21.7 | Tools - Cold-Chain | Excursion scrubber: how far out of band, for how long, in whose custody |
 | rare-sighting-vetting | 21.3 | Science - Birding ("Perchline") | Records-committee vetting: sonogram + seasonal expectation curve + observer track record on one screen |
+
+## Batch 4 ideation (2026-07-04, fresh lenses: civic/education, media/newsroom, built environment + 3 backlog survivors)
+
+| Slug | Score | Category | Status |
+|---|---|---|---|
+| election-returns-desk | 25.33 | Public Sector / Elections | IN BUILD (batch 4) |
+| broadcast-rundown-console | 25.00 | Media, publishing & live-events production | IN BUILD (batch 4) |
+| court-docketing-console | 24.33 | Public Sector / Courts | IN BUILD (batch 4) |
+| degree-audit-workbench | 24.33 | Education / Registrar | IN BUILD (batch 4) |
+| public-records-console | 23.67 | Public Sector / Transparency | backlog |
+| crane-lift-planner | 23.67 | Construction Engineering | backlog |
+| elevator-compliance-console | 23.67 | Property Operations | backlog |
+| magazine-flatplan-board | 23.33 | Media, publishing & live-events production | backlog |
+| municipal-plan-review | 23.00 | Public Sector / Permitting | backlog |
+| wire-assignment-desk | 22.67 | Media, publishing & live-events production | backlog |
+| podcast-ad-traffic-console | 22.67 | Media, publishing & live-events production | backlog |
+| photo-desk-rights-console | 22.33 | Media, publishing & live-events production | backlog |
+| drawing-set-revision-control | 22.33 | Architecture / AEC | backlog |
+| league-fixture-console | 22.33 | Community - Sports League Operations | backlog |
+| punch-list-walkthrough | 21.67 | Construction Field Ops | backlog |
+| cold-chain-lane-monitor | 21.00 | Tools - Cold-Chain Monitoring | backlog |
+| rare-sighting-vetting | 20.67 | Science - Birding & Citizen Science | backlog |
+| permit-plan-review | 18.00 | Built Environment / Gov | VETOED |
