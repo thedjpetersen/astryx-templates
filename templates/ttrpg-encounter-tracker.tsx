@@ -1569,8 +1569,14 @@ const SHORT_NAME: Record<string, string> = {
   [C_INQUISITOR]: 'Malachai',
 };
 
+// Text-on-row variant of HP_OK: as 11px ledger text, HP_OK's light half
+// #0B991F measures 3.76:1 on the white row — below 4.5:1 AA. #0B7F1B ≈ 5.5:1
+// on white; dark half unchanged (#34C759 ≈ 8.9:1 on #1E1E1E). Fill/ring uses
+// of HP_OK are unaffected.
+const HP_OK_TEXT = 'light-dark(#0B7F1B, #34C759)';
+
 const VERDICT_COLOR: Record<Verdict, string> = {
-  HIT: HP_OK,
+  HIT: HP_OK_TEXT,
   MISS: 'var(--color-text-secondary)',
   SAVE: SAVE_BLUE,
   // Quarantine rule: CRIT is the only verdict that would want the brand

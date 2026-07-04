@@ -84,3 +84,22 @@ grid-feeder-console is CLEAN post-fix. Analyze pass now complete across all four
 - kds-expo-line: WONT-FIX (by design), recorded above.
 
 Batch 2 closed: 29 claims → 3 fixed, 1 ruled by-design, 25 refuted.
+
+# Batch 3 analyze pass (workflow wf_af1a7d85-01d, 2026-07-04)
+
+6 confirmed / 25 refuted (81%). ev-site-power-console CLEAN (0/8 survived).
+
+- **HIGH** pharmacy [both]: vertical matrix column header clips "trim/sulf"→"im/sulf" (44px header box too short) — fix agent dispatched.
+- **HIGH** pharmacy [both]: audit-ticker pill flat-cut mid-glyph while ~290px footer space idles — aria-hidden flex:1 spacer competes with tickerList flex:1 — fix agent dispatched.
+- **LOW** pharmacy ×2: duplicated "JT" initials in header identity; flat keycap legend — same agent.
+- **MEDIUM→FIXED** festival [both]: blockMeta spans flat-cut mid-glyph ("220 seat|") — added blockMetaText (minWidth 0 + overflow hidden + ellipsis) to the runtime/seats spans; verified "1h 27… DCP 220 sea…" at 4x zoom (/tmp/vfix-fest2.png).
+- **LOW→FIXED** ttrpg [light]: HIT ledger label 3.76:1 — added HP_OK_TEXT light-dark(#0B7F1B, #34C759) (≈5.5:1 light) per the fill-vs-text split convention; fills keep HP_OK. Verified in re-shoot.
+
+Notable refutations: pharmacy VERIFY chip "burns in dark" (properly inverted), festival z-index inversion (stacking parity intact both themes), ttrpg 8/8 and ev 8/8 wholesale hallucinations.
+
+## Batch 3 fix outcomes (2026-07-04)
+
+- pharmacy: FIXED ×4 — column-header box 44→64px (full "trim/sulf"); collapsed-only spacer so tickerList owns the free width (pill #103 complete with rounded cap); identity label deduped to "J. Tan, PharmD"; keycap legend now DS Kbd chips (matching workforce-approvals-inbox idiom). Crop proofs in /tmp/astryx-uiux/b3-pharm-fix/.
+- festival + ttrpg: fixed inline earlier this pass (recorded above).
+
+Batch 3 closed: 31 claims → 6 fixed, 25 refuted. Day total across 3 batches: 84 claims adjudicated, 23 fixed, 1 by-design, 60 refuted (71%).

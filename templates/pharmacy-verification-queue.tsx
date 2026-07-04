@@ -97,6 +97,7 @@ import {Badge} from '@astryxdesign/core/Badge';
 import {Button} from '@astryxdesign/core/Button';
 import {DropdownMenu, DropdownMenuItem} from '@astryxdesign/core/DropdownMenu';
 import {Icon} from '@astryxdesign/core/Icon';
+import {Kbd} from '@astryxdesign/core/Kbd';
 import {Popover} from '@astryxdesign/core/Popover';
 import {RadioList, RadioListItem} from '@astryxdesign/core/RadioList';
 import {TextInput} from '@astryxdesign/core/TextInput';
@@ -1238,7 +1239,17 @@ const styles: Record<string, CSSProperties> = {
     fontSize: 12,
     color: 'var(--color-text-secondary)',
   },
-  keycapLegend: {fontFamily: MONO, fontSize: 11, color: 'var(--color-text-secondary)', whiteSpace: 'nowrap'},
+  // Keystroke chars render as DS Kbd chips (the workforce-approvals idiom)
+  // so keys read as keycaps, separated from their lowercase labels.
+  keycapLegend: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 4,
+    fontFamily: MONO,
+    fontSize: 11,
+    color: 'var(--color-text-secondary)',
+    whiteSpace: 'nowrap',
+  },
   emptyState: {
     display: 'flex',
     flexDirection: 'column',
@@ -1726,7 +1737,9 @@ function InteractionSeverityMatrix({
               title={med.name}
               style={{
                 ...styles.matrixHeadCell,
-                height: 44,
+                // 64px: the longest abbrev ('trim/sulf', 9 glyphs of 11px
+                // mono ≈ 60px) must render unclipped in the rotated box.
+                height: 64,
                 writingMode: 'vertical-rl',
                 transform: 'rotate(180deg)',
                 justifyContent: 'flex-end',
@@ -2055,10 +2068,22 @@ function AuditTicker({entries, collapsed, throughputLabel, onToggle, onEntryClic
           })}
         </div>
       )}
-      <span style={{flex: 1}} aria-hidden />
+      {/* Spacer only while collapsed — expanded, the ticker list owns the
+          free width (flex:1 + its own overflow-x scroll), so no sibling may
+          compete for it or the newest pill gets flat-cut mid-glyph. */}
+      {collapsed ? <span style={{flex: 1}} aria-hidden /> : null}
       <div style={styles.cornerStat}>
         <span style={{fontVariantNumeric: 'tabular-nums'}}>{throughputLabel}</span>
-        <span style={styles.keycapLegend}>A ack · O override · V verify</span>
+        <span style={styles.keycapLegend}>
+          <Kbd keys="a" />
+          <span>ack</span>
+          <span aria-hidden>·</span>
+          <Kbd keys="o" />
+          <span>override</span>
+          <span aria-hidden>·</span>
+          <Kbd keys="v" />
+          <span>verify</span>
+        </span>
       </div>
     </div>
   );
@@ -2695,7 +2720,7 @@ export default function PharmacyVerificationQueueTemplate() {
               <span style={styles.identityChip} title={RPH_TAN.name}>
                 <span style={styles.initialsDisc}>{RPH_TAN.initials}</span>
                 <Text type="supporting" size="xsm" style={{whiteSpace: 'nowrap'}}>
-                  {RPH_TAN.initials} · {RPH_TAN.name}
+                  {RPH_TAN.name}
                 </Text>
               </span>
             </div>

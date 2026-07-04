@@ -412,6 +412,14 @@ const styles: Record<string, CSSProperties> = {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
   },
+  // Meta text spans are flex items: without their own overflow+ellipsis the
+  // container flat-cuts the last item mid-glyph ("220 seat|") at narrow
+  // block widths.
+  blockMetaText: {
+    minWidth: 0,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
   blockGlyphOnly: {
     display: 'flex',
     alignItems: 'center',
@@ -1816,10 +1824,10 @@ function ScreeningBlock({
         <span style={styles.blockBody}>
           <span style={styles.blockTitle}>{film.title}</span>
           <span style={styles.blockMeta}>
-            <span style={{fontVariantNumeric: 'tabular-nums'}}>{film.runtimeLabel}</span>
+            <span style={{...styles.blockMetaText, fontVariantNumeric: 'tabular-nums'}}>{film.runtimeLabel}</span>
             <FormatGlyph format={film.format} />
             {venue != null ? (
-              <span style={{fontVariantNumeric: 'tabular-nums'}}>{venue.seats} seats</span>
+              <span style={{...styles.blockMetaText, fontVariantNumeric: 'tabular-nums'}}>{venue.seats} seats</span>
             ) : null}
           </span>
           <span style={{...styles.blockMeta, fontVariantNumeric: 'tabular-nums'}}>
