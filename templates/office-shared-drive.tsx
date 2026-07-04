@@ -174,12 +174,15 @@ const styles: Record<string, CSSProperties> = {
   numericCell: {fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap'},
   uploadBar: {minWidth: 0, width: 72},
   // Details panel ---------------------------------------------------------
-  detailScroll: {height: '100%', minHeight: 0, overflowY: 'auto', padding: 'var(--spacing-4)'},
+  // spacing-3 inset (matching the rail's quota strip) — with the compact
+  // vertical rhythm below it keeps the default details stack (7-person
+  // share list + metadata) above the demo card's bottom fold.
+  detailScroll: {height: '100%', minHeight: 0, overflowY: 'auto', padding: 'var(--spacing-3)'},
   previewTile: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 120,
+    height: 80,
     borderRadius: 'var(--radius-container)',
     backgroundColor: 'var(--color-background-muted)',
     border: 'var(--border-width) solid var(--color-border)',
@@ -193,6 +196,18 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: 'var(--color-background-muted)',
   },
   shareRow: {minWidth: 0},
+  // Link-audience rows ("Anyone at Kestrel Labs" / "Restricted") keep the
+  // access list's leading-avatar pattern: same 36px circle as Avatar small.
+  accessGlyph: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 36,
+    height: 36,
+    flexShrink: 0,
+    borderRadius: '50%',
+    backgroundColor: 'var(--color-background-muted)',
+  },
   visuallyHidden: {
     position: 'absolute',
     width: 1,
@@ -776,16 +791,19 @@ function buildColumns(isCompact: boolean): TableColumn<FileRow>[] {
     {
       key: 'name',
       header: 'Name',
-      // Floor kept low so Name + Owner stay fully visible before the
-      // horizontal scroll cut in the demo's narrow content pane.
-      width: proportional(2, {minWidth: 200}),
+      // 3:2 with Owner, floors at the exact ratio (240/160): Table scales
+      // the proportional pool to max(min/weight), so mismatched floors
+      // would inflate Name and push Owner past the demo's visible pane.
+      width: proportional(3, {minWidth: 240}),
       sortable: true,
       renderCell: (file: FileRow) => <NameCell file={file} />,
     },
     {
       key: 'owner',
       header: 'Owner',
-      width: proportional(1, {minWidth: 130}),
+      // 160px floor: avatar + gap + the longest roster name ("Marcus Webb")
+      // render without ellipsis at the demo's content-pane width.
+      width: proportional(2, {minWidth: 160}),
       sortable: true,
       renderCell: (file: FileRow) => (
         <HStack gap={2} vAlign="center">
@@ -866,7 +884,7 @@ function PersonRow({person, access}: {person: string; access: string}) {
 
 function SharingSummary({file}: {file: FileRow}) {
   return (
-    <VStack gap={2}>
+    <VStack gap={1}>
       <HStack gap={2} vAlign="center">
         <StackItem size="fill">
           <Text type="label">Who has access</Text>
@@ -888,7 +906,9 @@ function SharingSummary({file}: {file: FileRow}) {
       ))}
       {file.hasOrgLink ? (
         <HStack gap={2} vAlign="center">
-          <Icon icon={GlobeIcon} size="sm" color="secondary" />
+          <span style={styles.accessGlyph}>
+            <Icon icon={GlobeIcon} size="sm" color="secondary" />
+          </span>
           <StackItem size="fill">
             <Text type="supporting" color="secondary">
               Anyone at Kestrel Labs with the link
@@ -900,7 +920,9 @@ function SharingSummary({file}: {file: FileRow}) {
         </HStack>
       ) : (
         <HStack gap={2} vAlign="center">
-          <Icon icon={LockIcon} size="sm" color="secondary" />
+          <span style={styles.accessGlyph}>
+            <Icon icon={LockIcon} size="sm" color="secondary" />
+          </span>
           <Text type="supporting" color="secondary">
             Restricted — only people with access can open
           </Text>
@@ -1065,7 +1087,7 @@ function DetailsPanel({
   const meta = KIND_META[file.kind];
   return (
     <div style={styles.detailScroll}>
-      <VStack gap={4}>
+      <VStack gap={3}>
         <div style={styles.previewTile}>
           <span style={{...styles.kindGlyph, color: meta.color}}>
             <Icon icon={meta.icon} size="lg" color="inherit" />
@@ -1122,7 +1144,7 @@ function DetailsPanel({
         </SegmentedControl>
 
         {tab === 'details' ? (
-          <VStack gap={4}>
+          <VStack gap={3}>
             <SharingSummary file={file} />
             <Divider />
             <FileMetadata file={file} />

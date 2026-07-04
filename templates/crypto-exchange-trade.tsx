@@ -561,7 +561,7 @@ const styles: Record<string, CSSProperties> = {
   },
   orderGrid: {
     display: 'grid', alignItems: 'center', minHeight: 34, fontSize: 12,
-    gridTemplateColumns: '86px 52px 56px 90px 110px minmax(120px, 1fr) 96px 72px',
+    gridTemplateColumns: '86px 52px 56px 90px 138px minmax(120px, 1fr) 96px 72px',
     columnGap: 'var(--spacing-2)', paddingInline: 'var(--spacing-3)',
   },
   ordersScrollX: {overflowX: 'auto'},
@@ -1004,15 +1004,17 @@ function OrderBook() {
           );
         })}
         <div style={styles.spreadRow}>
-          <span style={{color: TEXT_FAINT, fontSize: 10}}>Spread</span>
-          <span style={{color: TEXT, fontWeight: 700}}>
-            {fmtUsd(SPREAD)}{' '}
-            <span style={{color: TEXT_FAINT}}>
-              ({SPREAD_PCT.toFixed(3)}%)
-            </span>
-          </span>
+          {/* Last price sits in the left slot so it aligns under the
+              Price (USD) column like every other price in the book. */}
           <span style={{color: DAY_UP ? UP_GREEN : DOWN_RED, fontWeight: 700}}>
             {fmtUsd(LAST_PRICE)}
+          </span>
+          <span style={{color: TEXT_FAINT, fontSize: 10}}>
+            Spread{' '}
+            <span style={{color: TEXT, fontWeight: 700, fontSize: 11}}>
+              {fmtUsd(SPREAD)}
+            </span>{' '}
+            ({SPREAD_PCT.toFixed(3)}%)
           </span>
         </div>
         {/* Bids: best bid immediately below the spread row */}
@@ -1326,7 +1328,7 @@ function OpenOrdersStrip() {
                     style={{
                       ...styles.mono,
                       fontSize: 11,
-                      color: partial ? TEXT : TEXT_FAINT,
+                      color: partial ? TEXT : TEXT_DIM,
                     }}>
                     {pct}%
                   </span>

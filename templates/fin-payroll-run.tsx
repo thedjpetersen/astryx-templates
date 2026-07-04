@@ -124,12 +124,20 @@ const styles: Record<string, CSSProperties> = {
     minHeight: 0,
     overflowY: 'auto',
     padding: 'var(--spacing-4)',
+    // Clearance equal to the pinned approve-and-submit bar (~100px when its
+    // rows wrap) so the last register row scrolls fully clear of it.
+    paddingBottom: 'calc(var(--spacing-4) + 100px)',
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-4)',
   },
   panelFill: {height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column'},
-  panelScroll: {flex: 1, minHeight: 0, overflowY: 'auto', padding: 'var(--spacing-4)'},
+  panelScroll: {
+    flex: 1, minHeight: 0, overflowY: 'auto', padding: 'var(--spacing-4)',
+    // Same footer-bar clearance as contentScroll — keeps the last pre-flight
+    // check and approver rows visible at full scroll.
+    paddingBottom: 'calc(var(--spacing-4) + 100px)',
+  },
   // Stepper ----------------------------------------------------------------
   stepperStrip: {
     display: 'flex', alignItems: 'flex-start', gap: 'var(--spacing-2)', flexShrink: 0,
@@ -215,6 +223,18 @@ const styles: Record<string, CSSProperties> = {
   },
   approverCell: {display: 'flex', alignItems: 'center', gap: 'var(--spacing-2)', minWidth: 0},
 };
+
+// The sortable-header button is a left-packed flex row, so the 'Gross' and
+// 'Net pay' labels of the end-aligned numeric columns stop short of their
+// right-aligned data edges (non-sortable 'Pre-tax'/'Taxes' sit flush). The
+// Table exposes no header-justify hook, so a scoped rule pushes the
+// label + sort-icon cluster to the column's end edge.
+const REGISTER_SORT_HEADER_CSS = `
+  .fin-payroll-register th[data-column-key='gross'] > button,
+  .fin-payroll-register th[data-column-key='net'] > button {
+    justify-content: flex-end;
+  }
+`;
 
 // Data-viz categorical tokens are not injected by the demo — every use
 // carries the repo-standard `light-dark()` fallback pair.
@@ -870,8 +890,8 @@ function anomalyButtons(id: AnomalyId, actions: AnomalyActions): AnomalyButton[]
   }
   if (id === 'a-pto') {
     return [
-      {label: 'Keep deduction', variant: 'secondary', onClick: actions.onKeepDeduction},
-      {label: 'Waive — repay Jul 31', variant: 'ghost', onClick: actions.onWaiveDeduction},
+      {label: 'Keep deduction', variant: 'secondary', icon: CheckIcon, onClick: actions.onKeepDeduction},
+      {label: 'Waive — repay Jul 31', variant: 'ghost', icon: CalendarClockIcon, onClick: actions.onWaiveDeduction},
     ];
   }
   return [
@@ -1317,7 +1337,8 @@ export default function FinPayrollRunTemplate() {
             : `${sortedData.length} ${sortedData.length === 1 ? 'row' : 'rows'}`}
         </Text>
       </div>
-      <div style={styles.registerTableWrap}>
+      <div style={styles.registerTableWrap} className="fin-payroll-register">
+        <style>{REGISTER_SORT_HEADER_CSS}</style>
         <Table<RegisterRow>
           data={sortedData}
           columns={columns}

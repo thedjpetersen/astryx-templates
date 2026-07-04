@@ -682,7 +682,9 @@ const styles: Record<string, CSSProperties> = {
   },
   playheadCap: {
     position: 'absolute',
-    top: 0,
+    // Sits in the ruler's lower (tick) band, apex on the ruler baseline —
+    // below the label row so it never covers the tick label it crosses.
+    top: RULER_H - 10,
     left: -4,
     width: 10,
     height: 10,
@@ -945,30 +947,34 @@ function InspectorStrip({
         <div style={styles.inspectorDividerBox}>
           <Divider orientation="vertical" />
         </div>
-        <VStack gap={0}>
-          <Text type="label" color="secondary">
-            In
-          </Text>
-          <Text type="supporting" hasTabularNumbers style={styles.mono}>
-            {formatTimecode(c.start)}
-          </Text>
-        </VStack>
-        <VStack gap={0}>
-          <Text type="label" color="secondary">
-            Out
-          </Text>
-          <Text type="supporting" hasTabularNumbers style={styles.mono}>
-            {formatTimecode(c.end)}
-          </Text>
-        </VStack>
-        <VStack gap={0}>
-          <Text type="label" color="secondary">
-            Duration
-          </Text>
-          <Text type="supporting" hasTabularNumbers style={styles.mono}>
-            {formatTimecode(c.end - c.start)}
-          </Text>
-        </VStack>
+        {/* Wider gap than the strip's base gap so the 11-char timecode
+            values read as three distinct columns, not one run-on string. */}
+        <HStack gap={5} vAlign="center">
+          <VStack gap={0}>
+            <Text type="label" color="secondary">
+              In
+            </Text>
+            <Text type="supporting" hasTabularNumbers style={styles.mono}>
+              {formatTimecode(c.start)}
+            </Text>
+          </VStack>
+          <VStack gap={0}>
+            <Text type="label" color="secondary">
+              Out
+            </Text>
+            <Text type="supporting" hasTabularNumbers style={styles.mono}>
+              {formatTimecode(c.end)}
+            </Text>
+          </VStack>
+          <VStack gap={0}>
+            <Text type="label" color="secondary">
+              Duration
+            </Text>
+            <Text type="supporting" hasTabularNumbers style={styles.mono}>
+              {formatTimecode(c.end - c.start)}
+            </Text>
+          </VStack>
+        </HStack>
         <div style={styles.inspectorDividerBox}>
           <Divider orientation="vertical" />
         </div>
@@ -1008,6 +1014,10 @@ function InspectorStrip({
                 step={0.25}
                 units="×"
                 size="sm"
+                // Narrow pill keeps the × unit tight against the value
+                // ("1 ×") instead of floating at a far edge where it reads
+                // as a clear button; 68px still fits the widest value 0.25.
+                width={68}
                 onChange={v => onAdjust({speed: v})}
               />
             )}
@@ -1214,7 +1224,9 @@ export default function VideoEditorWorkspaceTemplate() {
             <IconButton
               label={`${tool.label} tool`}
               icon={<Icon icon={tool.icon} size="sm" color="inherit" />}
-              variant={activeTool === tool.id ? 'secondary' : 'ghost'}
+              // Primary fill for the active tool — the secondary treatment
+              // was too faint against the light rail to read as selected.
+              variant={activeTool === tool.id ? 'primary' : 'ghost'}
               size="md"
               onClick={() => setActiveTool(tool.id)}
             />

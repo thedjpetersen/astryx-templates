@@ -69,6 +69,7 @@
 
 import {
   useEffect,
+  useRef,
   useState,
   type CSSProperties,
   type ReactNode,
@@ -140,7 +141,7 @@ const HAND_AMBER = '#B7791F';
 const CAPTION_BAND_BG = 'rgba(7, 10, 22, 0.65)';
 const CAPTION_CURRENT_BG = 'rgba(255, 255, 255, 0.07)';
 const CAPTION_ACCENT = '#7BA8FF';
-const CAPTION_DIM = 'rgba(226, 232, 240, 0.72)';
+const CAPTION_DIM = 'rgba(226, 232, 240, 0.84)';
 const STAGE_HAIRLINE = '1px solid rgba(255, 255, 255, 0.08)';
 const REACTION_CHIP_BG = 'rgba(23, 29, 51, 0.9)';
 
@@ -219,13 +220,38 @@ const styles: Record<string, CSSProperties> = {
   featuredSpeaking: {
     boxShadow: `0 0 0 3px ${SPEAKING_GLOW}, 0 0 18px rgba(61, 220, 133, 0.45)`,
   },
-  // Filmstrip: the page's only horizontal scroller.
+  // Filmstrip: the page's only horizontal scroller. The wrap anchors a
+  // right-edge fade + "+n more" chip whenever tiles overflow, so the strip
+  // never looks hard-clipped mid-tile.
+  filmstripWrap: {position: 'relative', flex: 'none'},
   filmstrip: {
     display: 'flex',
     gap: 'var(--spacing-2)',
     overflowX: 'auto',
     paddingBottom: 'var(--spacing-1)',
-    flex: 'none',
+  },
+  filmstripFade: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 'var(--spacing-1)',
+    width: 72,
+    pointerEvents: 'none',
+    background: `linear-gradient(to right, rgba(11, 15, 30, 0), ${STAGE_BG})`,
+  },
+  filmstripMoreChip: {
+    position: 'absolute',
+    right: 'var(--spacing-1)',
+    top: '50%',
+    transform: 'translateY(calc(-50% - var(--spacing-1) / 2))',
+    padding: '3px 10px',
+    borderRadius: 999,
+    backgroundColor: TILE_CHIP_BG,
+    border: STAGE_HAIRLINE,
+    fontSize: 11,
+    fontWeight: 600,
+    whiteSpace: 'nowrap',
+    pointerEvents: 'none',
   },
   filmTile: {flex: '0 0 148px', borderRadius: 'var(--radius-element)'},
   filmTileCompact: {flex: '0 0 120px'},
@@ -351,7 +377,7 @@ const styles: Record<string, CSSProperties> = {
     borderLeftWidth: 3,
     borderLeftStyle: 'solid',
     borderLeftColor: 'transparent',
-    opacity: 0.72,
+    opacity: 0.85,
   },
   captionRowCurrent: {
     backgroundColor: CAPTION_CURRENT_BG,
@@ -702,6 +728,57 @@ function StageTile({
   );
 }
 
+// Filmstrip scroller: measures overflow on mount/resize/scroll and, while
+// tiles remain off-screen to the right, shows a fade mask + "+n more" chip
+// so the strip never reads as hard-clipped. Chip count derives from the
+// measured overflow width over the fixed tile+gap span.
+function Filmstrip({
+  isCompact,
+  children,
+  tileCount,
+}: {
+  isCompact: boolean;
+  children: ReactNode;
+  tileCount: number;
+}) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [hiddenCount, setHiddenCount] = useState(0);
+
+  const measure = () => {
+    const node = scrollRef.current;
+    if (node == null) {
+      return;
+    }
+    const remaining = node.scrollWidth - node.clientWidth - node.scrollLeft;
+    const tileSpan = (isCompact ? 120 : 148) + 8; // tile + gap
+    setHiddenCount(remaining > 12 ? Math.round(remaining / tileSpan) : 0);
+  };
+
+  useEffect(() => {
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+    // Re-measure when the tile set or tile width changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tileCount, isCompact]);
+
+  return (
+    <div style={styles.filmstripWrap}>
+      <div ref={scrollRef} style={styles.filmstrip} onScroll={measure}>
+        {children}
+      </div>
+      {hiddenCount > 0 && (
+        <>
+          <div style={styles.filmstripFade} aria-hidden />
+          <span style={styles.filmstripMoreChip} aria-hidden>
+            +{hiddenCount} more
+          </span>
+        </>
+      )}
+    </div>
+  );
+}
+
 // ============= STAGE OVERLAYS & BANDS =============
 
 // Floating reactions column: a persistent stack (newest at the bottom) —
@@ -878,7 +955,7 @@ function BreakoutBanner({
             Breakout rooms open in{' '}
             <span style={styles.bannerCountdown}>{BREAKOUT_COUNTDOWN}</span>
           </Text>
-          <Text type="supporting" size="sm" color="secondary">
+          <Text type="supporting" size="sm" color="primary">
             — you're assigned to {BREAKOUT_ROOM}
           </Text>
         </HStack>
@@ -1268,11 +1345,11 @@ export default function MeetLiveStageTemplate() {
     ) : (
       <>
         {featuredTile}
-        <div style={styles.filmstrip}>
+        <Filmstrip isCompact={isCompact} tileCount={filmstripPeople.length}>
           {filmstripPeople.map(participant =>
             renderSmallTile(participant, 'film'),
           )}
-        </div>
+        </Filmstrip>
       </>
     );
 

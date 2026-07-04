@@ -345,6 +345,20 @@ const styles: Record<string, CSSProperties> = {
     padding: 'var(--spacing-2) var(--spacing-4)',
     background: 'var(--color-background-surface)',
   },
+  // Mask fade lives on this NON-scrolling wrapper, never the scroller — on
+  // the scroller the mask stretches over the full scrollWidth and scrolls
+  // with the content instead of pinning to the clip edge. The fade dissolves
+  // whichever run chip the scroll edge slices (a failed chip's red border
+  // would otherwise clip to a stray red arc at the strip edge). The ramp
+  // reaches full transparency a beat BEFORE the clip edge so even a
+  // few-pixel sliver of a sliced chip dissolves instead of rendering solid.
+  runStripWrap: {
+    minWidth: 0,
+    maskImage:
+      'linear-gradient(to right, black calc(100% - var(--spacing-12)), transparent calc(100% - var(--spacing-1)))',
+    WebkitMaskImage:
+      'linear-gradient(to right, black calc(100% - var(--spacing-12)), transparent calc(100% - var(--spacing-1)))',
+  },
   runStripScroll: {display: 'flex', gap: 'var(--spacing-2)', overflowX: 'auto', paddingBottom: 2},
   runChip: {
     display: 'flex',
@@ -403,7 +417,27 @@ const styles: Record<string, CSSProperties> = {
     clip: 'rect(0 0 0 0)',
     whiteSpace: 'nowrap',
   },
+  // Blocked-but-primary Publish: the library's 0.5-opacity disabled wash
+  // collapses to charcoal-on-mid-gray in dark mode (accent is a light pill
+  // there). Pin the pill to a dimmed accent mix and keep the on-accent text
+  // at full alpha so the button reads as a proper — if muted — primary in
+  // both schemes. Inline style outranks the library's atomic CSS.
+  publishBlocked: {
+    opacity: 1,
+    backgroundColor: 'color-mix(in srgb, var(--color-accent) 72%, var(--color-background-body))',
+  },
 };
+
+// The library TextArea pins the native resize grip to the inner textarea's
+// bottom-right corner, where a full last line ("…#eng-onboarding,") collides
+// with it. Scope an override that drops the grip and reserves end padding;
+// !important outranks the library's atomic CSS (same idiom as
+// doc-share-publish's .share-embed).
+const CONFIG_TEXTAREA_CSS = `
+.wsc-config-textarea textarea {
+  resize: none !important;
+  padding-inline-end: var(--spacing-2) !important;
+}`;
 
 // ---------------------------------------------------------------------------
 // DATA — Kestrel Labs (140-person platform company). This is the live
@@ -1306,13 +1340,18 @@ function ConfigFieldControl({
   if (field.kind === 'textarea') {
     return (
       <VStack gap={1}>
-        <TextArea
-          label={field.label}
-          rows={3}
-          width="100%"
-          value={typeof value === 'string' ? value : ''}
-          onChange={next => onChange(nodeId, field.id, next)}
-        />
+        {/* Scoped grip/padding override — see CONFIG_TEXTAREA_CSS. */}
+        <div className="wsc-config-textarea">
+          {/* 4 rows: with the reserved end padding the canonical invite
+              message wraps to four lines — keep them all visible. */}
+          <TextArea
+            label={field.label}
+            rows={4}
+            width="100%"
+            value={typeof value === 'string' ? value : ''}
+            onChange={next => onChange(nodeId, field.id, next)}
+          />
+        </div>
         {hint}
       </VStack>
     );
@@ -1672,6 +1711,7 @@ export default function WorkflowStudioCanvasTemplate() {
       size="sm"
       icon={<Icon icon={RocketIcon} size="sm" color="inherit" />}
       isDisabled={totalErrors > 0}
+      style={totalErrors > 0 ? styles.publishBlocked : undefined}
       onClick={() => setAnnouncement('Version 15 published.')}
     />
   );
@@ -1916,10 +1956,12 @@ export default function WorkflowStudioCanvasTemplate() {
             30 days: 8 runs · 4 completed · 2 skipped · 1 failed · 1 running
           </Text>
         </HStack>
-        <div style={styles.runStripScroll}>
-          {RUNS.map(run => (
-            <RunChip key={run.id} run={run} onJumpToNode={handleSelect} />
-          ))}
+        <div style={styles.runStripWrap}>
+          <div style={styles.runStripScroll}>
+            {RUNS.map(run => (
+              <RunChip key={run.id} run={run} onJumpToNode={handleSelect} />
+            ))}
+          </div>
         </div>
       </VStack>
     </div>
@@ -1928,6 +1970,7 @@ export default function WorkflowStudioCanvasTemplate() {
   // ---- frame ----
   return (
     <div style={styles.root}>
+      <style>{CONFIG_TEXTAREA_CSS}</style>
       <Layout
         height="fill"
         header={header}

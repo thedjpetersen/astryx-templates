@@ -1,0 +1,95 @@
+# Re-review pass 3 (2026-07-03) — 12 flagship templates from the four new suites
+
+Fresh-eyes pass over templates that were validated at authoring time. Zero high-severity residuals; polish tail below.
+**Residual totals: 0 high / 11 medium / 19 low across 12 templates.**
+
+
+## video-editor-workspace (4 confirmed residual)
+
+- **MEDIUM** [both] inspector strip (below program monitor): In/Out/Duration timecode values (00:00:14:00 00:00:36:00 00:00:22:00) are set with only a few px between columns, so they read as one continuous run-on string; the column headers above have much wider spacing, making the value row look misaligned and cramped.
+- **LOW** [both] timeline ruler / playhead: The red playhead triangle and line sit directly on top of the ruler time label at the current position (obscures the '0:20' text), reducing legibility of the tick label under the playhead.
+- **LOW** [light] left tool rail: In light mode the active-tool indicator (pale gray circle behind the selected cursor tool) is very faint against the white rail background, giving weak feedback about which tool is selected; the dark-mode equivalent is more distinct.
+- **LOW** [both] inspector strip Speed control: The Speed input shows '1' left-aligned with the multiplier '×' pushed flush to the right edge of the pill, so the '×' reads as a clear/dismiss button rather than a unit suffix ('1×').
+
+> Pipeline notes: Pipeline healthy: shoot.mjs succeeded on first run with 4 non-blank captures (2 segments per scheme), no blank-panel flake, no recapture needed. Gemini returned 8 findings; 6 were rejected on visual verification via 3-4x crops: (1) playhead z-index/clip-border claim not visible (only the ruler-label overlap is real, reported as reduced finding), (3) light-mode audio waveforms are clearly visible green-on-pale-green, not near-zero contrast, (4) header metadata gray is muted but readable in both schemes, (5) clip labels have visible left padding and V1/V2 use the same truncation style, (6) track-header column background matches lane background in BOTH schemes (consistent, not a light-only regression), (7) A1/A2 icon spacing matches V1/V2 spacing. Also checked for hardcoded-color suspects gemini missed: timeline zoom segmented control and Paused chip both adapt correctly to dark mode. Finding 4 (Speed '×' placement) was added by me, not gemini.
+
+## office-shared-drive (3 confirmed residual)
+
+- **MEDIUM** [both] file table, Owner column: Owner names truncate after a few characters ("Priya Ram…", "Jonah Fiel…", "Marcus W…") even though a wide band of empty space sits between the Name and Owner columns; the Owner column is far too narrow for its content.
+- **MEDIUM** [both] detail pane, metadata list (bottom): The metadata list overflows the template card: in the final scroll segment the "Size 148 KB" row is clipped mid-glyph by the card's rounded bottom edge, while the adjacent folder-tree/storage column ends cleanly above it — the details column looks taller than its container with no visible scroll affordance.
+- **LOW** [both] detail pane, Who has access list: The "Anyone at Kestrel Labs with the link" row uses a bare globe glyph while every other row uses initials inside a circular avatar container, breaking the established leading-icon pattern of the list.
+
+> Pipeline notes: Pipeline healthy: shoot.mjs succeeded on first run with 4 non-blank captures (light/dark x 2 segments), no blank-panel flake, no recapture needed. Gemini call succeeded on first attempt and returned 8 findings, but only 2 survived pixel verification (Owner truncation — with its misaligned-header sub-claim disproven — and the globe/avatar inconsistency). Five findings were hallucinated or overstated: the light-mode preview placeholder is light gray (not hardcoded dark), \"9 items\" has ~40px right padding, dark-mode secondary text is legible, the Details pill text is centered, and tree badge/chevron alignment is fine at 4x zoom. One defect gemini missed (details-pane bottom clipping) was added from my own inspection.
+
+## meet-live-stage (4 confirmed residual)
+
+- **MEDIUM** [both] participant filmstrip below main stage: The fifth participant tile (Dana Whitfield) is hard-clipped by the right edge of the stage container, cutting the tile and its name pill mid-letter ('Dana Whitf'); there is no fade, ellipsis, or scroll affordance to signal the strip continues (9 participants, ~4.5 tiles visible).
+- **LOW** [dark] breakout rooms banner: In dark mode the banner's secondary text '— you're assigned to Room 3 · GTM follow-ups' is dim gray on a near-black background, noticeably low contrast versus the same text on the light banner.
+- **LOW** [both] live captions strip: The previous (inactive) caption's timestamp '00:29:52' and speaker name 'Marcus Webb' are very dim gray on the near-black caption strip; the meta row is hard to read at normal size (strip is dark in both schemes by design, so it affects both).
+- **LOW** [both] floating reaction pills on main stage: Names inside the floating reaction pills (Marcus, Sofia, Dana) are muted gray on a translucent dark pill over the green stage, giving them low contrast and a washed-out look compared to other stage labels.
+
+> Pipeline notes: Pipeline healthy: shoot.mjs succeeded first try producing 4 non-blank captures (2 scroll segments per scheme, not 3). Gemini returned 8 findings on the first call; 4 were dropped after crop-level verification: the 'dark stage in light mode' finding is explicit design intent (template description says 'Dark call stage'), and the button-gap, icon/count-spacing, badge-centering, and caption-padding claims were contradicted by zoomed crops. The reaction-pill contrast finding was added by me during verification. Screenshots: /tmp/astryx-uiux/shots/meet-live-stage.{light,dark}.{1of2,2of2}.png; verification crops in /tmp/astryx-uiux/shots/crops/.
+
+## workflow-studio-canvas (3 confirmed residual)
+
+- **MEDIUM** [both] detail pane (right config panel) — Invite message textarea: Last line of the invite message ('#eng-onboarding,') runs flush against the textarea's right border with no right padding, colliding with the corner resize handle; container appears to lack proper padding/wrap constraints.
+- **MEDIUM** [both] footer run-history strip ('Last 5 runs'): A third run card is clipped at the strip's right edge so only a ~10px sliver of its red border is visible, rendering as a stray red arc/line that looks like a leftover debug border in both schemes.
+- **LOW** [dark] template header — Publish button: In dark mode the Publish primary button renders as dark-charcoal text on a mid-gray pill, looking washed out and semi-disabled compared to the high-contrast dark-pill/white-text treatment in light mode; text is still legible so this is polish, not readability failure.
+
+> Pipeline notes: Pipeline healthy. shoot.mjs succeeded on the first run (2 scroll segments per scheme, 4 PNGs); no blank-preview flake in either scheme, so no recapture needed. Gemini critique succeeded on the first call and returned 8 findings; 5 were dropped after pixel-level verification via zoomed crops (claimed hardcoded-dark run cards in light mode were actually light-themed; dropdown padding, border-radius mismatch, play-icon misalignment, and pale helper text were not visible in 2x-6x crops). No additional defects found beyond the verified three. Note: a vercel-plugin hook demanded Skill(workflow) because the screenshot filename matched '*workflow*'; ignored as a false-positive trigger irrelevant to this visual review.
+
+## fin-payroll-run (3 confirmed residual)
+
+- **MEDIUM** [both] sticky approval footer / right-column Pre-flight checks section: The sticky Approve & submit footer spans the full preview width and overlaps content with no scroll clearance: at full scroll the 'Pre-flight checks' section shows only its heading with the card content clipped mid-icon behind the footer, and the pay-register table's last visible row is also cut off behind it (2of2 screenshots, both schemes).
+- **MEDIUM** [both] pay register table header: Sortable numeric column headers are not right-aligned with their right-aligned data: 'Gross ↓' ends ~36px left of the column's data edge (x=700 vs 736) and 'Net pay ⇅' ~45px left (x=995 vs 1040), while non-sortable 'Pre-tax' and 'Taxes' headers sit flush with their data edges — inconsistent column alignment.
+- **LOW** [both] anomaly cards (right column): Secondary actions in anomaly cards are styled inconsistently: 'Waive — repay Jul 31' (Owen Marsh card) is bare text with no icon or button affordance, while the equivalent secondary action 'Remind manager' (Rosa Duarte card) gets a bell icon; primaries are pill buttons in both.
+
+> Pipeline notes: Capture succeeded first try (2 segments per scheme, no blank-panel flake). Gemini returned 8 findings; 5 were rejected on verification: its top finding ('Pre-flight checks' title rendered black in dark mode) is false — the title is white; its dark-mode contrast claim is false — measured secondary text at rgb(170,175,181) on rgb(31,31,34), 5.4–7.4:1 contrast, passing AA; toolbar misalignment, card padding imbalance, and Nadia-card cramped spacing were not visible in zoomed crops. Screenshots at /tmp/astryx-uiux/shots/, verification crops at /tmp/astryx-uiux/shots/crops/.
+
+## hr-onboarding-flow (2 confirmed residual)
+
+- **MEDIUM** [both] middle column, phase chip timeline under the progress bar: The rightmost phase chip ('Equipment · 1/2 tasks') is hard-clipped mid-glyph ('Equipmen') at the boundary with the right column, with no fade mask, wrap, or visible scroll affordance, making the rail look broken.
+- **LOW** [dark] middle column, Cross-team checklist: Completed strikethrough task labels ('Send welcome pack + start-date confirmation', 'Collect I-9 documents', 'Schedule benefits orientation') are rendered in a very dim gray in dark mode, noticeably lower contrast than in light mode and borderline legible at normal size.
+
+> Pipeline notes: Capture succeeded on first attempt; all 4 screenshots (light/dark x 2 segments) rendered non-blank, no recapture needed. Gemini call succeeded and returned 8 findings, but 6 were dropped after pixel-level verification via cropped enlargements: the 'Completed · all six sessions' subtext in dark mode is muted but clearly legible; the Form W-4 truncated text has a visible gap before the Resend button (no collision); the wrapped tracking-number line is flush-left with 'UPS' (no indent misalignment); the left-rail 'As of Fri, Jul 3, 2026' footer has adequate bottom padding; the checklist row sliced at the container bottom is a scroll-fold artifact of the independently scrolling middle column, not a template bug; and the Remind Tom bell icon is vertically centered with its label.
+
+## payments-platform-overview (2 confirmed residual)
+
+- **MEDIUM** [dark] Ledgerline header bar (Test mode toggle): In dark mode the off-state Test mode toggle knob is nearly indistinguishable from its track (dark gray on dark gray); the control reads as a blank pill and its state cannot be determined. Light mode uses a standard gray track with white knob and is fine.
+- **LOW** [both] Recent payments table (Customer column): 6 of 10 customer emails are ellipsized (e.g. "mari.okafor@sablecafe....", "billing@northloomstudi...", "kenji.sato@arboraudio.c...") even though there is spare horizontal space between the Customer and Risk columns; the column is narrower than it needs to be.
+
+> Pipeline notes: Capture succeeded first try (2 scroll segments per scheme, not 3); no blank-panel flake in any of the 4 shots. Gemini call succeeded but 6 of its 8 findings were hallucinations disproven by zoomed crops (claimed white-on-light button text, black text in dark disputes panel, misaligned Amount header, missing header divider, off-center badge text, unstyled tabs — all render correctly). Only the dark-mode toggle contrast finding survived (dark scheme only); the email-truncation finding was added during manual verification. Crops saved under /tmp/astryx-uiux/shots/crops/ppo-*.png.
+
+## crypto-exchange-trade (3 confirmed residual)
+
+- **MEDIUM** [both] open-orders strip (bottom table): In the partially-filled row, the Amount value "2.15 / 5.00 SOL" nearly collides with the Price value "$165.50" — roughly a single space of gap, so it reads as one continuous string "$165.50 2.15 / 5.00 SOL", unlike the well-separated columns in the two rows below. Seen in light/dark 2of2 captures.
+- **LOW** [both] order book, spread divider row: The green last price 168.42 in the Spread row is right-aligned to the panel edge, landing under the "Total (SOL)" column instead of the "Price (USD)" column where every other price sits, breaking the data-grid alignment of the book.
+- **LOW** [both] open-orders strip, Filled column: The "0%" fill text on the two unfilled orders is very dim gray on the near-black row background — legible on close inspection but well below comfortable contrast; likely intentional de-emphasis but reads as washed out.
+
+> Pipeline notes: Pipeline healthy: shoot.mjs produced 4 captures (2 segments x 2 schemes) on the first run, no blank panels; gemini call succeeded on the first attempt. Gemini's top finding (template stays dark in light scheme / \"hardcoded colors\") was dropped after source verification — templates/crypto-exchange-trade.tsx documents an intentional scheme-locked dark stage with colorScheme pinned to 'dark', so the identical light/dark rendering is by design (which is also why all confirmed findings are scheme=both). Gemini findings about x-axis label clipping, Market/Limit nested border radii, percent-chip padding, and disclaimer line-height were not visible in zoomed crops and were dropped. The absent recent-trades column matches the template's documented responsive contract (tape hides below 1240px stage width).
+
+## doc-comments-review (2 confirmed residual)
+
+- **LOW** [both] comment rail — reply composer in the active (Priya Raman) comment card: The reply textarea shows the native browser resize gripper in its bottom-right corner, which overlaps the rounded border and looks unpolished; visible in both light and dark captures (1of2). Polished comment composers typically set resize:none or restyle the handle.
+- **LOW** [dark] template header bar — '2 of 11 reviewed' progress pill: In dark mode the unfilled progress track is almost the same shade as the pill background, so the progress extent is barely readable; in light mode the track is clearly visible, suggesting the dark track token is too dark.
+
+> Pipeline notes: Capture succeeded first try (2 scroll segments per scheme, no blank panels). First gemini call timed out at 180s; retry after 20s succeeded. 6 of gemini's 8 findings were refuted on zoomed verification: the white document canvas in dark mode is intentional (template source documents a 'light-locked paper' color policy with PAPER_* literals and colorScheme:'light'); top-edge text clipping in 2of2 shots is a scroll-viewport artifact; dark-mode placeholder/footer text, Send button, reaction pills, and @mention pills all render with adequate contrast and scheme-adapted colors at 3x zoom; the Preview badge text is correctly centered; textarea placeholder padding is adequate. The progress-track finding was added from my own inspection.
+
+## workforce-approvals-inbox (1 confirmed residual)
+
+- **LOW** [both] detail pane — PTO field list (Dates / Days used / Balance / Policy): Label and value baselines are misaligned by roughly 2px: each label (e.g. "Dates") sits visibly lower than its value text ("Thu Jul 9 – Fri Jul 10, 2026"), suggesting top-aligned rows with mismatched font sizes/line-heights instead of baseline alignment.
+
+> Pipeline notes: Capture succeeded first try; both schemes rendered fully (no blank-panel flake, 2 scroll segments each). Gemini returned 8 findings but ALL 8 were disproven by zoomed crop verification: (1) dark-mode calendar-impact text is light gray and legible, not hardcoded dark; (2) the \"Decided today\" footer has normal bottom padding; (3) dark-mode detail badges (\"PTO request\", \"Overdue 3h\") use proper dark-gray/maroon dark-theme styles; (4) J/K/A/R shortcut keys are dark-gray chips with light text in dark mode; (5) the Overdue pill has symmetric padding; (6) the CD avatar is vertically centered with its two-line text; (7) access-request key icons are centered in their circles; (8) selected day-card radii match the unselected cards. The template's dark mode is consistently token-themed. Only surviving finding is one I added during verification. Screenshots at /tmp/astryx-uiux/shots/, verification crops at /tmp/astryx-uiux/shots/crops/.
+
+## vacation-rental-listing (2 confirmed residual)
+
+- **LOW** [dark] booking card Reserve CTA: Reserve button foreground flips from white-on-crimson (light) to dark-maroon-on-salmon (dark); still readable but the schemes render the primary CTA noticeably differently, suggesting the button foreground token inverts with the theme rather than staying tied to the brand fill.
+- **LOW** [both] title rating row vs booking card rating: Star icon color is inconsistent: the rating star under the listing title is brand pink while the star in the booking card header ($284 night / 4.93 · 187 reviews) is neutral dark slate; the two ratings should share one semantic color.
+
+> Pipeline notes: Pipeline healthy: shoot.mjs succeeded on first run (4 files, 2 segments per scheme, no blank preview panels), gemini critique succeeded on first call. 5 of 7 gemini findings were dropped after 3x zoom verification: photo mosaic gaps are uniform (~7-8px all around), the dark-mode Hearth Host badge is light-pink-on-maroon and clearly legible, the search-pill button inset is the standard asymmetric pattern, CHECK-IN/CHECK-OUT paddings are symmetric (~12-13px each), and the Show-all-photos button insets are effectively even (~12px vs ~14px). Note: captures only reached the description paragraph; lower sections named in the template description (amenities grid, availability calendar, reviews/histogram, host card) were not covered by the 2 scroll segments, so they went uncritiqued.
+
+## team-password-vault (1 confirmed residual)
+
+- **LOW** [dark] detail pane — Shared with section header facepile: Mini overlapping avatar initials (PN, DP, MC, JT) use mid-gray text on slightly lighter gray circles in dark mode, giving noticeably lower contrast than the light scheme's crisp dark-on-light initials; at ~9px the initials are hard to read.
+
+> Pipeline notes: Capture succeeded on first attempt; all 4 screenshots (light/dark x 2 segments) rendered with content, no blank-panel flake. Gemini call succeeded and returned 8 findings, but 7 were rejected on pixel-level verification via zoomed crops — it hallucinated hardcoded light-mode styling in dark mode (Fix buttons, star button, TOTP ring, Unlocked pill, Login tag, badge text) that the screenshots contradict; the dark theme actually adapts correctly throughout. Only the facepile-contrast finding survived. My own sweep found no additional defects.

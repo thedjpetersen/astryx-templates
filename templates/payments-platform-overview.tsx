@@ -117,6 +117,17 @@ const styles: Record<string, CSSProperties> = {
     width: 28,
   },
   wordmark: {letterSpacing: '-0.02em'},
+  // Scoped re-pin for Switches: the Switch knob paints
+  // --color-background-surface (#1F1F22 in dark), which vanishes against the
+  // off-state --color-background-gray track (#666A724C over the dark header
+  // ≈ the same shade). Lightening the OFF track — not the knob — keeps the
+  // ON state intact (its track is --color-accent, white-ish in dark here, so
+  // a lightened knob would disappear there instead). Light mode keeps the
+  // stock #0A131733 track; dark gets a solid gray the dark knob reads
+  // against at ~3.5:1.
+  switchKnobScope: {
+    '--color-background-gray': 'light-dark(#0A131733, #6F747C)',
+  } as CSSProperties,
   // Two-column dashboard rows: main widget + 340px end rail.
   splitGrid: {
     display: 'grid',
@@ -200,11 +211,13 @@ const styles: Record<string, CSSProperties> = {
   // Fixed-width score + label keep the risk StatusDots vertically aligned
   // across rows (labels vary: Normal / Elevated / Highest).
   riskScore: {
+    flexShrink: 0,
     fontVariantNumeric: 'tabular-nums',
     textAlign: 'end',
+    whiteSpace: 'nowrap',
     width: '2ch',
   },
-  riskLabel: {width: 56},
+  riskLabel: {flexShrink: 0, width: 52},
   methodWrap: {
     alignItems: 'center',
     display: 'flex',
@@ -796,16 +809,19 @@ function BlockedSparkline({data}: {data: typeof FRAUD_BLOCKED_DAILY}) {
 
 // ============= TABLE COLUMNS =============
 
-// Column widths are budgeted for the ~610px card the table renders in next
-// to the 340px rail: 104 + 112 + 118 fixed + the proportional minimums keeps
-// the Table's min-width under the card width, so no column ever scrolls out
-// of view or clips.
+// Column widths are budgeted for the ~614px card the table renders in next
+// to the 340px rail: 92 + 96 + 110 fixed leaves ~316px of flexible space,
+// split 1 : 1.75 so Method gets ~115px (icon + "Card ·· 4242") and Customer
+// gets ~200px — enough for the longest fixture email
+// (billing@northloomstudio.com) to render without ellipsis at desktop width.
+// Table min-width = pixels + max(minWidth × totalWeight / weight) must stay
+// under the card width or the table scrolls: 298 + 108×2.75 ≈ 595 < 614.
 function paymentColumns(showRisk: boolean) {
   const columns: TableColumn<PaymentRow>[] = [
     {
       key: 'amount',
       header: 'Amount',
-      width: pixel(104),
+      width: pixel(92),
       align: 'end',
       renderCell: (item: PaymentRow) => (
         <span style={styles.numericCell}>
@@ -818,7 +834,7 @@ function paymentColumns(showRisk: boolean) {
     {
       key: 'status',
       header: 'Status',
-      width: pixel(112),
+      width: pixel(96),
       renderCell: (item: PaymentRow) => (
         <Badge
           label={STATUS_META[item.status].label}
@@ -829,7 +845,7 @@ function paymentColumns(showRisk: boolean) {
     {
       key: 'method',
       header: 'Method',
-      width: proportional(1.2, {minWidth: 110}),
+      width: proportional(1, {minWidth: 108}),
       renderCell: (item: PaymentRow) => (
         <span style={styles.methodWrap}>
           <Icon
@@ -846,7 +862,7 @@ function paymentColumns(showRisk: boolean) {
     {
       key: 'customer',
       header: 'Customer',
-      width: proportional(1.6, {minWidth: 140}),
+      width: proportional(1.75, {minWidth: 168}),
       renderCell: (item: PaymentRow) => (
         <span style={styles.cellText}>
           <Text type="body" color="secondary">
@@ -860,7 +876,7 @@ function paymentColumns(showRisk: boolean) {
     columns.push({
       key: 'risk',
       header: 'Risk',
-      width: pixel(118),
+      width: pixel(110),
       align: 'end',
       renderCell: (item: PaymentRow) => {
         const meta = RISK_META[riskLevel(item.risk)];
@@ -1199,11 +1215,13 @@ export default function PaymentsPlatformOverviewTemplate() {
             <StackItem size="fill">
               <span />
             </StackItem>
-            <Switch
-              label="Test mode"
-              value={testMode}
-              onChange={checked => setTestMode(checked)}
-            />
+            <span style={styles.switchKnobScope}>
+              <Switch
+                label="Test mode"
+                value={testMode}
+                onChange={checked => setTestMode(checked)}
+              />
+            </span>
             <Button
               label="Create payment"
               variant="primary"
@@ -1242,11 +1260,13 @@ export default function PaymentsPlatformOverviewTemplate() {
                 <SegmentedControlItem value="7d" label="7d" />
                 <SegmentedControlItem value="14d" label="14d" />
               </SegmentedControl>
-              <Switch
-                label="Compare"
-                value={compare}
-                onChange={checked => setCompare(checked)}
-              />
+              <span style={styles.switchKnobScope}>
+                <Switch
+                  label="Compare"
+                  value={compare}
+                  onChange={checked => setCompare(checked)}
+                />
+              </span>
             </HStack>
 
             {/* Row 1: gross-volume chart + balance/payout rail */}

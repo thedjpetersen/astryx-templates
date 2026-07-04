@@ -144,11 +144,10 @@ const styles: Record<string, CSSProperties> = {
     overflowY: 'auto',
     padding: 'var(--spacing-4)',
   },
-  // Phase strip --------------------------------------------------------
   // Mask fades live on this NON-scrolling wrapper, never the scroller —
   // on the scroller the mask stretches over the full scrollWidth and
   // scrolls with the content instead of pinning to the clip edge. The
-  // fade dissolves whichever chip the scroll edge slices.
+  // fade dissolves whichever card the scroll edge slices.
   hStripWrap: {
     minWidth: 0,
     maskImage:
@@ -156,12 +155,24 @@ const styles: Record<string, CSSProperties> = {
     WebkitMaskImage:
       'linear-gradient(to right, black calc(100% - var(--spacing-5)), transparent 100%)',
   },
+  // Phase strip --------------------------------------------------------
+  // The strip wraps instead of scrolling: at narrow column widths a chip
+  // drops to the next row whole, so no chip is ever clipped mid-glyph at
+  // the column boundary. Every chip carries a leading connector and the
+  // strip is shifted left by exactly one connector+gap; the wrapper's
+  // overflow:hidden crops each row's leading connector, so no wrapped
+  // row starts with a stray dash.
+  phaseStripWrap: {
+    minWidth: 0,
+    overflow: 'hidden',
+  },
   phaseStrip: {
     display: 'flex',
     alignItems: 'center',
+    flexWrap: 'wrap',
     gap: 'var(--spacing-1)',
-    overflowX: 'auto',
     paddingBlock: 'var(--spacing-1)',
+    marginLeft: 'calc(-1 * (16px + var(--spacing-1)))',
   },
   phaseChip: {
     display: 'inline-flex',
@@ -227,7 +238,7 @@ const styles: Record<string, CSSProperties> = {
     padding: 'var(--spacing-2) var(--spacing-3)',
     borderTop: 'var(--border-width) solid var(--color-border)',
   },
-  taskDone: {textDecoration: 'line-through', opacity: 0.6},
+  taskDone: {textDecoration: 'line-through', opacity: 0.72},
   // Footgun: without flexShrink 0 the label column squeezes this cluster
   // until the status Token truncates to "D…" and dates wrap mid-phrase.
   taskMeta: {flexShrink: 0, whiteSpace: 'nowrap'},
@@ -885,11 +896,11 @@ function PhaseChip({phase}: {phase: PhaseView}) {
 
 function PhaseStrip({view}: {view: HireView}) {
   return (
-    <div style={styles.hStripWrap}>
+    <div style={styles.phaseStripWrap}>
       <div style={styles.phaseStrip} role="list" aria-label="Onboarding phases">
-        {view.phases.map((phase, index) => (
+        {view.phases.map(phase => (
           <HStack key={phase.id} gap={1} vAlign="center" role="listitem">
-            {index > 0 ? <span style={styles.phaseConnector} /> : null}
+            <span style={styles.phaseConnector} />
             <PhaseChip phase={phase} />
           </HStack>
         ))}
