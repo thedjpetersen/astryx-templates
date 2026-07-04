@@ -1,0 +1,1 @@
+import{t as e}from"./jsx-runtime-n5LQ9ujS.js";import{t}from"./Button-CHZHJSkC.js";var n=e();function r({icon:e,...r}){return(0,n.jsx)(t,{...r,icon:e,isIconOnly:!0})}r.displayName=`IconButton`;export{r as t};
