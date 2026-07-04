@@ -600,7 +600,10 @@ const styles: Record<string, CSSProperties> = {
     color: MULT_TEXT,
     whiteSpace: 'nowrap',
   },
-  entryHint: {alignSelf: 'center', whiteSpace: 'nowrap'},
+  // Flex child of the overflow-hidden entry bar — minWidth 0 lets it shrink
+  // so the Text maxLines={1} ellipsis engages instead of a flat clip at the
+  // pane edge.
+  entryHint: {alignSelf: 'center', minWidth: 0, overflow: 'hidden', whiteSpace: 'nowrap'},
   // Log region ---------------------------------------------------------------
   logRegion: {
     flex: 1,
@@ -648,7 +651,13 @@ const styles: Record<string, CSSProperties> = {
     color: 'var(--color-text-primary)',
     fontVariantNumeric: 'tabular-nums',
   },
-  logRowNewest: {boxShadow: `inset 3px 0 0 0 ${BRAND}`},
+  // Newest/selected row: brand indicator bar + the DS pressed/selected
+  // overlay token so selection reads as a fill in both schemes, not just
+  // the 3px bar + bold call.
+  logRowNewest: {
+    boxShadow: `inset 3px 0 0 0 ${BRAND}`,
+    backgroundColor: 'var(--color-overlay-pressed)',
+  },
   logCell: {whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'},
   logCallCell: {fontWeight: 700},
   logNumCell: {textAlign: 'right'},
@@ -1586,7 +1595,7 @@ export default function HamContestLoggerTemplate() {
                     size="md"
                   />
                   <span style={styles.entryHint}>
-                    <Text type="supporting" size="xsm" color="secondary">
+                    <Text type="supporting" size="xsm" color="secondary" maxLines={1}>
                       Enter logs · Esc wipes
                     </Text>
                   </span>

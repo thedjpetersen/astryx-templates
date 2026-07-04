@@ -53,7 +53,12 @@
  *   the overload zone is hatching + a label — color is never the sole
  *   channel.
  *
- * Responsive contract (subtraction, not reflow):
+ * Responsive contract (subtraction, not reflow). Breakpoints are measured
+ * against the work row's OWN width (ResizeObserver), not the viewport —
+ * host chrome around the template (demo sidebars etc.) starves the panes
+ * independently of the window, and viewport queries would keep all three
+ * panes mounted inside a container too narrow to hold them, collapsing the
+ * flex-1 one-line canvas to a sliver:
  * - >= 1360px: all three panes.
  * - < 1360px: the 340px feeder rail is removed entirely — feeder selection
  *   survives via diagram clicks; loads survive via the segment labels.
@@ -69,7 +74,15 @@
  * button.
  */
 
-import {useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent} from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type RefObject,
+} from 'react';
 
 import {CheckIcon, ClipboardListIcon, LockIcon, UsersIcon} from 'lucide-react';
 
@@ -1677,11 +1690,43 @@ interface EntityPatch {
   selected?: boolean; // feeders
 }
 
+/**
+ * Observe the work row's real width. Host chrome around the template (the
+ * demo's sidebar, preview padding) starves the row independently of the
+ * viewport, so viewport media queries alone cannot tell when the fixed
+ * 340px rail / 380px aside have run the flex-1 one-line canvas out of room.
+ */
+function useElementWidth(ref: RefObject<HTMLDivElement | null>): number {
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    const element = ref.current;
+    if (element == null) {
+      return undefined;
+    }
+    const observer = new ResizeObserver(entries => {
+      const rect = entries[0]?.contentRect;
+      if (rect != null) {
+        setWidth(rect.width);
+      }
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref]);
+  return width;
+}
+
 export default function GridFeederConsoleTemplate() {
-  // Responsive subtraction: < 1360px drops the 340px rail; < 1080px also
-  // drops the 380px aside (drafted-order state persists invisibly here).
-  const isRailHidden = useMediaQuery('(max-width: 1359px)');
-  const isAsideHidden = useMediaQuery('(max-width: 1079px)');
+  // Responsive subtraction: < 1360px of WORK-ROW width drops the 340px
+  // rail; < 1080px also drops the 380px aside (drafted-order state persists
+  // invisibly here). Measured on the row itself, not the viewport — see
+  // useElementWidth. Width 0 = first pre-observer render; fall back to
+  // viewport queries for that frame so wide hosts don't flash pane removal.
+  const workRowRef = useRef<HTMLDivElement | null>(null);
+  const workRowWidth = useElementWidth(workRowRef);
+  const isViewportNarrow = useMediaQuery('(max-width: 1359px)');
+  const isViewportVeryNarrow = useMediaQuery('(max-width: 1079px)');
+  const isRailHidden = workRowWidth > 0 ? workRowWidth < 1360 : isViewportNarrow;
+  const isAsideHidden = workRowWidth > 0 ? workRowWidth < 1080 : isViewportVeryNarrow;
   const isMotionReduced = useMediaQuery('(prefers-reduced-motion: reduce)');
 
   const [state, setState] = useState<ConsoleState>({
@@ -1849,7 +1894,7 @@ export default function GridFeederConsoleTemplate() {
         }
         content={
           <LayoutContent padding={0}>
-            <div style={styles.workRow}>
+            <div ref={workRowRef} style={styles.workRow}>
               {/* One-line canvas — legend pinned bottom-left */}
               <div style={{...styles.pane, ...styles.canvasPane}}>
                 <span style={styles.canvasCaption} aria-hidden>

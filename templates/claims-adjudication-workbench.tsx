@@ -100,6 +100,7 @@ import {
   type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
+  type RefObject,
 } from 'react';
 
 import {
@@ -291,6 +292,18 @@ const styles: Record<string, CSSProperties> = {
     paddingInline: GUTTER,
     borderBlockEnd: 'var(--border-width) solid var(--color-border)',
   },
+  // Filter-row meta segment ("N lines · DOS · provider") — a shrinking flex
+  // child. A tight main column drops whole trailing SEGMENTS (see metaTier,
+  // measured on the row via ResizeObserver) rather than mid-string
+  // ellipsizing; the nowrap + ellipsis here is only a last-resort guard so
+  // the meta never wraps over the SegmentedControl and the DX strip below.
+  filterMeta: {
+    minWidth: 0,
+    flexShrink: 1,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
   linesScroll: {flex: 1, minHeight: 0, overflowY: 'auto', position: 'relative'},
   // 32px diagnosis strip.
   dxStrip: {
@@ -320,8 +333,11 @@ const styles: Record<string, CSSProperties> = {
   // Claim-lines "table": 28px header row + 44px rows on one shared grid.
   lineGrid: {
     display: 'grid',
+    // Description is minmax(120px, 1fr): the low minimum keeps the cell's
+    // own right edge (and therefore its ellipsis) inside the container even
+    // when the fixed tracks overflow a tight main column.
     gridTemplateColumns:
-      '12px 64px 96px minmax(200px, 1fr) 48px 40px 88px 88px 88px 140px',
+      '12px 64px 96px minmax(120px, 1fr) 48px 40px 88px 88px 88px 140px',
     columnGap: GUTTER,
     alignItems: 'center',
     paddingInline: GUTTER,
@@ -565,10 +581,13 @@ const styles: Record<string, CSSProperties> = {
   },
   // Rule-trace ladder: <ol>, 56px rungs, 2px left rail, 10px outcome nodes.
   ladder: {listStyle: 'none', margin: 0, padding: 0, position: 'relative'},
+  // Inset by half a rung height (28px) at both ends so the spine starts at
+  // the FIRST rung icon's center and ends at the LAST rung icon's center —
+  // no overshoot into the "Rule trace" heading above or past the last node.
   ladderRail: {
     position: 'absolute',
-    insetBlockStart: 8,
-    insetBlockEnd: 8,
+    insetBlockStart: 28,
+    insetBlockEnd: 28,
     insetInlineStart: 4,
     width: 2,
     backgroundColor: 'var(--color-border)',
@@ -2108,12 +2127,55 @@ interface PrevTraceSnapshot {
   deltas: number[];
 }
 
+/**
+ * Observe the filter row's real width. Host chrome around the template (the
+ * demo's sidebar, preview padding) starves the main column independently of
+ * the viewport, so viewport media queries alone cannot tell when the meta
+ * segment has run out of room next to the SegmentedControl.
+ */
+function useElementWidth(ref: RefObject<HTMLDivElement | null>): number {
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    const element = ref.current;
+    if (element == null) {
+      return undefined;
+    }
+    const observer = new ResizeObserver(entries => {
+      const rect = entries[0]?.contentRect;
+      if (rect != null) {
+        setWidth(rect.width);
+      }
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref]);
+  return width;
+}
+
 export default function ClaimsAdjudicationWorkbenchTemplate() {
   // Responsive subtraction thresholds — see the header contract.
   const isIconRail = useMediaQuery('(max-width: 1359px)');
   const isNarrow = useMediaQuery('(max-width: 1199px)');
   const isAsideHidden = useMediaQuery('(max-width: 1079px)');
   const isReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
+
+  // Filter-row meta subtraction: measured on the row ITSELF, not the
+  // viewport — the demo stage is narrower than the window, so viewport
+  // queries never fire there. Instead of a mid-string ellipsis ("6 lines ·
+  // …" reads ragged after a separator), drop whole trailing segments:
+  // full "N lines · DOS · provider" → "N lines · DOS …" → "N lines".
+  // Width 0 = first pre-observer render; render the full meta for that
+  // frame so wide hosts don't flash the short form.
+  const filterRowRef = useRef<HTMLDivElement | null>(null);
+  const filterRowWidth = useElementWidth(filterRowRef);
+  const metaTier: 'full' | 'dos' | 'lines' | 'none' =
+    filterRowWidth === 0 || filterRowWidth >= 700
+      ? 'full'
+      : filterRowWidth >= 500
+        ? 'dos'
+        : filterRowWidth >= 320
+          ? 'lines'
+          : 'none';
 
   const [state, setState] = useState<WorkbenchState>(INITIAL_STATE);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
@@ -2341,7 +2403,7 @@ export default function ClaimsAdjudicationWorkbenchTemplate() {
                 onSelect={selectClaim}
               />
               <div style={styles.main}>
-                <div style={styles.filterRow}>
+                <div ref={filterRowRef} style={styles.filterRow}>
                   <SegmentedControl
                     label="Filter claims by status"
                     value={statusFilter}
@@ -2364,12 +2426,35 @@ export default function ClaimsAdjudicationWorkbenchTemplate() {
                   <StackItem size="fill">
                     <span />
                   </StackItem>
-                  <Text type="supporting" size="xsm" color="secondary" hasTabularNumbers>
-                    {selectedClaim.lines.length} lines · DOS {selectedClaim.fx.dos} ·{' '}
-                    {selectedClaim.fx.provider.name.length > 30
-                      ? 'Consolidated Multispecialty'
-                      : selectedClaim.fx.provider.name}
-                  </Text>
+                  {metaTier !== 'none' && (
+                    <span
+                      style={
+                        // At the shortest tier the meta is a fixed ~42px —
+                        // pin it (flexShrink 0) so the SegmentedControl,
+                        // not the meta, absorbs the last few deficit px;
+                        // otherwise "6 lines" ellipsizes to "6 lin…".
+                        metaTier === 'lines'
+                          ? {...styles.filterMeta, flexShrink: 0}
+                          : styles.filterMeta
+                      }>
+                      <Text
+                        type="supporting"
+                        size="xsm"
+                        color="secondary"
+                        hasTabularNumbers
+                        maxLines={1}>
+                        {selectedClaim.lines.length} lines
+                        {(metaTier === 'dos' || metaTier === 'full') &&
+                          ` · DOS ${selectedClaim.fx.dos}`}
+                        {metaTier === 'full' &&
+                          ` · ${
+                            selectedClaim.fx.provider.name.length > 30
+                              ? 'Consolidated Multispecialty'
+                              : selectedClaim.fx.provider.name
+                          }`}
+                      </Text>
+                    </span>
+                  )}
                 </div>
                 <div style={styles.linesScroll}>
                   {/* 32px diagnosis strip — DX pointer clicks in rows flash

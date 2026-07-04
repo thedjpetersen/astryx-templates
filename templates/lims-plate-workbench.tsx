@@ -64,7 +64,10 @@
  * - Type scale: 11px caps, 12px meta, 13px row body, 15px panel titles
  * Fit check: 560 − 40 padding = 520; 28 + (12×36) + (11×4) = 504 ≤ 520. OK.
  *
- * Responsive contract (SUBTRACTION, not reflow — single breakpoint 1200px):
+ * Responsive contract (SUBTRACTION, not reflow — single breakpoint 1200px,
+ * measured on the template ROOT's own width via ResizeObserver, not the
+ * viewport — host chrome around the template starves the panels
+ * independently of the viewport; see useElementWidth):
  * - > 1200px: three columns (plate 560 fixed + manifest flex + custody 360).
  * - <= 1200px: the 360 custody aside is REMOVED from flow and reached via a
  *   "Custody" button in the header right cluster that opens a Dialog holding
@@ -74,7 +77,7 @@
  *   workstation — no mobile stacking pretense.
  */
 
-import {Fragment, useCallback, useMemo, useRef, useState, type CSSProperties} from 'react';
+import {Fragment, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type RefObject} from 'react';
 
 import {
   ClipboardCheckIcon,
@@ -124,10 +127,17 @@ const BRAND = 'light-dark(#7C3AED, #A78BFA)';
 // schemes: #6D28D9 on white ≈ 7.1:1; #C4B5FD on the dark card ≈ 8.0:1.
 const BRAND_TEXT = 'light-dark(#6D28D9, #C4B5FD)';
 
-// Hold (QC hold / reagent-lot cascade) — amber. Text/stroke pair passes on
-// both surfaces (#B45309 on white ≈ 4.9:1; #FBBF24 on dark ≈ 10:1).
+// Hold (QC hold / reagent-lot cascade) — amber. Stroke/icon pair; passes the
+// 3:1 graphics bar on both surfaces (#B45309 on white ≈ 4.9:1; #FBBF24 on
+// dark ≈ 10:1). Amber TEXT uses the darker AMBER_TEXT pair below.
 const AMBER = 'light-dark(#B45309, #FBBF24)';
 const AMBER_SOFT = 'light-dark(rgba(180, 83, 9, 0.10), rgba(251, 191, 36, 0.16))';
+// Amber TEXT is a separate, darker light-half (same split as BRAND vs
+// BRAND_TEXT): the 12px supporting note and the label on the AMBER_SOFT card
+// need more headroom than the stroke pair. #92400E on white ≈ 7.1:1 and on
+// the AMBER_SOFT-tinted light card ≈ 6.2:1; dark side unchanged (#FBBF24 on
+// dark ≈ 10:1).
+const AMBER_TEXT = 'light-dark(#92400E, #FBBF24)';
 // Contamination — danger red.
 const DANGER = 'light-dark(#DC2626, #F87171)';
 const DANGER_SOFT = 'light-dark(rgba(220, 38, 38, 0.10), rgba(248, 113, 113, 0.16))';
@@ -698,7 +708,7 @@ const styles: Record<string, CSSProperties> = {
     padding: '0 20px',
     overflowX: 'auto',
   },
-  legendItem: {display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0},
+  legendItem: {display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0, whiteSpace: 'nowrap'},
 
   // Manifest panel (flex) --------------------------------------------------
   manifestPanel: {
@@ -711,7 +721,11 @@ const styles: Record<string, CSSProperties> = {
   manifestScroll: {flex: 1, minHeight: 0, overflow: 'auto'},
   table: {
     width: '100%',
-    minWidth: 620,
+    // = the colgroup sum (52+150+96+108+112+64+132). A percent Sample ID col
+    // under tableLayout:fixed only got the leftover after the px cols
+    // (620−564 = 56px → every id ellipsized to "S-…"), so the col is fixed at
+    // 150px and the table scrolls horizontally when the panel is narrower.
+    minWidth: 714,
     borderCollapse: 'collapse',
     tableLayout: 'fixed',
   },
@@ -786,6 +800,8 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: 'var(--color-background-card)',
   },
   connector: {height: 24, width: 2, marginLeft: -24, backgroundColor: 'var(--color-border)'},
+  nodeIdentity: {display: 'flex', alignItems: 'baseline', gap: 6, flexWrap: 'wrap', marginTop: 2},
+  nodeNote: {marginTop: 4},
   metaTable: {display: 'grid', gridTemplateColumns: 'auto 1fr', columnGap: 8, marginTop: 8},
   metaTableRow: {minHeight: 20, display: 'flex', alignItems: 'center'},
 
@@ -1052,10 +1068,27 @@ function WellLegend() {
       </span>
       <span style={styles.legendItem}>
         <Text type="supporting" size="xsm" color="secondary">
-          Ring = type
+          Hollow = unmeasured
         </Text>
+        {/* matches the col-12 wells: type ring only, no fill */}
+        <span
+          aria-hidden
+          style={{
+            width: 12,
+            height: 12,
+            borderRadius: 3,
+            border: `2px solid ${WELL_RING}`,
+            boxSizing: 'border-box',
+          }}
+        />
+      </span>
+      {/* No style enumeration here — the four items must fit the panel's
+          fixed 520px inner width on one 44px line (the old
+          "solid / dashed / dotted / double / inner" descriptor flat-cut at
+          the panel edge once the unmeasured swatch joined the row). */}
+      <span style={styles.legendItem}>
         <Text type="supporting" size="xsm" color="secondary">
-          solid / dashed / dotted / double / inner
+          Ring = type
         </Text>
       </span>
       <span style={styles.legendItem}>
@@ -1271,16 +1304,26 @@ function CustodyHandoffRail({nodeStates, flagged, holdCount, onSign}: CustodyRai
                     <Icon icon={node.glyph} size="xsm" color="inherit" />
                   </span>
                   <div style={styles.nodeCard}>
-                    <Text type="label" size="xsm" color="secondary">
+                    <Text as="div" type="label" size="xsm" color="secondary">
                       {node.role.toUpperCase()}
                     </Text>
-                    <Text type="body" size="sm">
-                      {node.person}
-                    </Text>
-                    <Text type="supporting" size="xsm" color="secondary" hasTabularNumbers>
-                      {node.timestamp}
-                    </Text>
-                    <Text type="supporting" size="xsm" color={state === 'deviation' ? 'inherit' : 'secondary'} style={state === 'deviation' ? {color: AMBER} : undefined}>
+                    <div style={styles.nodeIdentity}>
+                      <Text type="body" size="sm">
+                        {node.person}
+                      </Text>
+                      <Text type="supporting" size="xsm" color="secondary" aria-hidden>
+                        ·
+                      </Text>
+                      <Text type="supporting" size="xsm" color="secondary" hasTabularNumbers>
+                        {node.timestamp}
+                      </Text>
+                    </div>
+                    <Text
+                      as="div"
+                      type="supporting"
+                      size="xsm"
+                      color={state === 'deviation' ? 'inherit' : 'secondary'}
+                      style={state === 'deviation' ? {...styles.nodeNote, color: AMBER_TEXT} : styles.nodeNote}>
                       {node.note}
                     </Text>
                     <div style={styles.metaTable}>
@@ -1320,13 +1363,13 @@ function CustodyHandoffRail({nodeStates, flagged, holdCount, onSign}: CustodyRai
                   <Icon icon={TriangleAlertIcon} size="xsm" color="inherit" />
                 </span>
                 <div style={{...styles.nodeCard, borderColor: AMBER, backgroundColor: AMBER_SOFT}}>
-                  <Text type="label" size="xsm" style={{color: AMBER}}>
+                  <Text as="div" type="label" size="xsm" style={{color: AMBER_TEXT}}>
                     QC DEVIATION
                   </Text>
-                  <Text type="body" size="sm">
+                  <Text as="div" type="body" size="sm" style={{marginTop: 2}}>
                     Contamination flagged at {LINEAGE_PARENT_WELL}
                   </Text>
-                  <Text type="supporting" size="xsm" color="secondary" hasTabularNumbers>
+                  <Text as="div" type="supporting" size="xsm" color="secondary" hasTabularNumbers style={styles.nodeNote}>
                     07 Apr 2026, 15:52 · {holdCount} wells on hold
                   </Text>
                 </div>
@@ -1375,10 +1418,43 @@ function ReleaseGateButton({
 // PAGE
 // ---------------------------------------------------------------------------
 
+/**
+ * Observe the template root's real width. Host chrome around the template
+ * (the demo's sidebar, preview padding) starves the panels independently of
+ * the viewport, so viewport media queries alone cannot tell when the fixed
+ * 560px plate + 360px custody aside have run the flex manifest out of room.
+ */
+function useElementWidth(ref: RefObject<HTMLDivElement | null>): number {
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    const element = ref.current;
+    if (element == null) {
+      return undefined;
+    }
+    const observer = new ResizeObserver(entries => {
+      const rect = entries[0]?.contentRect;
+      if (rect != null) {
+        setWidth(rect.width);
+      }
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref]);
+  return width;
+}
+
 export default function LimsPlateWorkbenchTemplate() {
   const store = useRunStore();
   const {state} = store;
-  const isNarrow = useMediaQuery('(max-width: 1200px)');
+  // Responsive subtraction: < 1200px of ROOT width removes the 360 custody
+  // aside (reached via the header "Custody" Dialog). Measured on the root
+  // itself, not the viewport — see useElementWidth. Width 0 = first
+  // pre-observer render; fall back to the viewport query for that frame so
+  // wide hosts don't flash the aside away.
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const rootWidth = useElementWidth(rootRef);
+  const isViewportNarrow = useMediaQuery('(max-width: 1200px)');
+  const isNarrow = rootWidth > 0 ? rootWidth < 1200 : isViewportNarrow;
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   const [custodyOpen, setCustodyOpen] = useState(false);
 
@@ -1436,7 +1512,7 @@ export default function LimsPlateWorkbenchTemplate() {
   );
 
   return (
-    <div style={styles.root}>
+    <div ref={rootRef} style={styles.root}>
       {/* polite/assertive live region for the cascade announcement */}
       <div aria-live="assertive" style={styles.srOnly}>
         {state.announce}
@@ -1570,7 +1646,7 @@ export default function LimsPlateWorkbenchTemplate() {
                   <table style={styles.table}>
                     <colgroup>
                       <col style={{width: 52}} />
-                      <col style={{width: '22%'}} />
+                      <col style={{width: 150}} />
                       <col style={{width: 96}} />
                       <col style={{width: 108}} />
                       <col style={{width: 112}} />
@@ -1621,9 +1697,13 @@ export default function LimsPlateWorkbenchTemplate() {
                     </tbody>
                   </table>
                 </div>
-                {/* Aggregate footer — counts cross-check to 96 + live hold count */}
+                {/* Aggregate footer — counts cross-check to 96 + live hold count.
+                    Every item is nowrap + flexShrink 0 so a squeezed footer
+                    scrolls horizontally instead of stacking word-per-line.
+                    (StatusDot's label is aria-only; the trailing Text is its
+                    visible echo and must stay at every width.) */}
                 <div style={styles.manifestFooter} aria-live="polite">
-                  <Text type="supporting" size="xsm" color="secondary" hasTabularNumbers>
+                  <Text type="supporting" size="xsm" color="secondary" hasTabularNumbers style={styles.noShrink}>
                     {typeCounts.Patient} patient · {typeCounts.Calibrator} cal · {typeCounts.Blank} blank ·{' '}
                     {typeCounts.Spike} spike · {typeCounts.Duplicate} dup = {typeTotal}
                   </Text>
@@ -1637,7 +1717,7 @@ export default function LimsPlateWorkbenchTemplate() {
                       <StatusDot variant="success" label="No holds" />
                     </span>
                   )}
-                  <Text type="supporting" size="xsm" color="secondary" hasTabularNumbers>
+                  <Text type="supporting" size="xsm" color="secondary" hasTabularNumbers style={styles.noShrink}>
                     {holdCount > 0 ? `${holdCount} on hold` : 'No holds'}
                   </Text>
                 </div>
