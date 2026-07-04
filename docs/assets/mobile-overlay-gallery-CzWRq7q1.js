@@ -1,0 +1,1 @@
+`${{name:`Astryx`,color:`#4759E4`}.color}`;
