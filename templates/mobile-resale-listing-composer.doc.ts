@@ -1,0 +1,14 @@
+// Copyright (c) Meta Platforms, Inc. and affiliates.
+
+import type {AstryxPageTemplate} from '@astryxdesign/cli/template';
+
+const template = {
+  type: 'page',
+  name: 'Wornwell — Resale Listing Composer',
+  description:
+    "MOBILE (390px shell) resale-listing composer for Wornwell (fictional secondhand marketplace, hanger-with-loop mark): a 52px navBar (44×44 X with dirty-draft discard alert · 'New Listing' · Draft/Ready/Published stateChip) over a live preview card (96px id-derived cover gradient, 2-line title clamp for the Loden Wool Overshirt, $48.00 + Fair zone chip, 'You earn $41.20 after fees' = 48 − 10% − $2.00), a grade-driven 3-col photoGrid (3 filled gradient slots vs dashed ≥3:1 unmet slots against a Grade-B quota of 5), a 36px A/B/C ConditionGradePicker radiogroup mapping quotas 4/5/6, a 358×220 FlawPinCanvas overshirt silhouette with numbered 28px pins (max 5, canvas-tap + keyboard 'Add flaw' preset table) and 60px checklist rows (remove → Undo toast, exact-position restore), static details rows, and a PRICING row whose 36px Adjust button opens the 55%-detent price sheet. The sheet stacks a 140×84 DaysToSellGauge (days = round(2 + 19×(p−31)/35) clamp 2–21), an Underpriced/Fair/Ambitious legend (quartile band edges $40/$54 from 12 sold comps: 31…66, median $45.00, bins 2+1+3+2+2+1+0+1), a 358×96 CompHistogramScrubber (whole-dollar drag + role='slider' ±$1/±$5/Home/End), a 28/700 spinbutton price readout, a 96×32 ±$1 stepper + Match comps ($45), and an earnings echo — ONE price value updates gauge needle, zone chips, readout, earnings, AND the preview card + navBar stateChip visible above the medium sheet in a single render. Publish (always enabled) routes gates: unmet photo quota scrolls to PHOTOS + toasts the exact missing count; an Ambitious price (cleared on every re-entry into the zone) opens a 'Price ambitious anyway' action sheet; else Published. At desktop container widths (≥720px) it renders as a centered 430px phone column. Choose over mobile-parking-session when the surface is a CREATION/composer flow (draft → gated publish with price-intelligence) rather than a live metered session with countdown and extend/end verbs; choose over mobile-banking-home-insights when the one scrubbed value must rewrite a preview object and publish-readiness, not filter a transaction ledger; choose over bottom-sheet-snap-explorer when the sheet exists to drive cross-surface consequences (preview price, stateChip, gauge) in a real marketplace flow, not to demonstrate sheet mechanics; choose over any desktop commerce template when the brief calls for a phone-first 390px shell with sticky navBar/footer, bottom sheet, action sheets, and 44×44 touch targets.",
+  category: 'Mobile',
+  componentsUsed: ['Icon'],
+} satisfies AstryxPageTemplate;
+
+export default template;
