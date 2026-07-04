@@ -1,0 +1,14 @@
+// Copyright (c) Meta Platforms, Inc. and affiliates.
+
+import type {AstryxPageTemplate} from '@astryxdesign/cli/template';
+
+const template = {
+  type: 'page',
+  name: 'Whirlet — Zone Runner',
+  description:
+    "MOBILE (390px shell) robot-vacuum mission planner for Whirlet: a 52px navBar (36px teal spiral mark · 'Zone Runner' · 44×44 RefreshCw) over a STICKY 256px floorplanPane — six hit-tested SVG rooms (358×232 viewBox, id-derived pastel fills, 2px wall gaps) that are real role='button' toggles, brand run-order badges stamped at zone centroids, a dotted RoutePathTracer that re-traces through the ordered centroids and detours to the dock at (322,204) after every 2nd zone, and a live etaChip pill ('~42 min · 2 bin stops') — above a 68px snap-x runQueueRail of reorderable 44px chips (grip drag + edit-mode 44×44 chevrons, chip index IS the badge number, '800 sq ft queued' caption), a ZONES listCard of six 60px rows (24px color-key selection dot · '180 sq ft · Max · 1 pass' · trailing SlidersHorizontal), an 'All 1,020 sq ft mapped · 6 zones' terminal caption, a sticky 'Clean 4 zones' footer above a 3-tab bar (Clean/History/Robot with per-tab scroll persistence), and a per-zone medium/large-detent options sheet (Include switch, Eco/Standard/Max radiogroup, 1–3 passes spinbutton stepper, six-row RUN CHECKLIST calling the identical toggleZone). The signature move is one-array sovereignty: RunPlanStore's order array feeds a single derive() — zoneMin = (baseMin + suction adj) × passes, binStops = floor(n/2) — so dragging the Kitchen chip to position 3 fires ONE update('plan',{order}) that renumbers the map badges in place, re-traces the route, and honestly HOLDS the etaChip at 42 (sums are order-independent), while toggling Office ON from map, row, or sheet checklist moves it to '~51 min' and 'Clean 5 zones'; deselection executes immediately with an Undo toast restoring the exact prior index (undoOverConfirm, no confirm dialogs), and the RefreshCw skeleton (six 60px rows, deterministic 60/45/70% bars) resolves only on the next user action. At desktop container widths (≥720px) it renders as a centered 430px phone column, never a stretched relayout. Choose over mobile-story-planner when the one ordered array drives a SPATIAL surface — a floorplan map with route tracing and geometric badges — rather than a filmstrip timeline; choose over mobile-parking-session when the domain is home-IoT mission planning with multi-entity selection and per-zone settings, not a single live metered session with money math; choose over mobile-podcast-queue when reordering must ripple to a map/route visualization instead of a time ledger; choose over any desktop template when the brief calls for a phone-first 390px shell with sticky map pane, bottom sheet, snap chip rail, and 44×44 touch targets.",
+  category: 'Mobile',
+  componentsUsed: ['Icon'],
+} satisfies AstryxPageTemplate;
+
+export default template;
