@@ -114,3 +114,19 @@ Batch 3 closed: 31 claims → 6 fixed, 25 refuted. Day total across 3 batches: 8
 - **LOW→FIXED** degree [both]: scaleX squashed the meter fill's right cap — switched to translateX of a full-width pill (still transform-animated); rounded cap verified at 6x zoom.
 
 Day totals (4 batches): 116 claims adjudicated — 27 fixed, 1 by-design, 88 refuted (76%).
+
+# Batch 5 analyze pass (workflow wf_2a6dc12e-edc, completed post-pivot 2026-07-04)
+
+3 confirmed / 22 refuted (88%). public-records-console CLEAN (0/6, incl. a DOM-proof that all queue right-rail labels sit flush at x=692.0). magazine-flatplan-board CLEAN (0/6).
+
+- **HIGH** crane [dark]: rigging-stack SVG payload label "Transformer T-2 · 41,800 lb net" renders rgb(0,0,0) on rgb(24,24,26) (~1.0:1) — fill="var(--color-text)" on SVG <text> not resolving to the dark token. Fix agent dispatched.
+- **LOW** crane [both]: CL corner tag overlaps the Required pill by 3.0x14.8px (translucent ambers stack darker). Same agent.
+- **HIGH** elevator [both]: schedule grid 416px vs 404px card clip — "Regulatory windo" flat-cut header, every row's window band sheared flat at the card edge (DOM-verified 12px overflow). Fix agent dispatched.
+
+NOTE: fixes run as a low-priority side pass — the session has pivoted to the MOBILE KIT (user directive).
+
+## Batch 5 fix outcomes + phantom-token sweep (2026-07-04, post-pivot side pass)
+
+- crane: FIXED ×2 — root cause of the black label: `--color-text` DOES NOT EXIST (real tokens are --color-text-primary/-secondary/...). In CSS `color:` the invalid var degrades to inherited color and silently looks right; on SVG fill/stroke it collapses to initial black. All 9 SVG uses in crane replaced with --color-text-primary (pixel-proved rgb(223,226,229) on dark); CL tag/pill overlap cleared (2.0px clearance, DOM-proved).
+- elevator: FIXED — mid-band columns 104/92/76/minmax(80,1fr) = 400 ≤ 404 card (DOM-proved 404==404); bands end with rounded caps; header ellipsizes honestly.
+- REPO SWEEP for the phantom token: 71 `var(--color-text)` occurrences across 20+ templates, but only 3 in SVG fill/stroke contexts (all vertical-farm-rack-console dial/glyph) — fixed those; the CSS `color:` uses inherit correctly and were deliberately left (a blanket rename could CHANGE rendering where the inherited color is secondary).

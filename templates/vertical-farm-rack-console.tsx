@@ -1084,7 +1084,7 @@ function StackleafMark() {
       <g transform="translate(8, 0)" stroke="var(--color-text-secondary)" strokeWidth={1.5} fill="none">
         <path d={leaf} />
       </g>
-      <g transform="translate(4, 4)" stroke="var(--color-text)" strokeWidth={1.5} fill="none">
+      <g transform="translate(4, 4)" stroke="var(--color-text-primary)" strokeWidth={1.5} fill="none">
         <path d={leaf} />
       </g>
       <g transform="translate(0, 8)">
@@ -1346,11 +1346,11 @@ function HarvestReadinessGlyph({
         y1={DIAL_C}
         x2={nx.toFixed(2)}
         y2={ny.toFixed(2)}
-        stroke="var(--color-text)"
+        stroke="var(--color-text-primary)"
         strokeWidth={1.5}
         strokeLinecap="round"
       />
-      <circle cx={DIAL_C} cy={DIAL_C} r={2} fill="var(--color-text)" />
+      <circle cx={DIAL_C} cy={DIAL_C} r={2} fill="var(--color-text-primary)" />
       <text
         x={DIAL_C}
         y={24.5}

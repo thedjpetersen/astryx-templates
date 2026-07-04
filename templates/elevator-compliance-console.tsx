@@ -1936,7 +1936,9 @@ function ScheduleTable({
   // stage band the center column is only ~400px (rail 260 + aside 320 +
   // gutters), so mid drops Building AND CAT5 (CAT5 stays in the aside
   // facts); narrow regains CAT5 (the aside has left the flow); tight keeps
-  // Car/Status/CAT1/band.
+  // Car/Status/CAT1/band. Mid budget must clear a ~404px card: fixed
+  // 104+92+76 + 3×8 gaps + 24 row pad + band min 80 = 400, so the band's
+  // rounded right cap always lands inside the 12px row padding.
   const hasBuildingCol = band === 'wide';
   const hasCat5Col = band === 'wide' || band === 'narrow';
   const gridTemplateColumns =
@@ -1945,7 +1947,7 @@ function ScheduleTable({
       : band === 'narrow'
         ? '128px 100px 84px 84px minmax(120px, 1fr)'
         : band === 'mid'
-          ? '112px 92px 80px minmax(96px, 1fr)'
+          ? '104px 92px 76px minmax(80px, 1fr)'
           : '104px 92px 76px minmax(90px, 1fr)';
   const columnGap = band === 'mid' || band === 'tight' ? 8 : 12;
   return (

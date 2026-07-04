@@ -337,6 +337,9 @@ const styles: Record<string, CSSProperties> = {
   },
   signoffPill: {
     marginInlineStart: 'auto',
+    // Nudged 2px below row center so the CL corner tag (0–12px band)
+    // clears the pill's top edge on critical-lift rows.
+    marginBlockStart: 4,
     flexShrink: 0,
     display: 'inline-flex',
     alignItems: 'center',
@@ -351,7 +354,7 @@ const styles: Record<string, CSSProperties> = {
   pillRequired: {color: AMBER_TEXT, backgroundColor: AMBER_SOFT},
   clTag: {
     position: 'absolute',
-    top: 3,
+    top: 1,
     insetInlineEnd: 6,
     fontSize: 9,
     fontWeight: 700,
@@ -360,7 +363,7 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: BRAND_TAG_SOFT,
     borderRadius: 3,
     padding: '0 4px',
-    lineHeight: '12px',
+    lineHeight: '11px',
   },
   emptyState: {paddingInline: GUTTER, paddingBlock: 6},
   // Canvas: flex-1 measured container; SVG scales via viewBox.
@@ -1254,12 +1257,12 @@ function CapacityGauge({utilizationPct, grossLabel, capacityLabel, critical}: Ca
             y1={GAUGE_C.y}
             x2={GAUGE_C.x - 78}
             y2={GAUGE_C.y}
-            stroke="var(--color-text)"
+            stroke="var(--color-text-primary)"
             strokeWidth="3"
             strokeLinecap="round"
           />
         </g>
-        <circle cx={GAUGE_C.x} cy={GAUGE_C.y} r="6" fill="var(--color-text)" />
+        <circle cx={GAUGE_C.x} cy={GAUGE_C.y} r="6" fill="var(--color-text-primary)" />
         <text
           x={GAUGE_C.x}
           y={GAUGE_C.y - 26}
@@ -1267,7 +1270,7 @@ function CapacityGauge({utilizationPct, grossLabel, capacityLabel, critical}: Ca
           fontSize="28"
           fontWeight="700"
           style={{
-            fill: critical ? AMBER_TEXT : 'var(--color-text)',
+            fill: critical ? AMBER_TEXT : 'var(--color-text-primary)',
             fontVariantNumeric: 'tabular-nums',
           }}>
           {utilizationPct == null ? '—' : `${utilizationPct.toFixed(1)}%`}
@@ -1315,9 +1318,9 @@ function RiggingStackDiagram({angleDeg, factor, perLegLb, overloadedLegIds}: Rig
       role="img"
       aria-label={`Rigging stack: four sling legs at ${angleDeg} degrees, ${fmtLb(perLegLb)} pounds per leg${overloadedLegIds.length > 0 ? ', SLNG-205 legs overloaded' : ''}`}>
       {/* Hook + shackle */}
-      <circle cx="170" cy="14" r="6" fill="none" stroke="var(--color-text)" strokeWidth="2.5" />
-      <line x1="170" y1="20" x2="170" y2="34" stroke="var(--color-text)" strokeWidth="2.5" />
-      <path d="M163 34h14l-3 12h-8Z" fill="none" stroke="var(--color-text)" strokeWidth="2" />
+      <circle cx="170" cy="14" r="6" fill="none" stroke="var(--color-text-primary)" strokeWidth="2.5" />
+      <line x1="170" y1="20" x2="170" y2="34" stroke="var(--color-text-primary)" strokeWidth="2.5" />
+      <path d="M163 34h14l-3 12h-8Z" fill="none" stroke="var(--color-text-primary)" strokeWidth="2" />
       {/* Upper slings to the spreader */}
       <line x1="170" y1="46" x2="94" y2="86" stroke="var(--color-text-secondary)" strokeWidth="2" />
       <line x1="170" y1="46" x2="246" y2="86" stroke="var(--color-text-secondary)" strokeWidth="2" />
@@ -1344,8 +1347,8 @@ function RiggingStackDiagram({angleDeg, factor, perLegLb, overloadedLegIds}: Rig
               style={{stroke: isOverloaded ? RED : 'var(--color-text-secondary)'}}
               strokeWidth={isOverloaded ? 2.5 : 2}
             />
-            <circle cx={LEG_TOP_X[i]} cy="94" r="2.5" fill="var(--color-text)" />
-            <circle cx={LEG_BOT_X[i]} cy="170" r="2.5" fill="var(--color-text)" />
+            <circle cx={LEG_TOP_X[i]} cy="94" r="2.5" fill="var(--color-text-primary)" />
+            <circle cx={LEG_BOT_X[i]} cy="170" r="2.5" fill="var(--color-text-primary)" />
             {/* Warning glyph on overloaded legs (never color alone) */}
             {isOverloaded ? (
               <path
@@ -1407,7 +1410,7 @@ function RiggingStackDiagram({angleDeg, factor, perLegLb, overloadedLegIds}: Rig
         y="192"
         textAnchor="middle"
         fontSize="11"
-        fill="var(--color-text)"
+        fill="var(--color-text-primary)"
         style={{fontVariantNumeric: 'tabular-nums'}}>
         {LOAD_T2.name} · {LOAD_T2.weightLabel} net
       </text>
