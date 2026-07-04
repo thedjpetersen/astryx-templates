@@ -334,11 +334,16 @@ const styles: Record<string, CSSProperties> = {
     cursor: 'pointer',
   },
   track: {flex: 1, display: 'flex', gap: 2, height: 6},
+  // Unplayed track + future beads sit on the chapter-tint-washed hero, where
+  // the muted token nearly vanishes (~1.2:1 vs the wash in dark). Explicit
+  // in-family rest color instead: #7A928D vs light wash ≈ 3.0:1, #5F7370 vs
+  // #191F1E wash ≈ 3.4:1 (≥3:1 non-text law); future chapter structure must
+  // stay readable ahead of the playhead.
   segment: {
     position: 'relative',
     height: 6,
     borderRadius: 3,
-    background: 'var(--color-background-muted)',
+    background: 'light-dark(#7A928D, #5F7370)',
     overflow: 'hidden',
   },
   segmentFill: {position: 'absolute', insetBlock: 0, left: 0, background: BRAND_ACCENT},
@@ -356,8 +361,10 @@ const styles: Record<string, CSSProperties> = {
     width: 12,
     height: 12,
     borderRadius: '50%',
-    background: 'var(--color-background-muted)',
-    border: '1px solid var(--color-border)',
+    // Same rest pair as the unplayed track (see styles.segment) so future
+    // chapter-jump beads stay visible on the tinted hero.
+    background: 'light-dark(#7A928D, #5F7370)',
+    border: '1px solid light-dark(#5F7370, #7A928D)',
   },
   beadReached: {
     background: 'var(--color-background-card)',

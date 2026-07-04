@@ -456,13 +456,17 @@ const styles: Record<string, CSSProperties> = {
     whiteSpace: 'nowrap',
   },
   // 22×22 check glyph at 7px radius — inside the 72px row button, so the
-  // touch target is the whole row.
+  // touch target is the whole row. The UNCHECKED border cannot use the
+  // hairline token: var(--color-border) measures 1.31:1 on the dark row
+  // surface, hiding the selection affordance. Explicit pair instead —
+  // #73737D on white ≈ 5.0:1, #98989F on #1F1F22 ≈ 5.3:1 (≥3:1 UI-boundary
+  // law).
   checkGlyph: {
     width: 22,
     height: 22,
     flexShrink: 0,
     borderRadius: 7,
-    border: '1px solid var(--color-border)',
+    border: '1px solid light-dark(#73737D, #98989F)',
     display: 'grid',
     placeItems: 'center',
   },

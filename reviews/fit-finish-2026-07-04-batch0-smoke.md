@@ -138,3 +138,12 @@ NOTE: fixes run as a low-priority side pass — the session has pivoted to the M
 - **MEDIUM→FIXED** mobile-cycle-phase-wheel [both]: active tab used var(--color-brand) (demo-logo blue) inside the single-accent Lunara rose app — tabItemActive now uses BRAND_ACCENT; re-shot, rose confirmed.
 
 Foundations amendments recorded in /tmp/astryx-mobile-brief.md (sticky toast docks; preventScroll sheet focus) — discovered independently by 3 of 4 authors.
+
+# Mobile batch 2 analyze pass (workflow wf_a46241db-5c3, 2026-07-04)
+
+2 confirmed / 28 refuted (93%). mobile-camera-roll-organizer 0/8 and mobile-sleep-morning-report 0/8 CLEAN.
+
+- **MEDIUM→FIXED** mobile-prescription-pickup [dark]: unchecked checkGlyph border used the hairline token (1.31:1 on the dark row) — now light-dark(#73737D, #98989F); DOM-proved rgb(152,152,159) on rgb(31,31,34) ≈ 5.3:1.
+- **MEDIUM→FIXED** mobile-meditation-breath-player [both]: unplayed track + future beads ~1.2:1 against the chapter-tint hero — explicit in-family rest pair light-dark(#7A928D, #5F7370) (≥3:1 both schemes); crop-verified visible timeline structure.
+
+Recurring lesson: the hairline/muted tokens are for passive separators only — INTERACTIVE control boundaries and meaningful rest-state fills need explicit ≥3:1 pairs (candidates for a primitiveContracts addendum).
