@@ -387,10 +387,13 @@ const styles: Record<string, CSSProperties> = {
   fuelHandleHit: {
     position: 'absolute',
     left: 0,
-    width: 16, // 16px pointer hit area around the 8px visible grip
-    height: 14,
+    width: 24, // 24px pointer hit area around the 8px visible grip tab
+    height: 24,
     display: 'flex',
-    alignItems: 'center',
+    // alignItems is set per-row: the visible grip hangs OUTSIDE the 14px
+    // lane (above for the y=8 lane, below for y=26) so it never occludes
+    // the glyphs of same-lane pills that overlap the fuel end-cap (Board
+    // label / lock icon).
     justifyContent: 'flex-end',
     cursor: 'ew-resize',
     pointerEvents: 'auto',
@@ -399,10 +402,10 @@ const styles: Record<string, CSSProperties> = {
   },
   fuelHandleGrip: {
     width: 8,
-    height: 14,
+    height: 9, // 1px overlaps the bar border; 8px protrudes past the lane edge
     borderRadius: 3,
     backgroundColor: WARN_FILL,
-    marginRight: 4,
+    marginRight: 8,
   },
   // 64px right cap: the per-row EOBT chip.
   rowCap: {
@@ -1372,9 +1375,11 @@ function EobtChip({deltaMin, wide}: {deltaMin: number; wide?: boolean}) {
 // y=8 / y=26 lanes by array-index parity, and a 64px right cap holding the
 // 20px EOBT chip. Critical-path bars get the 2px brand-mix glow plus 2px
 // connector segments between consecutive critical bars at lane midpoints.
-// The fuel bar alone carries an 8px visible drag grip (16px hit area,
-// role='slider'); drag math lives here (round(dxPx / pxPerMin)) but only
-// deltaMin is emitted — no state.
+// The fuel bar alone carries an 8px-wide drag grip tab (24px hit area,
+// role='slider') that rides the lane edge — hanging outside the 14px bar
+// (above for the y=8 lane, below for y=26) so it never covers the glyphs
+// of same-lane pills overlapping the fuel end-cap; drag math lives here
+// (round(dxPx / pxPerMin)) but only deltaMin is emitted — no state.
 // ---------------------------------------------------------------------------
 
 const MS_COLOR: Record<MilestoneId, string> = {
@@ -1431,7 +1436,11 @@ function TurnaroundGanttRow({
   // Transient drag values live in a ref (never state) — only deltaMin
   // changes leave the component, via onFuelDelta.
   const dragRef = useRef<{startX: number; lastDelta: number} | null>(null);
-  const fuel = flight.milestones.find(m => m.id === 'fuel');
+  const fuelIndex = flight.milestones.findIndex(m => m.id === 'fuel');
+  const fuel = fuelIndex >= 0 ? flight.milestones[fuelIndex] : undefined;
+  const fuelLaneY = laneTop(Math.max(fuelIndex, 0));
+  // y=8 (even-index) lane → grip hangs above; y=26 lane → hangs below.
+  const fuelHangsBelow = fuelIndex % 2 === 1;
   const isInbound = flight.phase === 'inbound';
 
   const handlePointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
@@ -1579,8 +1588,12 @@ function TurnaroundGanttRow({
             aria-orientation="horizontal"
             style={{
               ...styles.fuelHandleHit,
-              top: laneTop(flight.milestones.findIndex(m => m.id === 'fuel')),
-              transform: `translateX(${(fuel.startMin + fuel.durMin) * pxPerMin - 12}px)`,
+              // Grip tab hangs outside the lane so it never occludes the
+              // Board pill's glyphs / lock icon sharing the fuel lane:
+              // y=8 lane hangs above, y=26 lane hangs below.
+              top: fuelHangsBelow ? fuelLaneY - 2 : fuelLaneY - 8,
+              alignItems: fuelHangsBelow ? 'flex-end' : 'flex-start',
+              transform: `translateX(${(fuel.startMin + fuel.durMin) * pxPerMin - 16}px)`,
             }}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}

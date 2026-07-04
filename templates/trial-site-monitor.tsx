@@ -54,17 +54,22 @@
  * so viewport media queries would lie; a viewport query covers only the
  * first pre-observer frame):
  * - W >= 1200: rail 300px, aside 400px, cells 64px (track 44px).
- * - 1000 <= W < 1200 (canonical demo band): rail 260px (names truncate
+ * - 1000 <= W < 1200 (canonical demo band): rail 240px (names truncate
  *   earlier, arm tag drops), aside 360px, cells 56px (track 38px), site
  *   switcher shows the short label, toolbar filter chips drop text labels
- *   for glyphs.
+ *   for glyphs. Rail 240 + 8x56 = 688px so all 8 visit columns fit the
+ *   ~690px scroller at the canonical demo width — no clipped FU-30.
  * - W < 1000: aside leaves the flex flow and becomes a 360px absolute
  *   overlay (right 0, shadow, opens on participant/cell selection, X to
  *   close, Escape closes and restores focus); rail 220px with ID + dots
  *   only. Subtraction, not reflow — nothing squeezes.
  * - The matrix horizontal-scrolls inside its single scroller when the 8
  *   columns exceed the remaining width; the rail is sticky-left INSIDE
- *   that scroller so row alignment survives scroll.
+ *   that scroller so row alignment survives scroll. Whenever columns
+ *   remain off-screen to the right, a gradient fade + chevron affordance
+ *   appears on a NON-scrolling wrapper (a fade on the scroll container
+ *   itself would scroll away with the content) so clipped never reads as
+ *   complete; it hides once scrolled to the end.
  * Corner map: top-left Cohortiq mark + protocol/site switcher; top-right
  * SAE countdown chip (cascade-only) + sync dot + monitor avatar;
  * bottom-left rail footer 'Enrolled 12 / 30 · Screen-fail 1' pinned in
@@ -79,11 +84,13 @@ import {
   useState,
   type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
+  type ReactNode,
   type RefObject,
 } from 'react';
 
 import {
   CheckIcon,
+  ChevronRightIcon,
   CircleAlertIcon,
   FlaskConicalIcon,
   LockIcon,
@@ -256,7 +263,25 @@ const styles: Record<string, CSSProperties> = {
     color: 'var(--color-text)',
     fontWeight: 600,
   },
+  // Non-scrolling wrapper that owns the right-edge overflow affordance —
+  // the fade must NOT live on the scroller itself or it scrolls away with
+  // the content.
+  matrixViewport: {position: 'relative', flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column'},
   scroller: {flex: 1, minHeight: 0, overflow: 'auto', position: 'relative'},
+  scrollHint: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    width: 44,
+    zIndex: 5,
+    pointerEvents: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingRight: 3,
+    background: 'linear-gradient(to right, transparent, var(--color-background) 72%)',
+  },
   legendStrip: {
     display: 'flex',
     alignItems: 'center',
@@ -1537,6 +1562,52 @@ function VisitWindowMatrix({
 }
 
 // ---------------------------------------------------------------------------
+// MatrixScrollport — non-scrolling wrapper around the matrix scroller. When
+// visit columns remain off-screen to the right (scrollLeft + clientWidth <
+// scrollWidth), it overlays a right-edge gradient fade + chevron so a
+// hard-clipped column can never read as the last one ('FU-3' vs 'FU-30').
+// The affordance lives on THIS wrapper, not the scroller — a fade on the
+// scroll container itself would scroll away with the content. At the
+// canonical demo band the 8 columns fit (rail 240 + 8x56 = 688px) and the
+// hint never renders; it is defense for narrower slices of each band.
+// ---------------------------------------------------------------------------
+
+function MatrixScrollport({children}: {children: ReactNode}) {
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateOverflow = useCallback(() => {
+    const el = scrollerRef.current;
+    if (el == null) return;
+    setCanScrollRight(el.scrollWidth - el.clientWidth - el.scrollLeft > 1);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (el == null) return undefined;
+    updateOverflow();
+    // Re-check on viewport resize; content-width changes (geometry band
+    // flips) only happen alongside container resizes, so this covers both.
+    const observer = new ResizeObserver(updateOverflow);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [updateOverflow]);
+
+  return (
+    <div style={styles.matrixViewport}>
+      <div ref={scrollerRef} style={styles.scroller} onScroll={updateOverflow}>
+        {children}
+      </div>
+      {canScrollRight ? (
+        <div style={styles.scrollHint} aria-hidden>
+          <Icon icon={ChevronRightIcon} size="xsm" color="secondary" />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // AEGradeSelector — fully custom; a stock segmented control has no
 // regulatory threshold semantics. Presentational: the SAE cascade lives in
 // the owner, never here. role=radiogroup, arrow keys move grade.
@@ -2148,7 +2219,10 @@ export default function TrialSiteMonitorTemplate() {
   const geometry: MatrixGeometry = isNarrow
     ? {railW: 220, cellW: 56, trackW: 38, showNames: false, showArmTags: false}
     : isMid
-      ? {railW: 260, cellW: 56, trackW: 38, showNames: true, showArmTags: false}
+      ? // Rail 240 (not 260): 240 + 8x56 = 688px fits the ~690px scroller at
+        // the canonical demo width, so FU-30 renders whole instead of
+        // hard-clipping to a plausible-but-wrong 'FU-3'.
+        {railW: 240, cellW: 56, trackW: 38, showNames: true, showArmTags: false}
       : {railW: 300, cellW: 64, trackW: 44, showNames: true, showArmTags: true};
 
   // ---- THE single state owner ---------------------------------------------
@@ -2593,7 +2667,7 @@ export default function TrialSiteMonitorTemplate() {
                     {complianceLine}
                   </Text>
                 </div>
-                <div style={styles.scroller}>
+                <MatrixScrollport>
                   <VisitWindowMatrix
                     participants={sortedParticipants}
                     cells={study.cells}
@@ -2609,7 +2683,7 @@ export default function TrialSiteMonitorTemplate() {
                     onToggleQuery={toggleQuery}
                     cellRefs={cellRefs}
                   />
-                </div>
+                </MatrixScrollport>
                 <LegendStrip />
               </div>
               {asideVisible ? (

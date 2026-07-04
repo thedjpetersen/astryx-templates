@@ -66,3 +66,21 @@ Gemini returned 4; ALL FOUR refuted against pixels/source — its entire dark-th
 - "bus line bleeds through T1 coils" — source (grid-feeder-console.tsx:1173-1176) stops connector stubs at circle tangents; 4x zoom (/tmp/vgf-t1-zoom.png) shows the interior marks are the two coils' intentional IEC overlap.
 
 grid-feeder-console is CLEAN post-fix. Analyze pass now complete across all four batch templates. Running refute tally for the day: 19 of 24 Gemini claims refuted (79% on this batch — worse than the historical 60%; the crop-verify discipline is earning its cost).
+
+# Batch 2 analyze pass (workflow wf_48255d4d-321, 2026-07-04)
+
+4 confirmed / 25 refuted (86%). Full refutations in the workflow output; confirmed:
+
+- **HIGH** trial-site-monitor [both]: matrix scroll viewport misses fitting all 8 columns by 18px (clientWidth 690 vs scrollWidth 708) — final column hard-clips mid-glyph with no affordance; "FU-30" reads as the plausible-but-wrong "FU-3". DOM-proved via scroll-to-end crop.
+- **HIGH** ramp-turnaround-console [both]: orange fuel drag handle layers over the green Board pill ("Bo■d") on rows A4/D5 and over lock icons on B1/B3.
+- **MEDIUM** vertical-farm-rack-console [dark]: far-red 730nm (#FB7185) indistinguishable from deep-red 660nm (#F87171); source comment "kept distinct from the 660nm band" fails in dark.
+- **MEDIUM→WONT-FIX** kds-expo-line: mid-name ellipsis on ticket rows — RULED BY-DESIGN: 244px column + single-line row is the spec'd density law; distinguishing info carried by modifier microrows; full names in the all-day aside.
+
+## Batch 2 fix outcomes (2026-07-04)
+
+- trial-site-monitor: FIXED — mid-band rail 260→240 (688 ≤ 690, all 8 columns fit; DOM-proved clientWidth==scrollWidth 690) + MatrixScrollport fade/chevron affordance on a non-scrolling wrapper for the 1000-1057 band slices, hidden at scroll end.
+- ramp-turnaround-console: FIXED — fuel grip now an 8×9px tab protruding outside the 14px lane band (parity-driven side), hit area widened 16×14→24×24, slider semantics untouched; 4x crops show "Board" + locks fully legible on A4/B1/B3/D5 both themes.
+- vertical-farm-rack-console: FIXED — far-red dark half #FB7185→#F472B6, validated ΔE 37.9/37.3 deutan/12.1 tritan vs 660nm salmon, ≥3:1 on dark surface; fill-only constant.
+- kds-expo-line: WONT-FIX (by design), recorded above.
+
+Batch 2 closed: 29 claims → 3 fixed, 1 ruled by-design, 25 refuted.

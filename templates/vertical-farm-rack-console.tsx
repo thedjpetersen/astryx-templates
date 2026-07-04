@@ -120,8 +120,11 @@ const SPECTRUM_DEEP_RED =
   'var(--color-data-categorical-red, light-dark(#DC2626, #F87171))'; // 660nm
 const SPECTRUM_BLUE =
   'var(--color-data-categorical-blue, light-dark(#0171E3, #4C9EFF))'; // 450nm
-// Far-red 730nm reads as deep rose — kept distinct from the 660nm band.
-const SPECTRUM_FAR_RED = 'light-dark(#9F1239, #FB7185)';
+// Far-red 730nm reads as rose-magenta — kept distinct from the 660nm band.
+// Dark half is #F472B6 (not the salmon #FB7185, which collided with #F87171
+// at swatch size): vs #F87171 it holds ΔE 37.9 normal / 37.3 deutan /
+// 12.1 tritan, and >= 3:1 on the dark surface. Fill/swatch only, never text.
+const SPECTRUM_FAR_RED = 'light-dark(#9F1239, #F472B6)';
 
 // Gauge status text at 10px must clear 4.5:1: #067647 on white = 5.5:1,
 // #4ADE80 on #1E1E1E = 9.9:1; #9A3412 on white = 7.6:1, #FBBF24 on
