@@ -869,7 +869,9 @@ const styles: Record<string, CSSProperties> = {
     fontSize: 13,
     lineHeight: 1.45,
   },
-  matrixSubject: {fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0},
+  // Fixed width so every rule column shares one left edge ('anchored
+  // menu' is the widest subject at 13px/600).
+  matrixSubject: {fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0, width: 96},
   matrixRule: {flex: 1, minWidth: 0, color: 'var(--color-text-secondary)'},
   // ------------------------------- TOAST DOCK (real) --------------------
   // Sticky-in-flow per the batch-1 amendment (the shell scrolls; absolute
@@ -888,7 +890,7 @@ const styles: Record<string, CSSProperties> = {
 // FIXTURES — deterministic consts; no Math.random, no Date.now, no timers.
 // ---------------------------------------------------------------------------
 
-// S1 · Action sheet. The context header is the two-line stress; the third
+// S1 · Action sheet. The context header is the three-line stress; the third
 // option is the longest-row stress ('Move to Saved Recordings' single-lines
 // at 17px/500 inside the option card; ellipsis guard on the row anyway);
 // the destructive verb is LAST, per contract.
@@ -998,7 +1000,7 @@ const LAYERS = [
   {id: 'z30', z: '30', name: 'toastDock'},
   {id: 'z40', z: '40', name: 'sheetScrim'},
   {id: 'z41', z: '41', name: 'sheet / actionSheet / anchored menu'},
-  {id: 'z50', z: '50', name: 'fullscreen cover (cited, not specimen’d)'},
+  {id: 'z50', z: '50', name: 'fullscreen cover (cited only)'},
   {id: 'z60', z: '60', name: 'alertScrim — above covers'},
   {id: 'z61', z: '61', name: 'alert'},
 ] as const;
@@ -1183,7 +1185,7 @@ function ActionSheetSpecimen() {
         <AnnotationList
           items={[
             'sheetScrim — absolute inset 0, light-dark(rgba(21,17,12,0.32), rgba(0,0,0,0.55)), z40; actionSheet — absolute insetInline 16, bottom 16, z41 (the sheet layer: never stack it)',
-            'card one — card bg, radius 16, shadow 0 −8px 32px; context header 13/400 secondary, centered, padding 14px 16px, hairline below (two-line stress shown)',
+            'card one — card bg, radius 16, shadow 0 −8px 32px; context header 13/400 secondary, centered, padding 14px 16px, hairline below (three-line stress shown)',
             'actionSheetRows — 56px real <button>s, 17/500 centered, full-width 1px hairlines; centered-no-icons variant (leading-icons is the other legal variant — never mix)',
             'destructive row — text (and any icon) in --color-error, always LAST; never first focus',
             'card two — its own card, 8px below: one 56px Cancel row 17/600 — the panic-safe bottom-of-screen tap',

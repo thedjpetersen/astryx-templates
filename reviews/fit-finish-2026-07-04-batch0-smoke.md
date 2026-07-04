@@ -147,3 +147,12 @@ Foundations amendments recorded in /tmp/astryx-mobile-brief.md (sticky toast doc
 - **MEDIUM→FIXED** mobile-meditation-breath-player [both]: unplayed track + future beads ~1.2:1 against the chapter-tint hero — explicit in-family rest pair light-dark(#7A928D, #5F7370) (≥3:1 both schemes); crop-verified visible timeline structure.
 
 Recurring lesson: the hairline/muted tokens are for passive separators only — INTERACTIVE control boundaries and meaningful rest-state fills need explicit ≥3:1 pairs (candidates for a primitiveContracts addendum).
+
+# Mobile specimen suite audit (workflow wf_6076df9c-ec0, 2026-07-04)
+
+8 confirmed / 37 refuted (82%). The audit ran as design critique + CONTRACT AUDIT (annotations DOM-measured against their own claims). The primitives measured TRUE across the board (52/64px bars, 2px+1px thumb inset, 55%/−56px detents, 8px grabber inset, full 7-row z-ladder, exact 44/60/72 rows); all 8 findings were annotation/fixture-truth issues, all FIXED with DOM proof:
+- chrome: both ellipsis-stress specimens now genuinely overflow (fixtures lengthened; scrollWidth>clientWidth proved); 358→354 frame-inner arithmetic corrected in annotations (tabs 5×70.8).
+- list-input: duplicate "2m" removed; rich-row fixture shortened so no unannotated truncation.
+- overlay: action-sheet annotation now says three-line stress (matches 3.02 rendered lines); matrix rule columns aligned via fixed 96px subject width; z50 plate label shortened to fit.
+
+Specimen law reinforced: a gallery annotation its own pixels contradict is a HIGH-trust defect even when the UI is pretty.

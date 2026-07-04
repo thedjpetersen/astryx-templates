@@ -890,12 +890,12 @@ const ROW_TRIO = {
   standard: {
     initials: 'KW',
     primary: 'Katarzyna Wojciechowska-Brzęczyszczykiewicz',
-    secondary: 'Sent a photo · 2m',
+    secondary: 'Sent a photo',
     meta: '2m',
   },
   rich: {
     primary: 'Quarterly review deck',
-    secondary: 'Edited by Priya · 4.2 MB · Yesterday',
+    secondary: 'Edited by Priya · 4.2 MB',
     tertiary: 'Shared with Design Crit · 8 people',
   },
 };

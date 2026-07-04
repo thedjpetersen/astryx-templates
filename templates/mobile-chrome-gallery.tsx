@@ -834,11 +834,11 @@ const COVER_TITLE = 'Compose';
 // render them (each gets a visible STRESS row + an annotation line).
 const STRESS = {
   navTitle: 'Reconciliation & Adjustments — Q3',
-  largeTitle: 'Saved Conversations',
+  largeTitle: 'Saved Conversation Transcripts',
   searchQuery: 'meeting notes from the offsite in Lisbon',
   editCount: '248 Selected',
   fabLabel: 'New voice memo',
-  ctaLabel: 'Continue to checkout — $1,284.00',
+  ctaLabel: 'Continue to checkout — Annual Pro plan · $1,284.00',
   sheetTitle: 'Filter, sort & display options',
 } as const;
 
@@ -916,7 +916,7 @@ const SPECIMENS: SpecimenDef[] = [
       'large title: 28px/700 at the 16px gutter · single line',
       'expanded: center title hidden · no hairline until collapse',
       'collapsed: title back to 17px/600 centered · hairline on',
-      'stress: “Saved Conversations” 28px/700 ellipsis at 326px (358 − 32)',
+      'stress: “Saved Conversation Transcripts” 28px/700 ellipsis at 322px (354 frame-inner − 32)',
     ],
   },
   {
@@ -952,7 +952,7 @@ const SPECIMENS: SpecimenDef[] = [
     state: 'LIVE',
     anatomy: [
       'bar: 64px · borderTop hairline · blur surface · sticky bottom z20',
-      'items: flex 1 · full 64px touch target · 5 × 71.6px at 390',
+      'items: flex 1 · full 64px touch target · 5 × 70.8px (354px frame-inner)',
       '24px icon over 11px/500 label · 4px gap',
       'active: --color-brand + 600 weight · inactive: --color-text-secondary',
       'LIVE: taps really move the tint — activeTab in the one state owner',
@@ -1031,7 +1031,7 @@ const SPECIMENS: SpecimenDef[] = [
       'footer: sticky bottom · blur surface · borderTop hairline · padding 12px 16px',
       'button: 48px full width · radius 12 · --color-brand · 17px/600',
       'label light-dark(#FFFFFF, #431407) on brand — 5.2:1 / 6.9:1',
-      'stress: “Continue to checkout — $1,284.00” single-line ellipsis inside 48px',
+      'stress: “Continue to checkout — Annual Pro plan · $1,284.00” single-line ellipsis inside 48px',
     ],
   },
   {

@@ -58,10 +58,10 @@ Produced by the 3-lens ideation workflow (physical ops / regulated verticals / c
 | mobile-transit-companion | 23.67 | Travel & Transit | IN BUILD (mobile batch 1) |
 | mobile-p2p-payment-flow | 23.67 | Money & Logistics — P2P Payments | IN BUILD (mobile batch 1) |
 | mobile-cycle-phase-wheel | 23.33 | Health, fitness and lifestyle | IN BUILD (mobile batch 1) |
-| mobile-prescription-pickup | 23.00 | Money & Logistics — Pharmacy Pickup | backlog |
-| mobile-meditation-breath-player | 22.33 | Health, fitness and lifestyle | backlog |
-| mobile-camera-roll-organizer | 22.00 | Media & Photos | backlog |
-| mobile-sleep-morning-report | 22.00 | Health, fitness and lifestyle | backlog |
+| mobile-prescription-pickup | 23.00 | Money & Logistics — Pharmacy Pickup | SHIPPED (mobile batch 2) |
+| mobile-meditation-breath-player | 22.33 | Health, fitness and lifestyle | SHIPPED (mobile batch 2) |
+| mobile-camera-roll-organizer | 22.00 | Media & Photos | SHIPPED (mobile batch 2) |
+| mobile-sleep-morning-report | 22.00 | Health, fitness and lifestyle | SHIPPED (mobile batch 2) |
 | mobile-meal-quickadd-log | 22.00 | Health, fitness and lifestyle | backlog |
 | mobile-run-route-recap | 21.33 | Health, fitness and lifestyle | backlog |
 | mobile-podcast-queue | 20.33 | Audio | backlog |
