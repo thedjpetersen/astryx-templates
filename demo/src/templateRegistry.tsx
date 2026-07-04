@@ -2370,4 +2370,25 @@ export const templates: TemplateEntry[] = [
     'Mobile',
     "The mobile kit's shell-chrome contract as 17 annotated specimens: four navBar variants, the 64px tabBar (LIVE 5-tab tint + 99+ badges + editToolbar swap), a LIVE 200ms segmented radiogroup, FAB and footer-CTA stills (incl. the one legal 16px spinner), frozen 55%/large sheet detents, a z50 cover, and the zIndex/motion legend — with a navBar Sun/Moon switch that flips the shell's colorScheme to prove both themes per frame.",
   ),
+  entry(
+    'mobile-meal-quickadd-log',
+    "Forkful — Today's Meal Quick-Add Log",
+    'page',
+    'Mobile',
+    "Forkful 390px meal logger built for repetition speed: a concentric three-arc macro dial ('1,106 of 2,110 kcal', overshoot error ticks), calorie-sized meal-rail dots (21/24/16/12px), 2-col quick-add tiles whose ×N badges, swipe-to-delete rows, '1,004 kcal left' footer, and one Undo toast all re-derive from a single tap — Protein Shake ×3 clamps the protein arc at '27g over', Salmon ×3 via the 55% portion sheet flips the footer to '247 kcal over'.",
+  ),
+  entry(
+    'mobile-run-route-recap',
+    'Pacelight — Run Route Recap',
+    'page',
+    'Mobile',
+    "Pacelight 390px post-run recap where one distanceCursor threads everything: a stylized 84-segment pace-gradient route ribbon whose draggable puck IS a keyboard slider, a prev/next-km readout chip, cursor-writing stat tiles, a 9-row diverging split ladder (km 5's +20 s bar fills the half zone exactly, km 7 wears the PB flag), and a synced elevation strip with an anchored pin/copy menu and sticky Undo toast.",
+  ),
+  entry(
+    'mobile-podcast-queue',
+    'Earmark — Up Next Queue',
+    'page',
+    'Mobile',
+    "Earmark 390px podcast queue that budgets listening time: six 72px rows whose bottom dividers ARE per-episode progress meters, a queueLedger answering 'Ends 6:42 PM' from one queue array (32+31+21+24+18+12+14 = 152 min remaining), and every grip-drag reorder, swipe-archive (undo, 6:18 PM), Discover add (7:20 PM), or skip-30 re-summing the ledger, miniPlayer 'Up next' line, and #n overlines in one render.",
+  ),
 ];
