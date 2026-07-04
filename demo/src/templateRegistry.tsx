@@ -2391,4 +2391,11 @@ export const templates: TemplateEntry[] = [
     'Mobile',
     "Earmark 390px podcast queue that budgets listening time: six 72px rows whose bottom dividers ARE per-episode progress meters, a queueLedger answering 'Ends 6:42 PM' from one queue array (32+31+21+24+18+12+14 = 152 min remaining), and every grip-drag reorder, swipe-archive (undo, 6:18 PM), Discover add (7:20 PM), or skip-30 re-summing the ledger, miniPlayer 'Up next' line, and #n overlines in one render.",
   ),
+  entry(
+    'mobile-banking-home-insights',
+    'Alderbank — Banking Home with Spend Insights',
+    'page',
+    'Mobile',
+    "Alderbank 390px banking home where insights are a working filter: one activeCategory dispatch threads the 200px five-arc spend ring (safe-to-spend $821.50 = $2,600 − $1,778.50), a 6-card insight peek-rail, a 45-row ledger ('Showing Dining · 14 — Clear'), and the toast dock — while the navBar eye masks 20+ figures through one width-stable maskableAmount ('$4,286.31' → '$•,•••.••', zero shift) synced to the More tab's Privacy switch.",
+  ),
 ];
