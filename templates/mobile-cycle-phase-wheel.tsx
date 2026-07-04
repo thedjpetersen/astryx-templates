@@ -865,7 +865,9 @@ const styles: Record<string, CSSProperties> = {
     gap: 4,
     color: 'var(--color-text-secondary)',
   },
-  tabItemActive: {color: 'var(--color-brand)'},
+  // Active tab carries the quarantined Lunara rose, not var(--color-brand)
+  // (that token is the demo-logo blue and would break the single-accent law).
+  tabItemActive: {color: BRAND_ACCENT},
   tabLabel: {fontSize: 11, fontWeight: 500},
   tabLabelActive: {fontWeight: 600},
   // Log sheet — medium/large two-detent bottom sheet.

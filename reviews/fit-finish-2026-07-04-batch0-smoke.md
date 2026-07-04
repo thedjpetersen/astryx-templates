@@ -130,3 +130,11 @@ NOTE: fixes run as a low-priority side pass — the session has pivoted to the M
 - crane: FIXED ×2 — root cause of the black label: `--color-text` DOES NOT EXIST (real tokens are --color-text-primary/-secondary/...). In CSS `color:` the invalid var degrades to inherited color and silently looks right; on SVG fill/stroke it collapses to initial black. All 9 SVG uses in crane replaced with --color-text-primary (pixel-proved rgb(223,226,229) on dark); CL tag/pill overlap cleared (2.0px clearance, DOM-proved).
 - elevator: FIXED — mid-band columns 104/92/76/minmax(80,1fr) = 400 ≤ 404 card (DOM-proved 404==404); bands end with rounded caps; header ellipsizes honestly.
 - REPO SWEEP for the phantom token: 71 `var(--color-text)` occurrences across 20+ templates, but only 3 in SVG fill/stroke contexts (all vertical-farm-rack-console dial/glyph) — fixed those; the CSS `color:` uses inherit correctly and were deliberately left (a blanket rename could CHANGE rendering where the inherited color is secondary).
+
+# Mobile batch 1 analyze pass (workflow wf_b108b075-c45, 2026-07-04)
+
+1 confirmed / 25 refuted (96% — cleanest batch of the session; the mobile foundations discipline held). parking 0/8, transit 0/6, p2p 0/5 all CLEAN — several refutations were gallery-harness scroll-padding artifacts around the sticky nav/tab bars, correctly identified as impossible-on-device; verifiers used live-DOM measurement at the demo's new port 5176.
+
+- **MEDIUM→FIXED** mobile-cycle-phase-wheel [both]: active tab used var(--color-brand) (demo-logo blue) inside the single-accent Lunara rose app — tabItemActive now uses BRAND_ACCENT; re-shot, rose confirmed.
+
+Foundations amendments recorded in /tmp/astryx-mobile-brief.md (sticky toast docks; preventScroll sheet focus) — discovered independently by 3 of 4 authors.
