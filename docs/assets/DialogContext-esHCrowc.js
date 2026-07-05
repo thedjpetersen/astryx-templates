@@ -1,1 +1,0 @@
-import{a as e,n as t}from"./jsx-runtime-n5LQ9ujS.js";var n=e(t(),1),r=(0,n.createContext)(null);r.displayName=`DialogContext`;function i(){return(0,n.use)(r)}export{i as n,r as t};

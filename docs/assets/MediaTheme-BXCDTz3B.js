@@ -1,0 +1,1 @@
+import"./rolldown-runtime-QTnfLwEv.js";import{n as e,t}from"./jsx-runtime-CIxEorsV.js";import{n}from"./themeProps-C0N1XsMS.js";e();var r=t();function i({mode:e,children:t}){return(0,r.jsx)(`div`,{[n(`media`)]:e,className:`xjp7ctv x1tgivj0`,children:t})}i.displayName=`MediaTheme`;export{i as t};

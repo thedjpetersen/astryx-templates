@@ -1,0 +1,1 @@
+import{r as e}from"./rolldown-runtime-QTnfLwEv.js";import{n as t}from"./jsx-runtime-CIxEorsV.js";var n=e(t(),1),r=(0,n.createContext)(null);r.displayName=`SizeContext`;function i(e,t=`md`){let i=(0,n.use)(r);return e??i??t}var a=r.Provider;export{i as n,a as t};

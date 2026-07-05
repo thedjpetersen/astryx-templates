@@ -1,0 +1,1 @@
+import{r as e}from"./rolldown-runtime-QTnfLwEv.js";import{n as t}from"./jsx-runtime-CIxEorsV.js";var n=e(t(),1),r=(0,n.createContext)(null);r.displayName=`DialogContext`;function i(){return(0,n.use)(r)}export{i as n,r as t};

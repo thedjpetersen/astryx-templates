@@ -1,0 +1,1 @@
+import{t as e}from"./jsx-runtime-CIxEorsV.js";import{t}from"./Stack-BO2vzwBR.js";var n=e();function r({ref:e,justify:r,align:i,hAlign:a,vAlign:o,...s}){return(0,n.jsx)(t,{...s,direction:`horizontal`,hAlign:a??r,vAlign:o??i,ref:e})}r.displayName=`HStack`;export{r as t};
