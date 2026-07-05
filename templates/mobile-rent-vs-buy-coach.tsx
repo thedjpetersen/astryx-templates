@@ -1410,10 +1410,9 @@ function intersectionYear(p: LiveParams, be: number): number {
 interface CrossoverChartProps {
   live: LiveParams;
   onStayChange: (year: number) => void;
-  reducedMotion: boolean;
 }
 
-function CrossoverChart({live, onStayChange, reducedMotion}: CrossoverChartProps) {
+function CrossoverChart({live, onStayChange}: CrossoverChartProps) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const probeRef = useRef<HTMLSpanElement | null>(null);
@@ -1619,10 +1618,8 @@ function CrossoverChart({live, onStayChange, reducedMotion}: CrossoverChartProps
           onKeyDown={onScrubKeyDown}
         />
       ) : null}
-      {/* Non-gesture parity lives in the scrubber button row below; the
-          drag itself never gates anything (reducedMotion only strips the
-          snap pulse, wired in the readout). */}
-      {reducedMotion ? null : null}
+      {/* Non-gesture parity lives in the scrubber button row below the
+          canvas; reduced motion strips the snap pulse in the readout. */}
     </div>
   );
 }
@@ -2372,7 +2369,7 @@ export default function MobileRentVsBuyCoachTemplate() {
               {fmtUsd(gapDisplay)}
             </span>
           </div>
-          <CrossoverChart live={live} onStayChange={onStayChange} reducedMotion={reducedMotion} />
+          <CrossoverChart live={live} onStayChange={onStayChange} />
           <div style={styles.scrubRow}>
             <button
               type="button"

@@ -2178,12 +2178,16 @@ export default function MobileGamedayTrackerTemplate() {
           {activeTab === 'court' ? (
             <section style={styles.courtPanel} aria-label="Court">
               <h2 className="pgt-vh">Shot chart</h2>
-              <SegmentedControl
-                options={FILTER_OPTIONS}
-                value={teamFilter}
-                ariaLabel="Filter shots by team"
-                onSelect={id => update({teamFilter: id as TeamFilter})}
-              />
+              {/* row-flex wrapper: segTrack is flex:1 (sized for the
+                  scrubRow); inside this column panel it needs a row box. */}
+              <div style={{display: 'flex'}}>
+                <SegmentedControl
+                  options={FILTER_OPTIONS}
+                  value={teamFilter}
+                  ariaLabel="Filter shots by team"
+                  onSelect={id => update({teamFilter: id as TeamFilter})}
+                />
+              </div>
               <div style={styles.courtCard}>
                 <CourtShotPlotter shots={shots} t={t} reducedMotion={reducedMotion} />
               </div>

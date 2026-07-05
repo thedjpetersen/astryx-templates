@@ -2979,4 +2979,25 @@ export const templates: TemplateEntry[] = [
     'Mobile',
     "Duesday 390px aging-sorted invoice triage where every aggregate derives from ONE chaseStore: a 72px TOTAL OUTSTANDING header reduces nine invoices to $17,000.00 ($7,685 overdue + $6,850 due soon + $2,465 promised) under an Overdue 4 / Due soon 3 / Promised 2 radiogroup, 88px rows pair id-derived gradient monograms with escalating aging arcs (sweep daysPast/45, amber→orange→red pairs) and 44×16 three-notch ladderSteppers, and the signature nudge ladder — ellipsis → action sheet → two-detent composer prefilled from rung-keyed templates — advances firm→final on Send, stamps 'nudged today', FLIP-re-sorts the cooled row downward, badges Activity via a derived 'Today' count, and offers snapshot-exact Undo from a sticky-in-flow toast dock; swipe −72px logs a promise (moving the row into Promised with a scroll-snap chip rail), Mark paid drops the header to $12,750.00 live, emptying Promised reveals a true-empty state whose one action opens the first overdue row's action sheet, and refresh shows 3 deterministic 88px skeletons with per-tab scrollTop persistence throughout.",
   ),
+  entry(
+    'mobile-party-headcount-grid',
+    'Feastly — Party Headcount Grid',
+    'page',
+    'Mobile',
+    "Feastly 390px party-planning surface where a dual-sticky guest-by-dietary matrix drives everything: 12 fixture guests (7 confirmed + 3 maybe + 2 out) on 'minmax(72px,1fr) repeat(4, minmax(52px,56px))' columns with a 44px sort-header row sticky top:52 and a 32px live tally row sticky top:96 ('2 · 1 +1 · 2 +1 · 2 +1'), every cell a real 56px aria-pressed toggle button; tapping Marcus's GF cell rolls the tally and the sticky-bottom ServingsRecalcBar (STD 4 · VEG 2 · VGN 1, std = 7−2−1 ✓) via 20px NumberRollers, flips Rosemary Focaccia to 'Short 1' (Menu tab badge), and regenerates exactly two Shopping lines (GF flour 240 g→360 g, soy sauce→GF tamari) with 'updated' dots — Menu and Shopping are pure projections of one guestRoster reducer, reversed by a persistent no-timer Undo toast in a sticky-in-flow dock, never a confirm dialog; plus a two-detent guest sheet (status radiogroup, whole-row switches, 29/71/86% invite-decay rings, 'Send nudge' footer), a pushed dish-detail screen with 96×32 spinbutton steppers, per-tab scroll/screen persistence, and a centered 430px phone column at desktop widths.",
+  ),
+  entry(
+    'mobile-thankyou-note-tracker',
+    'Gracenote — Thank-You Note Tracker',
+    'page',
+    'Mobile',
+    "Gracenote 390px post-wedding thank-you ledger where ONE noteLedger (14 gifts · 9 households · 10 notes; H4/H7/H9 pre-merged = −4) projects every surface: Queue sections TO WRITE 3 / DRAFTED 3 / SEALED 1 of 72px GiftNoteRows (four-dot stage spine with ≥3:1 PENDING_INK rest dots, id-derived-gradient 48px tiles at hue = charCodes×37%360, dot-only stage chips under a ≤308px @container query, mandatory 44×44 ellipsis menus) — swiping drafted Osei right past +72px 'Send' postmarks the row with a StampSweep stamp + dashed 'JUL 4' arc, ticks the navBar RemainingRing 7→6 (dash 33.9→45.2 of C≈113.1), adds a Jul 4 PostmarkEntry, seals the Gifts tile 5→6, and raises a PERSISTENT no-timer Undo toast in the sticky-in-flow toastDock; the unmerged Alvarez–Kim HouseholdCollapser's 'Combine into one note' proves n−1 math (10→9 notes, 7→6 remaining, ring 3/9 → dash 37.7), the two-detent draft sheet advances 'Mark drafted'→'Mark sealed'→'Mark sent' over prompt chips (+3 at large), Sent rows Unsend through the same undo patch, and per-tab scrollTop persists with a true-empty MailCheck 'All caught up' after all 7 sends.",
+  ),
+  entry(
+    'mobile-venue-punch-walkthrough',
+    'Snagline — Venue Punch Walkthrough',
+    'page',
+    'Mobile',
+    "Snagline 390px linear venue-walkthrough punch list (NO tabBar) where 16 fixture items drive every surface: a sticky 358×228 skewX(−8) isometric ZonePlan whose six focusable rooms carry live count chips (2/4/3/2/0/1 = 12 open) and numbered severity-ring pins (2/4/6px, blockers error-red), a 184px six-dot amber/green RoomDots radiogroup, Prev/Next roomNav over 72px swipe-to-resolve rows (blockers-first, +72px brand Resolve block + mandatory ellipsis menu) and 44px collapsed room jumps — filing from the two-detent ghost-pin sheet appends in ONE write that re-sorts, pulses pin+row 1200ms, bumps the chip, and recomputes the 64px HandoffLedger 'VENUE FIXES 7 | WE BRING TAPE 5', while resolving Patio's last item dims the room to a resolved tint, flips its dot green, and reverts atomically via persistent snapshot Undo; the always-enabled '12 open' pill nags to the first open room until zero, then opens the sign-off cover + 'Sign off walkthrough?' alertdialog that locks the list.",
+  ),
 ];
