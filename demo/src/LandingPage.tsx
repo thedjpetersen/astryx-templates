@@ -2,7 +2,7 @@ import type {RefObject} from 'react';
 
 import './landing.css';
 
-import {Suspense, useEffect, useMemo, useRef, useState} from 'react';
+import {Suspense, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 import {categorySlug, displayCategory, filterTemplates} from './catalog';
 import type {KindFilter} from './catalog';
@@ -33,12 +33,36 @@ const FEATURED_IDS = [
   'coding-terminal-workspace',
 ];
 
+/** Renders inside the Suspense boundary, so its effect only fires once the
+ * lazy template chunk has resolved — the signal that opens the next slot. */
+function MountSignal({onMount}: {onMount: () => void}) {
+  useEffect(() => {
+    onMount();
+  }, [onMount]);
+  return null;
+}
+
 /**
  * Mounts a template component only once its preview scrolls near the
  * viewport, so landing never pays for template code the visitor never sees.
+ * On phones mounts are also serialized (`readySlots`) so six template chunks
+ * never resolve concurrently mid-scroll.
  */
-function FeaturedPreview({entry}: {entry: TemplateEntry}) {
+function FeaturedPreview({
+  entry,
+  index,
+  isPhone,
+  readySlots,
+  onResolved,
+}: {
+  entry: TemplateEntry;
+  index: number;
+  isPhone: boolean;
+  readySlots: number;
+  onResolved: (index: number) => void;
+}) {
   const [inView, setInView] = useState(false);
+  const [width, setWidth] = useState(0);
   const previewRef = useRef<HTMLDivElement | null>(null);
   const Component = entry.component;
 
@@ -52,19 +76,43 @@ function FeaturedPreview({entry}: {entry: TemplateEntry}) {
           observer.disconnect();
         }
       },
-      {rootMargin: '200px'},
+      {rootMargin: isPhone ? '0px' : '200px'},
     );
     observer.observe(node);
     return () => observer.disconnect();
+  }, [isPhone]);
+
+  // Scale from measured card width, not viewport queries — the compare-
+  // before-set keeps this idempotent under StrictMode double-invocation.
+  useEffect(() => {
+    const node = previewRef.current;
+    if (!node) return;
+    const ro = new ResizeObserver(entries => {
+      const w = entries[entries.length - 1]?.contentRect.width ?? 0;
+      setWidth(prev => (Math.abs(prev - w) < 1 ? prev : w));
+    });
+    ro.observe(node);
+    return () => ro.disconnect();
   }, []);
+
+  const scale = width > 0 ? width / 920 : 0.35;
+  const handleResolved = useCallback(
+    () => onResolved(index),
+    [onResolved, index],
+  );
 
   return (
     <div ref={previewRef} className="landing-featured-preview">
-      {inView ? (
-        <div className="landing-featured-artboard" aria-hidden="true" inert>
+      {inView && index < readySlots ? (
+        <div
+          className="landing-featured-artboard"
+          style={{transform: `scale(${scale})`}}
+          aria-hidden="true"
+          inert>
           <Suspense
             fallback={<div className="landing-skeleton landing-skeleton--fill" />}>
             <Component />
+            <MountSignal onMount={handleResolved} />
           </Suspense>
         </div>
       ) : (
@@ -83,6 +131,23 @@ export function LandingPage({
   kind,
 }: LandingPageProps) {
   const total = templates.length;
+
+  // Lazy initializers on purpose: pointer class / phone width never change
+  // mid-session on the devices that matter, and this avoids effect churn.
+  const [isPhone] = useState(
+    () => window.matchMedia('(max-width: 860px)').matches,
+  );
+  const [coarsePointer] = useState(
+    () => window.matchMedia('(hover: none) and (pointer: coarse)').matches,
+  );
+  // Phones drain featured mounts one at a time; desktop mounts all six.
+  const [readySlots, setReadySlots] = useState(() =>
+    window.matchMedia('(max-width: 860px)').matches ? 1 : Infinity,
+  );
+  const onResolved = useCallback(
+    (i: number) => setReadySlots(n => Math.max(n, i + 2)),
+    [],
+  );
 
   const pageCount = useMemo(
     () => templates.filter(t => t.kind === 'page').length,
@@ -165,7 +230,11 @@ export function LandingPage({
               type="search"
               value={query}
               aria-label="Search templates"
-              placeholder={`Search ${total} templates…  ( / )`}
+              placeholder={
+                coarsePointer
+                  ? `Search ${total} templates…`
+                  : `Search ${total} templates…  ( / )`
+              }
               onChange={e => onQueryChange(e.target.value)}
               onKeyDown={e => {
                 if (e.key === 'Enter') window.location.hash = '/browse';
@@ -188,7 +257,7 @@ export function LandingPage({
             <small className="landing-hero-hint">
               {matchCount === 0
                 ? `No templates match “${query.trim()}”`
-                : `${matchCount} matches — press Enter to browse`}
+                : `${matchCount} matches — ${coarsePointer ? 'tap Browse all templates' : 'press Enter to browse'}`}
             </small>
           ) : null}
 
@@ -253,12 +322,18 @@ export function LandingPage({
               Six templates, live and scaled down.
             </h2>
             <div className="landing-featured-grid">
-              {featured.map(t => (
+              {featured.map((t, index) => (
                 <a
                   key={t.id}
                   className="landing-featured-card"
                   href={'#' + t.id}>
-                  <FeaturedPreview entry={t} />
+                  <FeaturedPreview
+                    entry={t}
+                    index={index}
+                    isPhone={isPhone}
+                    readySlots={readySlots}
+                    onResolved={onResolved}
+                  />
                   <span className="landing-featured-meta">
                     <small>{displayCategory(t.category)}</small>
                     <strong>{t.name}</strong>
@@ -302,7 +377,11 @@ export function LandingPage({
             Browse the catalog
           </a>
           <p className="landing-footer-hint">
-            Press <kbd>/</kbd> to search ·{' '}
+            {coarsePointer ? null : (
+              <>
+                Press <kbd>/</kbd> to search{' · '}
+              </>
+            )}
             <a
               href="https://github.com/thedjpetersen/astryx-templates"
               target="_blank"

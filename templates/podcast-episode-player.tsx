@@ -757,7 +757,18 @@ export default function PodcastEpisodePlayerTemplate() {
   }, [atEnd]);
 
   // Auto-scroll keeps the highlighted cue in view as the playhead moves.
+  // Skip the initial mount run: scrollIntoView also scrolls the document,
+  // which would yank a freshly-loaded page away from the top. Tracking the
+  // previous deps key (rather than a "mounted" flag) keeps this idempotent
+  // under StrictMode's double effect invocation.
+  const prevAutoScrollKey = useRef<string | null>(null);
   useEffect(() => {
+    const key = `${autoScroll}:${activeCueIndex}`;
+    if (prevAutoScrollKey.current === null || prevAutoScrollKey.current === key) {
+      prevAutoScrollKey.current = key;
+      return;
+    }
+    prevAutoScrollKey.current = key;
     if (!autoScroll || activeCueIndex < 0) {
       return;
     }

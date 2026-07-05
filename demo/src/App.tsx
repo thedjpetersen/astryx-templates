@@ -1,4 +1,4 @@
-import {Suspense, useEffect, useMemo, useRef, useState} from 'react';
+import {Suspense, startTransition, useEffect, useMemo, useRef, useState} from 'react';
 
 import {BrowseView} from './BrowseView';
 import {categorySlug, displayCategory, filterTemplates} from './catalog';
@@ -14,7 +14,7 @@ type SchemePref = 'system' | 'light' | 'dark';
 export type Route =
   | {view: 'landing'}
   | {view: 'browse'; categorySlug?: string}
-  | {view: 'detail'; templateId: string};
+  | {view: 'detail'; templateId: string; requestedId?: string};
 
 function parseRoute(hash: string): Route {
   const raw = decodeURIComponent(hash.replace(/^#/, ''));
@@ -25,7 +25,11 @@ function parseRoute(hash: string): Route {
     return {view: 'landing'}; // unknown app route
   }
   const exists = templates.some(t => t.id === raw);
-  return {view: 'detail', templateId: exists ? raw : templates[0].id}; // preserved fallback
+  // Unknown ids still render templates[0] (preserved fallback), but carry the
+  // requested id along so the app can reconcile the URL and say so.
+  return exists
+    ? {view: 'detail', templateId: raw}
+    : {view: 'detail', templateId: templates[0].id, requestedId: raw};
 }
 
 const RECENT_KEY = 'astryx-templates:recent';
@@ -58,6 +62,8 @@ function SchemeToggle({
   onChange: (next: SchemePref) => void;
   floating?: boolean;
 }) {
+  const next =
+    SCHEME_OPTIONS[(SCHEME_OPTIONS.indexOf(value) + 1) % SCHEME_OPTIONS.length];
   return (
     <div
       className={
@@ -78,6 +84,15 @@ function SchemeToggle({
           {option}
         </button>
       ))}
+      {/* Mobile-only compact cycler: CSS swaps the three-label pill for this
+          single 44px control below 860px. */}
+      <button
+        type="button"
+        className="scheme-cycle"
+        aria-label={`Color scheme: ${value}. Switch to ${next}.`}
+        onClick={() => onChange(next)}>
+        {value === 'system' ? '◐' : value === 'light' ? '☀' : '☾'}
+      </button>
     </div>
   );
 }
@@ -103,6 +118,50 @@ const prefetch = (entry: TemplateEntry) => {
 
 const sourceCache = new Map<string, string>();
 
+// Highlighted HTML keyed by the source text itself, so a stale text/template
+// pairing during a switch can never poison the cache. Shiki loads lazily —
+// visitors who never open Source never pay for it — and emits light-dark()
+// colors, so the code follows the scheme toggle exactly like the rest of the
+// chrome. Fine-grained core imports (one grammar, two themes, JS regex
+// engine) keep this to a handful of chunks instead of the full language
+// bundle plus wasm.
+const highlightCache = new Map<string, string>();
+
+let highlighterPromise: Promise<
+  import('shiki/core').HighlighterCore
+> | null = null;
+
+function getHighlighter() {
+  highlighterPromise ??= (async () => {
+    const [core, engine, light, dark, tsx] = await Promise.all([
+      import('shiki/core'),
+      import('shiki/engine/javascript'),
+      import('shiki/dist/themes/github-light.mjs'),
+      import('shiki/dist/themes/github-dark.mjs'),
+      import('shiki/dist/langs/tsx.mjs'),
+    ]);
+    return core.createHighlighterCore({
+      themes: [light.default, dark.default],
+      langs: [tsx.default],
+      engine: engine.createJavaScriptRegexEngine({forgiving: true}),
+    });
+  })();
+  return highlighterPromise;
+}
+
+async function highlightSource(code: string): Promise<string> {
+  const cached = highlightCache.get(code);
+  if (cached !== undefined) return cached;
+  const highlighter = await getHighlighter();
+  const html = highlighter.codeToHtml(code, {
+    lang: 'tsx',
+    themes: {light: 'github-light', dark: 'github-dark'},
+    defaultColor: 'light-dark()',
+  });
+  highlightCache.set(code, html);
+  return html;
+}
+
 // Grouped by display label so legacy 'Code' entries fold under 'Coding'.
 function groupTemplates(entries: TemplateEntry[]) {
   return entries.reduce<Record<string, TemplateEntry[]>>((acc, template) => {
@@ -125,12 +184,40 @@ export function DemoApp() {
   const [scheme, setScheme] = useState<SchemePref>(readSchemePref);
   const [recentIds, setRecentIds] = useState<string[]>(readRecentIds);
   const [sourceText, setSourceText] = useState<string | null>(null);
+  const [sourceHtml, setSourceHtml] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(
+    () => window.matchMedia('(max-width: 860px)').matches,
+  );
+  // Lazy initializer on purpose: pointer class never changes mid-session on
+  // the devices that matter, and this avoids effect churn.
+  const [coarsePointer] = useState(
+    () => window.matchMedia('(hover: none) and (pointer: coarse)').matches,
+  );
+  const [descExpanded, setDescExpanded] = useState(false);
+  const [noticeDismissed, setNoticeDismissed] = useState(false);
+  const [copied, setCopied] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
+  const previewWrapRef = useRef<HTMLDivElement>(null);
+  const navToggleRef = useRef<HTMLButtonElement>(null);
+  const navRef = useRef<HTMLElement>(null);
+  const prevBtnRef = useRef<HTMLButtonElement>(null);
+  const nextBtnRef = useRef<HTMLButtonElement>(null);
+  const prevNavOpenRef = useRef<boolean | null>(null);
 
   useEffect(() => {
-    const onHashChange = () => setRoute(parseRoute(window.location.hash));
+    // startTransition keeps the current template rendered while the next
+    // lazy chunk resolves, so pager steps don't flash the skeleton.
+    const onHashChange = () =>
+      startTransition(() => setRoute(parseRoute(window.location.hash)));
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width: 860px)');
+    const onChange = (event: MediaQueryListEvent) => setIsMobile(event.matches);
+    mql.addEventListener('change', onChange);
+    return () => mql.removeEventListener('change', onChange);
   }, []);
 
   useEffect(() => {
@@ -144,6 +231,9 @@ export function DemoApp() {
         event.preventDefault();
         setIsNavOpen(true);
         searchRef.current?.focus();
+      }
+      if (event.key === 'Escape') {
+        setIsNavOpen(false);
       }
     };
     window.addEventListener('keydown', onKeyDown);
@@ -198,6 +288,9 @@ export function DemoApp() {
     if (detailId === null || mode !== 'source') return;
     const entry = templates.find(template => template.id === selectedId);
     if (!entry) return;
+    // Warm the highlighter in parallel with the source fetch instead of
+    // serially after it; getHighlighter memoizes so repeat calls are free.
+    void getHighlighter().catch(() => {});
     const cached = sourceCache.get(selectedId);
     if (cached !== undefined) {
       setSourceText(cached);
@@ -221,6 +314,29 @@ export function DemoApp() {
     };
   }, [detailId, mode, selectedId]);
 
+  // Highlight loaded source. Plain text renders immediately; the highlighted
+  // markup swaps in when Shiki (lazy chunk) finishes tokenizing.
+  useEffect(() => {
+    if (mode !== 'source' || sourceText === null) {
+      setSourceHtml(null);
+      return;
+    }
+    const cached = highlightCache.get(sourceText);
+    setSourceHtml(cached ?? null);
+    if (cached !== undefined) return;
+    let cancelled = false;
+    void highlightSource(sourceText)
+      .then(html => {
+        if (!cancelled) setSourceHtml(html);
+      })
+      .catch(() => {
+        // Highlighting is progressive enhancement — plain text stays up.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [mode, sourceText]);
+
   const selectTemplate = (id: string) => {
     setIsNavOpen(false);
     window.location.hash = id;
@@ -231,6 +347,139 @@ export function DemoApp() {
     [kind, query],
   );
   const grouped = useMemo(() => groupTemplates(visibleTemplates), [visibleTemplates]);
+
+  // Prev/next steps through the filtered list when the current template is in
+  // it (so search/kind scope the walk), otherwise the full catalog order.
+  const pagerList = visibleTemplates.some(t => t.id === selected.id)
+    ? visibleTemplates
+    : templates;
+  const pagerIndex = pagerList.findIndex(t => t.id === selected.id);
+  const prevTemplate = pagerIndex > 0 ? pagerList[pagerIndex - 1] : null;
+  const nextTemplate =
+    pagerIndex >= 0 && pagerIndex < pagerList.length - 1
+      ? pagerList[pagerIndex + 1]
+      : null;
+
+  // Arrow keys page between templates on the detail view. Skipped while
+  // typing or when focus is inside the rendered template, which may have its
+  // own arrow-key behavior (lists, sliders, calendars).
+  const isDetail = route.view === 'detail';
+  useEffect(() => {
+    if (!isDetail) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      const target = event.target as HTMLElement | null;
+      const isTyping =
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target?.isContentEditable;
+      if (isTyping || target?.closest('.template-stage')) return;
+      const dest = event.key === 'ArrowLeft' ? prevTemplate : nextTemplate;
+      if (dest) window.location.hash = dest.id;
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isDetail, prevTemplate, nextTemplate]);
+
+  // Warm the pager neighbors so steps are near-instant. The 250ms delay keeps
+  // the current template's own chunk first in line; prefetch is best-effort
+  // and deduped by the module cache, so StrictMode double-invoke is harmless.
+  useEffect(() => {
+    if (!isDetail) return;
+    const timer = setTimeout(() => {
+      if (prevTemplate) prefetch(prevTemplate);
+      if (nextTemplate) prefetch(nextTemplate);
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [isDetail, prevTemplate, nextTemplate]);
+
+  // Copy-button state: reset when the template or view mode changes, and
+  // revert "Copied" back to "Copy" after 2s.
+  useEffect(() => {
+    setCopied(false);
+  }, [selectedId, mode]);
+
+  useEffect(() => {
+    if (!copied) return;
+    const timer = setTimeout(() => setCopied(false), 2000);
+    return () => clearTimeout(timer);
+  }, [copied]);
+
+  // Each template starts at the top of its preview, not wherever the last
+  // one was scrolled to. On mobile the document itself scrolls, so reset
+  // both (idempotent — safe under StrictMode double-invoke).
+  useEffect(() => {
+    previewWrapRef.current?.scrollTo(0, 0);
+    window.scrollTo(0, 0);
+  }, [selectedId]);
+
+  // Collapse the description clamp when switching templates.
+  useEffect(() => {
+    setDescExpanded(false);
+  }, [selectedId]);
+
+  // Per-route document titles for history/tabs/screen readers.
+  const selectedName = selected.name;
+  useEffect(() => {
+    document.title =
+      route.view === 'detail'
+        ? `${selectedName} — Astryx Templates`
+        : route.view === 'browse'
+          ? 'Browse — Astryx Templates'
+          : 'Astryx Templates';
+  }, [route.view, selectedName]);
+
+  // Unknown detail ids: reconcile the address bar to the template actually
+  // rendered (replaceState fires no hashchange, so no re-render loop) and
+  // surface a dismissible notice while this in-memory route persists.
+  const requestedId = route.view === 'detail' ? route.requestedId : undefined;
+  useEffect(() => {
+    if (requestedId === undefined) return;
+    setNoticeDismissed(false);
+    history.replaceState(null, '', '#' + templates[0].id);
+  }, [requestedId]);
+
+  // Mobile overlay transitions: opening centers the selected item inside the
+  // list (container-scoped scroll); closing returns focus to the toggle so
+  // Escape/selection never drops focus to <body>. Compares the previous
+  // isNavOpen value (never a boolean "mounted" flag) so StrictMode's double
+  // invoke is harmless; the initial run pre-scrolls the desktop sidebar for
+  // deep links.
+  useEffect(() => {
+    const centerSelected = () => {
+      const nav = navRef.current;
+      const sel = nav?.querySelector<HTMLElement>('.template-nav-item.is-selected');
+      if (nav && sel) {
+        nav.scrollTop =
+          sel.getBoundingClientRect().top -
+          nav.getBoundingClientRect().top +
+          nav.scrollTop -
+          nav.clientHeight / 2 +
+          sel.clientHeight / 2;
+      }
+    };
+    const prevOpen = prevNavOpenRef.current;
+    prevNavOpenRef.current = isNavOpen;
+    if (prevOpen === null) {
+      if (!isMobile) centerSelected();
+      return;
+    }
+    if (prevOpen === isNavOpen) return;
+    if (isNavOpen) {
+      centerSelected();
+    } else if (isMobile) {
+      navToggleRef.current?.focus();
+    }
+  }, [isNavOpen, isMobile]);
+
+  // The document scrolls on mobile, so lock it while the overlay is up.
+  useEffect(() => {
+    if (!(isNavOpen && isMobile)) return;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isNavOpen, isMobile]);
 
   if (route.view === 'landing') {
     return (
@@ -270,7 +519,13 @@ export function DemoApp() {
 
   return (
     <main className="demo-shell">
-      <aside className="demo-sidebar" aria-label="Templates">
+      <aside
+        className={isNavOpen ? 'demo-sidebar is-open' : 'demo-sidebar'}
+        aria-label="Templates"
+        // Only the mobile full-screen overlay is a dialog; the desktop
+        // sidebar is plain layout and the main pane stays interactive.
+        role={isNavOpen && isMobile ? 'dialog' : undefined}
+        aria-modal={isNavOpen && isMobile ? true : undefined}>
         <div className="demo-brand">
           <a className="demo-brand-link" href="#" aria-label="Astryx Templates home">
             <svg
@@ -287,6 +542,7 @@ export function DemoApp() {
           </a>
           <button
             type="button"
+            ref={navToggleRef}
             className="nav-toggle"
             aria-expanded={isNavOpen}
             aria-controls="template-browser"
@@ -303,7 +559,11 @@ export function DemoApp() {
               ref={searchRef}
               type="search"
               value={query}
-              placeholder="Search templates…  ( / )"
+              placeholder={
+                coarsePointer
+                  ? 'Search templates…'
+                  : 'Search templates…  ( / )'
+              }
               aria-label="Search templates"
               onChange={event => setQuery(event.target.value)}
             />
@@ -327,13 +587,14 @@ export function DemoApp() {
                 key={nextKind}
                 type="button"
                 className={kind === nextKind ? 'is-active' : ''}
+                aria-pressed={kind === nextKind}
                 onClick={() => setKind(nextKind)}>
                 {nextKind}
               </button>
             ))}
           </div>
 
-          <nav className="template-nav" aria-label="Template list">
+          <nav className="template-nav" aria-label="Template list" ref={navRef}>
             {visibleTemplates.length === 0 ? (
               <p className="nav-empty">
                 No templates match &ldquo;{query.trim()}&rdquo;.
@@ -367,9 +628,29 @@ export function DemoApp() {
         </div>
       </aside>
 
-      <section className="demo-main" aria-label="Template preview">
+      <section
+        className="demo-main"
+        aria-label="Template preview"
+        // While the mobile overlay is up, remove the background from the tab
+        // order and the a11y tree (React 19 inert prop).
+        inert={isNavOpen && isMobile ? true : undefined}>
+        {requestedId && !noticeDismissed ? (
+          <div className="route-notice" role="status">
+            &ldquo;{requestedId}&rdquo; isn&rsquo;t in the catalog — showing the
+            first template. <a href="#/browse">Browse all</a>
+            <button
+              type="button"
+              aria-label="Dismiss"
+              onClick={() => setNoticeDismissed(true)}>
+              ×
+            </button>
+          </div>
+        ) : null}
         <header className="demo-toolbar">
-          <div className="template-heading">
+          <div
+            className={
+              descExpanded ? 'template-heading is-expanded' : 'template-heading'
+            }>
             <a
               className="crumb-back"
               href={'#/browse/' + categorySlug(selected.category)}>
@@ -377,27 +658,97 @@ export function DemoApp() {
             </a>
             <h2>{selected.name}</h2>
             <p>{selected.description}</p>
+            {selected.description.length > 140 ? (
+              <button
+                type="button"
+                className="desc-toggle"
+                aria-expanded={descExpanded}
+                onClick={() => setDescExpanded(v => !v)}>
+                {descExpanded ? 'Less' : 'More'}
+              </button>
+            ) : null}
             {selected.requires ? <p className="template-note">{selected.requires}</p> : null}
           </div>
 
           <div className="toolbar-controls">
+            <div className="pager" aria-label="Template pager">
+              <button
+                type="button"
+                ref={prevBtnRef}
+                disabled={prevTemplate === null}
+                aria-label={
+                  prevTemplate ? `Previous: ${prevTemplate.name}` : 'Previous template'
+                }
+                title={prevTemplate?.name}
+                onPointerEnter={() => prevTemplate && prefetch(prevTemplate)}
+                onClick={() => {
+                  if (!prevTemplate) return;
+                  window.location.hash = prevTemplate.id;
+                  // Landing on the first template disables this button; hand
+                  // keyboard focus to its still-enabled sibling.
+                  if (pagerIndex - 1 === 0) nextBtnRef.current?.focus();
+                }}>
+                ←
+              </button>
+              <span className="pager-count" aria-live="polite">
+                {pagerIndex + 1} / {pagerList.length}
+                <span className="visually-hidden">: {selected.name}</span>
+              </span>
+              <button
+                type="button"
+                ref={nextBtnRef}
+                disabled={nextTemplate === null}
+                aria-label={
+                  nextTemplate ? `Next: ${nextTemplate.name}` : 'Next template'
+                }
+                title={nextTemplate?.name}
+                onPointerEnter={() => nextTemplate && prefetch(nextTemplate)}
+                onClick={() => {
+                  if (!nextTemplate) return;
+                  window.location.hash = nextTemplate.id;
+                  if (pagerIndex + 1 === pagerList.length - 1) {
+                    prevBtnRef.current?.focus();
+                  }
+                }}>
+                →
+              </button>
+            </div>
             <div className="segmented" aria-label="View mode">
               {(['preview', 'source'] as const).map(nextMode => (
                 <button
                   key={nextMode}
                   type="button"
                   className={mode === nextMode ? 'is-active' : ''}
+                  aria-pressed={mode === nextMode}
                   onClick={() => setMode(nextMode)}>
                   {nextMode}
                 </button>
               ))}
             </div>
-            <div className="segmented" aria-label="Viewport">
+            {mode === 'source' ? (
+              <button
+                type="button"
+                className="copy-source"
+                disabled={sourceText === null}
+                onClick={() => {
+                  if (sourceText === null) return;
+                  // Clipboard API needs a secure context (localhost/https);
+                  // elsewhere the catch keeps the tap a silent no-op.
+                  navigator.clipboard
+                    .writeText(sourceText)
+                    .then(() => setCopied(true))
+                    .catch(() => {});
+                }}>
+                {copied ? 'Copied' : 'Copy'}
+              </button>
+            ) : null}
+            <div className="segmented viewport-toggle" aria-label="Viewport">
               {(['desktop', 'mobile'] as const).map(nextViewport => (
                 <button
                   key={nextViewport}
                   type="button"
                   className={viewport === nextViewport ? 'is-active' : ''}
+                  aria-pressed={viewport === nextViewport}
                   onClick={() => setViewport(nextViewport)}>
                   {nextViewport}
                 </button>
@@ -407,7 +758,7 @@ export function DemoApp() {
           </div>
         </header>
 
-        <div className="preview-wrap">
+        <div className="preview-wrap" ref={previewWrapRef}>
           {mode === 'preview' ? (
             <div
               className={
@@ -420,9 +771,18 @@ export function DemoApp() {
               </Suspense>
             </div>
           ) : (
-            <pre className="source-panel">
-              <code>{sourceText ?? 'Loading source…'}</code>
-            </pre>
+            <div className="source-panel">
+              {sourceHtml !== null ? (
+                <div
+                  className="source-highlighted"
+                  dangerouslySetInnerHTML={{__html: sourceHtml}}
+                />
+              ) : (
+                <pre className="source-plain">
+                  <code>{sourceText ?? 'Loading source…'}</code>
+                </pre>
+              )}
+            </div>
           )}
         </div>
       </section>

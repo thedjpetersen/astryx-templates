@@ -220,9 +220,15 @@ button:focus-visible,
 .scheme-toggle-floating {
   position: fixed;
   right: 16px;
-  bottom: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
   z-index: 60;
   box-shadow: 0 4px 14px var(--color-shadow);
+}
+
+/* Mobile-only compact scheme cycler (rendered by SchemeToggle); the 860px
+   block swaps it in for the three-label pill. */
+.scheme-cycle {
+  display: none;
 }
 
 .template-nav {
@@ -310,6 +316,11 @@ button:focus-visible,
   min-height: 0;
 }
 
+/* The reconciliation notice adds a row above the toolbar when present. */
+.demo-main:has(.route-notice) {
+  grid-template-rows: auto auto minmax(0, 1fr);
+}
+
 .demo-toolbar {
   display: flex;
   align-items: center;
@@ -345,7 +356,59 @@ button:focus-visible,
 }
 
 .template-note {
-  color: var(--color-warning) !important;
+  /* Pure --color-warning measures ~1.8:1 on the light toolbar; blending
+     toward text ink lifts light mode past 4.5:1. Dark mode already passes
+     on pure warning. */
+  color: light-dark(
+    color-mix(in oklab, var(--color-warning) 45%, var(--color-text-primary)),
+    var(--color-warning)
+  ) !important;
+}
+
+/* Mobile-only expander for clamped descriptions (see 860px block). */
+.desc-toggle {
+  display: none;
+}
+
+/* Screen-reader-only text (pager live region carries the template name). */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Banner shown when a deep link's template id wasn't found and the URL was
+   reconciled to the rendered fallback. */
+.route-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-accent-muted);
+  color: var(--color-text-primary);
+  font-size: 13px;
+}
+
+.route-notice a {
+  color: inherit;
+}
+
+.route-notice button {
+  margin-left: auto;
+  border: 0;
+  background: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 16px;
+  min-width: 32px;
+  min-height: 32px;
 }
 
 .toolbar-controls {
@@ -354,9 +417,69 @@ button:focus-visible,
   gap: 10px;
 }
 
+/* Prev/next template pager: same pill language as .segmented. */
+.pager {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-background-card);
+}
+
+.pager button {
+  min-width: 40px;
+  min-height: 30px;
+  border: 0;
+  border-radius: var(--radius-full, 999px);
+  background: transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.pager button:hover:not(:disabled) {
+  background: var(--color-accent-muted);
+}
+
+.pager button:disabled {
+  color: var(--color-text-secondary);
+  cursor: default;
+  opacity: 0.45;
+}
+
+.pager-count {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  padding: 0 6px;
+  white-space: nowrap;
+}
+
+/* Copy-source pill, visible only in source mode. */
+.copy-source {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-background-card);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  padding: 6px 16px;
+  font-weight: var(--font-weight-medium, 500);
+}
+
+.copy-source:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
 .preview-wrap {
   min-height: 0;
   overflow: auto;
+  /* Stops iOS rubber-band scroll chaining out of the pane; inert on mobile
+     where this pane no longer scrolls itself. */
+  overscroll-behavior: contain;
   padding: 20px 24px 24px;
 }
 
@@ -418,6 +541,7 @@ button:focus-visible,
 .source-panel {
   min-height: calc(100dvh - 130px);
   overflow: auto;
+  overscroll-behavior: contain;
   margin: 0;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-container, 16px);
@@ -427,21 +551,53 @@ button:focus-visible,
   font-size: 12px;
   line-height: 1.55;
   padding: 20px;
+}
+
+.source-panel pre {
+  margin: 0;
+  font: inherit;
   white-space: pre;
 }
 
+/* Shiki emits its own <pre class="shiki"> with a theme background; the
+   panel's token surface wins so light/dark stays on Astryx colors. */
+.source-panel .shiki {
+  background: transparent !important;
+}
+
 @media (max-width: 860px) {
+  /* Unlock document scrolling: the whole page scrolls so the toolbar chrome
+     scrolls away instead of pinning 300-550px above the template. */
   .demo-shell {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(0, 1fr);
+    display: block;
+    height: auto;
+    overflow: visible;
   }
 
+  /* Slim brand bar stays reachable via sticky (background already opaque);
+     z-index stays below the overlay's 50. */
   .demo-sidebar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
     min-height: auto;
     gap: 14px;
     border-right: 0;
     border-bottom: 1px solid var(--color-border);
-    padding: 14px 16px;
+    padding: 10px 16px;
+  }
+
+  .demo-brand p {
+    display: none;
+  }
+
+  .demo-brand-mark {
+    width: 26px;
+    height: 26px;
+  }
+
+  .demo-brand h1 {
+    font-size: 16px;
   }
 
   .nav-toggle {
@@ -457,8 +613,40 @@ button:focus-visible,
     display: flex;
   }
 
+  /* Open state takes over the whole viewport: full-height list with its own
+     scroll instead of a squeezed 55dvh strip pushing the preview down. */
+  .demo-sidebar.is-open {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    overflow: hidden;
+    border-bottom: 0;
+  }
+
   .template-nav {
-    max-height: 55dvh;
+    flex: 1;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Comfortable thumb targets. */
+  .template-nav-item {
+    padding: 12px;
+  }
+
+  .nav-toggle {
+    min-height: 40px;
+    padding: 8px 18px;
+  }
+
+  .segmented button {
+    min-height: 38px;
+  }
+
+  /* On a phone the stage already renders at true device width, so the
+     desktop/mobile artboard toggle does nothing — hide it. */
+  .viewport-toggle {
+    display: none;
   }
 
   .demo-toolbar {
@@ -476,15 +664,29 @@ button:focus-visible,
     min-width: 0;
   }
 
+  /* With overflow:visible these grid items regain a min-content floor; wide
+     desktop-era templates would inflate .demo-main's column track past the
+     phone viewport and zoom the whole layout out. Pin them to the viewport —
+     the stage's overflow:clip crops anything wider. */
+  .demo-toolbar,
   .preview-wrap {
+    min-width: 0;
+  }
+
+  .preview-wrap {
+    overflow: visible;
+    min-height: auto;
     padding: 12px;
+    /* Clearance for the fixed thumb-zone pager bar. */
+    padding-bottom: calc(88px + env(safe-area-inset-bottom));
   }
 
   /* Let templates render at true phone width instead of forcing a
-     920px artboard that needs horizontal panning. */
+     920px artboard that needs horizontal panning. The card sizes to
+     content now that the document scrolls — no phantom-scroll floor. */
   .template-stage {
     min-width: 0;
-    min-height: calc(100dvh - 220px);
+    min-height: 0;
   }
 
   .template-stage-mobile {
@@ -493,8 +695,111 @@ button:focus-visible,
   }
 
   .source-panel {
-    min-height: calc(100dvh - 220px);
-    font-size: 11px;
+    min-height: 0;
+    font-size: 12px;
     padding: 14px;
+  }
+
+  /* Soft-wrap code so source mode never needs two-axis panning. */
+  .source-panel pre,
+  .source-panel .shiki code {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .copy-source {
+    min-height: 40px;
+  }
+
+  /* Clamp long registry descriptions behind the More toggle; the requires
+     note (.template-note) must stay fully visible. */
+  .template-heading > p:not(.template-note) {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .template-heading.is-expanded > p:not(.template-note) {
+    -webkit-line-clamp: unset;
+    display: block;
+  }
+
+  .desc-toggle {
+    display: inline-block;
+    border: 0;
+    background: none;
+    color: var(--color-accent);
+    padding: 4px 0;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  /* Collapse the three-label scheme pill to a single 44px cycle control. */
+  .scheme-toggle > button:not(.scheme-cycle) {
+    display: none;
+  }
+
+  .scheme-toggle .scheme-cycle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+  }
+
+  /* Detail view's scheme toggle floats like the landing/browse instances. */
+  .toolbar-controls .scheme-toggle {
+    position: fixed;
+    right: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    z-index: 60;
+    box-shadow: 0 4px 14px var(--color-shadow);
+  }
+
+  /* The fixed controls sit at z-index 60, above the browse overlay's 50;
+     while the overlay has the main pane inert, hide them so they don't
+     float over the modal list. */
+  .demo-main[inert] .pager,
+  .demo-main[inert] .toolbar-controls .scheme-toggle {
+    visibility: hidden;
+  }
+
+  /* Thumb-zone pager: fixed to the bottom edge with >=44px targets. */
+  .pager {
+    position: fixed;
+    left: 50%;
+    bottom: calc(14px + env(safe-area-inset-bottom));
+    z-index: 60;
+    transform: translateX(-50%);
+    box-shadow: 0 4px 14px var(--color-shadow);
+  }
+
+  .pager button {
+    min-width: 56px;
+    min-height: 44px;
+  }
+
+  /* Breadcrumb is the only in-chrome way back — give it a 44px target
+     without shifting the heading rhythm. */
+  .crumb-back {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin: -14px 0;
+    padding-right: 12px;
+  }
+
+  .search-clear {
+    width: 40px;
+    height: 40px;
+    right: 2px;
+  }
+
+  /* 16px stops iOS Safari's auto-zoom on focus. */
+  .template-search input {
+    padding-right: 44px;
+    font-size: 16px;
   }
 }

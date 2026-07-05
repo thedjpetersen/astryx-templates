@@ -330,8 +330,12 @@
   background: var(--color-background-card, Canvas);
 }
 
+/* transform is a pre-measure fallback; FeaturedPreview overrides it inline
+   with a scale derived from the measured preview width. min-height keeps
+   short templates filling the 224px preview window once scaled. */
 .landing-featured-artboard {
   width: 920px;
+  min-height: 640px;
   transform: scale(0.35);
   transform-origin: top left;
   pointer-events: none;
@@ -491,9 +495,24 @@
     width: 100%;
   }
 
-  .landing-btn {
+  /* Scoped to the hero row so the footer button keeps intrinsic width. */
+  .landing-cta-row .landing-btn {
+    width: 100%;
     box-sizing: border-box;
     text-align: center;
+  }
+
+  .landing-category-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .landing-category-card {
+    padding: 12px 14px;
+  }
+
+  .landing-category-samples {
+    display: none;
   }
 
   .landing-footer {
