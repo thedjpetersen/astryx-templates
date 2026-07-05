@@ -1,0 +1,1 @@
+import{A as e}from"./index-BhI2sin4.js";var t=e(`forward`,[[`path`,{d:`m15 17 5-5-5-5`,key:`nf172w`}],[`path`,{d:`M4 18v-2a4 4 0 0 1 4-4h12`,key:`jmiej9`}]]),n=e(`reply-all`,[[`path`,{d:`m12 17-5-5 5-5`,key:`1s3y5u`}],[`path`,{d:`M22 18v-2a4 4 0 0 0-4-4H7`,key:`1fcyog`}],[`path`,{d:`m7 17-5-5 5-5`,key:`1ed8i2`}]]);export{t as n,n as t};
