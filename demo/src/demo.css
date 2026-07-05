@@ -506,6 +506,19 @@ button:focus-visible,
   margin: 0 auto;
 }
 
+/* The phone artboard is an iframe (see App.tsx): fixed 390x844 device
+   frame; the template scrolls inside it like a real phone screen. */
+iframe.template-stage-mobile {
+  display: block;
+  /* content-box so the borders sit OUTSIDE the 390px: templates are
+     authored against exactly 390 CSS px of viewport. */
+  box-sizing: content-box;
+  height: 844px;
+  min-height: 0;
+  border: 1px solid var(--color-border);
+  background: var(--color-background-card);
+}
+
 /* Suspense fallback while a lazy template chunk loads into the stage.
    Same shimmer language as .landing-skeleton / .browse-skeleton. */
 .stage-skeleton {
@@ -540,8 +553,11 @@ button:focus-visible,
 
 .source-panel {
   min-height: calc(100dvh - 130px);
+  /* auto for horizontal panning only — the panel grows with its content, so
+     it never scrolls vertically itself. No overscroll-behavior here: on a
+     zero-range scroller 'contain' would swallow wheel/touch chaining to
+     .preview-wrap and make source feel unscrollable. */
   overflow: auto;
-  overscroll-behavior: contain;
   margin: 0;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-container, 16px);

@@ -760,16 +760,24 @@ export function DemoApp() {
 
         <div className="preview-wrap" ref={previewWrapRef}>
           {mode === 'preview' ? (
-            <div
-              className={
-                viewport === 'mobile'
-                  ? 'template-stage template-stage-mobile'
-                  : 'template-stage'
-              }>
-              <Suspense fallback={<div className="stage-skeleton" aria-hidden="true" />}>
-                <SelectedComponent />
-              </Suspense>
-            </div>
+            viewport === 'mobile' && !isMobile ? (
+              // An iframe, not a narrowed div: templates size themselves with
+              // window media queries and vw units, which only resolve to
+              // phone values inside a real 390px viewport. Re-keyed on scheme
+              // so the artboard follows the toggle (EmbedStage reads ?scheme).
+              <iframe
+                key={selected.id + ':' + scheme}
+                className="template-stage template-stage-mobile"
+                title={`${selected.name} at phone width`}
+                src={`${import.meta.env.BASE_URL}?embed=1&scheme=${scheme}#${selected.id}`}
+              />
+            ) : (
+              <div className="template-stage">
+                <Suspense fallback={<div className="stage-skeleton" aria-hidden="true" />}>
+                  <SelectedComponent />
+                </Suspense>
+              </div>
+            )
           ) : (
             <div className="source-panel">
               {sourceHtml !== null ? (
