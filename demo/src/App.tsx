@@ -196,6 +196,7 @@ export function DemoApp() {
   const [descExpanded, setDescExpanded] = useState(false);
   const [noticeDismissed, setNoticeDismissed] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   const previewWrapRef = useRef<HTMLDivElement>(null);
   const navToggleRef = useRef<HTMLButtonElement>(null);
@@ -203,6 +204,9 @@ export function DemoApp() {
   const prevBtnRef = useRef<HTMLButtonElement>(null);
   const nextBtnRef = useRef<HTMLButtonElement>(null);
   const prevNavOpenRef = useRef<boolean | null>(null);
+  const fullscreenBtnRef = useRef<HTMLButtonElement>(null);
+  const fullscreenExitRef = useRef<HTMLButtonElement>(null);
+  const prevFullscreenRef = useRef(false);
 
   useEffect(() => {
     // startTransition keeps the current template rendered while the next
@@ -373,7 +377,9 @@ export function DemoApp() {
         target instanceof HTMLInputElement ||
         target instanceof HTMLTextAreaElement ||
         target?.isContentEditable;
-      if (isTyping || target?.closest('.template-stage')) return;
+      if (isTyping || target?.closest('.template-stage, .fullscreen-preview')) {
+        return;
+      }
       const dest = event.key === 'ArrowLeft' ? prevTemplate : nextTemplate;
       if (dest) window.location.hash = dest.id;
     };
@@ -392,6 +398,48 @@ export function DemoApp() {
     }, 250);
     return () => clearTimeout(timer);
   }, [isDetail, prevTemplate, nextTemplate]);
+
+  // Full-screen preview lives on the detail view only; leaving it (or
+  // landing elsewhere via deep link) drops the flag so returning to a detail
+  // page never re-opens an overlay the user has already left.
+  useEffect(() => {
+    if (!isDetail) setIsFullscreen(false);
+  }, [isDetail]);
+
+  // Escape exits the full-screen preview (the global handler above only
+  // closes the nav overlay).
+  useEffect(() => {
+    if (!isFullscreen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsFullscreen(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isFullscreen]);
+
+  // The overlay owns scrolling while it's up; lock the document behind it
+  // (matters on mobile, where the document itself scrolls).
+  useEffect(() => {
+    if (!isFullscreen) return;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isFullscreen]);
+
+  // Hand focus to the exit control on open and back to the toolbar toggle on
+  // close. Prev-value comparison (not a "mounted" flag) keeps StrictMode's
+  // double invoke harmless.
+  useEffect(() => {
+    const prev = prevFullscreenRef.current;
+    prevFullscreenRef.current = isFullscreen;
+    if (prev === isFullscreen) return;
+    if (isFullscreen) {
+      fullscreenExitRef.current?.focus();
+    } else {
+      fullscreenBtnRef.current?.focus();
+    }
+  }, [isFullscreen]);
 
   // Copy-button state: reset when the template or view mode changes, and
   // revert "Copied" back to "Copy" after 2s.
@@ -518,7 +566,12 @@ export function DemoApp() {
   const SelectedComponent = selected.component;
 
   return (
-    <main className="demo-shell">
+    <>
+    <main
+      className="demo-shell"
+      // The full-screen overlay replaces the page: pull the shell out of the
+      // tab order and a11y tree while it's up.
+      inert={isFullscreen ? true : undefined}>
       <aside
         className={isNavOpen ? 'demo-sidebar is-open' : 'demo-sidebar'}
         aria-label="Templates"
@@ -754,13 +807,35 @@ export function DemoApp() {
                 </button>
               ))}
             </div>
+            <button
+              type="button"
+              ref={fullscreenBtnRef}
+              className="fullscreen-toggle"
+              aria-haspopup="dialog"
+              onClick={() => setIsFullscreen(true)}>
+              <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                <path
+                  d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              Full screen
+            </button>
             <SchemeToggle value={scheme} onChange={setScheme} />
           </div>
         </header>
 
         <div className="preview-wrap" ref={previewWrapRef}>
           {mode === 'preview' ? (
-            viewport === 'mobile' && !isMobile ? (
+            isFullscreen ? (
+              // The overlay owns the only mounted instance while it's up —
+              // rendering the stage too would double every template mount.
+              <div className="stage-skeleton" aria-hidden="true" />
+            ) : viewport === 'mobile' && !isMobile ? (
               // An iframe, not a narrowed div: templates size themselves with
               // window media queries and vw units, which only resolve to
               // phone values inside a real 390px viewport. Re-keyed on scheme
@@ -795,5 +870,28 @@ export function DemoApp() {
         </div>
       </section>
     </main>
+    {isFullscreen ? (
+      // Full-viewport preview: the template gets the REAL window as its
+      // viewport, so media queries and vw units resolve against the actual
+      // device — the easiest way to sanity-check a template on a phone (or
+      // an uncluttered desktop) without the gallery chrome around it.
+      <div
+        className="fullscreen-preview"
+        role="dialog"
+        aria-modal="true"
+        aria-label={`${selected.name} — full screen preview`}>
+        <Suspense fallback={<div className="stage-skeleton" aria-hidden="true" />}>
+          <SelectedComponent />
+        </Suspense>
+        <button
+          type="button"
+          ref={fullscreenExitRef}
+          className="fullscreen-exit"
+          onClick={() => setIsFullscreen(false)}>
+          ✕ Exit full screen
+        </button>
+      </div>
+    ) : null}
+    </>
   );
 }

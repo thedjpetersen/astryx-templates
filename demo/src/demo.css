@@ -474,6 +474,61 @@ button:focus-visible,
   cursor: default;
 }
 
+/* Full-screen preview toggle: same pill language as .copy-source. */
+.fullscreen-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-background-card);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  padding: 6px 16px;
+  font-weight: var(--font-weight-medium, 500);
+  white-space: nowrap;
+}
+
+.fullscreen-toggle:hover {
+  background: var(--color-accent-muted);
+}
+
+/* The overlay IS the viewport: templates' media queries and vw units
+   resolve against the real window, which a framed stage never gives them. */
+.fullscreen-preview {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  background: var(--color-background-card);
+}
+
+.fullscreen-exit {
+  position: fixed;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  z-index: 110;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-background-card);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  padding: 10px 18px;
+  font-weight: var(--font-weight-medium, 500);
+  white-space: nowrap;
+  box-shadow: 0 4px 14px var(--color-shadow);
+}
+
+.fullscreen-exit:hover {
+  background: var(--color-accent-muted);
+}
+
 .preview-wrap {
   min-height: 0;
   overflow: auto;
@@ -723,7 +778,8 @@ iframe.template-stage-mobile {
     overflow-wrap: anywhere;
   }
 
-  .copy-source {
+  .copy-source,
+  .fullscreen-toggle {
     min-height: 40px;
   }
 
