@@ -9,11 +9,11 @@ importers:
   .:
     devDependencies:
       '@astryxdesign/cli':
-        specifier: ^0.1.2
-        version: 0.1.2(@astryxdesign/core@0.1.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(gpt-tokenizer@2.9.0)
+        specifier: ^0.1.4
+        version: 0.1.4(@astryxdesign/core@0.1.4(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(gpt-tokenizer@2.9.0)
       '@astryxdesign/core':
-        specifier: ^0.1.2
-        version: 0.1.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^0.1.4
+        version: 0.1.4(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@stylexjs/stylex':
         specifier: ^0.19.0
         version: 0.19.0
@@ -53,8 +53,8 @@ importers:
 
 packages:
 
-  '@astryxdesign/cli@0.1.2':
-    resolution: {integrity: sha512-I4VlPGQRI7PTMcjBRX1hj/wB/KCHU8wd8NbqF1p/McAPgj0A5k72lyJFzH+IAA+ciaef5NMdakvovzbfJGPcSw==}
+  '@astryxdesign/cli@0.1.4':
+    resolution: {integrity: sha512-OIHQEMifssRJnrlOy+bjx22HCKf/SA5XCs6mcGxtRAJj2gjfSkHcO3ctxx7ZeLXW5idpjhYQ0gAG3lRi7Klq2g==}
     hasBin: true
     peerDependencies:
       '@astryxdesign/core': '*'
@@ -69,9 +69,10 @@ packages:
       '@astryxdesign/theme-neutral':
         optional: true
 
-  '@astryxdesign/core@0.1.2':
-    resolution: {integrity: sha512-SJOEXUaRvcVgGbdPwV5UL5aYMbwIl09H2yQb3hPh4NNGWqmLTHE05IFTNRi37Mk9ywoo01+UM2ZrewmJe39f0A==}
+  '@astryxdesign/core@0.1.4':
+    resolution: {integrity: sha512-pLwdh8Pu4ifgQ3thiaFjzitWzVpGJmyaSgNe2AZnGwGO1E876HY4k7s6m2wDnxbt5kxdSSeu0O6axq1LxUbwEQ==}
     peerDependencies:
+      '@stylexjs/stylex': ^0.18.3
       react: '>=19.0.0'
       react-dom: '>=19.0.0'
 
@@ -431,9 +432,6 @@ packages:
 
   '@stylexjs/shared@0.19.0':
     resolution: {integrity: sha512-7Yym70cQH5sPzJHgzJX3FkL9ZCptbC3IbiRijN9YLYU/5OywB/3c519Xv1DOzvxqjv8urSxh98/9HxLaPG7sDg==}
-
-  '@stylexjs/stylex@0.18.3':
-    resolution: {integrity: sha512-15gDzAJAorOE0yzxaWLNxldW2aqdmCiLG5QcPD8nmVCVqvrWp0Asgv45zk7LtN86WJb/4Ym9eQ6qT5MJW59tWQ==}
 
   '@stylexjs/stylex@0.19.0':
     resolution: {integrity: sha512-CnUFp7YMaDLDeemsWOfJgoC/gKM5P/yBNMcpJaE6ChJmXr7s0DJwSeGTTlHJcqqwN9OW1qGtmARWLFhGZN1pTA==}
@@ -1067,7 +1065,7 @@ packages:
 
 snapshots:
 
-  '@astryxdesign/cli@0.1.2(@astryxdesign/core@0.1.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(gpt-tokenizer@2.9.0)':
+  '@astryxdesign/cli@0.1.4(@astryxdesign/core@0.1.4(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(gpt-tokenizer@2.9.0)':
     dependencies:
       '@clack/prompts': 1.6.0
       commander: 12.1.0
@@ -1076,14 +1074,14 @@ snapshots:
       jscodeshift: 17.3.0
       zod: 4.4.3
     optionalDependencies:
-      '@astryxdesign/core': 0.1.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@astryxdesign/core': 0.1.4(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
     transitivePeerDependencies:
       - '@babel/preset-env'
       - supports-color
 
-  '@astryxdesign/core@0.1.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@astryxdesign/core@0.1.4(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
-      '@stylexjs/stylex': 0.18.3
+      '@stylexjs/stylex': 0.19.0
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
 
@@ -1492,12 +1490,6 @@ snapshots:
       - supports-color
 
   '@stylexjs/shared@0.19.0': {}
-
-  '@stylexjs/stylex@0.18.3':
-    dependencies:
-      css-mediaquery: 0.1.2
-      invariant: 2.2.4
-      styleq: 0.2.1
 
   '@stylexjs/stylex@0.19.0':
     dependencies:

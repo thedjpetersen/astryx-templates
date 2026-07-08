@@ -38,7 +38,7 @@ npx astryx template --list --package astryx-templates
 npx astryx template feature-gate-console ./src/app/gates
 ```
 
-The published `@astryxdesign/cli@0.1.2` discovers external block templates through `blocks/`; the upstream integration-template API on `facebook/astryx` discovers page and block templates through `templates/`. This repo keeps both roots so current CLI releases and the incoming API coexist.
+The published `@astryxdesign/cli@0.1.4` discovers external block templates through `blocks/`; the upstream integration-template API on `facebook/astryx` discovers page and block templates through `templates/`. This repo keeps both roots so current CLI releases and the incoming API coexist.
 
 ## The catalog
 
