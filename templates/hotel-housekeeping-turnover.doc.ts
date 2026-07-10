@@ -2,10 +2,11 @@ import type {AstryxPageTemplate} from '@astryxdesign/cli/template';
 
 const template = {
   type: 'page',
-  name: "Housekeeping Turnover Board",
-  description: "Hotel turnover board for room readiness, inspection exceptions, VIP holds, and late checkout conflicts. Includes a three-column command frame, live state filters, derived readiness metrics, row selection, and a detail timeline with deterministic fixtures.",
-  category: "Hospitality - Housekeeping Turnover Board",
-  componentsUsed: ['Layout', 'LayoutHeader', 'LayoutContent'],
+  name: 'Turndown Housekeeping Turnover',
+  description:
+    'Hotel exec-housekeeper surface for the 3 PM check-in push: a floor-by-floor board of state-coded room tiles driving the full housekeeping state machine (dirty → cleaning → inspect → ready, with fail-and-redo bounces), beside a 328px rail with the inspector queue (Pass / Fail with an inline reason picker), a live arrivals list whose room chips track the tiles, and a housekeeping log. Passing a room re-derives arrivals readiness %, left-to-turn, and floor readouts in one render; deterministic fixtures.',
+  category: 'Hospitality - Housekeeping Turnover Board',
+  componentsUsed: ['Layout', 'LayoutHeader', 'LayoutContent', 'Icon'],
 } satisfies AstryxPageTemplate;
 
 export default template;
