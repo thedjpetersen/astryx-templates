@@ -1,0 +1,1 @@
+import{A as e}from"./index-CZ0XLKUx.js";var t=e(`chevrons-right`,[[`path`,{d:`m6 17 5-5-5-5`,key:`xnjwq`}],[`path`,{d:`m13 17 5-5-5-5`,key:`17xmmf`}]]);export{t};

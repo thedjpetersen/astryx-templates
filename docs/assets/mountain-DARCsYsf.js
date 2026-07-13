@@ -1,1 +1,0 @@
-import{A as e}from"./index-CfmeJ-SX.js";var t=e(`mountain`,[[`path`,{d:`m8 3 4 8 5-5 5 15H2L8 3z`,key:`otkl63`}]]);export{t};
