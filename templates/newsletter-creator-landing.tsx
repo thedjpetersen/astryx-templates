@@ -7,83 +7,117 @@
  * @input Deterministic fixtures only (the fictional "Overshoot" weekly
  *   design-engineering newsletter: hero copy with an issue-count eyebrow,
  *   reader/open-rate proof numbers, five reader monograms, two complete
- *   sample-issue bodies — #142 and #141, each with an intro, two prose
- *   sections, a CSS code tip, and a five-item links list — six archive
+ *   sample-issue bodies — #142 and #141, each with an intro, a deep-dive
+ *   section, a CSS code tip, and a five-item links list — six archive
  *   issue cards with topics and read times, six reader testimonials, a
  *   sponsor slot card with per-month availability, and an author bio)
- * @output Complete long-scroll landing page for a creator newsletter: a
- *   sticky navbar with smooth-scrolling scroll-spy anchor links that
- *   collapse behind a menu button at compact widths, a split hero pairing
- *   a validating subscribe capture (success flips to a "Check your inbox"
- *   card with a working resend link) with a signature spring-curve
- *   masthead card that draws itself with a visible overshoot and replays
- *   on demand, count-up reader/open-rate proof under an avatar cluster, a
- *   framed scrollable sample-issue reader with an issue #142/#141 swap
- *   toggle, a topic-filterable archive grid, a masonry-style testimonial
- *   wall, a sponsor slot card with availability chips and an inline
- *   request-confirmation state, an about-the-author row with a
- *   reveal-on-click email, and a minimal footer.
+ * @output Art-directed long-scroll landing page for a creator newsletter:
+ *   a sticky navbar that starts transparent and condenses onto a tinted
+ *   hairline surface after 24px of scroll (scroll-spy anchor links that
+ *   collapse behind a menu button at compact widths), an aurora-lit hero
+ *   theater pairing display-scale gradient-ink type and a validating
+ *   subscribe capture with the signature self-drawing spring masthead
+ *   card staged in perspective under floating satellite chips that bob
+ *   and parallax toward the pointer, a pinned scroll-story that walks a
+ *   framed sample-issue reader through its four-part anatomy on a
+ *   numbered step rail (steps clickable; #142/#141 swap kept), a
+ *   topic-filterable archive grid with an oversized featured card, a
+ *   pause-on-hover testimonial marquee, a scheme-locked dark sponsor
+ *   band with glass cards and a pointer-tracked spotlight, an author
+ *   card that bleeds up across the dark band's boundary, and a minimal
+ *   footer.
  * @position Page template; emitted by `astryx template newsletter-creator-landing`
  *
  * Frame: Layout height="fill", content-only — a landing page owns its own
  * chrome, so there is no LayoutHeader. LayoutContent (padding 0) hosts a
- * single scroll container div that owns scroll-spy and is measured by a
+ * single scroll container div that owns scroll-spy, the nav-condense
+ * flag, and the pinned-story progress, and is measured by a
  * ResizeObserver for the responsive breakpoints; the navbar is
- * position:sticky top:0 inside it. Full-bleed bands (accent-tinted sample
- * reader, muted testimonial wall, muted footer) alternate with plain
- * bands; each band centers a 1100px column.
+ * position:sticky top:0 inside it. Full-bleed bands (aurora hero, plain
+ * pinned story, accent-tinted archive with a dot-grid texture, muted
+ * marquee, scheme-locked dark sponsor, plain author, muted footer)
+ * alternate; each centers an 1120px column with 96-128px vertical
+ * rhythm at wide widths (56-72px compact).
  *
  * Interaction contract:
  * - Nav anchors (Sample issue / Archive / Readers / Sponsor) smooth-scroll
  *   the container to real section nodes with a sticky-nav allowance;
  *   onScroll spies the last anchor above the fold line (aria-current).
+ *   The navbar is transparent at rest and gains a color-mix surface,
+ *   hairline, shadow, and a slightly shorter row after 24px of scroll.
  *   At compact widths the links collapse behind a menu button whose
  *   dropdown closes on Escape, outside pointerdown, or selection.
  * - The hero subscribe form validates on submit (empty + format errors
  *   inline, role="alert"); success swaps to a "Check your inbox" card
- *   echoing the address, with a working "Resend" link (flips a sent-again
- *   caption) and a "Use a different address" reset. The nav CTA scrolls
- *   back to the hero form.
- * - Signature hero moment: the masthead card's spring curve draws itself
- *   on load (stroke-dash transition), the "+9% overshoot" peak label and
- *   settle dot fade in after the draw, and a Replay button re-runs it.
- * - Reader/open-rate numbers count up once when the proof row first
- *   enters the viewport (IntersectionObserver, ease-out rAF).
- * - The sample-issue reader is a framed, internally scrollable excerpt;
- *   its header button swaps the whole body between issue #142 and #141
- *   and back. The code tips are CodeBlocks with copy buttons.
+ *   echoing the address, with a working "Resend" link and a "Use a
+ *   different address" reset. The nav CTA scrolls back to the hero form.
+ * - Signature hero moment, staged as product theater: the masthead
+ *   card's spring curve draws itself on load (stroke-dash transition),
+ *   the "+9% overshoot" label fades in after the draw, and a Replay
+ *   button re-runs it. The card sits in a perspective wrapper ringed by
+ *   three floating satellite chips (open-rate metric, issue toast,
+ *   reader cluster) that bob on independent 7-9s keyframes (negative
+ *   delays) and parallax ±6-12px toward the pointer (CSS vars set on
+ *   pointermove; satellites and parallax are wide-width only and fully
+ *   off under reduced motion).
+ * - Reader/open-rate numbers count up once (~900ms decelerate) when the
+ *   proof row first enters the viewport.
+ * - Pinned scroll story: the sample-issue section is a ~250vh container
+ *   whose sticky stage holds a numbered four-step anatomy rail (The
+ *   hook / The deep dive / The code tip / Five worth your click) beside
+ *   the framed, internally scrollable reader. Container scroll progress
+ *   fills the rail and advances the active step, which auto-scrolls the
+ *   reader to that part; steps are also clickable buttons. The masthead
+ *   button still swaps the whole body between issue #142 and #141. Under
+ *   reduced motion (or compact widths) the scene renders as a static
+ *   stacked sequence with clickable steps.
  * - Archive topic chips (ToggleButtons with counts) live-filter the six
- *   issue cards; "All" restores the full grid.
- * - The sponsor card's "Request the sponsor kit" button flips to an
- *   inline confirmation state (no dead CTAs); availability chips are
- *   Badges. The author row's "Say hello" button reveals a mono email.
- * - Section blocks rise+fade 12px exactly once when first revealed
- *   (IntersectionObserver). All motion — reveals, count-ups, the spring
- *   draw, smooth scrolling — is gated by prefers-reduced-motion via
- *   matchMedia: reveals render visible, counters render final, the curve
- *   renders complete, and scrolling snaps.
+ *   issue cards; the first visible card renders oversized with a ghost
+ *   numeral; cards raise a shadow tier with an accent glow on hover.
+ * - The testimonial wall runs as a 52s marquee loop (pause on hover,
+ *   duplicated track aria-hidden); reduced motion renders the static
+ *   masonry columns instead.
+ * - The sponsor band is scheme-locked dark (colorScheme: 'dark' flips
+ *   every token via light-dark()) with aurora glows, a pointer-tracked
+ *   radial spotlight (CSS vars --ncl-mx/--ncl-my), and a glass card;
+ *   its "Request the sponsor kit" button flips to an inline
+ *   confirmation. The author card overlaps upward across the dark
+ *   band's bottom edge; its "Say hello" button reveals a mono email.
+ * - Section blocks rise+fade 16px with a 0.985 scale settle exactly once
+ *   when first revealed (IntersectionObserver), staggered ~70ms within
+ *   grids. All motion — reveals, count-ups, the spring draw, auroras,
+ *   bobbing, marquee, parallax, spotlight, smooth scrolling — is gated
+ *   by prefers-reduced-motion via matchMedia AND a CSS media block:
+ *   reveals render visible, counters render final, the curve renders
+ *   complete, ambient layers freeze, and scrolling snaps.
  * - Deterministic fixtures only: no Date.now, no Math.random, no network
  *   assets, no real logos; only animation cadence is runtime.
  *
  * Color policy: token-pure except ONE quarantined accent literal (the
  * Overshoot signal-orange light-dark pair, contrast math at the constant).
- * Every accent tint — chips, bands, gradient art tiles, the avatar
- * cluster, the author portrait — derives from that single literal via
- * color-mix against tokens, so both app themes hold.
+ * Every accent tint — chips, bands, gradient ink, aurora blobs, glass
+ * strokes, the avatar cluster, the author portrait — derives from that
+ * single literal via color-mix against tokens, so both app themes hold
+ * (the dark sponsor band simply pins colorScheme so the same tokens
+ * resolve to their dark halves). Shadow tiers use neutral black alphas
+ * per the shared depth spec; the grain texture is an inline SVG
+ * feTurbulence data-URI.
  *
  * Responsive contract (useElementWidth ResizeObserver — the inline demo
  * stage is ~1045px wide, so viewport media queries are never used):
- * - >980px: split hero (copy left, spring masthead right), 3-column
- *   archive grid, 3-column testimonial wall, inline nav links.
- * - 761–980px: archive and testimonials drop to 2 columns; hero gap
- *   tightens but stays split.
- * - <=760px: nav links collapse behind the menu button, the hero stacks
- *   (copy above the masthead card), and the sponsor and author rows
- *   stack their halves.
- * - <=560px: archive and testimonials drop to 1 column, the subscribe
- *   form stacks its button under the input, the headline and reader
- *   frame paddings step down, and all proof/chip rows wrap — the page
- *   holds at 390px in the phone artboard with no overflow-x.
+ * - >980px: split hero with satellites + parallax, pinned story with a
+ *   left step rail, 3-column archive (featured card spans 2), marquee
+ *   wall, inline nav links.
+ * - 761–980px: satellites hide and parallax disarms, archive drops to 2
+ *   columns, the story keeps its pinned rail, hero gap tightens.
+ * - <=760px: nav links collapse behind the menu button, the hero stacks,
+ *   the story unpins into a static sequence with a horizontal step row,
+ *   and the sponsor and author rows stack their halves.
+ * - <=560px: archive drops to 1 column, the subscribe form stacks its
+ *   button under the input, display type and paddings step down, and
+ *   all proof/chip rows wrap — the page holds at 390px in the phone
+ *   artboard with no overflow-x (ambient layers live inside
+ *   overflow-hidden bands).
  */
 
 import {
@@ -91,6 +125,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
   type ReactNode,
   type RefObject,
   type UIEvent,
@@ -147,9 +182,122 @@ const ACCENT_SOFT = accentMix(12);
 const ACCENT_WASH = accentMix(6);
 const ACCENT_BORDER = accentMix(32);
 
+// Aurora blob inks: the accent mixed toward warning/accent tokens, then
+// faded toward transparency — never a new literal.
+const AURORA_EMBER = accentMix(55);
+const AURORA_AMBER = `color-mix(in srgb, color-mix(in srgb, ${ACCENT} 55%, var(--color-warning)) 55%, transparent)`;
+const AURORA_DUSK = `color-mix(in srgb, color-mix(in srgb, ${ACCENT} 45%, var(--color-accent)) 50%, transparent)`;
+
+// Gradient ink for the hero key phrase — accent, warmed via color-mix.
+const INK_GRADIENT = `linear-gradient(94deg, ${ACCENT} 0%, color-mix(in srgb, ${ACCENT} 55%, var(--color-warning)) 55%, ${ACCENT} 100%)`;
+
+// Depth tiers (shared spec: neutral black alphas, layered).
+const SHADOW_RAISED =
+  '0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px -12px rgba(0, 0, 0, 0.18)';
+const SHADOW_FLOATING =
+  '0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px -12px rgba(0, 0, 0, 0.18), ' +
+  '0 24px 48px -24px rgba(0, 0, 0, 0.3)';
+
 /** Sticky-nav height; smooth-scroll and scroll-spy both allow for it. */
 const NAV_ALLOWANCE = 72;
 const SPY_OFFSET = 140;
+
+// Grain texture: inline SVG feTurbulence data-URI (no network assets).
+const GRAIN_URL =
+  'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' ' +
+  "width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence " +
+  "type='fractalNoise' baseFrequency='0.9' numOctaves='2' " +
+  "stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' " +
+  "height='160' filter='url(%23n)'/%3E%3C/svg%3E\")";
+
+// ============= SCOPED CSS (keyframes + hover choreography) =============
+// Transform/opacity only. Every ambient animation is also killed in the
+// prefers-reduced-motion block below (belt and suspenders with the JS
+// matchMedia gate).
+
+const SCOPE = 'ncl-root';
+
+const TEMPLATE_CSS = `
+@keyframes ncl-drift-a {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(56px, -32px, 0) scale(1.14); }
+  100% { transform: translate3d(-28px, 22px, 0) scale(0.94); }
+}
+@keyframes ncl-drift-b {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-48px, 36px, 0) scale(1.1); }
+  100% { transform: translate3d(30px, -20px, 0) scale(0.97); }
+}
+@keyframes ncl-bob {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -7px, 0); }
+}
+@keyframes ncl-marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+.${SCOPE} .ncl-aurora-a { animation: ncl-drift-a 38s ease-in-out infinite alternate; }
+.${SCOPE} .ncl-aurora-b { animation: ncl-drift-b 32s ease-in-out infinite alternate; }
+.${SCOPE} .ncl-aurora-c { animation: ncl-drift-a 44s ease-in-out infinite alternate-reverse; }
+.${SCOPE} .ncl-bob { animation: ncl-bob 7.5s ease-in-out infinite; }
+.${SCOPE} .ncl-para-a, .${SCOPE} .ncl-para-b, .${SCOPE} .ncl-para-c {
+  transition: transform 640ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.${SCOPE} .ncl-para-a { transform: translate3d(calc(var(--ncl-px, 0) * 9px), calc(var(--ncl-py, 0) * 7px), 0); }
+.${SCOPE} .ncl-para-b { transform: translate3d(calc(var(--ncl-px, 0) * -7px), calc(var(--ncl-py, 0) * 10px), 0); }
+.${SCOPE} .ncl-para-c { transform: translate3d(calc(var(--ncl-px, 0) * 12px), calc(var(--ncl-py, 0) * -6px), 0); }
+.${SCOPE} .ncl-tilt {
+  transform: rotateX(calc(var(--ncl-py, 0) * -2.4deg)) rotateY(calc(var(--ncl-px, 0) * 3.2deg));
+  transition: transform 640ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.${SCOPE} .ncl-cta { position: relative; display: inline-flex; transition: transform 220ms ease; }
+.${SCOPE} .ncl-cta::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  pointer-events: none;
+  background-image: linear-gradient(115deg, transparent 32%, color-mix(in srgb, var(--color-on-accent) 32%, transparent) 50%, transparent 68%);
+  background-size: 260% 100%;
+  background-position: 130% 0;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 260ms ease, background-position 720ms ease;
+}
+.${SCOPE} .ncl-cta:hover { transform: translateY(-1px); }
+.${SCOPE} .ncl-cta:hover::after { opacity: 1; background-position: -40% 0; }
+.${SCOPE} .ncl-cta:active { transform: translateY(0) scale(0.98); }
+.${SCOPE} .ncl-raise {
+  height: 100%;
+  border-radius: var(--radius-container, 12px);
+  transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 280ms ease;
+  box-shadow: ${SHADOW_RAISED};
+}
+.${SCOPE} .ncl-raise:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 0 1px ${ACCENT_BORDER}, ${SHADOW_FLOATING};
+}
+.${SCOPE} .ncl-marquee { display: flex; width: max-content; animation: ncl-marquee 52s linear infinite; }
+.${SCOPE} .ncl-marquee-wrap:hover .ncl-marquee { animation-play-state: paused; }
+.${SCOPE} .ncl-marquee-half { display: flex; gap: 16px; padding-right: 16px; }
+.${SCOPE} .ncl-spot {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(480px circle at var(--ncl-mx, 62%) var(--ncl-my, 30%), ${accentMix(
+    14,
+  )}, transparent 70%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .${SCOPE} .ncl-aurora-a, .${SCOPE} .ncl-aurora-b, .${SCOPE} .ncl-aurora-c,
+  .${SCOPE} .ncl-bob, .${SCOPE} .ncl-marquee { animation: none; }
+  .${SCOPE} .ncl-para-a, .${SCOPE} .ncl-para-b, .${SCOPE} .ncl-para-c,
+  .${SCOPE} .ncl-tilt { transform: none; transition: none; }
+  .${SCOPE} .ncl-cta, .${SCOPE} .ncl-cta:hover, .${SCOPE} .ncl-cta:active { transform: none; transition: none; }
+  .${SCOPE} .ncl-cta::after { display: none; }
+  .${SCOPE} .ncl-raise, .${SCOPE} .ncl-raise:hover { transform: none; }
+}
+`;
 
 // ============= STYLES =============
 
@@ -159,33 +307,77 @@ const styles: Record<string, CSSProperties> = {
     position: 'relative',
     height: '100%',
     overflowY: 'auto',
+    overflowX: 'hidden',
     backgroundColor: 'var(--color-background-body)',
     color: 'var(--color-text-primary)',
   },
   // Centered content column; bands paint full-bleed around it.
   column: {
+    position: 'relative',
     width: '100%',
-    maxWidth: 1100,
+    maxWidth: 1120,
     marginInline: 'auto',
-    padding: 'var(--spacing-8) var(--spacing-6)',
+    paddingInline: 'var(--spacing-6)',
     boxSizing: 'border-box',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 'var(--spacing-6)',
   },
-  columnCompact: {
-    padding: 'var(--spacing-6) var(--spacing-4)',
+  columnNarrow: {
+    paddingInline: 'var(--spacing-4)',
+  },
+  // ---- ambient layers ----
+  band: {
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  blob: {
+    position: 'absolute',
+    borderRadius: '50%',
+    filter: 'blur(90px)',
+    pointerEvents: 'none',
+  },
+  grain: {
+    position: 'absolute',
+    inset: 0,
+    backgroundImage: GRAIN_URL,
+    opacity: 0.04,
+    pointerEvents: 'none',
+  },
+  dotGrid: {
+    position: 'absolute',
+    inset: 0,
+    backgroundImage:
+      'radial-gradient(var(--color-border) 1.2px, transparent 1.6px)',
+    backgroundSize: '22px 22px',
+    opacity: 0.55,
+    maskImage:
+      'radial-gradient(110% 90% at 75% 0%, black 25%, transparent 72%)',
+    WebkitMaskImage:
+      'radial-gradient(110% 90% at 75% 0%, black 25%, transparent 72%)',
+    pointerEvents: 'none',
   },
   bandTinted: {
+    position: 'relative',
+    overflow: 'hidden',
     backgroundColor: ACCENT_WASH,
     borderTop: `1px solid ${ACCENT_BORDER}`,
     borderBottom: `1px solid ${ACCENT_BORDER}`,
   },
   bandMuted: {
+    position: 'relative',
+    overflow: 'hidden',
     backgroundColor: 'var(--color-background-muted)',
     borderTop: '1px solid var(--color-border)',
   },
-  // 10-11px uppercase tracked section eyebrow, accent-tinted.
+  // Scheme-locked dark sponsor band: colorScheme pins every light-dark()
+  // token to its dark half, so the same token vocabulary paints it.
+  bandDark: {
+    position: 'relative',
+    overflow: 'hidden',
+    colorScheme: 'dark',
+    backgroundColor: 'var(--color-background-body)',
+    color: 'var(--color-text-primary)',
+    borderTop: '1px solid var(--color-border)',
+  },
+  // ---- eyebrows + display type ----
   eyebrow: {
     fontSize: 11,
     fontWeight: 700,
@@ -193,25 +385,89 @@ const styles: Record<string, CSSProperties> = {
     textTransform: 'uppercase',
     color: ACCENT,
   },
-  // ---- sticky navbar ----
+  eyebrowChip: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 8,
+    width: 'fit-content',
+    height: 26,
+    paddingInline: 11,
+    borderRadius: 999,
+    border: `1px solid ${ACCENT_BORDER}`,
+    backgroundColor: accentMix(9),
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+    color: ACCENT,
+    whiteSpace: 'nowrap',
+  },
+  eyebrowDot: {
+    width: 6,
+    height: 6,
+    borderRadius: '50%',
+    backgroundColor: ACCENT,
+    flexShrink: 0,
+  },
+  headline: {
+    lineHeight: 1.04,
+    letterSpacing: '-0.025em',
+    fontWeight: 725,
+    margin: 0,
+  },
+  headlineInk: {
+    backgroundImage: INK_GRADIENT,
+    WebkitBackgroundClip: 'text',
+    backgroundClip: 'text',
+    color: 'transparent',
+  },
+  sectionTitle: {
+    fontSize: 40,
+    lineHeight: 1.08,
+    letterSpacing: '-0.02em',
+    fontWeight: 700,
+    margin: 0,
+  },
+  sectionTitleCompact: {
+    fontSize: 30,
+  },
+  subcopy: {
+    fontSize: 18,
+    lineHeight: 1.6,
+    color: 'var(--color-text-secondary)',
+    maxWidth: '56ch',
+    margin: 0,
+  },
+  // ---- sticky navbar (transparent → condensed tinted surface) ----
   navBar: {
     position: 'sticky',
     top: 0,
     zIndex: 30,
-    backgroundColor: 'var(--color-background-body)',
+    backgroundColor: 'transparent',
+    borderBottom: '1px solid transparent',
+    transition:
+      'background-color 300ms ease, border-color 300ms ease, box-shadow 300ms ease',
+  },
+  navBarScrolled: {
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-body) 92%, transparent)',
     borderBottom: '1px solid var(--color-border)',
+    boxShadow: '0 8px 24px -18px rgba(0, 0, 0, 0.28)',
   },
   navInner: {
     position: 'relative',
     width: '100%',
-    maxWidth: 1100,
+    maxWidth: 1120,
     marginInline: 'auto',
     boxSizing: 'border-box',
     padding: 'var(--spacing-2) var(--spacing-4)',
     display: 'flex',
     alignItems: 'center',
     gap: 'var(--spacing-2)',
-    minHeight: 56,
+    minHeight: 64,
+  },
+  navInnerScrolled: {
+    minHeight: 52,
   },
   brandTile: {
     width: 32,
@@ -272,7 +528,7 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 14,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-body)',
-    boxShadow: 'var(--shadow-high, 0 12px 32px rgba(0, 0, 0, 0.24))',
+    boxShadow: SHADOW_FLOATING,
     padding: 'var(--spacing-3)',
     zIndex: 40,
   },
@@ -295,7 +551,7 @@ const styles: Record<string, CSSProperties> = {
   // ---- hero ----
   heroRow: {
     display: 'flex',
-    gap: 'var(--spacing-8)',
+    gap: 48,
     alignItems: 'center',
   },
   heroRowMid: {
@@ -304,35 +560,18 @@ const styles: Record<string, CSSProperties> = {
   heroRowStacked: {
     flexDirection: 'column',
     alignItems: 'stretch',
-    gap: 'var(--spacing-5)',
+    gap: 'var(--spacing-6)',
   },
   heroText: {
-    flex: '1.15 1 0',
+    flex: '1.08 1 0',
     minWidth: 0,
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-4)',
   },
   heroAside: {
-    flex: '1 1 0',
+    flex: '0.92 1 0',
     minWidth: 0,
-  },
-  headline: {
-    fontSize: 44,
-    fontWeight: 800,
-    lineHeight: 1.1,
-    letterSpacing: '-0.02em',
-    margin: 0,
-  },
-  headlineCompact: {
-    fontSize: 31,
-  },
-  subcopy: {
-    fontSize: 17,
-    lineHeight: 1.55,
-    color: 'var(--color-text-secondary)',
-    maxWidth: 520,
-    margin: 0,
   },
   emailRow: {
     display: 'flex',
@@ -363,6 +602,7 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 'var(--radius-container, 12px)',
     border: `1px solid ${ACCENT_BORDER}`,
     backgroundColor: ACCENT_SOFT,
+    boxShadow: SHADOW_RAISED,
     boxSizing: 'border-box',
   },
   successDisc: {
@@ -402,12 +642,17 @@ const styles: Record<string, CSSProperties> = {
     fontVariantNumeric: 'tabular-nums',
     whiteSpace: 'nowrap',
   },
-  // ---- spring masthead card (signature hero moment) ----
+  // ---- hero theater: spring masthead + satellites ----
+  heroStage: {
+    position: 'relative',
+    perspective: 1400,
+  },
   springCard: {
-    borderRadius: 16,
+    position: 'relative',
+    borderRadius: 18,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
-    boxShadow: 'var(--shadow-med)',
+    boxShadow: SHADOW_FLOATING,
     overflow: 'hidden',
   },
   springHeader: {
@@ -431,12 +676,137 @@ const styles: Record<string, CSSProperties> = {
     flexWrap: 'wrap',
     padding: '0 var(--spacing-4) var(--spacing-3)',
   },
+  satShell: {
+    position: 'absolute',
+    zIndex: 2,
+  },
+  satCard: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+    padding: '10px 14px',
+    borderRadius: 14,
+    border: '1px solid var(--color-border)',
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-card) 94%, transparent)',
+    boxShadow: SHADOW_FLOATING,
+    whiteSpace: 'nowrap',
+  },
+  satGlyph: {
+    width: 30,
+    height: 30,
+    borderRadius: 9,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    backgroundColor: ACCENT_SOFT,
+    color: ACCENT,
+  },
+  satFigure: {
+    fontSize: 15,
+    fontWeight: 800,
+    letterSpacing: '-0.01em',
+    fontVariantNumeric: 'tabular-nums',
+    lineHeight: 1.2,
+  },
+  satCaption: {
+    fontSize: 11,
+    color: 'var(--color-text-secondary)',
+    lineHeight: 1.3,
+  },
+  // ---- pinned scroll story (sample-issue anatomy) ----
+  storyStage: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-5)',
+  },
+  storySplit: {
+    display: 'flex',
+    gap: 'var(--spacing-6)',
+    alignItems: 'stretch',
+  },
+  storyRail: {
+    flex: '0 0 264px',
+    minWidth: 0,
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-2)',
+    paddingLeft: 18,
+  },
+  storyRailCompact: {
+    flex: '1 1 auto',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingLeft: 0,
+    gap: 'var(--spacing-2)',
+  },
+  railTrack: {
+    position: 'absolute',
+    left: 5,
+    top: 10,
+    bottom: 10,
+    width: 2,
+    borderRadius: 1,
+    backgroundColor: 'var(--color-border)',
+    overflow: 'hidden',
+  },
+  railFill: {
+    position: 'absolute',
+    inset: 0,
+    backgroundColor: ACCENT,
+    transformOrigin: 'top',
+    transition: 'transform 180ms linear',
+  },
+  stepButton: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: 'var(--spacing-3)',
+    padding: 'var(--spacing-3)',
+    borderRadius: 12,
+    border: '1px solid transparent',
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+    textAlign: 'left',
+    transition: 'background-color 240ms ease, border-color 240ms ease',
+  },
+  stepButtonActive: {
+    border: `1px solid ${ACCENT_BORDER}`,
+    backgroundColor: accentMix(8, 'var(--color-background-card)'),
+    boxShadow: SHADOW_RAISED,
+  },
+  stepIndex: {
+    fontSize: 12,
+    fontWeight: 800,
+    fontFamily: 'var(--font-family-mono, ui-monospace, monospace)',
+    color: ACCENT,
+    lineHeight: '20px',
+    flexShrink: 0,
+  },
+  stepTitle: {
+    fontSize: 15,
+    fontWeight: 700,
+    margin: 0,
+    lineHeight: 1.35,
+    color: 'var(--color-text-primary)',
+  },
+  stepCopy: {
+    fontSize: 13,
+    lineHeight: 1.45,
+    margin: 0,
+    color: 'var(--color-text-secondary)',
+  },
   // ---- sample-issue reader ----
+  readerColumn: {
+    flex: '1 1 0',
+    minWidth: 0,
+  },
   readerFrame: {
-    borderRadius: 16,
+    borderRadius: 18,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
-    boxShadow: 'var(--shadow-med)',
+    boxShadow: SHADOW_FLOATING,
     overflow: 'hidden',
   },
   readerMasthead: {
@@ -449,7 +819,8 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: 'var(--color-background-muted)',
   },
   readerBody: {
-    maxHeight: 460,
+    position: 'relative',
+    maxHeight: 440,
     overflowY: 'auto',
     padding: 'var(--spacing-5) var(--spacing-6)',
     display: 'flex',
@@ -510,7 +881,41 @@ const styles: Record<string, CSSProperties> = {
     fontFamily: 'var(--font-family-mono, ui-monospace, monospace)',
     color: ACCENT,
   },
-  // ---- testimonial wall ----
+  ghostNumeral: {
+    position: 'absolute',
+    right: 4,
+    bottom: -26,
+    fontSize: 128,
+    fontWeight: 800,
+    letterSpacing: '-0.05em',
+    lineHeight: 1,
+    fontVariantNumeric: 'tabular-nums',
+    color: accentMix(10),
+    pointerEvents: 'none',
+    userSelect: 'none',
+  },
+  // ---- testimonial marquee ----
+  quoteCard: {
+    flexShrink: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-2)',
+    width: 340,
+    padding: 'var(--spacing-4)',
+    borderRadius: 16,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_RAISED,
+    boxSizing: 'border-box',
+  },
+  marqueeWrap: {
+    width: '100%',
+    overflow: 'hidden',
+    maskImage:
+      'linear-gradient(90deg, transparent 0%, black 6%, black 94%, transparent 100%)',
+    WebkitMaskImage:
+      'linear-gradient(90deg, transparent 0%, black 6%, black 94%, transparent 100%)',
+  },
   quoteMark: {
     width: 28,
     height: 28,
@@ -527,7 +932,16 @@ const styles: Record<string, CSSProperties> = {
     lineHeight: 1.55,
     margin: 0,
   },
-  // ---- sponsor + author ----
+  // ---- dark sponsor band + author overlap ----
+  glassCard: {
+    position: 'relative',
+    borderRadius: 20,
+    padding: 'var(--spacing-6)',
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-card) 55%, transparent)',
+    boxShadow: `inset 0 0 0 1px color-mix(in srgb, var(--color-border) 85%, transparent), ${SHADOW_FLOATING}`,
+    boxSizing: 'border-box',
+  },
   splitRow: {
     display: 'flex',
     gap: 'var(--spacing-6)',
@@ -546,16 +960,26 @@ const styles: Record<string, CSSProperties> = {
     gap: 'var(--spacing-3)',
   },
   rateFigure: {
-    fontSize: 30,
+    fontSize: 44,
     fontWeight: 800,
-    letterSpacing: '-0.02em',
+    letterSpacing: '-0.03em',
     fontVariantNumeric: 'tabular-nums',
-    lineHeight: 1.1,
+    lineHeight: 1.05,
   },
   monoLine: {
     fontFamily: 'var(--font-family-mono, ui-monospace, monospace)',
     fontSize: 13,
     color: 'var(--color-text-secondary)',
+  },
+  authorCard: {
+    position: 'relative',
+    zIndex: 2,
+    borderRadius: 20,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_FLOATING,
+    padding: 'var(--spacing-6)',
+    boxSizing: 'border-box',
   },
   authorTile: {
     width: 88,
@@ -602,7 +1026,8 @@ const BRAND = {
 
 const HERO = {
   eyebrow: 'Issue #142 · every Tuesday',
-  headline: 'The weekly letter for engineers who sweat the last 2%',
+  headlineLead: 'The weekly letter for engineers who',
+  headlineInk: 'sweat the last 2%',
   subcopy:
     'Every Tuesday, Overshoot dissects one production interface — the ' +
     'spring curves, the CSS tricks, the performance budgets — in a ' +
@@ -628,6 +1053,26 @@ const NAV_ANCHORS: readonly {id: SectionId; label: string}[] = [
   {id: 'archive', label: 'Archive'},
   {id: 'readers', label: 'Readers'},
   {id: 'sponsor', label: 'Sponsor'},
+];
+
+/** The four-part anatomy every issue follows — drives the pinned rail. */
+const STORY_STEPS: readonly {title: string; copy: string}[] = [
+  {
+    title: 'The hook',
+    copy: 'One production interface, and why it feels right.',
+  },
+  {
+    title: 'The deep dive',
+    copy: 'The mechanism explained with numbers, not vibes.',
+  },
+  {
+    title: 'The code tip',
+    copy: 'A paste-ready snippet you can ship the same afternoon.',
+  },
+  {
+    title: 'Five worth your click',
+    copy: 'A hand-picked link list with honest one-line reviews.',
+  },
 ];
 
 interface IssueLink {
@@ -962,6 +1407,10 @@ function validateEmail(raw: string): string | null {
   return null;
 }
 
+function clamp01(value: number): number {
+  return Math.min(1, Math.max(0, value));
+}
+
 // ============= HOOKS =============
 
 /**
@@ -1040,12 +1489,13 @@ function useInView(): [RefObject<HTMLDivElement | null>, boolean] {
 
 /**
  * Eases 0 → target with requestAnimationFrame once `isActive` flips true.
- * prefers-reduced-motion (and rAF-less environments) snap to the target.
+ * ~900ms decelerate per the shared motion spec; prefers-reduced-motion
+ * (and rAF-less environments) snap straight to the target.
  */
 function useCountUp(
   target: number,
   isActive: boolean,
-  durationMs = 1300,
+  durationMs = 900,
 ): number {
   const [value, setValue] = useState(0);
   useEffect(() => {
@@ -1083,13 +1533,20 @@ function useCountUp(
 
 // ============= SMALL PIECES =============
 
-/** Rise+fade scroll reveal; fires once, renders visible under reduced motion. */
+/**
+ * Rise+fade+settle scroll reveal (translateY 16px + scale .985 → identity,
+ * 620ms decelerate bezier); fires once, renders visible under reduced
+ * motion. `delayMs` staggers children inside grids (~70ms per index);
+ * `style` lets grid parents place the reveal node itself.
+ */
 function Reveal({
   children,
   delayMs = 0,
+  style,
 }: {
   children: ReactNode;
   delayMs?: number;
+  style?: CSSProperties;
 }) {
   const [ref, inView] = useInView();
   const reducedMotion = usePrefersReducedMotion();
@@ -1098,11 +1555,13 @@ function Reveal({
     <div
       ref={ref}
       style={{
+        ...style,
         opacity: isShown ? 1 : 0,
-        transform: isShown ? 'none' : 'translateY(12px)',
+        transform: isShown ? 'none' : 'translateY(16px) scale(0.985)',
         transition: reducedMotion
           ? 'none'
-          : `opacity 560ms ease ${delayMs}ms, transform 560ms ease ${delayMs}ms`,
+          : `opacity 620ms cubic-bezier(0.22, 1, 0.36, 1) ${delayMs}ms, ` +
+            `transform 620ms cubic-bezier(0.22, 1, 0.36, 1) ${delayMs}ms`,
       }}>
       {children}
     </div>
@@ -1121,9 +1580,72 @@ function BrandMark() {
   );
 }
 
-/** Uppercase tracked section eyebrow in the accent tint. */
+/** Uppercase tracked eyebrow — accent chip with a signal dot. */
 function Eyebrow({label}: {label: string}) {
-  return <span style={styles.eyebrow}>{label}</span>;
+  return (
+    <span style={styles.eyebrowChip}>
+      <span style={styles.eyebrowDot} aria-hidden="true" />
+      {label}
+    </span>
+  );
+}
+
+/** 32-44px section heading (Heading component sizes cap below spec). */
+function SectionTitle({
+  children,
+  isCompact,
+}: {
+  children: ReactNode;
+  isCompact: boolean;
+}) {
+  return (
+    <h2
+      style={{
+        ...styles.sectionTitle,
+        ...(isCompact ? styles.sectionTitleCompact : null),
+      }}>
+      {children}
+    </h2>
+  );
+}
+
+/** Aurora blob: blurred radial ink drifting on a 30-45s keyframe loop. */
+function AuroraBlob({
+  className,
+  ink,
+  size,
+  top,
+  left,
+  right,
+  bottom,
+  opacity = 0.5,
+}: {
+  className: string;
+  ink: string;
+  size: number;
+  top?: number | string;
+  left?: number | string;
+  right?: number | string;
+  bottom?: number | string;
+  opacity?: number;
+}) {
+  return (
+    <div
+      className={className}
+      aria-hidden="true"
+      style={{
+        ...styles.blob,
+        width: size,
+        height: size,
+        top,
+        left,
+        right,
+        bottom,
+        opacity,
+        background: `radial-gradient(closest-side, ${ink}, transparent 72%)`,
+      }}
+    />
+  );
 }
 
 /**
@@ -1226,68 +1748,118 @@ function SpringCurve({
   );
 }
 
-/** One full sample-issue body (intro, two sections, code tip, links). */
+/**
+ * One full sample-issue body (intro, deep dive, code tip, links). The
+ * four anatomy parts register nodes with the pinned story rail so the
+ * active step can scroll its part into view inside the framed scroller.
+ */
 function IssueReaderBody({
   issue,
   isCompact,
+  scrollRef,
+  registerPart,
 }: {
   issue: IssueBody;
   isCompact: boolean;
+  scrollRef: RefObject<HTMLDivElement | null>;
+  registerPart: (index: number) => (node: HTMLDivElement | null) => void;
 }) {
   return (
     <div
+      ref={scrollRef}
       style={{
         ...styles.readerBody,
         ...(isCompact ? styles.readerBodyCompact : null),
       }}>
-      <VStack gap={2}>
-        <Eyebrow label={`Issue #${issue.number} · ${issue.date}`} />
-        <Heading level={3}>{issue.subject}</Heading>
-        <p style={styles.proseParagraph}>{issue.intro}</p>
-      </VStack>
+      <div ref={registerPart(0)}>
+        <VStack gap={2}>
+          <span style={styles.eyebrow}>
+            Issue #{issue.number} · {issue.date}
+          </span>
+          <Heading level={3}>{issue.subject}</Heading>
+          <p style={styles.proseParagraph}>{issue.intro}</p>
+        </VStack>
+      </div>
       <Divider />
-      <VStack gap={2}>
-        <h4 style={styles.proseHeading}>{issue.sectionOneTitle}</h4>
-        <p style={styles.proseParagraph}>{issue.sectionOneCopy}</p>
-      </VStack>
-      <VStack gap={2}>
-        <h4 style={styles.proseHeading}>{issue.tipTitle}</h4>
-        <p style={styles.proseParagraph}>{issue.tipCopy}</p>
-        <CodeBlock
-          code={issue.tipCode}
-          language={issue.tipLanguage}
-          hasCopyButton
-          size="sm"
-          width="100%"
-        />
-      </VStack>
-      <VStack gap={1}>
-        <h4 style={styles.proseHeading}>{issue.linksTitle}</h4>
-        {issue.links.map(link => (
-          <div key={link.title} style={styles.linkRow}>
-            <div style={styles.linkGlyph} aria-hidden="true">
-              <Icon icon={ArrowUpRightIcon} size="xsm" color="inherit" />
-            </div>
-            <StackItem size="fill">
-              <VStack gap={0}>
-                <Text size="sm" weight="semibold">
-                  {link.title}{' '}
-                  <Text size="sm" color="secondary">
-                    — {link.source}
+      <div ref={registerPart(1)}>
+        <VStack gap={2}>
+          <h4 style={styles.proseHeading}>{issue.sectionOneTitle}</h4>
+          <p style={styles.proseParagraph}>{issue.sectionOneCopy}</p>
+        </VStack>
+      </div>
+      <div ref={registerPart(2)}>
+        <VStack gap={2}>
+          <h4 style={styles.proseHeading}>{issue.tipTitle}</h4>
+          <p style={styles.proseParagraph}>{issue.tipCopy}</p>
+          <CodeBlock
+            code={issue.tipCode}
+            language={issue.tipLanguage}
+            hasCopyButton
+            size="sm"
+            width="100%"
+          />
+        </VStack>
+      </div>
+      <div ref={registerPart(3)}>
+        <VStack gap={1}>
+          <h4 style={styles.proseHeading}>{issue.linksTitle}</h4>
+          {issue.links.map(link => (
+            <div key={link.title} style={styles.linkRow}>
+              <div style={styles.linkGlyph} aria-hidden="true">
+                <Icon icon={ArrowUpRightIcon} size="xsm" color="inherit" />
+              </div>
+              <StackItem size="fill">
+                <VStack gap={0}>
+                  <Text size="sm" weight="semibold">
+                    {link.title}{' '}
+                    <Text size="sm" color="secondary">
+                      — {link.source}
+                    </Text>
                   </Text>
-                </Text>
-                <Text type="supporting" color="secondary">
-                  {link.note}
-                </Text>
-              </VStack>
-            </StackItem>
-          </div>
-        ))}
-      </VStack>
+                  <Text type="supporting" color="secondary">
+                    {link.note}
+                  </Text>
+                </VStack>
+              </StackItem>
+            </div>
+          ))}
+        </VStack>
+      </div>
       <Text type="supporting" color="secondary">
         — June. Reply to this email; I read every one.
       </Text>
     </div>
+  );
+}
+
+/** One testimonial card — shared by the marquee and the static wall. */
+function QuoteCard({
+  entry,
+  width,
+}: {
+  entry: Testimonial;
+  width?: CSSProperties['width'];
+}) {
+  return (
+    <figure
+      style={{...styles.quoteCard, width: width ?? styles.quoteCard.width, margin: 0}}>
+      <div style={styles.quoteMark} aria-hidden="true">
+        <Icon icon={QuoteIcon} size="xsm" color="inherit" />
+      </div>
+      <blockquote style={{...styles.quoteText, margin: 0}}>
+        {entry.quote}
+      </blockquote>
+      <figcaption>
+        <VStack gap={0}>
+          <Text size="sm" weight="semibold">
+            {entry.name}
+          </Text>
+          <Text type="supporting" color="secondary">
+            {entry.role}
+          </Text>
+        </VStack>
+      </figcaption>
+    </figure>
   );
 }
 
@@ -1303,8 +1875,26 @@ export default function NewsletterCreatorLandingTemplate() {
 
   const reducedMotion = usePrefersReducedMotion();
 
-  // ---- nav: compact menu + scroll-spy ----
+  // Display-type tiers: 64-84px at wide widths, stepping with the
+  // measured container (never under 56px while the hero is split).
+  const headlineSize =
+    pageWidth === 0 || pageWidth > 1020
+      ? 78
+      : pageWidth > 980
+        ? 68
+        : pageWidth > 760
+          ? 58
+          : pageWidth > 560
+            ? 46
+            : 37;
+
+  // Layout rhythm: 96-128px section padding at wide, 56-72px compact.
+  const sectionPadY = isNarrow ? 56 : isCompact ? 68 : 112;
+  const authorOverlap = isCompact ? 48 : 88;
+
+  // ---- nav: compact menu + scroll-spy + condense-on-scroll ----
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const navRef = useRef<HTMLElement | null>(null);
   const menuTriggerRef = useRef<HTMLButtonElement | null>(null);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
@@ -1316,10 +1906,10 @@ export default function NewsletterCreatorLandingTemplate() {
   const [confirmedEmail, setConfirmedEmail] = useState<string | null>(null);
   const [hasResent, setHasResent] = useState(false);
 
-  // ---- hero proof count-ups (fire once on first view) ----
+  // ---- hero proof count-ups (fire once on first view, ~900ms) ----
   const [proofRef, proofInView] = useInView();
   const readerCount = useCountUp(HERO.readers, proofInView);
-  const openRateCount = useCountUp(HERO.openRate, proofInView, 1100);
+  const openRateCount = useCountUp(HERO.openRate, proofInView, 750);
 
   // ---- signature spring draw (replayable) ----
   const [springRun, setSpringRun] = useState(0);
@@ -1341,8 +1931,41 @@ export default function NewsletterCreatorLandingTemplate() {
     };
   }, [springRun, reducedMotion]);
 
-  // ---- sample reader swap toggle ----
+  // ---- sample reader swap toggle + pinned scroll story ----
   const [readerIssue, setReaderIssue] = useState<142 | 141>(142);
+  const [storyStep, setStoryStep] = useState(0);
+  const [storyProgress, setStoryProgress] = useState(0);
+  const readerScrollRef = useRef<HTMLDivElement | null>(null);
+  const partRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const storyEngagedRef = useRef(false);
+
+  // Pinned scene only where there is room; reduced motion and compact
+  // widths render the static stacked sequence instead.
+  const storyPinned = !reducedMotion && !isCompact;
+
+  // Active step scrolls its part into view inside the framed reader
+  // (skipped on mount so the page loads at the top of the excerpt).
+  useEffect(() => {
+    if (!storyEngagedRef.current) {
+      storyEngagedRef.current = true;
+      return;
+    }
+    const scroller = readerScrollRef.current;
+    const part = partRefs.current[storyStep];
+    if (scroller == null || part == null) {
+      return;
+    }
+    scroller.scrollTo({
+      top: Math.max(0, part.offsetTop - 20),
+      behavior: reducedMotion ? 'auto' : 'smooth',
+    });
+  }, [storyStep, reducedMotion]);
+
+  const registerPart =
+    (index: number) =>
+    (node: HTMLDivElement | null): void => {
+      partRefs.current[index] = node;
+    };
 
   // ---- archive topic filter ----
   const [topic, setTopic] = useState<TopicId>('all');
@@ -1409,10 +2032,15 @@ export default function NewsletterCreatorLandingTemplate() {
     });
   };
 
-  /** Scroll-spy: the last nav anchor above the fold line wins. */
+  /**
+   * One scroll handler, three jobs: condense the navbar after 24px, spy
+   * the last nav anchor above the fold line, and drive the pinned story
+   * (progress fills the rail; quarter thresholds advance the step).
+   */
   const onPageScroll = (event: UIEvent<HTMLDivElement>) => {
     const container = event.currentTarget;
     const containerTop = container.getBoundingClientRect().top;
+    setIsScrolled(container.scrollTop > 24);
     let active: SectionId | null = null;
     for (const anchor of NAV_ANCHORS) {
       const section = sectionRefs.current[anchor.id];
@@ -1424,6 +2052,79 @@ export default function NewsletterCreatorLandingTemplate() {
       }
     }
     setActiveSection(active);
+    if (storyPinned) {
+      const story = sectionRefs.current.sample;
+      if (story != null) {
+        const travel = story.offsetHeight - container.clientHeight;
+        if (travel > 80) {
+          const relTop = story.getBoundingClientRect().top - containerTop;
+          const progress = clamp01(-relTop / travel);
+          setStoryProgress(Math.round(progress * 48) / 48);
+          setStoryStep(Math.min(3, Math.floor(progress * 4)));
+        }
+      }
+    }
+  };
+
+  /**
+   * Step buttons: always select the part; in pinned mode also scroll the
+   * page to the matching point of the story's travel so rail, scroll
+   * position, and reader stay in one story.
+   */
+  const goToStoryStep = (index: number) => {
+    setStoryStep(index);
+    if (!storyPinned) {
+      return;
+    }
+    const container = pageRef.current;
+    const story = sectionRefs.current.sample;
+    if (container == null || story == null) {
+      return;
+    }
+    const travel = story.offsetHeight - container.clientHeight;
+    if (travel <= 80) {
+      return;
+    }
+    const storyTop =
+      story.getBoundingClientRect().top -
+      container.getBoundingClientRect().top +
+      container.scrollTop;
+    container.scrollTo({
+      top: storyTop + ((index + 0.5) / 4) * travel,
+      behavior: reducedMotion ? 'auto' : 'smooth',
+    });
+  };
+
+  /** Hero parallax: pointer position → CSS vars (transform-only, ref'd). */
+  const onHeroPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (reducedMotion || isMid) {
+      return;
+    }
+    const node = event.currentTarget;
+    const rect = node.getBoundingClientRect();
+    const px = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+    const py = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+    node.style.setProperty('--ncl-px', px.toFixed(3));
+    node.style.setProperty('--ncl-py', py.toFixed(3));
+  };
+
+  const onHeroPointerLeave = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const node = event.currentTarget;
+    node.style.setProperty('--ncl-px', '0');
+    node.style.setProperty('--ncl-py', '0');
+  };
+
+  /** Dark-band spotlight follows the pointer via CSS vars (no re-render). */
+  const onSpotlightMove = (event: ReactPointerEvent<HTMLElement>) => {
+    if (reducedMotion) {
+      return;
+    }
+    const node = event.currentTarget;
+    const rect = node.getBoundingClientRect();
+    const mx = ((event.clientX - rect.left) / rect.width) * 100;
+    const my = ((event.clientY - rect.top) / rect.height) * 100;
+    node.style.setProperty('--ncl-mx', `${mx.toFixed(1)}%`);
+    node.style.setProperty('--ncl-my', `${my.toFixed(1)}%`);
   };
 
   const submitSubscribe = () => {
@@ -1461,12 +2162,25 @@ export default function NewsletterCreatorLandingTemplate() {
 
   const archiveColumns = isNarrow ? 1 : isMid ? 2 : 3;
   const quoteColumns = isNarrow ? 1 : isMid ? 2 : 3;
+  const showSatellites = !isMid;
+
+  const colStyle: CSSProperties = {
+    ...styles.column,
+    ...(isNarrow ? styles.columnNarrow : null),
+  };
 
   // ============= CHROME =============
 
   const navbar = (
-    <nav ref={navRef} style={styles.navBar} aria-label="Primary">
-      <div style={styles.navInner}>
+    <nav
+      ref={navRef}
+      style={{...styles.navBar, ...(isScrolled ? styles.navBarScrolled : null)}}
+      aria-label="Primary">
+      <div
+        style={{
+          ...styles.navInner,
+          ...(isScrolled ? styles.navInnerScrolled : null),
+        }}>
         <BrandMark />
         <StackItem size="fill">
           {!isCompact && (
@@ -1489,13 +2203,15 @@ export default function NewsletterCreatorLandingTemplate() {
             </HStack>
           )}
         </StackItem>
-        <Button
-          label="Subscribe"
-          variant="primary"
-          size={isCompact ? 'sm' : 'md'}
-          icon={<Icon icon={MailIcon} size="sm" color="inherit" />}
-          onClick={jumpToTop}
-        />
+        <span className="ncl-cta">
+          <Button
+            label="Subscribe"
+            variant="primary"
+            size={isCompact ? 'sm' : 'md'}
+            icon={<Icon icon={MailIcon} size="sm" color="inherit" />}
+            onClick={jumpToTop}
+          />
+        </span>
         {isCompact && (
           <button
             ref={menuTriggerRef}
@@ -1540,7 +2256,7 @@ export default function NewsletterCreatorLandingTemplate() {
     </nav>
   );
 
-  // ============= HERO =============
+  // ============= HERO (product theater) =============
 
   const subscribeForm =
     confirmedEmail !== null ? (
@@ -1596,12 +2312,14 @@ export default function NewsletterCreatorLandingTemplate() {
               }}
             />
           </div>
-          <Button
-            label="Subscribe free"
-            variant="primary"
-            icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
-            onClick={submitSubscribe}
-          />
+          <span className="ncl-cta">
+            <Button
+              label="Subscribe free"
+              variant="primary"
+              icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
+              onClick={submitSubscribe}
+            />
+          </span>
         </div>
         {emailError !== null && (
           <p style={styles.emailError} role="alert">
@@ -1644,7 +2362,7 @@ export default function NewsletterCreatorLandingTemplate() {
   );
 
   const springCard = (
-    <div style={styles.springCard}>
+    <div className="ncl-tilt" style={styles.springCard}>
       <div style={styles.springHeader}>
         <div style={styles.brandTile} aria-hidden="true">
           <Icon icon={ActivityIcon} size="sm" color="inherit" />
@@ -1682,6 +2400,86 @@ export default function NewsletterCreatorLandingTemplate() {
     </div>
   );
 
+  const heroTheater = (
+    <div
+      style={styles.heroStage}
+      onPointerMove={onHeroPointerMove}
+      onPointerLeave={onHeroPointerLeave}>
+      {springCard}
+      {showSatellites && (
+        <>
+          <div
+            className="ncl-para-a"
+            aria-hidden="true"
+            style={{...styles.satShell, top: -26, right: -14}}>
+            <div
+              className="ncl-bob"
+              style={{...styles.satCard, animationDelay: '-1.2s'}}>
+              <div style={styles.satGlyph}>
+                <Icon icon={ActivityIcon} size="sm" color="inherit" />
+              </div>
+              <div>
+                <div style={styles.satFigure}>54% open rate</div>
+                <div style={styles.satCaption}>19% link CTR</div>
+              </div>
+            </div>
+          </div>
+          <div
+            className="ncl-para-b"
+            aria-hidden="true"
+            style={{...styles.satShell, bottom: -30, left: -26}}>
+            <div
+              className="ncl-bob"
+              style={{...styles.satCard, animationDelay: '-3.6s'}}>
+              <div style={styles.satGlyph}>
+                <Icon icon={MailCheckIcon} size="sm" color="inherit" />
+              </div>
+              <div>
+                <div style={styles.satFigure}>Issue #142 just landed</div>
+                <div style={styles.satCaption}>
+                  The physics of a good toggle · 6 min
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            className="ncl-para-c"
+            aria-hidden="true"
+            style={{...styles.satShell, top: '46%', left: -40}}>
+            <div
+              className="ncl-bob"
+              style={{
+                ...styles.satCard,
+                animationDelay: '-5.4s',
+                padding: '8px 12px',
+              }}>
+              <div style={styles.avatarStack}>
+                {READER_MONOGRAMS.slice(0, 3).map((reader, index) => (
+                  <div
+                    key={reader.initials}
+                    style={{
+                      ...styles.avatarDisc,
+                      width: 26,
+                      height: 26,
+                      fontSize: 10,
+                      backgroundColor: accentMix(
+                        reader.tint,
+                        'var(--color-background-muted)',
+                      ),
+                      marginLeft: index === 0 ? 0 : -8,
+                    }}>
+                    {reader.initials}
+                  </div>
+                ))}
+              </div>
+              <div style={styles.satFigure}>18,204 readers</div>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+
   const hero = (
     <div
       style={{
@@ -1691,12 +2489,9 @@ export default function NewsletterCreatorLandingTemplate() {
       }}>
       <div style={styles.heroText}>
         <Eyebrow label={HERO.eyebrow} />
-        <h1
-          style={{
-            ...styles.headline,
-            ...(isNarrow ? styles.headlineCompact : null),
-          }}>
-          {HERO.headline}
+        <h1 style={{...styles.headline, fontSize: headlineSize}}>
+          {HERO.headlineLead}{' '}
+          <span style={styles.headlineInk}>{HERO.headlineInk}</span>
         </h1>
         <p style={styles.subcopy}>{HERO.subcopy}</p>
         {subscribeForm}
@@ -1705,278 +2500,513 @@ export default function NewsletterCreatorLandingTemplate() {
         </Text>
         {heroProof}
       </div>
-      <div style={styles.heroAside}>{springCard}</div>
+      <div style={styles.heroAside}>{heroTheater}</div>
     </div>
   );
 
-  // ============= SAMPLE-ISSUE READER =============
+  const heroBand = (
+    <header style={styles.band}>
+      <AuroraBlob
+        className="ncl-aurora-a"
+        ink={AURORA_EMBER}
+        size={520}
+        top={-190}
+        left={-150}
+        opacity={0.5}
+      />
+      <AuroraBlob
+        className="ncl-aurora-b"
+        ink={AURORA_AMBER}
+        size={460}
+        top={-90}
+        right={-130}
+        opacity={0.45}
+      />
+      <AuroraBlob
+        className="ncl-aurora-c"
+        ink={AURORA_DUSK}
+        size={380}
+        bottom={-170}
+        left="36%"
+        opacity={0.38}
+      />
+      <div style={styles.dotGrid} aria-hidden="true" />
+      <div style={styles.grain} aria-hidden="true" />
+      <div
+        style={{
+          ...colStyle,
+          paddingTop: isCompact ? 40 : 64,
+          paddingBottom: sectionPadY,
+        }}>
+        {hero}
+      </div>
+    </header>
+  );
+
+  // ============= PINNED SCROLL STORY (sample issue) =============
 
   const currentIssue = readerIssue === 142 ? ISSUE_142 : ISSUE_141;
   const otherIssueNumber = readerIssue === 142 ? 141 : 142;
 
-  const sampleReader = (
+  const storyRail = (
+    <div
+      style={{
+        ...styles.storyRail,
+        ...(isCompact ? styles.storyRailCompact : null),
+      }}>
+      {!isCompact && (
+        <div style={styles.railTrack} aria-hidden="true">
+          <div
+            style={{
+              ...styles.railFill,
+              transform: `scaleY(${storyPinned ? storyProgress : 1})`,
+            }}
+          />
+        </div>
+      )}
+      {STORY_STEPS.map((step, index) => (
+        <button
+          key={step.title}
+          type="button"
+          aria-current={storyStep === index ? 'step' : undefined}
+          style={{
+            ...styles.stepButton,
+            ...(storyStep === index ? styles.stepButtonActive : null),
+            ...(isCompact
+              ? {flex: '1 1 150px', padding: 'var(--spacing-2)'}
+              : null),
+          }}
+          onClick={() => goToStoryStep(index)}>
+          <span style={styles.stepIndex}>{`0${index + 1}`}</span>
+          <span style={{minWidth: 0}}>
+            <span style={{...styles.stepTitle, display: 'block'}}>
+              {step.title}
+            </span>
+            {!isNarrow && (
+              <span style={{...styles.stepCopy, display: 'block'}}>
+                {step.copy}
+              </span>
+            )}
+          </span>
+        </button>
+      ))}
+    </div>
+  );
+
+  const readerFrame = (
+    <div style={styles.readerColumn}>
+      <div style={styles.readerFrame}>
+        <div style={styles.readerMasthead}>
+          <span style={styles.issueChip}>#{currentIssue.number}</span>
+          <StackItem size="fill">
+            <Text size="sm" weight="semibold">
+              {currentIssue.subject}
+            </Text>
+          </StackItem>
+          <Button
+            label={
+              readerIssue === 142
+                ? `Read issue #${otherIssueNumber}`
+                : `Back to issue #${otherIssueNumber}`
+            }
+            variant="secondary"
+            size="sm"
+            icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
+            onClick={() => setReaderIssue(otherIssueNumber as 142 | 141)}
+          />
+        </div>
+        <IssueReaderBody
+          issue={currentIssue}
+          isCompact={isNarrow}
+          scrollRef={readerScrollRef}
+          registerPart={registerPart}
+        />
+      </div>
+    </div>
+  );
+
+  const sampleStory = (
     <section
       id="sample"
       ref={registerSection('sample')}
-      aria-label="Sample issue">
-      <Reveal>
-        <VStack gap={4}>
-          <VStack gap={2}>
-            <Eyebrow label="Sample issue" />
-            <Heading level={2}>Read one before you subscribe</Heading>
-            <Text type="supporting" color="secondary">
-              The whole pitch is the product. Here is last week's issue,
-              unabridged — scroll inside the frame.
-            </Text>
-          </VStack>
-          <div style={styles.readerFrame}>
-            <div style={styles.readerMasthead}>
-              <span style={styles.issueChip}>#{currentIssue.number}</span>
-              <StackItem size="fill">
-                <Text size="sm" weight="semibold">
-                  {currentIssue.subject}
+      aria-label="Sample issue"
+      style={{
+        position: 'relative',
+        height: storyPinned ? '250vh' : 'auto',
+      }}>
+      <div style={storyPinned ? {position: 'sticky', top: 0} : undefined}>
+        <div
+          style={{
+            ...colStyle,
+            paddingTop: isCompact ? 48 : 72,
+            paddingBottom: isCompact ? 48 : 40,
+          }}>
+          <Reveal>
+            <div style={styles.storyStage}>
+              <VStack gap={2}>
+                <Eyebrow label="Sample issue" />
+                <SectionTitle isCompact={isCompact}>
+                  Read one before you subscribe
+                </SectionTitle>
+                <Text type="supporting" color="secondary">
+                  The whole pitch is the product — every issue follows the
+                  same four-beat anatomy. Keep scrolling, or pick a beat.
                 </Text>
-              </StackItem>
-              <Button
-                label={
-                  readerIssue === 142
-                    ? `Read issue #${otherIssueNumber}`
-                    : `Back to issue #${otherIssueNumber}`
-                }
-                variant="secondary"
-                size="sm"
-                icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
-                onClick={() => setReaderIssue(otherIssueNumber as 142 | 141)}
-              />
+              </VStack>
+              <div
+                style={{
+                  ...styles.storySplit,
+                  ...(isCompact ? {flexDirection: 'column'} : null),
+                }}>
+                {storyRail}
+                {readerFrame}
+              </div>
             </div>
-            <IssueReaderBody issue={currentIssue} isCompact={isNarrow} />
-          </div>
-        </VStack>
-      </Reveal>
+          </Reveal>
+        </div>
+      </div>
     </section>
   );
 
   // ============= ARCHIVE =============
 
   const archive = (
-    <section id="archive" ref={registerSection('archive')} aria-label="Archive">
-      <Reveal>
-        <VStack gap={4}>
-          <VStack gap={2}>
-            <Eyebrow label="Archive" />
-            <Heading level={2}>141 back issues, zero paywalls</Heading>
-            <Text type="supporting" color="secondary">
-              The six most recent below — filter by topic.
-            </Text>
-          </VStack>
-          <HStack gap={2} vAlign="center" wrap="wrap">
-            {TOPICS.map(entry => (
-              <ToggleButton
-                key={entry.id}
-                label={`${entry.label} · ${topicCount(entry.id)}`}
-                size="sm"
-                isPressed={topic === entry.id}
-                onPressedChange={() => setTopic(entry.id)}
-              />
-            ))}
-          </HStack>
+    <section
+      id="archive"
+      ref={registerSection('archive')}
+      aria-label="Archive"
+      style={styles.bandTinted}>
+      <div style={{...colStyle, paddingBlock: sectionPadY}}>
+        <VStack gap={5}>
+          <Reveal>
+            <div
+              style={{
+                display: 'flex',
+                gap: 'var(--spacing-4)',
+                alignItems: 'flex-end',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+              }}>
+              <VStack gap={2}>
+                <Eyebrow label="Archive" />
+                <SectionTitle isCompact={isCompact}>
+                  141 back issues, zero paywalls
+                </SectionTitle>
+                <Text type="supporting" color="secondary">
+                  The six most recent below — filter by topic.
+                </Text>
+              </VStack>
+              <HStack gap={2} vAlign="center" wrap="wrap">
+                {TOPICS.map(entry => (
+                  <ToggleButton
+                    key={entry.id}
+                    label={`${entry.label} · ${topicCount(entry.id)}`}
+                    size="sm"
+                    isPressed={topic === entry.id}
+                    onPressedChange={() => setTopic(entry.id)}
+                  />
+                ))}
+              </HStack>
+            </div>
+          </Reveal>
           <div
             style={{
               display: 'grid',
               gridTemplateColumns: `repeat(${archiveColumns}, minmax(0, 1fr))`,
               gap: 'var(--spacing-3)',
             }}>
-            {visibleIssues.map(issue => (
-              <Card key={issue.number} padding={4} height="100%">
-                <VStack gap={2}>
-                  <HStack gap={2} vAlign="center">
-                    <StackItem size="fill">
-                      <span style={styles.issueNumber}>
-                        ISSUE #{issue.number}
-                      </span>
-                    </StackItem>
-                    <Badge variant="orange" label={issue.topicLabel} />
-                  </HStack>
-                  <Text weight="semibold">{issue.title}</Text>
-                  <Text type="supporting" color="secondary">
-                    {issue.teaser}
-                  </Text>
-                  <HStack gap={1} vAlign="center">
-                    <Icon icon={ClockIcon} size="xsm" color="secondary" />
-                    <Text type="supporting" color="secondary">
-                      {issue.minutes} min read
-                    </Text>
-                  </HStack>
-                </VStack>
-              </Card>
-            ))}
+            {visibleIssues.map((issue, index) => {
+              const isFeature = index === 0 && archiveColumns > 1;
+              return (
+                <Reveal
+                  key={issue.number}
+                  delayMs={index * 70}
+                  style={{
+                    gridColumn: isFeature ? 'span 2' : 'auto',
+                    minWidth: 0,
+                    height: '100%',
+                  }}>
+                  <div className="ncl-raise">
+                    <Card
+                      padding={isFeature ? 5 : 4}
+                      height="100%"
+                      style={{position: 'relative', overflow: 'hidden'}}>
+                      {isFeature && (
+                        <span style={styles.ghostNumeral} aria-hidden="true">
+                          {issue.number}
+                        </span>
+                      )}
+                      <VStack gap={2}>
+                        <HStack gap={2} vAlign="center">
+                          <StackItem size="fill">
+                            <span style={styles.issueNumber}>
+                              ISSUE #{issue.number}
+                            </span>
+                          </StackItem>
+                          <Badge variant="orange" label={issue.topicLabel} />
+                        </HStack>
+                        <span
+                          style={{
+                            fontSize: isFeature ? 24 : 16,
+                            fontWeight: 700,
+                            letterSpacing: '-0.01em',
+                            lineHeight: 1.25,
+                          }}>
+                          {issue.title}
+                        </span>
+                        <Text type="supporting" color="secondary">
+                          {issue.teaser}
+                        </Text>
+                        <HStack gap={1} vAlign="center">
+                          <Icon icon={ClockIcon} size="xsm" color="secondary" />
+                          <Text type="supporting" color="secondary">
+                            {issue.minutes} min read
+                          </Text>
+                        </HStack>
+                      </VStack>
+                    </Card>
+                  </div>
+                </Reveal>
+              );
+            })}
           </div>
         </VStack>
-      </Reveal>
+      </div>
     </section>
   );
 
-  // ============= TESTIMONIAL WALL =============
+  // ============= TESTIMONIAL MARQUEE =============
 
   const testimonialWall = (
     <section
       id="readers"
       ref={registerSection('readers')}
-      aria-label="What readers say">
-      <Reveal>
-        <VStack gap={4}>
+      aria-label="What readers say"
+      style={{
+        ...styles.bandMuted,
+        borderBottom: '1px solid var(--color-border)',
+      }}>
+      <div
+        style={{
+          ...colStyle,
+          paddingTop: sectionPadY,
+          paddingBottom: 'var(--spacing-6)',
+        }}>
+        <Reveal>
           <VStack gap={2}>
             <Eyebrow label="Readers" />
-            <Heading level={2}>Read by the people who ship the pixels</Heading>
+            <SectionTitle isCompact={isCompact}>
+              Read by the people who ship the pixels
+            </SectionTitle>
           </VStack>
+        </Reveal>
+      </div>
+      {reducedMotion ? (
+        <div style={{...colStyle, paddingBottom: sectionPadY}}>
           <div
             style={{
               columnCount: quoteColumns,
               columnGap: 'var(--spacing-3)',
             }}>
             {TESTIMONIALS.map(entry => (
-              <Card
+              <div
                 key={entry.name}
-                padding={4}
                 style={{
                   breakInside: 'avoid',
                   marginBottom: 'var(--spacing-3)',
                 }}>
-                <VStack gap={2}>
-                  <div style={styles.quoteMark} aria-hidden="true">
-                    <Icon icon={QuoteIcon} size="xsm" color="inherit" />
-                  </div>
-                  <p style={styles.quoteText}>{entry.quote}</p>
-                  <VStack gap={0}>
-                    <Text size="sm" weight="semibold">
-                      {entry.name}
-                    </Text>
-                    <Text type="supporting" color="secondary">
-                      {entry.role}
-                    </Text>
-                  </VStack>
-                </VStack>
-              </Card>
+                <QuoteCard entry={entry} width="100%" />
+              </div>
             ))}
           </div>
-        </VStack>
-      </Reveal>
+        </div>
+      ) : (
+        <Reveal>
+          <div
+            className="ncl-marquee-wrap"
+            style={{...styles.marqueeWrap, paddingBottom: sectionPadY}}
+            aria-label="Reader testimonials, scrolling — hover to pause">
+            <div className="ncl-marquee">
+              <div className="ncl-marquee-half">
+                {TESTIMONIALS.map(entry => (
+                  <QuoteCard
+                    key={entry.name}
+                    entry={entry}
+                    width={isNarrow ? 280 : 340}
+                  />
+                ))}
+              </div>
+              <div className="ncl-marquee-half" aria-hidden="true">
+                {TESTIMONIALS.map(entry => (
+                  <QuoteCard
+                    key={entry.name}
+                    entry={entry}
+                    width={isNarrow ? 280 : 340}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </Reveal>
+      )}
     </section>
   );
 
-  // ============= SPONSOR + AUTHOR =============
+  // ============= DARK SPONSOR BAND + OVERLAPPING AUTHOR =============
 
   const sponsorSection = (
     <section
       id="sponsor"
       ref={registerSection('sponsor')}
-      aria-label="Sponsor Overshoot">
-      <Reveal>
-        <VStack gap={4}>
-          <VStack gap={2}>
-            <Eyebrow label="Sponsor" />
-            <Heading level={2}>{SPONSOR.heading}</Heading>
-          </VStack>
-          <Card padding={5}>
-            <div
-              style={{
-                ...styles.splitRow,
-                ...(isCompact ? styles.splitRowStacked : null),
-              }}>
-              <div style={styles.splitHalf}>
-                <Text type="body" color="secondary">
-                  {SPONSOR.copy}
-                </Text>
-                <span style={styles.monoLine}>{SPONSOR.stats}</span>
-              </div>
-              <div style={styles.splitHalf}>
-                <VStack gap={0}>
-                  <span style={styles.rateFigure}>{SPONSOR.rate}</span>
-                  <Text type="supporting" color="secondary">
-                    {SPONSOR.rateCaption}
+      aria-label="Sponsor Overshoot"
+      style={styles.bandDark}
+      onPointerMove={onSpotlightMove}>
+      <AuroraBlob
+        className="ncl-aurora-b"
+        ink={AURORA_EMBER}
+        size={480}
+        top={-150}
+        right={-110}
+        opacity={0.42}
+      />
+      <AuroraBlob
+        className="ncl-aurora-c"
+        ink={AURORA_DUSK}
+        size={420}
+        bottom={-140}
+        left={-130}
+        opacity={0.36}
+      />
+      <div className="ncl-spot" aria-hidden="true" />
+      <div style={styles.grain} aria-hidden="true" />
+      <div
+        style={{
+          ...colStyle,
+          paddingTop: sectionPadY,
+          paddingBottom: sectionPadY + authorOverlap,
+        }}>
+        <Reveal>
+          <VStack gap={4}>
+            <VStack gap={2}>
+              <Eyebrow label="Sponsor" />
+              <SectionTitle isCompact={isCompact}>
+                {SPONSOR.heading}
+              </SectionTitle>
+            </VStack>
+            <div style={styles.glassCard}>
+              <div
+                style={{
+                  ...styles.splitRow,
+                  ...(isCompact ? styles.splitRowStacked : null),
+                }}>
+                <div style={styles.splitHalf}>
+                  <Text type="body" color="secondary">
+                    {SPONSOR.copy}
                   </Text>
-                </VStack>
-                <HStack gap={2} vAlign="center" wrap="wrap">
-                  {SPONSOR.availability.map(slot => (
-                    <Badge
-                      key={slot.month}
-                      variant={slot.variant}
-                      label={`${slot.month} · ${slot.status}`}
-                    />
-                  ))}
-                </HStack>
-                {isKitRequested ? (
-                  <HStack gap={2} vAlign="center">
-                    <Icon icon={CheckIcon} size="sm" color="success" />
+                  <span style={styles.monoLine}>{SPONSOR.stats}</span>
+                </div>
+                <div style={styles.splitHalf}>
+                  <VStack gap={0}>
+                    <span style={styles.rateFigure}>{SPONSOR.rate}</span>
                     <Text type="supporting" color="secondary">
-                      Kit requested — June replies within 2 business days.
+                      {SPONSOR.rateCaption}
                     </Text>
+                  </VStack>
+                  <HStack gap={2} vAlign="center" wrap="wrap">
+                    {SPONSOR.availability.map(slot => (
+                      <Badge
+                        key={slot.month}
+                        variant={slot.variant}
+                        label={`${slot.month} · ${slot.status}`}
+                      />
+                    ))}
                   </HStack>
-                ) : (
-                  <div style={{display: 'flex'}}>
-                    <Button
-                      label="Request the sponsor kit"
-                      variant="secondary"
-                      icon={
-                        <Icon icon={ArrowRightIcon} size="sm" color="inherit" />
-                      }
-                      onClick={() => setIsKitRequested(true)}
-                    />
-                  </div>
-                )}
+                  {isKitRequested ? (
+                    <HStack gap={2} vAlign="center">
+                      <Icon icon={CheckIcon} size="sm" color="success" />
+                      <Text type="supporting" color="secondary">
+                        Kit requested — June replies within 2 business days.
+                      </Text>
+                    </HStack>
+                  ) : (
+                    <div style={{display: 'flex'}}>
+                      <Button
+                        label="Request the sponsor kit"
+                        variant="secondary"
+                        icon={
+                          <Icon
+                            icon={ArrowRightIcon}
+                            size="sm"
+                            color="inherit"
+                          />
+                        }
+                        onClick={() => setIsKitRequested(true)}
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </Card>
-        </VStack>
-      </Reveal>
+          </VStack>
+        </Reveal>
+      </div>
     </section>
   );
 
   const authorSection = (
     <section aria-label="About the author">
-      <Reveal>
-        <div
-          style={{
-            ...styles.splitRow,
-            ...(isCompact ? styles.splitRowStacked : null),
-            alignItems: isCompact ? 'stretch' : 'center',
-          }}>
-          <HStack gap={4} vAlign="center">
-            <div style={styles.authorTile} aria-hidden="true">
-              {AUTHOR.initials}
+      <div
+        style={{
+          ...colStyle,
+          marginTop: -authorOverlap,
+          paddingBottom: sectionPadY,
+        }}>
+        <Reveal>
+          <div style={styles.authorCard}>
+            <div
+              style={{
+                ...styles.splitRow,
+                ...(isCompact ? styles.splitRowStacked : null),
+                alignItems: isCompact ? 'stretch' : 'center',
+              }}>
+              <HStack gap={4} vAlign="center">
+                <div style={styles.authorTile} aria-hidden="true">
+                  {AUTHOR.initials}
+                </div>
+                <VStack gap={1}>
+                  <Eyebrow label="About the author" />
+                  <Heading level={3}>Written by {AUTHOR.name}</Heading>
+                </VStack>
+              </HStack>
+              <StackItem size="fill">
+                <VStack gap={2}>
+                  <Text type="body" color="secondary">
+                    {AUTHOR.bio}
+                  </Text>
+                  <HStack gap={2} vAlign="center" wrap="wrap">
+                    {AUTHOR.chips.map(chip => (
+                      <Badge key={chip} variant="neutral" label={chip} />
+                    ))}
+                  </HStack>
+                  <HStack gap={2} vAlign="center" wrap="wrap">
+                    {isEmailRevealed ? (
+                      <span style={styles.monoLine}>{AUTHOR.email}</span>
+                    ) : (
+                      <Button
+                        label="Say hello"
+                        variant="ghost"
+                        size="sm"
+                        icon={<Icon icon={MailIcon} size="sm" color="inherit" />}
+                        onClick={() => setIsEmailRevealed(true)}
+                      />
+                    )}
+                  </HStack>
+                </VStack>
+              </StackItem>
             </div>
-            <VStack gap={1}>
-              <Eyebrow label="About the author" />
-              <Heading level={3}>Written by {AUTHOR.name}</Heading>
-            </VStack>
-          </HStack>
-          <StackItem size="fill">
-            <VStack gap={2}>
-              <Text type="body" color="secondary">
-                {AUTHOR.bio}
-              </Text>
-              <HStack gap={2} vAlign="center" wrap="wrap">
-                {AUTHOR.chips.map(chip => (
-                  <Badge key={chip} variant="neutral" label={chip} />
-                ))}
-              </HStack>
-              <HStack gap={2} vAlign="center" wrap="wrap">
-                {isEmailRevealed ? (
-                  <span style={styles.monoLine}>{AUTHOR.email}</span>
-                ) : (
-                  <Button
-                    label="Say hello"
-                    variant="ghost"
-                    size="sm"
-                    icon={<Icon icon={MailIcon} size="sm" color="inherit" />}
-                    onClick={() => setIsEmailRevealed(true)}
-                  />
-                )}
-              </HStack>
-            </VStack>
-          </StackItem>
-        </div>
-      </Reveal>
+          </div>
+        </Reveal>
+      </div>
     </section>
   );
 
@@ -1986,8 +3016,10 @@ export default function NewsletterCreatorLandingTemplate() {
     <footer style={styles.bandMuted}>
       <div
         style={{
-          ...styles.column,
-          ...(isNarrow ? styles.columnCompact : null),
+          ...colStyle,
+          paddingBlock: 48,
+          display: 'flex',
+          flexDirection: 'column',
           gap: 'var(--spacing-4)',
         }}>
         <HStack gap={4} vAlign="start" wrap="wrap">
@@ -2047,58 +3079,19 @@ export default function NewsletterCreatorLandingTemplate() {
   return (
     <Layout height="fill">
       <LayoutContent padding={0}>
-        <div ref={pageRef} style={styles.page} onScroll={onPageScroll}>
+        <div
+          ref={pageRef}
+          className={SCOPE}
+          style={styles.page}
+          onScroll={onPageScroll}>
+          <style>{TEMPLATE_CSS}</style>
           {navbar}
-          {/* hero band (plain) */}
-          <div
-            style={{
-              ...styles.column,
-              ...(isNarrow ? styles.columnCompact : null),
-            }}>
-            {hero}
-          </div>
-          {/* sample reader band (accent-tinted, full-bleed) */}
-          <div style={styles.bandTinted}>
-            <div
-              style={{
-                ...styles.column,
-                ...(isNarrow ? styles.columnCompact : null),
-              }}>
-              {sampleReader}
-            </div>
-          </div>
-          {/* archive band (plain) */}
-          <div
-            style={{
-              ...styles.column,
-              ...(isNarrow ? styles.columnCompact : null),
-            }}>
-            {archive}
-          </div>
-          {/* testimonial band (muted, full-bleed) */}
-          <div
-            style={{
-              ...styles.bandMuted,
-              borderBottom: '1px solid var(--color-border)',
-            }}>
-            <div
-              style={{
-                ...styles.column,
-                ...(isNarrow ? styles.columnCompact : null),
-              }}>
-              {testimonialWall}
-            </div>
-          </div>
-          {/* sponsor + author band (plain) */}
-          <div
-            style={{
-              ...styles.column,
-              ...(isNarrow ? styles.columnCompact : null),
-              gap: 'var(--spacing-8)',
-            }}>
-            {sponsorSection}
-            {authorSection}
-          </div>
+          {heroBand}
+          {sampleStory}
+          {archive}
+          {testimonialWall}
+          {sponsorSection}
+          {authorSection}
           {footer}
         </div>
       </LayoutContent>

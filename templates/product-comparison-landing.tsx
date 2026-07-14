@@ -8,98 +8,116 @@
  *   vs the fictional incumbent "Gridware": a 12-dimension comparison
  *   matrix grouped into four categories with yes/no/partial verdicts,
  *   short evidence notes, and three shared footnotes; a derived
- *   head-to-head tally; three "why teams switch" stat cards; a four-step
- *   migration timeline with a copyable CLI command; one switcher
- *   testimonial with before/after metric chips; a two-bullet "when
- *   Gridware is a better fit" callout; two pricing-at-a-glance cards;
- *   four FAQ entries; and footer link fixtures)
- * @output Full "switch from" comparison landing page: sticky navbar with
- *   smooth-scrolling scroll-spy anchors that collapse behind a menu
- *   button at compact widths, a hero with the versus headline, one-line
- *   verdict, working scroll CTAs, and an animated head-to-head scoreboard
- *   whose tally bars fill and count up on first view; the centerpiece
- *   sticky-header comparison table (12 dimension rows x 2 product
- *   columns of check/cross/partial verdict chips with superscript
- *   footnote markers that jump to the footnotes section) fronted by a
- *   category filter row that scroll-jumps to and highlights row groups,
- *   with a sticky first column once the page narrows; three switch-
- *   reason cards with count-up stats; a migration timeline with per-step
- *   durations and a copy-with-feedback CLI command; a dark switcher
- *   testimonial band with before/after chips; an honest "when Gridware
- *   is a better fit" callout; a pricing-at-a-glance band; a controlled
- *   FAQ accordion; a validating email capture for the migration
- *   checklist; the footnotes list; and a dark sitemap footer.
+ *   head-to-head tally; a marquee of ten invented switcher teams; three
+ *   "why teams switch" stat cards; a four-step migration timeline with
+ *   scripted terminal output per step and a copyable CLI command; one
+ *   switcher testimonial with before/after metric chips; a two-bullet
+ *   "when Gridware is a better fit" callout; two pricing-at-a-glance
+ *   cards; four FAQ entries; and footer link fixtures)
+ * @output Full "switch from" comparison landing page, staged to an
+ *   awwwards bar: a sticky navbar that rides transparent over the hero
+ *   and condenses to a tinted hairline surface after 24px of scroll; a
+ *   hero theater — aurora blobs + grain, a 76px two-line display headline
+ *   with gradient ink on the challenger wordmark, and the head-to-head
+ *   scoreboard staged as a tilting glass card with three bobbing
+ *   satellite chips that parallax toward the pointer; a switched-teams
+ *   marquee; the centerpiece sticky-header comparison table (12 dimension
+ *   rows x 2 verdict columns with footnote jump buttons and a category
+ *   filter row that scroll-jumps and highlights row groups, sticky first
+ *   column when narrow); an asymmetric why-switch band with count-up stat
+ *   cards over a dot grid; a pinned scroll-story migration scene (sticky
+ *   stage inside a ~2.6-viewport container whose scroll progress advances
+ *   four clickable steps and a scripted terminal, with the copyable CLI
+ *   command inline); a scheme-locked dark testimonial band with a glass
+ *   quote card and pointer-tracked spotlight; an honest "when Gridware
+ *   wins" card that overlaps the dark band into the pricing band; offset
+ *   pricing-at-a-glance cards; a controlled FAQ accordion; a validating
+ *   email capture on a dark glow band; footnotes; and a sitemap footer.
  * @position Page template; emitted by `astryx template product-comparison-landing`
  *
  * Frame: Layout height="fill", content-only — a landing page owns its own
  * chrome, so there is no LayoutHeader. LayoutContent (padding 0) hosts a
- * single scroll container div that owns scroll-spy; the navbar inside it
- * is position:sticky top:0. The page is a stack of full-bleed bands
- * (plain / muted / dark) that each center a 1120px column, alternating
- * tinted and plain surfaces per the landing-page contract. The compact
- * nav menu drops absolutely from the sticky navbar; the Toast sits fixed
- * bottom-right.
+ * single scroll container div; a rAF-throttled scroll listener on it
+ * drives scroll-spy, the condensing navbar, and the pinned migration
+ * story. The page is a stack of full-bleed bands (plain / muted / dark)
+ * that each center a 1120px column. The compact nav menu drops absolutely
+ * from the sticky navbar; the Toast sits fixed bottom-right.
  *
- * Interaction contract:
+ * Interaction contract (all preserved from the previous revision):
  * - Nav anchors (Comparison / Why switch / Migration / Pricing / FAQ)
- *   smooth-scroll the container under the sticky nav; onScroll spies the
- *   last section above the fold and highlights the matching link
- *   (aria-current). At compact widths the links collapse behind a 40px
- *   menu button whose dropdown closes on Escape, outside pointerdown, or
- *   selection.
- * - Hero CTAs actually navigate: "Migrate in a weekend" scrolls to the
- *   migration timeline, "See the full comparison" to the table. The
+ *   smooth-scroll under the sticky nav; scroll-spy highlights the last
+ *   section above the fold (aria-current). At compact widths the links
+ *   collapse behind a 40px menu button whose dropdown closes on Escape,
+ *   outside pointerdown, or selection.
+ * - Hero CTAs navigate to the migration scene and the table. The
  *   scoreboard tally (derived from the table fixtures, never hand-typed)
  *   counts up and its bars fill once on first view.
  * - The category filter row sets the active row group (tinted rows) and
  *   scroll-jumps the container so the group header lands under the
- *   sticky table header; "All 12" clears the highlight and returns to
- *   the top of the table.
- * - Every superscript footnote marker in the table is a real button that
- *   scrolls to the footnotes section.
- * - The migration CLI command's Copy button writes to the clipboard and
- *   flips to a "Copied" state for 2s (timer cleaned up on unmount).
+ *   sticky table header; "All 12" clears the highlight.
+ * - Every superscript footnote marker is a real button that scrolls to
+ *   the footnotes section.
+ * - Migration steps are clickable buttons: in the pinned scene they
+ *   scroll the story container to that step's progress window; the CLI
+ *   Copy button writes to the clipboard and flips to "Copied" for 2s
+ *   (timer cleaned up on unmount).
  * - The checklist email form validates on submit (empty and format
- *   errors inline) and success swaps the form for a confirmed state
- *   echoing the address, with a "Use a different email" reset.
- * - FAQ Collapsibles are controlled via a Set of open ids so several can
- *   be open at once; the first ships open as an affordance.
- * - Buttons that would leave the page (pilot signup, docs, status,
- *   social) fire a corner Toast so the wiring is provable.
+ *   errors inline); success swaps the form for a confirmed state with a
+ *   "Use a different email" reset.
+ * - FAQ Collapsibles are controlled via a Set of open ids; the first
+ *   ships open. Would-leave-the-page buttons fire a corner Toast.
  *
- * Motion: scroll-reveals (IntersectionObserver, fire once, rise+fade
- * 12px), count-ups on first view, and the hero scoreboard bar fill are
- * all gated by prefers-reduced-motion (matchMedia read once): reduced
- * renders reveals visible, counters final, bars full, and swaps smooth
- * scrolling for instant jumps. No Date.now, no randomness, no network
- * assets, no real logos.
+ * Motion (every layer reduced-motion gated; loops and reveals live in
+ * scoped CSS so `prefers-reduced-motion: reduce` statically renders
+ * everything visible, marquee wrapped, counters final, bars full):
+ * - Ambient: three aurora blobs drift on 38/46s alternate keyframes
+ *   behind the hero; grain (feTurbulence data-URI at 4-5% opacity) and
+ *   dot-grid texture layers; satellite chips bob on an 8s loop with
+ *   negative delays; the switched-teams marquee loops 48s linear and
+ *   pauses on hover.
+ * - Pointer: the hero scoreboard tilts (rotateX/rotateY via --px/--py
+ *   custom props) and its satellites parallax ±9px toward the pointer at
+ *   wide widths; the dark testimonial band tracks a radial spotlight via
+ *   --mx/--my. Both idle at rest values when reduced motion is on.
+ * - Scroll: the navbar condenses after 24px; the migration story's
+ *   sticky stage advances its step rail, watermark numeral, and scripted
+ *   terminal from scroll progress. Reveals rise 16px + settle from
+ *   scale(.985) over 600ms decelerate, staggered 80-90ms, fire once.
+ *   Primary CTAs get a hover sheen sweep + 1px lift + .98 pressed scale.
+ * - No layout-property animation: transforms, opacity, and
+ *   background-position only (the scoreboard bar fill keeps its original
+ *   width transition as the one sanctioned legacy exception).
  *
- * Color policy: ONE quarantined accent literal (BRAND_ACCENT, see the
- * contrast math at its declaration); accent tints are derived from it
- * via color-mix so no second literal exists. Status verdict tints follow
- * the repo convention of var(--color-success/error/warning, light-dark())
- * pairs. The testimonial band, final CTA band, terminal pane, and footer
- * are deliberately scheme-locked dark surfaces (colorScheme:'dark' with
- * literal paint) so they read identically in both app themes, matching
- * the saas-landing-page exemplar; DARK_TEXT* literals exist only for
- * text sitting on those locked surfaces.
+ * Color policy: ONE quarantined accent literal (BRAND_ACCENT, contrast
+ * math at its declaration); every accent tint, aurora stop, glow ring,
+ * gradient ink stop, and glass stroke is a color-mix() derivation of it
+ * (mixed with icon/success tokens), never a second literal. Status
+ * verdict tints follow the repo var(--color-success/error/warning,
+ * light-dark()) convention. The testimonial band, final CTA band,
+ * terminal panes, and footer are deliberately scheme-locked dark
+ * surfaces (colorScheme:'dark' with literal paint) so they read
+ * identically in both app themes; DARK_TEXT / TERMINAL literals exist
+ * only for those locked surfaces. Neutral black-based shadow tiers
+ * (raised / floating / glass inset) are shadows, not palette colors.
  *
- * Responsive contract (useElementWidth ResizeObserver on the page wrap —
+ * Responsive contract (useElementSize ResizeObserver on the page wrap —
  * the inline demo stage is ~1045px wide, so viewport media queries never
- * fire there):
+ * fire there; measured height sizes the pinned story stage):
  * - Column: max-width 1120px, centered; every band paints full-bleed.
- * - >900px: navbar shows all five anchor links + CTA inline.
+ *   Section rhythm: 104px block padding at wide, 64px at phone.
+ * - >900px: navbar shows all five anchor links + CTA inline; hero
+ *   display type 76px (62px between 780-1000px).
  * - <=900px: nav links collapse behind a menu button dropdown.
- * - <=780px: hero stacks (scoreboard below copy), the migration
- *   timeline drops from a 4-across row to a vertical rail, why-switch
- *   and pricing grids reflow via Grid minWidth, and the testimonial
- *   before/after chip rows stack.
+ * - <=780px: hero stacks (scoreboard below copy, satellites + parallax
+ *   off), the migration story renders as a static stacked sequence, the
+ *   why-switch header split and pricing offset flatten, and the
+ *   testimonial before/after chip rows stack.
  * - <=720px: the comparison table gains a horizontal scroll wrapper
  *   (minWidth 640) with a sticky first column (shadow edge); at wide
  *   widths the table header row is the sticky element instead.
- * - <=560px: headline and section type step down, the email form stacks
- *   its button, and band paddings tighten. Action rows wrap, so the
- *   page holds at 390px in the phone artboard with no overflow-x.
+ * - <=560px: display and section type step down, the email form stacks
+ *   its button, band paddings tighten. Action rows wrap, so the page
+ *   holds at 390px in the phone artboard with no overflow-x.
  */
 
 import {
@@ -107,9 +125,9 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
   type ReactNode,
   type RefObject,
-  type UIEvent,
 } from 'react';
 
 import {
@@ -119,7 +137,7 @@ import {
   StackItem,
   VStack,
 } from '@astryxdesign/core/Layout';
-import {Heading, Text} from '@astryxdesign/core/Text';
+import {Text} from '@astryxdesign/core/Text';
 import {Badge} from '@astryxdesign/core/Badge';
 import {Button} from '@astryxdesign/core/Button';
 import {Card} from '@astryxdesign/core/Card';
@@ -129,7 +147,6 @@ import {Grid} from '@astryxdesign/core/Grid';
 import {Icon} from '@astryxdesign/core/Icon';
 import {TextInput} from '@astryxdesign/core/TextInput';
 import {Toast} from '@astryxdesign/core/Toast';
-import {Token} from '@astryxdesign/core/Token';
 import {
   ArrowDownIcon,
   ArrowRightIcon,
@@ -169,15 +186,54 @@ const BRAND_ACCENT = 'light-dark(#2547D0, #8FA8FF)';
 const ACCENT_TINT_STRONG = `color-mix(in srgb, ${BRAND_ACCENT} 14%, transparent)`;
 const ACCENT_TINT_SOFT = `color-mix(in srgb, ${BRAND_ACCENT} 7%, transparent)`;
 const ACCENT_TINT_BORDER = `color-mix(in srgb, ${BRAND_ACCENT} 32%, transparent)`;
+const ACCENT_GLOW = `color-mix(in srgb, ${BRAND_ACCENT} 24%, transparent)`;
+
+/**
+ * Gradient ink for the hero wordmark — every stop is a color-mix of the
+ * quarantined accent with scheme hue tokens.
+ */
+const GRADIENT_INK =
+  `linear-gradient(96deg, ${BRAND_ACCENT} 0%, ` +
+  `color-mix(in srgb, ${BRAND_ACCENT} 55%, var(--color-icon-cyan)) 58%, ` +
+  `color-mix(in srgb, ${BRAND_ACCENT} 40%, var(--color-success)) 100%)`;
 
 // Text literals for the deliberately scheme-locked dark bands only
-// (testimonial, final CTA, terminal pane, footer — see Color policy).
+// (testimonial, final CTA, terminal panes, footer — see Color policy).
 const DARK_TEXT = '#FFFFFF';
 const DARK_TEXT_SOFT = 'rgba(226, 232, 240, 0.82)';
 const DARK_TEXT_FAINT = 'rgba(226, 232, 240, 0.6)';
 const CHIP_BG = 'rgba(255, 255, 255, 0.12)';
 const CHIP_BORDER = 'rgba(255, 255, 255, 0.24)';
 const ERROR_ON_DARK = '#FECACA';
+/** Glass surface on the locked dark bands: white mixed to 6%. */
+const GLASS_ON_DARK = `color-mix(in srgb, ${DARK_TEXT} 6%, transparent)`;
+
+// Scheme-locked terminal pane inks (hoisted so the pinned story's log
+// pane derives its faint tint via color-mix, not a new literal).
+const TERMINAL_BG = '#0B1220';
+const TERMINAL_INK = '#A5F3FC';
+const TERMINAL_INK_FAINT = `color-mix(in srgb, ${TERMINAL_INK} 55%, transparent)`;
+
+/**
+ * Depth system — shared neutral shadow tiers (black-based; these are
+ * shadows, not palette colors). Hover lifts add the accent ring via the
+ * scoped .pcl-lift / .pcl-ours classes below.
+ */
+const SHADOW_RAISED =
+  '0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px -12px rgba(0, 0, 0, 0.18)';
+const SHADOW_FLOATING =
+  '0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px -12px rgba(0, 0, 0, 0.18), ' +
+  '0 24px 48px -24px rgba(0, 0, 0, 0.3)';
+/** Glass hairline: 1px inset stroke mixed from accent + border tokens. */
+const GLASS_INSET = `inset 0 0 0 1px color-mix(in srgb, ${BRAND_ACCENT} 14%, var(--color-border))`;
+
+/** Grain texture: inline SVG feTurbulence data-URI, tiled at low opacity. */
+const GRAIN_URI =
+  'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' ' +
+  "width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence " +
+  "type='fractalNoise' baseFrequency='0.85' numOctaves='2' " +
+  "stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' " +
+  'filter=\'url(%23g)\'/%3E%3C/svg%3E")';
 
 /** Sticky-nav height; smooth-scroll, scroll-spy, and the sticky table
  * header all allow for it. */
@@ -187,6 +243,102 @@ const SPY_OFFSET = 140;
  * table header row does not cover the group label. */
 const TABLE_HEADER_ALLOWANCE = 56;
 
+// Scoped CSS: ambient loops (auroras, satellite bobs, marquee), reveal
+// choreography, card lifts, and CTA sheens — all gated by
+// prefers-reduced-motion (reveals render visible, loops static, the
+// marquee wraps).
+const SCOPE = 'pcl-root';
+const TEMPLATE_CSS = `
+@keyframes pcl-aurora-a {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(64px, -44px, 0) scale(1.14); }
+}
+@keyframes pcl-aurora-b {
+  0% { transform: translate3d(0, 0, 0) scale(1.06); }
+  100% { transform: translate3d(-56px, 40px, 0) scale(0.9); }
+}
+.${SCOPE} .pcl-aurora-a { animation: pcl-aurora-a 38s ease-in-out infinite alternate; }
+.${SCOPE} .pcl-aurora-b { animation: pcl-aurora-b 46s ease-in-out infinite alternate; }
+@keyframes pcl-bob {
+  0%, 100% { transform: translateY(-6px); }
+  50% { transform: translateY(6px); }
+}
+.${SCOPE} .pcl-bob { animation: pcl-bob 8s ease-in-out infinite; }
+.${SCOPE} .pcl-reveal {
+  opacity: 0;
+  transform: translateY(16px) scale(0.985);
+  transition:
+    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.${SCOPE} .pcl-reveal[data-shown='true'] { opacity: 1; transform: none; }
+.${SCOPE} .pcl-lift {
+  box-shadow: ${SHADOW_RAISED};
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.${SCOPE} .pcl-lift:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 0 0 1px ${ACCENT_TINT_BORDER},
+    ${SHADOW_FLOATING};
+}
+.${SCOPE} .pcl-ours {
+  box-shadow: 0 0 0 1px ${ACCENT_TINT_BORDER}, ${SHADOW_FLOATING};
+}
+.${SCOPE} .pcl-ours:hover {
+  box-shadow:
+    0 0 0 1px ${BRAND_ACCENT},
+    0 0 32px -8px ${ACCENT_GLOW},
+    ${SHADOW_FLOATING};
+}
+.${SCOPE} .pcl-cta { position: relative; display: inline-flex; transition: transform 0.22s ease; }
+.${SCOPE} .pcl-cta:hover { transform: translateY(-1px); }
+.${SCOPE} .pcl-cta:active { transform: translateY(0) scale(0.98); }
+.${SCOPE} .pcl-sheen { position: absolute; inset: 0; border-radius: 8px; overflow: hidden; pointer-events: none; }
+.${SCOPE} .pcl-sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-130%);
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    color-mix(in srgb, var(--color-on-accent) 32%, transparent) 50%,
+    transparent 62%
+  );
+  transition: transform 0.7s ease;
+}
+.${SCOPE} .pcl-cta:hover .pcl-sheen::after { transform: translateX(130%); }
+@keyframes pcl-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.${SCOPE} .pcl-marquee { overflow: hidden; }
+.${SCOPE} .pcl-marquee-track { display: flex; width: max-content; animation: pcl-marquee 48s linear infinite; }
+.${SCOPE} .pcl-marquee:hover .pcl-marquee-track { animation-play-state: paused; }
+@keyframes pcl-stage-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+.${SCOPE} .pcl-stage-in { animation: pcl-stage-in 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
+@media (prefers-reduced-motion: reduce) {
+  .${SCOPE} .pcl-aurora-a,
+  .${SCOPE} .pcl-aurora-b,
+  .${SCOPE} .pcl-bob,
+  .${SCOPE} .pcl-stage-in,
+  .${SCOPE} .pcl-marquee-track {
+    animation: none;
+  }
+  .${SCOPE} .pcl-marquee-track { width: auto; flex-wrap: wrap; justify-content: center; }
+  .${SCOPE} .pcl-marquee-half { flex-wrap: wrap; justify-content: center; }
+  .${SCOPE} .pcl-marquee-clone { display: none; }
+  .${SCOPE} .pcl-reveal { opacity: 1; transform: none; transition: none; }
+  .${SCOPE} .pcl-cta, .${SCOPE} .pcl-lift { transition: none; }
+  .${SCOPE} .pcl-cta:hover, .${SCOPE} .pcl-cta:active { transform: none; }
+  .${SCOPE} .pcl-lift:hover { transform: none; box-shadow: ${SHADOW_RAISED}; }
+  .${SCOPE} .pcl-sheen::after { display: none; }
+}
+`;
+
 // ============= STYLES =============
 
 const styles: Record<string, CSSProperties> = {
@@ -194,35 +346,83 @@ const styles: Record<string, CSSProperties> = {
     position: 'relative',
     height: '100%',
     overflowY: 'auto',
+    overflowX: 'hidden',
     backgroundColor: 'var(--color-background-body)',
     color: 'var(--color-text-primary)',
   },
-  // Bands paint full-bleed; each centers this column.
+  // Bands paint full-bleed; each centers this column. 104px section
+  // rhythm at wide, 64px at phone (per-band overrides where noted).
   bandInner: {
     width: '100%',
     maxWidth: 1120,
     marginInline: 'auto',
     boxSizing: 'border-box',
-    padding: 'var(--spacing-8) var(--spacing-6)',
+    padding: '104px var(--spacing-6)',
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-6)',
   },
   bandInnerCompact: {
-    padding: 'var(--spacing-6) var(--spacing-4)',
+    padding: '64px var(--spacing-4)',
+    gap: 'var(--spacing-5)',
   },
   bandMuted: {
+    position: 'relative',
+    overflow: 'hidden',
     backgroundColor: 'var(--color-background-muted)',
     borderTop: '1px solid var(--color-border)',
     borderBottom: '1px solid var(--color-border)',
   },
-  // ---- sticky navbar ----
+  // ---- atmosphere layers ----
+  auroraClip: {
+    position: 'absolute',
+    inset: 0,
+    overflow: 'hidden',
+    pointerEvents: 'none',
+  },
+  auroraBlob: {
+    position: 'absolute',
+    borderRadius: '50%',
+    filter: 'blur(90px)',
+    // Aurora stops are accent color-mixed with scheme hue tokens.
+    opacity: 0.5,
+  },
+  grainLayer: {
+    position: 'absolute',
+    inset: 0,
+    backgroundImage: GRAIN_URI,
+    backgroundRepeat: 'repeat',
+    opacity: 0.04,
+    pointerEvents: 'none',
+  },
+  dotGrid: {
+    position: 'absolute',
+    inset: 0,
+    backgroundImage:
+      'radial-gradient(var(--color-border) 1px, transparent 1px)',
+    backgroundSize: '26px 26px',
+    opacity: 0.5,
+    maskImage:
+      'radial-gradient(75% 70% at 50% 40%, black 0%, transparent 100%)',
+    WebkitMaskImage:
+      'radial-gradient(75% 70% at 50% 40%, black 0%, transparent 100%)',
+    pointerEvents: 'none',
+  },
+  // ---- sticky navbar (transparent at top → tinted after 24px) ----
   navBar: {
     position: 'sticky',
     top: 0,
     zIndex: 30,
-    backgroundColor: 'var(--color-background-body)',
+    backgroundColor: 'transparent',
+    borderBottom: '1px solid transparent',
+    transition:
+      'background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease',
+  },
+  navBarScrolled: {
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-body) 88%, transparent)',
     borderBottom: '1px solid var(--color-border)',
+    boxShadow: SHADOW_RAISED,
   },
   navInner: {
     position: 'relative',
@@ -230,11 +430,15 @@ const styles: Record<string, CSSProperties> = {
     maxWidth: 1120,
     marginInline: 'auto',
     boxSizing: 'border-box',
-    padding: 'var(--spacing-2) var(--spacing-4)',
+    paddingInline: 'var(--spacing-4)',
+    paddingBlock: 12,
     display: 'flex',
     alignItems: 'center',
     gap: 'var(--spacing-2)',
-    minHeight: 56,
+    transition: 'padding 0.3s ease',
+  },
+  navInnerScrolled: {
+    paddingBlock: 6,
   },
   // Brand-art gradient tile: scheme-locked so the wordmark tile reads
   // identically in both themes (sanctioned hue-gradient art).
@@ -249,6 +453,7 @@ const styles: Record<string, CSSProperties> = {
     colorScheme: 'dark',
     background: 'linear-gradient(135deg, #2547D0 0%, #0EA5E9 100%)',
     color: '#FFFFFF',
+    boxShadow: SHADOW_RAISED,
   },
   navLink: {
     display: 'inline-flex',
@@ -291,8 +496,7 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 14,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-body)',
-    boxShadow:
-      'var(--shadow-high, 0 12px 32px light-dark(rgba(15, 23, 42, 0.18), rgba(0, 0, 0, 0.5)))',
+    boxShadow: SHADOW_FLOATING,
     padding: 'var(--spacing-3)',
     zIndex: 40,
     maxHeight: 'calc(100vh - 120px)',
@@ -314,7 +518,45 @@ const styles: Record<string, CSSProperties> = {
     color: 'var(--color-text-primary)',
     textAlign: 'left',
   },
-  // ---- hero ----
+  // ---- eyebrows + section headings ----
+  eyebrow: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 8,
+    padding: '5px 12px',
+    borderRadius: 999,
+    border: `1px solid ${ACCENT_TINT_BORDER}`,
+    backgroundColor: ACCENT_TINT_SOFT,
+    color: BRAND_ACCENT,
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: '0.09em',
+    textTransform: 'uppercase',
+    whiteSpace: 'nowrap',
+  },
+  sectionHeading: {
+    margin: 0,
+    fontSize: 38,
+    lineHeight: 1.1,
+    fontWeight: 700,
+    letterSpacing: '-0.02em',
+    color: 'var(--color-text-primary)',
+  },
+  sectionHeadingCompact: {
+    fontSize: 30,
+  },
+  // ---- hero theater ----
+  heroBand: {
+    position: 'relative',
+  },
+  heroInner: {
+    padding: '72px var(--spacing-6) 88px',
+    gap: 'var(--spacing-7)',
+  },
+  heroInnerCompact: {
+    padding: '40px var(--spacing-4) 56px',
+    gap: 'var(--spacing-6)',
+  },
   heroRow: {
     display: 'flex',
     gap: 'var(--spacing-8)',
@@ -323,7 +565,7 @@ const styles: Record<string, CSSProperties> = {
   heroRowStacked: {
     flexDirection: 'column',
     alignItems: 'stretch',
-    gap: 'var(--spacing-5)',
+    gap: 'var(--spacing-6)',
   },
   heroText: {
     flex: '1.15 1 0',
@@ -332,19 +574,23 @@ const styles: Record<string, CSSProperties> = {
     flexDirection: 'column',
     gap: 'var(--spacing-4)',
   },
-  heroBoard: {
-    flex: '1 1 0',
-    minWidth: 0,
-  },
   heroHeadline: {
-    fontSize: 46,
-    fontWeight: 700,
-    lineHeight: 1.1,
-    letterSpacing: '-0.02em',
     margin: 0,
+    fontWeight: 700,
+    lineHeight: 1.02,
+    letterSpacing: '-0.025em',
   },
-  heroHeadlineCompact: {
-    fontSize: 30,
+  heroLine: {
+    display: 'block',
+  },
+  heroInk: {
+    display: 'block',
+    backgroundImage: GRADIENT_INK,
+    WebkitBackgroundClip: 'text',
+    backgroundClip: 'text',
+    color: 'transparent',
+    WebkitTextFillColor: 'transparent',
+    paddingBottom: '0.06em',
   },
   heroVs: {
     color: BRAND_ACCENT,
@@ -353,22 +599,35 @@ const styles: Record<string, CSSProperties> = {
     fontSize: 17,
     lineHeight: 1.55,
     color: 'var(--color-text-secondary)',
-    maxWidth: 540,
+    maxWidth: '56ch',
     margin: 0,
   },
-  // ---- head-to-head scoreboard (signature hero moment) ----
+  // Perspective wrapper: the scoreboard tilts, satellites orbit above.
+  heroBoard: {
+    flex: '1 1 0',
+    minWidth: 0,
+    position: 'relative',
+    perspective: 1400,
+  },
+  boardTilt: {
+    transform:
+      'translate3d(calc(var(--px, 0) * -6px), calc(var(--py, 0) * -4px), 0) ' +
+      'rotateX(calc(var(--py, 0) * -2deg)) rotateY(calc(var(--px, 0) * 2.5deg))',
+    transition: 'transform 0.55s cubic-bezier(0.22, 1, 0.36, 1)',
+  },
+  // ---- head-to-head scoreboard (signature hero moment, staged) ----
   board: {
-    borderRadius: 16,
-    border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-background-card)',
-    boxShadow: 'var(--shadow-med)',
-    padding: 'var(--spacing-5)',
+    borderRadius: 20,
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-card) 92%, transparent)',
+    boxShadow: `${GLASS_INSET}, ${SHADOW_FLOATING}`,
+    padding: 'var(--spacing-6)',
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-4)',
   },
   boardCount: {
-    fontSize: 40,
+    fontSize: 44,
     fontWeight: 700,
     lineHeight: 1,
     letterSpacing: '-0.02em',
@@ -387,6 +646,104 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 5,
     transition: 'width 700ms cubic-bezier(0.22, 1, 0.36, 1)',
   },
+  // ---- hero satellites (wide widths only) ----
+  satLayer: {
+    position: 'absolute',
+    inset: 0,
+    pointerEvents: 'none',
+    transform:
+      'translate(calc(var(--px, 0) * 9px), calc(var(--py, 0) * 7px))',
+    transition: 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
+    zIndex: 2,
+  },
+  satellite: {
+    borderRadius: 14,
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-card) 94%, transparent)',
+    boxShadow: `${GLASS_INSET}, ${SHADOW_FLOATING}`,
+    padding: '10px 14px',
+  },
+  satGlyph: {
+    width: 30,
+    height: 30,
+    borderRadius: 9,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    backgroundColor: ACCENT_TINT_STRONG,
+    color: BRAND_ACCENT,
+  },
+  satTitle: {
+    fontSize: 13,
+    fontWeight: 700,
+    lineHeight: 1.2,
+    color: 'var(--color-text-primary)',
+    fontVariantNumeric: 'tabular-nums',
+    whiteSpace: 'nowrap',
+  },
+  satCaption: {
+    fontSize: 11,
+    lineHeight: 1.3,
+    color: 'var(--color-text-secondary)',
+    whiteSpace: 'nowrap',
+  },
+  satAvatar: {
+    width: 24,
+    height: 24,
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: 9,
+    fontWeight: 700,
+    backgroundColor: ACCENT_TINT_STRONG,
+    color: BRAND_ACCENT,
+    boxShadow: 'inset 0 0 0 1px var(--color-border)',
+    flexShrink: 0,
+  },
+  // ---- switched-teams marquee ----
+  marqueeLabel: {
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: '0.09em',
+    textTransform: 'uppercase',
+    color: 'var(--color-text-secondary)',
+  },
+  marqueeClip: {
+    maskImage:
+      'linear-gradient(90deg, transparent, black 8%, black 92%, transparent)',
+    WebkitMaskImage:
+      'linear-gradient(90deg, transparent, black 8%, black 92%, transparent)',
+  },
+  marqueeHalf: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 'var(--spacing-6)',
+    paddingInlineEnd: 'var(--spacing-6)',
+  },
+  marqueeItem: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 8,
+    fontSize: 13,
+    fontWeight: 600,
+    color: 'var(--color-text-secondary)',
+    whiteSpace: 'nowrap',
+  },
+  marqueeDisc: {
+    width: 26,
+    height: 26,
+    borderRadius: 8,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: 10,
+    fontWeight: 700,
+    backgroundColor: ACCENT_TINT_STRONG,
+    color: BRAND_ACCENT,
+    flexShrink: 0,
+  },
   // ---- comparison table ----
   filterChip: {
     display: 'inline-flex',
@@ -402,6 +759,7 @@ const styles: Record<string, CSSProperties> = {
     fontWeight: 600,
     color: 'var(--color-text-secondary)',
     whiteSpace: 'nowrap',
+    transition: 'border-color 0.2s ease, background-color 0.2s ease',
   },
   filterChipActive: {
     borderColor: ACCENT_TINT_BORDER,
@@ -410,9 +768,10 @@ const styles: Record<string, CSSProperties> = {
   },
   tableScroll: {
     overflowX: 'auto',
-    borderRadius: 14,
+    borderRadius: 18,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_RAISED,
   },
   table: {
     width: '100%',
@@ -434,6 +793,10 @@ const styles: Record<string, CSSProperties> = {
   // sticky first column.
   thCompact: {
     position: 'static',
+  },
+  thOurs: {
+    boxShadow: `inset 0 3px 0 ${BRAND_ACCENT}`,
+    backgroundImage: `linear-gradient(${ACCENT_TINT_SOFT}, ${ACCENT_TINT_SOFT})`,
   },
   stickyCol: {
     position: 'sticky',
@@ -496,9 +859,19 @@ const styles: Record<string, CSSProperties> = {
     lineHeight: 1,
     color: BRAND_ACCENT,
   },
-  // ---- why-switch stat cards ----
+  // ---- why-switch stat cards (asymmetric 5/7 header split) ----
+  whyHeader: {
+    display: 'flex',
+    gap: 'var(--spacing-6)',
+    alignItems: 'flex-end',
+  },
+  whyHeaderStacked: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    gap: 'var(--spacing-3)',
+  },
   statNumber: {
-    fontSize: 40,
+    fontSize: 48,
     fontWeight: 700,
     lineHeight: 1.05,
     letterSpacing: '-0.02em',
@@ -515,7 +888,7 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: ACCENT_TINT_STRONG,
     color: BRAND_ACCENT,
   },
-  // ---- migration timeline ----
+  // ---- migration: static rail (compact / reduced motion) ----
   stepRail: {
     display: 'flex',
     gap: 'var(--spacing-3)',
@@ -535,6 +908,7 @@ const styles: Record<string, CSSProperties> = {
     flexDirection: 'column',
     gap: 'var(--spacing-2)',
     boxSizing: 'border-box',
+    boxShadow: SHADOW_RAISED,
   },
   stepIndex: {
     fontSize: 11,
@@ -543,19 +917,115 @@ const styles: Record<string, CSSProperties> = {
     textTransform: 'uppercase',
     color: BRAND_ACCENT,
   },
-  // Scheme-locked terminal pane (see Color policy).
+  // ---- migration: pinned scroll story (wide + motion) ----
+  pinStage: {
+    position: 'sticky',
+    top: 0,
+    boxSizing: 'border-box',
+    display: 'flex',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  pinColumn: {
+    width: '100%',
+    maxWidth: 1120,
+    marginInline: 'auto',
+    boxSizing: 'border-box',
+    padding: '0 var(--spacing-6)',
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-5)',
+  },
+  storyGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'minmax(0, 5fr) minmax(0, 7fr)',
+    gap: 'var(--spacing-6)',
+    alignItems: 'stretch',
+    width: '100%',
+  },
+  stepButton: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 'var(--spacing-3)',
+    width: '100%',
+    padding: '10px 12px',
+    borderRadius: 12,
+    border: 'none',
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+    textAlign: 'left',
+    color: 'var(--color-text-primary)',
+    transition: 'background-color 0.25s ease, opacity 0.25s ease',
+  },
+  stepNumeral: {
+    fontSize: 40,
+    fontWeight: 700,
+    lineHeight: 1,
+    letterSpacing: '-0.02em',
+    fontVariantNumeric: 'tabular-nums',
+    color: `color-mix(in srgb, ${BRAND_ACCENT} 26%, transparent)`,
+    width: 56,
+    flexShrink: 0,
+  },
+  stepRailLine: {
+    position: 'relative',
+    width: 3,
+    borderRadius: 2,
+    backgroundColor: 'var(--color-border)',
+    alignSelf: 'stretch',
+    marginLeft: 12,
+    overflow: 'hidden',
+    flexShrink: 0,
+  },
+  stepRailFill: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: BRAND_ACCENT,
+    borderRadius: 2,
+  },
+  stageCard: {
+    position: 'relative',
+    borderRadius: 18,
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-card) 90%, transparent)',
+    boxShadow: `${GLASS_INSET}, ${SHADOW_FLOATING}`,
+    padding: 'var(--spacing-5)',
+    overflow: 'hidden',
+    boxSizing: 'border-box',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-4)',
+    minHeight: 320,
+  },
+  stageWatermark: {
+    position: 'absolute',
+    top: -20,
+    right: 6,
+    fontSize: 140,
+    fontWeight: 800,
+    lineHeight: 1,
+    letterSpacing: '-0.04em',
+    color: `color-mix(in srgb, ${BRAND_ACCENT} 8%, transparent)`,
+    pointerEvents: 'none',
+    userSelect: 'none',
+  },
+  // Scheme-locked terminal panes (see Color policy).
   terminal: {
     colorScheme: 'dark',
     borderRadius: 12,
-    backgroundColor: '#0B1220',
+    backgroundColor: TERMINAL_BG,
     padding: 'var(--spacing-3) var(--spacing-4)',
     display: 'flex',
     alignItems: 'center',
     gap: 'var(--spacing-3)',
     fontFamily: 'var(--font-family-mono, ui-monospace, monospace)',
     fontSize: 13,
-    color: '#A5F3FC',
+    color: TERMINAL_INK,
     flexWrap: 'wrap',
+    boxShadow: SHADOW_RAISED,
   },
   terminalCommand: {
     flex: '1 1 260px',
@@ -563,14 +1033,62 @@ const styles: Record<string, CSSProperties> = {
     overflowWrap: 'anywhere',
     margin: 0,
   },
+  stageTerminal: {
+    colorScheme: 'dark',
+    borderRadius: 12,
+    backgroundColor: TERMINAL_BG,
+    padding: 'var(--spacing-3) var(--spacing-4)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-2)',
+    fontFamily: 'var(--font-family-mono, ui-monospace, monospace)',
+    fontSize: 12.5,
+    color: TERMINAL_INK,
+    marginTop: 'auto',
+  },
+  logLine: {
+    margin: 0,
+    lineHeight: 1.5,
+    overflowWrap: 'anywhere',
+  },
+  logDone: {
+    margin: 0,
+    lineHeight: 1.5,
+    color: TERMINAL_INK_FAINT,
+  },
+  logOk: {
+    margin: 0,
+    lineHeight: 1.5,
+    color: 'var(--color-success)',
+  },
   // ---- switcher testimonial (scheme-locked dark band) ----
   testimonialBand: {
+    position: 'relative',
+    overflow: 'hidden',
     colorScheme: 'dark',
     color: DARK_TEXT,
     backgroundImage: [
       'radial-gradient(70% 90% at 100% 0%, rgba(37, 71, 208, 0.45), transparent 55%)',
       'linear-gradient(135deg, #0B1220 0%, #1E1B4B 100%)',
     ].join(', '),
+  },
+  spotlight: {
+    position: 'absolute',
+    inset: 0,
+    backgroundImage:
+      `radial-gradient(360px circle at var(--mx, 70%) var(--my, 20%), ` +
+      `color-mix(in srgb, ${DARK_TEXT} 9%, transparent), transparent 70%)`,
+    pointerEvents: 'none',
+  },
+  glassQuote: {
+    position: 'relative',
+    borderRadius: 20,
+    backgroundColor: GLASS_ON_DARK,
+    boxShadow: `inset 0 0 0 1px ${CHIP_BORDER}, ${SHADOW_FLOATING}`,
+    padding: 'var(--spacing-6)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-4)',
   },
   quoteText: {
     fontSize: 24,
@@ -619,15 +1137,11 @@ const styles: Record<string, CSSProperties> = {
   },
   // ---- pricing at a glance ----
   priceFigure: {
-    fontSize: 40,
+    fontSize: 44,
     fontWeight: 700,
     lineHeight: 1.05,
     letterSpacing: '-0.02em',
     fontVariantNumeric: 'tabular-nums',
-  },
-  priceCardOurs: {
-    borderColor: ACCENT_TINT_BORDER,
-    boxShadow: `0 0 0 1px ${ACCENT_TINT_BORDER}`,
   },
   checkGlyph: {
     display: 'inline-flex',
@@ -641,6 +1155,8 @@ const styles: Record<string, CSSProperties> = {
   },
   // ---- final CTA (scheme-locked dark band) ----
   ctaBand: {
+    position: 'relative',
+    overflow: 'hidden',
     colorScheme: 'dark',
     color: DARK_TEXT,
     backgroundImage: [
@@ -649,14 +1165,14 @@ const styles: Record<string, CSSProperties> = {
     ].join(', '),
   },
   ctaHeadline: {
-    fontSize: 32,
+    fontSize: 40,
     fontWeight: 700,
-    lineHeight: 1.2,
+    lineHeight: 1.1,
     letterSpacing: '-0.02em',
     margin: 0,
   },
   ctaHeadlineCompact: {
-    fontSize: 24,
+    fontSize: 28,
   },
   emailRow: {
     display: 'flex',
@@ -907,6 +1423,21 @@ const TALLY = COMPARE_ROWS.reduce(
   {northbeam: 0, tied: 0, gridware: 0},
 );
 
+/** Invented switcher logos for the hero marquee (monogram tiles only —
+ * no network assets, no real companies). */
+const SWITCHED_TEAMS: readonly {name: string; initials: string}[] = [
+  {name: 'Tallgrass Health', initials: 'TH'},
+  {name: 'Fernwood Logistics', initials: 'FL'},
+  {name: 'Halyard Systems', initials: 'HS'},
+  {name: 'Bluenote Media', initials: 'BM'},
+  {name: 'Quarrylane Freight', initials: 'QF'},
+  {name: 'Ostro Labs', initials: 'OL'},
+  {name: 'Meridian Rail', initials: 'MR'},
+  {name: 'Sundial Grocery', initials: 'SG'},
+  {name: 'Copperline Energy', initials: 'CE'},
+  {name: 'Pinebrook Capital', initials: 'PB'},
+];
+
 interface SwitchReason {
   id: string;
   icon: Glyph;
@@ -990,6 +1521,31 @@ const MIGRATION_STEPS: readonly MigrationStep[] = [
 
 const CLI_COMMAND =
   'npx northbeam-migrate --source gridware --token $GRIDWARE_API_KEY';
+
+/** Scripted terminal output for the pinned migration scene — figures
+ * mirror the benchmark fixtures above (deterministic, no timers). */
+const STEP_LOGS: Record<string, readonly {glyph: '›' | '✓'; text: string}[]> = {
+  export: [
+    {glyph: '›', text: 'Connecting to Gridware workspace tallgrass-prod…'},
+    {glyph: '›', text: '38 dashboards · 214 queries · 40 seats found'},
+    {glyph: '✓', text: 'Export complete in 19m 42s'},
+  ],
+  map: [
+    {glyph: '›', text: 'Matching fields against the Northbeam schema…'},
+    {glyph: '›', text: '92% mapped automatically · 12 queued for review'},
+    {glyph: '✓', text: 'Mappings staged — nothing imports until you approve'},
+  ],
+  import: [
+    {glyph: '›', text: 'Importing 2.1M records with owners and schedules…'},
+    {glyph: '›', text: 'History and audit trail normalized to UTC'},
+    {glyph: '✓', text: 'Import complete in 34m 08s'},
+  ],
+  verify: [
+    {glyph: '›', text: 'Diffing 38 migrated dashboards against Gridware…'},
+    {glyph: '›', text: '38 of 38 render identical, query for query'},
+    {glyph: '✓', text: 'Checklist green — flip DNS Monday before standup'},
+  ],
+};
 
 const TESTIMONIAL = {
   quote:
@@ -1120,11 +1676,15 @@ const FOOTER_LINK_GROUPS: readonly {
 // ============= HOOKS =============
 
 /**
- * Measure the page's own width (ResizeObserver) — the inline demo stage
- * is ~1045px wide, so viewport media queries never fire there.
+ * Measure the page's own size (ResizeObserver) — the inline demo stage
+ * is ~1045px wide, so viewport media queries never fire there. Width
+ * drives the breakpoint tiers; height sizes the pinned story stage.
  */
-function useElementWidth(ref: RefObject<HTMLDivElement | null>): number {
-  const [width, setWidth] = useState(0);
+function useElementSize(ref: RefObject<HTMLDivElement | null>): {
+  width: number;
+  height: number;
+} {
+  const [size, setSize] = useState({width: 0, height: 0});
   useEffect(() => {
     const element = ref.current;
     if (element == null) {
@@ -1133,38 +1693,49 @@ function useElementWidth(ref: RefObject<HTMLDivElement | null>): number {
     const observer = new ResizeObserver(entries => {
       const rect = entries[0]?.contentRect;
       if (rect != null) {
-        setWidth(rect.width);
+        setSize({width: rect.width, height: rect.height});
       }
     });
     observer.observe(element);
     return () => observer.disconnect();
   }, [ref]);
-  return width;
+  return size;
 }
 
-/** Read prefers-reduced-motion once; gates reveals, count-ups, bars. */
-function usePrefersReducedMotion(): boolean {
-  const [prefersReduced] = useState(
-    () =>
-      typeof window !== 'undefined' &&
-      typeof window.matchMedia === 'function' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-  );
-  return prefersReduced;
-}
-
-/** Fire-once in-view flag; starts true when motion is disabled. */
-function useInViewOnce(
-  ref: RefObject<HTMLElement | null>,
-  isDisabled: boolean,
-): boolean {
-  const [isInView, setIsInView] = useState(isDisabled);
+/** Reactive reduced-motion preference (gates parallax, the pinned story,
+ * count-ups, and smooth scrolling; CSS loops gate themselves). */
+function useReducedMotion(): boolean {
+  const [isReduced, setIsReduced] = useState(false);
   useEffect(() => {
-    if (isInView) {
+    if (
+      typeof window === 'undefined' ||
+      typeof window.matchMedia !== 'function'
+    ) {
       return undefined;
     }
-    const element = ref.current;
-    if (element == null) {
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const onChange = () => setIsReduced(query.matches);
+    onChange();
+    query.addEventListener('change', onChange);
+    return () => query.removeEventListener('change', onChange);
+  }, []);
+  return isReduced;
+}
+
+/**
+ * Fires once when the node scrolls into view; falls back to "visible"
+ * when IntersectionObserver is unavailable so nothing stays hidden.
+ */
+function useInView(): [RefObject<HTMLDivElement | null>, boolean] {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [isInView, setIsInView] = useState(false);
+  useEffect(() => {
+    const node = ref.current;
+    if (node == null) {
+      return undefined;
+    }
+    if (typeof IntersectionObserver === 'undefined') {
+      setIsInView(true);
       return undefined;
     }
     const observer = new IntersectionObserver(
@@ -1176,21 +1747,26 @@ function useInViewOnce(
       },
       {threshold: 0.2},
     );
-    observer.observe(element);
+    observer.observe(node);
     return () => observer.disconnect();
-  }, [isInView, ref]);
-  return isInView;
+  }, []);
+  return [ref, isInView];
 }
 
-/** Ease-out count-up; renders the final value under reduced motion. */
+/** Ease-out count-up (~900ms); snaps to the final value under reduced
+ * motion or when requestAnimationFrame is unavailable. */
 function useCountUp(
   target: number,
   isActive: boolean,
   isReduced: boolean,
 ): number {
-  const [value, setValue] = useState(() => (isReduced ? target : 0));
+  const [value, setValue] = useState(0);
   useEffect(() => {
-    if (isReduced || !isActive) {
+    if (!isActive) {
+      return undefined;
+    }
+    if (isReduced || typeof requestAnimationFrame !== 'function') {
+      setValue(target);
       return undefined;
     }
     let frame = 0;
@@ -1207,7 +1783,7 @@ function useCountUp(
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
   }, [isActive, isReduced, target]);
-  return value;
+  return isReduced && isActive ? target : value;
 }
 
 // ============= HELPERS =============
@@ -1261,6 +1837,11 @@ function BrandMark() {
   );
 }
 
+/** 11px tracked-uppercase eyebrow chip (accent-tinted). */
+function Eyebrow({label}: {label: string}) {
+  return <span style={styles.eyebrow}>{label}</span>;
+}
+
 /** 40px icon-only button (Astryx Button caps at 36px). */
 function IconButton40({
   label,
@@ -1273,7 +1854,7 @@ function IconButton40({
   icon: Glyph;
   onClick: () => void;
   ariaExpanded?: boolean;
-  buttonRef?: React.Ref<HTMLButtonElement>;
+  buttonRef?: RefObject<HTMLButtonElement | null>;
 }) {
   return (
     <button
@@ -1288,7 +1869,21 @@ function IconButton40({
   );
 }
 
-/** Fire-once scroll reveal: rise 12px + fade, disabled by reduced motion. */
+/** Sheen-sweep wrapper for primary CTAs (lift + pressed scale via CSS). */
+function CtaSheen({children}: {children: ReactNode}) {
+  return (
+    <span className="pcl-cta">
+      {children}
+      <span className="pcl-sheen" aria-hidden="true" />
+    </span>
+  );
+}
+
+/**
+ * Rise+fade+settle scroll reveal (translateY 16px + scale .985 → identity
+ * over 600ms decelerate); fires once, renders visible on reduced motion
+ * via the scoped CSS. Stagger siblings with 80-90ms delay steps.
+ */
 function Reveal({
   children,
   delayMs = 0,
@@ -1298,20 +1893,13 @@ function Reveal({
   delayMs?: number;
   style?: CSSProperties;
 }) {
-  const prefersReduced = usePrefersReducedMotion();
-  const ref = useRef<HTMLDivElement | null>(null);
-  const isInView = useInViewOnce(ref, prefersReduced);
+  const [ref, isInView] = useInView();
   return (
     <div
       ref={ref}
-      style={{
-        ...style,
-        opacity: isInView ? 1 : 0,
-        transform: isInView ? 'none' : 'translateY(12px)',
-        transition: prefersReduced
-          ? undefined
-          : `opacity 480ms ease-out ${delayMs}ms, transform 480ms ease-out ${delayMs}ms`,
-      }}>
+      className="pcl-reveal"
+      data-shown={isInView}
+      style={{...style, transitionDelay: `${delayMs}ms`}}>
       {children}
     </div>
   );
@@ -1360,7 +1948,8 @@ function VerdictCell({
   );
 }
 
-/** Why-switch stat card: count-up stat fires on first view. */
+/** Why-switch stat card: count-up stat fires on first view; the card
+ * hover-lifts a shadow tier with an accent ring (.pcl-lift). */
 function SwitchReasonCard({
   reason,
   delayMs,
@@ -1368,22 +1957,16 @@ function SwitchReasonCard({
   reason: SwitchReason;
   delayMs: number;
 }) {
-  const prefersReduced = usePrefersReducedMotion();
-  const ref = useRef<HTMLDivElement | null>(null);
-  const isInView = useInViewOnce(ref, prefersReduced);
-  const value = useCountUp(reason.statValue, isInView, prefersReduced);
+  const isReduced = useReducedMotion();
+  const [ref, isInView] = useInView();
+  const value = useCountUp(reason.statValue, isInView, isReduced);
   return (
     <div
       ref={ref}
-      style={{
-        height: '100%',
-        opacity: isInView ? 1 : 0,
-        transform: isInView ? 'none' : 'translateY(12px)',
-        transition: prefersReduced
-          ? undefined
-          : `opacity 480ms ease-out ${delayMs}ms, transform 480ms ease-out ${delayMs}ms`,
-      }}>
-      <Card padding={5} height="100%">
+      className="pcl-reveal"
+      data-shown={isInView}
+      style={{height: '100%', transitionDelay: `${delayMs}ms`}}>
+      <Card padding={5} height="100%" className="pcl-lift">
         <VStack gap={3}>
           <div style={styles.statGlyph} aria-hidden="true">
             <Icon icon={reason.icon} size="sm" color="inherit" />
@@ -1406,13 +1989,13 @@ function SwitchReasonCard({
 
 /**
  * Signature hero moment: head-to-head scoreboard whose tally counts up
- * and whose bars fill on first view. Derived from COMPARE_ROWS.
+ * and whose bars fill on first view. Derived from COMPARE_ROWS. Staged
+ * as a tilting glass card (--px/--py set by the hero pointer handler).
  */
 function VerdictBoard() {
-  const prefersReduced = usePrefersReducedMotion();
-  const ref = useRef<HTMLDivElement | null>(null);
-  const isInView = useInViewOnce(ref, prefersReduced);
-  const wins = useCountUp(TALLY.northbeam, isInView, prefersReduced);
+  const isReduced = useReducedMotion();
+  const [ref, isInView] = useInView();
+  const wins = useCountUp(TALLY.northbeam, isInView, isReduced);
   const total = COMPARE_ROWS.length;
   const rows: readonly {label: string; count: number; fill: string}[] = [
     {
@@ -1432,7 +2015,7 @@ function VerdictBoard() {
     },
   ];
   return (
-    <div ref={ref} style={styles.board}>
+    <div ref={ref} style={{...styles.board, ...styles.boardTilt}}>
       <HStack gap={3} vAlign="center">
         <span style={styles.boardCount} aria-hidden="true">
           {wins}
@@ -1463,7 +2046,7 @@ function VerdictBoard() {
                   ...styles.boardFill,
                   backgroundColor: row.fill,
                   width: isInView ? `${(row.count / total) * 100}%` : '0%',
-                  transition: prefersReduced ? 'none' : styles.boardFill.transition,
+                  transition: isReduced ? 'none' : styles.boardFill.transition,
                 }}
               />
             </div>
@@ -1477,24 +2060,100 @@ function VerdictBoard() {
   );
 }
 
+/** Floating satellite chips around the hero scoreboard (decorative —
+ * every figure is echoed in the table and stat cards). */
+function HeroSatellites() {
+  return (
+    <div style={styles.satLayer} aria-hidden="true">
+      <div style={{position: 'absolute', top: -26, right: -12}}>
+        <div className="pcl-bob" style={styles.satellite}>
+          <HStack gap={2} vAlign="center">
+            <div style={styles.satGlyph}>
+              <Icon icon={GaugeIcon} size="sm" color="inherit" />
+            </div>
+            <VStack gap={0}>
+              <span style={styles.satTitle}>0.4 s p50</span>
+              <span style={styles.satCaption}>dashboard loads</span>
+            </VStack>
+          </HStack>
+        </div>
+      </div>
+      <div style={{position: 'absolute', bottom: -28, left: -24}}>
+        <div
+          className="pcl-bob"
+          style={{...styles.satellite, animationDelay: '-2.6s'}}>
+          <HStack gap={2} vAlign="center">
+            <div
+              style={{
+                ...styles.satGlyph,
+                backgroundColor: VERDICT_PAINT.yes.bg,
+                color: VERDICT_PAINT.yes.fg,
+              }}>
+              <Icon icon={CheckIcon} size="sm" color="inherit" />
+            </div>
+            <VStack gap={0}>
+              <span style={styles.satTitle}>Import complete</span>
+              <span style={styles.satCaption}>2.1M records verified</span>
+            </VStack>
+          </HStack>
+        </div>
+      </div>
+      <div style={{position: 'absolute', top: '42%', left: -40}}>
+        <div
+          className="pcl-bob"
+          style={{...styles.satellite, animationDelay: '-5.2s'}}>
+          <HStack gap={2} vAlign="center">
+            <HStack gap={0} vAlign="center">
+              {SWITCHED_TEAMS.slice(0, 3).map((team, index) => (
+                <span
+                  key={team.initials}
+                  style={{
+                    ...styles.satAvatar,
+                    marginLeft: index === 0 ? 0 : -6,
+                  }}>
+                  {team.initials}
+                </span>
+              ))}
+            </HStack>
+            <VStack gap={0}>
+              <span style={styles.satTitle}>412 teams</span>
+              <span style={styles.satCaption}>switched in two quarters</span>
+            </VStack>
+          </HStack>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ============= PAGE =============
 
 export default function ProductComparisonLandingTemplate() {
-  const prefersReduced = usePrefersReducedMotion();
+  const isMotionReduced = useReducedMotion();
 
-  // ---- element-width responsive contract ----
+  // ---- element-size responsive contract ----
   const wrapRef = useRef<HTMLDivElement | null>(null);
-  const wrapWidth = useElementWidth(wrapRef);
+  const {width: wrapWidth, height: stageHeight} = useElementSize(wrapRef);
   const isNavCollapsed = wrapWidth > 0 && wrapWidth <= 900;
   const isStacked = wrapWidth > 0 && wrapWidth <= 780;
   const isTableCompact = wrapWidth > 0 && wrapWidth <= 720;
   const isPhone = wrapWidth > 0 && wrapWidth <= 560;
+
+  // Hero display tiers: 76 → 62 → 52 → 42 (never under 56 at full width).
+  const heroFontSize = isPhone
+    ? 42
+    : isStacked
+      ? 52
+      : wrapWidth > 0 && wrapWidth <= 1000
+        ? 62
+        : 76;
 
   // ---- scroll plumbing ----
   const pageRef = useRef<HTMLDivElement | null>(null);
   const sectionRefs = useRef<Partial<Record<JumpId, HTMLElement | null>>>({});
   const categoryRowRefs = useRef<Partial<Record<CategoryId, HTMLTableRowElement | null>>>({});
   const [activeSection, setActiveSection] = useState<SectionId | null>(null);
+  const [isNavScrolled, setIsNavScrolled] = useState(false);
 
   // ---- nav menu (compact widths) ----
   const [isNavMenuOpen, setIsNavMenuOpen] = useState(false);
@@ -1503,6 +2162,48 @@ export default function ProductComparisonLandingTemplate() {
 
   // ---- comparison table ----
   const [activeCategory, setActiveCategory] = useState<CategoryId | null>(null);
+
+  // ---- pinned migration scroll story ----
+  const pinRef = useRef<HTMLElement | null>(null);
+  const [storyProgress, setStoryProgress] = useState(0);
+  const isPinned = !isMotionReduced && !isStacked && stageHeight > 520;
+  const activeStep = Math.min(
+    MIGRATION_STEPS.length - 1,
+    Math.floor(storyProgress * MIGRATION_STEPS.length),
+  );
+
+  // ---- hero parallax (satellites toward pointer, board counter-tilt) ----
+  const showSatellites = !isStacked;
+  const isParallaxOn = showSatellites && !isMotionReduced;
+
+  const onHeroPointerMove = (event: ReactPointerEvent<HTMLElement>) => {
+    if (!isParallaxOn) {
+      return;
+    }
+    const band = event.currentTarget;
+    const rect = band.getBoundingClientRect();
+    const nx = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+    const ny = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+    band.style.setProperty('--px', nx.toFixed(3));
+    band.style.setProperty('--py', ny.toFixed(3));
+  };
+
+  const onHeroPointerLeave = (event: ReactPointerEvent<HTMLElement>) => {
+    const band = event.currentTarget;
+    band.style.setProperty('--px', '0');
+    band.style.setProperty('--py', '0');
+  };
+
+  /** Pointer-tracked spotlight on the dark band (static glow otherwise). */
+  const onDarkPointerMove = (event: ReactPointerEvent<HTMLElement>) => {
+    if (isMotionReduced) {
+      return;
+    }
+    const band = event.currentTarget;
+    const rect = band.getBoundingClientRect();
+    band.style.setProperty('--mx', `${Math.round(event.clientX - rect.left)}px`);
+    band.style.setProperty('--my', `${Math.round(event.clientY - rect.top)}px`);
+  };
 
   // ---- migration CLI copy feedback ----
   const [isCommandCopied, setIsCommandCopied] = useState(false);
@@ -1525,6 +2226,54 @@ export default function ProductComparisonLandingTemplate() {
   const fireToast = (message: string) => {
     setToast(previous => ({key: (previous?.key ?? 0) + 1, message}));
   };
+
+  // One rAF-throttled scroll listener drives the condensing navbar, the
+  // scroll-spy, and the pinned story progress (transform/opacity
+  // consumers only; passive so scrolling never blocks).
+  useEffect(() => {
+    const page = pageRef.current;
+    if (page == null) {
+      return undefined;
+    }
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      setIsNavScrolled(page.scrollTop > 24);
+      const pageRect = page.getBoundingClientRect();
+      let active: SectionId | null = null;
+      for (const anchor of NAV_ANCHORS) {
+        const section = sectionRefs.current[anchor.id];
+        if (section == null) {
+          continue;
+        }
+        if (section.getBoundingClientRect().top - pageRect.top <= SPY_OFFSET) {
+          active = anchor.id;
+        }
+      }
+      setActiveSection(active);
+      const pin = pinRef.current;
+      if (pin != null && isPinned) {
+        const range = pin.offsetHeight - stageHeight;
+        if (range > 0) {
+          const raw = (page.scrollTop - pin.offsetTop) / range;
+          setStoryProgress(Math.min(1, Math.max(0, raw)));
+        }
+      }
+    };
+    const onScroll = () => {
+      if (frame === 0 && typeof requestAnimationFrame === 'function') {
+        frame = requestAnimationFrame(update);
+      }
+    };
+    page.addEventListener('scroll', onScroll, {passive: true});
+    update();
+    return () => {
+      page.removeEventListener('scroll', onScroll);
+      if (frame !== 0) {
+        cancelAnimationFrame(frame);
+      }
+    };
+  }, [isPinned, stageHeight]);
 
   // Nav menu dismisses on Escape (refocusing the trigger) and on any
   // pointerdown outside the sticky navbar.
@@ -1566,7 +2315,7 @@ export default function ProductComparisonLandingTemplate() {
     [],
   );
 
-  const scrollBehavior: ScrollBehavior = prefersReduced ? 'auto' : 'smooth';
+  const scrollBehavior: ScrollBehavior = isMotionReduced ? 'auto' : 'smooth';
 
   /** Smooth-scroll the page container to a section, under the sticky nav. */
   const jumpToSection = (id: JumpId) => {
@@ -1607,23 +2356,21 @@ export default function ProductComparisonLandingTemplate() {
     });
   };
 
-  /** Scroll-spy: the last nav anchor above the fold line wins. */
-  const onPageScroll = (event: UIEvent<HTMLDivElement>) => {
-    const container = event.currentTarget;
-    const containerRect = container.getBoundingClientRect();
-    let active: SectionId | null = null;
-    for (const anchor of NAV_ANCHORS) {
-      const section = sectionRefs.current[anchor.id];
-      if (section == null) {
-        continue;
-      }
-      const top =
-        section.getBoundingClientRect().top - containerRect.top;
-      if (top <= SPY_OFFSET) {
-        active = anchor.id;
-      }
+  /** Pinned-story steps are buttons: scroll to that step's progress window. */
+  const jumpToMigrationStep = (index: number) => {
+    const page = pageRef.current;
+    const pin = pinRef.current;
+    if (page == null || pin == null || !isPinned) {
+      return;
     }
-    setActiveSection(active);
+    const range = pin.offsetHeight - stageHeight;
+    if (range <= 0) {
+      return;
+    }
+    page.scrollTo({
+      top: pin.offsetTop + ((index + 0.5) / MIGRATION_STEPS.length) * range,
+      behavior: scrollBehavior,
+    });
   };
 
   const copyCommand = () => {
@@ -1674,12 +2421,26 @@ export default function ProductComparisonLandingTemplate() {
     ...styles.bandInner,
     ...(isPhone ? styles.bandInnerCompact : null),
   };
+  const headingStyle: CSSProperties = {
+    ...styles.sectionHeading,
+    ...(isPhone ? styles.sectionHeadingCompact : null),
+  };
 
   // ============= NAVBAR =============
 
   const navbar = (
-    <nav ref={navRef} style={styles.navBar} aria-label="Primary">
-      <div style={styles.navInner}>
+    <nav
+      ref={navRef}
+      style={{
+        ...styles.navBar,
+        ...(isNavScrolled ? styles.navBarScrolled : null),
+      }}
+      aria-label="Primary">
+      <div
+        style={{
+          ...styles.navInner,
+          ...(isNavScrolled ? styles.navInnerScrolled : null),
+        }}>
         <BrandMark />
         <StackItem size="fill">
           {!isNavCollapsed && (
@@ -1705,12 +2466,14 @@ export default function ProductComparisonLandingTemplate() {
           )}
         </StackItem>
         {!isNavCollapsed && (
-          <Button
-            label="Migrate in a weekend"
-            variant="primary"
-            size="sm"
-            onClick={() => jumpToSection('migration')}
-          />
+          <CtaSheen>
+            <Button
+              label="Migrate in a weekend"
+              variant="primary"
+              size="sm"
+              onClick={() => jumpToSection('migration')}
+            />
+          </CtaSheen>
         )}
         {isNavCollapsed && (
           <IconButton40
@@ -1747,11 +2510,60 @@ export default function ProductComparisonLandingTemplate() {
     </nav>
   );
 
-  // ============= HERO =============
+  // ============= HERO THEATER =============
 
   const hero = (
-    <header>
-      <div style={bandInnerStyle}>
+    <header
+      style={styles.heroBand}
+      onPointerMove={onHeroPointerMove}
+      onPointerLeave={onHeroPointerLeave}>
+      {/* Aurora field: accent color-mixed with scheme hue tokens,
+          drifting on 38/46s loops (static under reduced motion). */}
+      <div style={styles.auroraClip} aria-hidden="true">
+        <div
+          className="pcl-aurora-a"
+          style={{
+            ...styles.auroraBlob,
+            width: 540,
+            height: 540,
+            left: '-10%',
+            top: '-24%',
+            background: `radial-gradient(closest-side, color-mix(in srgb, ${BRAND_ACCENT} 58%, var(--color-icon-cyan)) 0%, transparent 70%)`,
+          }}
+        />
+        <div
+          className="pcl-aurora-b"
+          style={{
+            ...styles.auroraBlob,
+            width: 460,
+            height: 460,
+            right: '-8%',
+            top: '-4%',
+            background: `radial-gradient(closest-side, color-mix(in srgb, ${BRAND_ACCENT} 62%, transparent) 0%, transparent 70%)`,
+            opacity: 0.42,
+          }}
+        />
+        <div
+          className="pcl-aurora-a"
+          style={{
+            ...styles.auroraBlob,
+            width: 380,
+            height: 380,
+            left: '34%',
+            bottom: '-34%',
+            background: `radial-gradient(closest-side, color-mix(in srgb, ${BRAND_ACCENT} 40%, var(--color-success)) 0%, transparent 70%)`,
+            opacity: 0.35,
+            animationDelay: '-14s',
+          }}
+        />
+      </div>
+      <div style={styles.grainLayer} aria-hidden="true" />
+      <div
+        style={{
+          ...bandInnerStyle,
+          ...(isPhone ? styles.heroInnerCompact : styles.heroInner),
+          position: 'relative',
+        }}>
         <div
           style={{
             ...styles.heroRow,
@@ -1759,25 +2571,26 @@ export default function ProductComparisonLandingTemplate() {
           }}>
           <div style={styles.heroText}>
             <HStack gap={2} vAlign="center" wrap="wrap">
-              <Token label="Switching guide" size="sm" color="purple" />
+              <Eyebrow label="Switching guide" />
               <Badge variant="neutral" label="Updated June 2026" />
             </HStack>
-            <h1
-              style={{
-                ...styles.heroHeadline,
-                ...(isPhone ? styles.heroHeadlineCompact : null),
-              }}>
-              {BRAND.name} <span style={styles.heroVs}>vs</span> {BRAND.rival}
+            <h1 style={{...styles.heroHeadline, fontSize: heroFontSize}}>
+              <span style={styles.heroInk}>{BRAND.name}</span>
+              <span style={styles.heroLine}>
+                <span style={styles.heroVs}>vs</span> {BRAND.rival}
+              </span>
             </h1>
             <p style={styles.heroSubcopy}>{HERO.verdict}</p>
             <p style={{...styles.heroSubcopy, fontSize: 15}}>{HERO.subcopy}</p>
             <HStack gap={2} wrap="wrap">
-              <Button
-                label="Migrate in a weekend"
-                variant="primary"
-                icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
-                onClick={() => jumpToSection('migration')}
-              />
+              <CtaSheen>
+                <Button
+                  label="Migrate in a weekend"
+                  variant="primary"
+                  icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
+                  onClick={() => jumpToSection('migration')}
+                />
+              </CtaSheen>
               <Button
                 label="See the full comparison"
                 variant="secondary"
@@ -1791,8 +2604,43 @@ export default function ProductComparisonLandingTemplate() {
           </div>
           <div style={styles.heroBoard}>
             <VerdictBoard />
+            {showSatellites && <HeroSatellites />}
           </div>
         </div>
+        {/* Switched-teams marquee: 48s loop, pauses on hover, wraps
+            statically under reduced motion. */}
+        <VStack gap={2}>
+          <span style={styles.marqueeLabel}>
+            A few of the 412 teams that switched last quarter
+          </span>
+          <div className="pcl-marquee" style={styles.marqueeClip}>
+            <div className="pcl-marquee-track">
+              <div className="pcl-marquee-half" style={styles.marqueeHalf}>
+                {SWITCHED_TEAMS.map(team => (
+                  <span key={team.name} style={styles.marqueeItem}>
+                    <span style={styles.marqueeDisc} aria-hidden="true">
+                      {team.initials}
+                    </span>
+                    {team.name}
+                  </span>
+                ))}
+              </div>
+              <div
+                className="pcl-marquee-half pcl-marquee-clone"
+                style={styles.marqueeHalf}
+                aria-hidden="true">
+                {SWITCHED_TEAMS.map(team => (
+                  <span key={team.name} style={styles.marqueeItem}>
+                    <span style={styles.marqueeDisc} aria-hidden="true">
+                      {team.initials}
+                    </span>
+                    {team.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </VStack>
       </div>
     </header>
   );
@@ -1821,6 +2669,7 @@ export default function ProductComparisonLandingTemplate() {
           style={{
             ...styles.th,
             ...(isTableCompact ? styles.thCompact : null),
+            ...styles.thOurs,
             width: '33%',
           }}>
           <VStack gap={0}>
@@ -1916,10 +2765,10 @@ export default function ProductComparisonLandingTemplate() {
       <div style={bandInnerStyle}>
         <Reveal>
           <VStack gap={2} hAlign="center">
-            <Token label="The receipts" size="sm" color="purple" />
-            <Heading level={2}>
+            <Eyebrow label="The receipts" />
+            <h2 style={{...headingStyle, textAlign: 'center'}}>
               Twelve dimensions, two columns, three footnotes
-            </Heading>
+            </h2>
             <Text type="supporting" color="secondary" justify="center">
               Every verdict links its evidence. Jump to a category, or read
               top to bottom — the header stays put while you scroll.
@@ -1997,16 +2846,31 @@ export default function ProductComparisonLandingTemplate() {
       ref={registerSection('why')}
       style={styles.bandMuted}
       aria-label="Why teams switch">
-      <div style={bandInnerStyle}>
+      <div style={styles.dotGrid} aria-hidden="true" />
+      <div style={{...bandInnerStyle, position: 'relative'}}>
         <Reveal>
-          <VStack gap={2} hAlign="center">
-            <Token label="Why teams switch" size="sm" color="purple" />
-            <Heading level={2}>The three numbers that close the debate</Heading>
-            <Text type="supporting" color="secondary" justify="center">
-              From our 2026 switching survey (63 teams) and the May 2026
-              public benchmark — methodology in the footnotes.
-            </Text>
-          </VStack>
+          <div
+            style={{
+              ...styles.whyHeader,
+              ...(isStacked ? styles.whyHeaderStacked : null),
+            }}>
+            <div style={{flex: '5 1 0', minWidth: 0}}>
+              <VStack gap={2} hAlign="start">
+                <Eyebrow label="Why teams switch" />
+                <h2 style={headingStyle}>
+                  The three numbers that close the debate
+                </h2>
+              </VStack>
+            </div>
+            <div style={{flex: '7 1 0', minWidth: 0}}>
+              <Text type="supporting" color="secondary">
+                From our 2026 switching survey (63 teams) and the May 2026
+                public benchmark — methodology in the footnotes. No cherry
+                picking: the same workspace, sources, and queries ran on
+                both products.
+              </Text>
+            </div>
+          </div>
         </Reveal>
         <Grid columns={{minWidth: 240, repeat: 'fit', max: 3}} gap={4}>
           {SWITCH_REASONS.map((reason, index) => (
@@ -2023,19 +2887,154 @@ export default function ProductComparisonLandingTemplate() {
 
   // ============= MIGRATION PATH =============
 
-  const migrationSection = (
+  const migrationHeader = (
+    <VStack gap={2} hAlign="start">
+      <Eyebrow label="The weekend plan" />
+      <h2 style={headingStyle}>Export Friday, verify Monday</h2>
+      <Text type="supporting" color="secondary">
+        Four steps, one command, and a migration engineer on the call for
+        workspaces above 20 seats.
+      </Text>
+    </VStack>
+  );
+
+  const activeStepData = MIGRATION_STEPS[activeStep];
+
+  // Pinned scroll story: a sticky stage inside a ~2.6-viewport container.
+  // Scroll progress fills the step rail and advances the scripted
+  // terminal; steps are also clickable buttons.
+  const migrationPinned = (
+    <section
+      ref={node => {
+        pinRef.current = node;
+        sectionRefs.current.migration = node;
+      }}
+      aria-label="Migration path"
+      style={{height: Math.round(stageHeight * 2.6)}}>
+      <div style={{...styles.pinStage, height: stageHeight}}>
+        <div style={styles.dotGrid} aria-hidden="true" />
+        <div style={styles.pinColumn}>
+          {migrationHeader}
+          <div style={styles.storyGrid}>
+            <VStack gap={4} hAlign="start">
+              <div style={{display: 'flex', width: '100%'}}>
+                <div style={styles.stepRailLine} aria-hidden="true">
+                  <div
+                    style={{
+                      ...styles.stepRailFill,
+                      height: `${Math.round(storyProgress * 100)}%`,
+                    }}
+                  />
+                </div>
+                <VStack gap={1} style={{flex: '1 1 0', minWidth: 0}}>
+                  {MIGRATION_STEPS.map((step, index) => (
+                    <button
+                      key={step.id}
+                      type="button"
+                      aria-current={index === activeStep ? 'step' : undefined}
+                      style={{
+                        ...styles.stepButton,
+                        ...(index === activeStep
+                          ? {backgroundColor: ACCENT_TINT_SOFT}
+                          : {opacity: 0.55}),
+                      }}
+                      onClick={() => jumpToMigrationStep(index)}>
+                      <span style={styles.stepNumeral}>
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      <StackItem size="fill">
+                        <VStack gap={0}>
+                          <Text type="label">{step.title}</Text>
+                          <Text type="supporting" color="secondary">
+                            {step.duration}
+                          </Text>
+                        </VStack>
+                      </StackItem>
+                    </button>
+                  ))}
+                </VStack>
+              </div>
+              <Text type="supporting" color="secondary">
+                Scroll — or click a step.
+              </Text>
+            </VStack>
+            <div
+              key={activeStep}
+              className="pcl-stage-in"
+              style={styles.stageCard}>
+              <span style={styles.stageWatermark} aria-hidden="true">
+                {String(activeStep + 1).padStart(2, '0')}
+              </span>
+              <HStack gap={3} vAlign="center">
+                <div style={styles.statGlyph} aria-hidden="true">
+                  <Icon icon={activeStepData.icon} size="sm" color="inherit" />
+                </div>
+                <StackItem size="fill">
+                  <VStack gap={0}>
+                    <span style={styles.stepIndex}>
+                      Step {activeStep + 1} of {MIGRATION_STEPS.length}
+                    </span>
+                    <Text type="label">{activeStepData.title}</Text>
+                  </VStack>
+                </StackItem>
+                <Badge
+                  variant="neutral"
+                  icon={<Icon icon={ClockIcon} size="xsm" color="inherit" />}
+                  label={activeStepData.duration}
+                />
+              </HStack>
+              <Text type="supporting" color="secondary">
+                {activeStepData.copy}
+              </Text>
+              <div style={styles.stageTerminal}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 'var(--spacing-3)',
+                    flexWrap: 'wrap',
+                  }}>
+                  <code style={styles.terminalCommand}>{CLI_COMMAND}</code>
+                  <Button
+                    label={isCommandCopied ? 'Copied' : 'Copy'}
+                    variant="secondary"
+                    size="sm"
+                    icon={
+                      <Icon
+                        icon={isCommandCopied ? CheckIcon : CopyIcon}
+                        size="sm"
+                        color="inherit"
+                      />
+                    }
+                    onClick={copyCommand}
+                  />
+                </div>
+                {MIGRATION_STEPS.slice(0, activeStep).map(step => (
+                  <p key={step.id} style={styles.logDone}>
+                    ✓ {step.title} complete
+                  </p>
+                ))}
+                {(STEP_LOGS[activeStepData.id] ?? []).map(line => (
+                  <p
+                    key={line.text}
+                    style={line.glyph === '✓' ? styles.logOk : styles.logLine}>
+                    {line.glyph} {line.text}
+                  </p>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+
+  // Static sequence: compact widths and reduced motion get every step
+  // visible at once (no pinning, nothing hidden).
+  const migrationStatic = (
     <section ref={registerSection('migration')} aria-label="Migration path">
       <div style={bandInnerStyle}>
-        <Reveal>
-          <VStack gap={2} hAlign="center">
-            <Token label="The weekend plan" size="sm" color="purple" />
-            <Heading level={2}>Export Friday, verify Monday</Heading>
-            <Text type="supporting" color="secondary" justify="center">
-              Four steps, one command, and a migration engineer on the call
-              for workspaces above 20 seats.
-            </Text>
-          </VStack>
-        </Reveal>
+        <Reveal>{migrationHeader}</Reveal>
         <div
           style={{
             ...styles.stepRail,
@@ -2092,13 +3091,27 @@ export default function ProductComparisonLandingTemplate() {
     </section>
   );
 
-  // ============= SWITCHER TESTIMONIAL =============
+  const migrationSection = isPinned ? migrationPinned : migrationStatic;
+
+  // ============= SWITCHER TESTIMONIAL (dark glass + spotlight) =============
 
   const testimonialSection = (
-    <section style={styles.testimonialBand} aria-label="Switcher story">
-      <div style={bandInnerStyle}>
+    <section
+      style={styles.testimonialBand}
+      aria-label="Switcher story"
+      onPointerMove={onDarkPointerMove}>
+      <div style={{...styles.grainLayer, opacity: 0.05}} aria-hidden="true" />
+      <div style={styles.spotlight} aria-hidden="true" />
+      {/* Extra bottom padding: the honest callout card overlaps this
+          band's lower edge into the pricing band. */}
+      <div
+        style={{
+          ...bandInnerStyle,
+          position: 'relative',
+          paddingBottom: isPhone ? 120 : 168,
+        }}>
         <Reveal>
-          <VStack gap={4}>
+          <div style={styles.glassQuote}>
             <Icon icon={QuoteIcon} size="md" color="inherit" />
             <p
               style={{
@@ -2153,54 +3166,74 @@ export default function ProductComparisonLandingTemplate() {
                 </HStack>
               </VStack>
             </div>
-          </VStack>
+          </div>
         </Reveal>
       </div>
     </section>
   );
 
-  // ============= HONEST CALLOUT + PRICING =============
+  // ============= HONEST CALLOUT (crosses the band boundary) =============
 
   const honestCallout = (
-    <Reveal>
-      <Card padding={5}>
-        <VStack gap={3}>
-          <HStack gap={2} vAlign="center">
-            <div style={styles.statGlyph} aria-hidden="true">
-              <Icon icon={ScaleIcon} size="sm" color="inherit" />
-            </div>
-            <Heading level={3}>When {BRAND.rival} is a better fit</Heading>
-          </HStack>
-          <Text type="supporting" color="secondary">
-            Two honest cases where we&rsquo;d tell you to renew instead:
-          </Text>
-          <VStack gap={2}>
-            {HONEST_BULLETS.map(bullet => (
-              <HStack key={bullet} gap={2} vAlign="start">
-                <span style={styles.crossGlyph} aria-hidden="true">
-                  <Icon icon={MinusIcon} size="sm" color="inherit" />
-                </span>
-                <StackItem size="fill">
-                  <Text type="body">{bullet}</Text>
-                </StackItem>
-              </HStack>
-            ))}
+    <div
+      style={{
+        ...bandInnerStyle,
+        paddingTop: 0,
+        paddingBottom: isPhone ? 24 : 40,
+      }}>
+      <Reveal>
+        <Card
+          padding={5}
+          style={{
+            position: 'relative',
+            zIndex: 2,
+            marginTop: isPhone ? -72 : -104,
+            boxShadow: SHADOW_FLOATING,
+          }}>
+          <VStack gap={3}>
+            <HStack gap={2} vAlign="center">
+              <div style={styles.statGlyph} aria-hidden="true">
+                <Icon icon={ScaleIcon} size="sm" color="inherit" />
+              </div>
+              <h3 style={{...styles.sectionHeading, fontSize: isPhone ? 22 : 26}}>
+                When {BRAND.rival} is a better fit
+              </h3>
+            </HStack>
+            <Text type="supporting" color="secondary">
+              Two honest cases where we&rsquo;d tell you to renew instead:
+            </Text>
+            <VStack gap={2}>
+              {HONEST_BULLETS.map(bullet => (
+                <HStack key={bullet} gap={2} vAlign="start">
+                  <span style={styles.crossGlyph} aria-hidden="true">
+                    <Icon icon={MinusIcon} size="sm" color="inherit" />
+                  </span>
+                  <StackItem size="fill">
+                    <Text type="body">{bullet}</Text>
+                  </StackItem>
+                </HStack>
+              ))}
+            </VStack>
           </VStack>
-        </VStack>
-      </Card>
-    </Reveal>
+        </Card>
+      </Reveal>
+    </div>
   );
+
+  // ============= PRICING (offset asymmetric pair) =============
 
   const pricingSection = (
     <section
       ref={registerSection('pricing')}
       style={styles.bandMuted}
       aria-label="Pricing at a glance">
-      <div style={bandInnerStyle}>
+      <div style={{...bandInnerStyle, position: 'relative'}}>
         <Reveal>
           <VStack gap={2} hAlign="center">
-            <Token label="Pricing at a glance" size="sm" color="purple" />
-            <Heading level={2}>One flat number vs four tiers of maybe</Heading>
+            <Eyebrow label="Pricing at a glance" />
+            <h2 style={{...headingStyle, textAlign: 'center'}}>
+              One flat number vs four tiers of maybe
+            </h2>
           </VStack>
         </Reveal>
         <Grid columns={{minWidth: 260, repeat: 'fit', max: 2}} gap={4}>
@@ -2209,7 +3242,12 @@ export default function ProductComparisonLandingTemplate() {
               <Card
                 padding={5}
                 height="100%"
-                style={card.id === 'northbeam' ? styles.priceCardOurs : undefined}>
+                className={card.id === 'northbeam' ? 'pcl-ours' : 'pcl-lift'}
+                style={
+                  card.id === 'northbeam' && !isStacked
+                    ? {marginTop: -16, borderColor: ACCENT_TINT_BORDER}
+                    : undefined
+                }>
                 <VStack gap={3}>
                   <HStack gap={2} vAlign="center" wrap="wrap">
                     <Text type="label">{card.name}</Text>
@@ -2270,11 +3308,13 @@ export default function ProductComparisonLandingTemplate() {
                     ))}
                   </VStack>
                   {card.id === 'northbeam' && (
-                    <Button
-                      label="Start a free 30-day pilot"
-                      variant="primary"
-                      onClick={() => jumpToSection('cta')}
-                    />
+                    <CtaSheen>
+                      <Button
+                        label="Start a free 30-day pilot"
+                        variant="primary"
+                        onClick={() => jumpToSection('cta')}
+                      />
+                    </CtaSheen>
                   )}
                 </VStack>
               </Card>
@@ -2294,31 +3334,35 @@ export default function ProductComparisonLandingTemplate() {
       <div style={bandInnerStyle}>
         <Reveal>
           <VStack gap={2} hAlign="center">
-            <Token label="Switching FAQ" size="sm" color="purple" />
-            <Heading level={2}>The questions renewal season raises</Heading>
+            <Eyebrow label="Switching FAQ" />
+            <h2 style={{...headingStyle, textAlign: 'center'}}>
+              The questions renewal season raises
+            </h2>
           </VStack>
         </Reveal>
-        <Card padding={5}>
-          <VStack gap={0}>
-            {FAQ.map((entry, index) => (
-              <VStack key={entry.id} gap={0}>
-                {index > 0 ? <Divider /> : null}
-                <div style={{padding: 'var(--spacing-2) 0'}}>
-                  <Collapsible
-                    isOpen={openFaqs.has(entry.id)}
-                    onOpenChange={isOpen => toggleFaq(entry.id, isOpen)}
-                    trigger={entry.question}>
-                    <div style={{padding: 'var(--spacing-2) 0 var(--spacing-1)'}}>
-                      <Text type="body" color="secondary">
-                        {entry.answer}
-                      </Text>
-                    </div>
-                  </Collapsible>
-                </div>
-              </VStack>
-            ))}
-          </VStack>
-        </Card>
+        <Reveal delayMs={90}>
+          <Card padding={5} style={{boxShadow: SHADOW_RAISED}}>
+            <VStack gap={0}>
+              {FAQ.map((entry, index) => (
+                <VStack key={entry.id} gap={0}>
+                  {index > 0 ? <Divider /> : null}
+                  <div style={{padding: 'var(--spacing-2) 0'}}>
+                    <Collapsible
+                      isOpen={openFaqs.has(entry.id)}
+                      onOpenChange={isOpen => toggleFaq(entry.id, isOpen)}
+                      trigger={entry.question}>
+                      <div style={{padding: 'var(--spacing-2) 0 var(--spacing-1)'}}>
+                        <Text type="body" color="secondary">
+                          {entry.answer}
+                        </Text>
+                      </div>
+                    </Collapsible>
+                  </div>
+                </VStack>
+              ))}
+            </VStack>
+          </Card>
+        </Reveal>
       </div>
     </section>
   );
@@ -2330,7 +3374,14 @@ export default function ProductComparisonLandingTemplate() {
       ref={registerSection('cta')}
       style={styles.ctaBand}
       aria-label="Get the migration checklist">
-      <div style={{...bandInnerStyle, alignItems: 'center', textAlign: 'center'}}>
+      <div style={{...styles.grainLayer, opacity: 0.05}} aria-hidden="true" />
+      <div
+        style={{
+          ...bandInnerStyle,
+          position: 'relative',
+          alignItems: 'center',
+          textAlign: 'center',
+        }}>
         <h2
           style={{
             ...styles.ctaHeadline,
@@ -2369,12 +3420,14 @@ export default function ProductComparisonLandingTemplate() {
                   }}
                 />
               </div>
-              <Button
-                label="Send the checklist"
-                variant="primary"
-                icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
-                onClick={submitEmail}
-              />
+              <CtaSheen>
+                <Button
+                  label="Send the checklist"
+                  variant="primary"
+                  icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
+                  onClick={submitEmail}
+                />
+              </CtaSheen>
             </div>
             {emailError !== null && (
               <p style={styles.emailError} role="alert">
@@ -2420,7 +3473,14 @@ export default function ProductComparisonLandingTemplate() {
 
   const footnotesSection = (
     <section ref={registerSection('footnotes')} aria-label="Footnotes">
-      <div style={{...bandInnerStyle, gap: 'var(--spacing-3)'}}>
+      <div
+        style={{
+          ...bandInnerStyle,
+          padding: isPhone
+            ? '40px var(--spacing-4)'
+            : '56px var(--spacing-6)',
+          gap: 'var(--spacing-3)',
+        }}>
         <Divider />
         <Text type="label" color="secondary">
           Footnotes
@@ -2447,7 +3507,13 @@ export default function ProductComparisonLandingTemplate() {
 
   const footer = (
     <footer style={styles.footer} aria-label="Footer">
-      <div style={bandInnerStyle}>
+      <div
+        style={{
+          ...bandInnerStyle,
+          padding: isPhone
+            ? '48px var(--spacing-4)'
+            : '64px var(--spacing-6)',
+        }}>
         <div
           style={{
             display: 'flex',
@@ -2505,7 +3571,8 @@ export default function ProductComparisonLandingTemplate() {
   // ============= RENDER =============
 
   return (
-    <div ref={wrapRef} style={{height: '100%'}}>
+    <div ref={wrapRef} className={SCOPE} style={{height: '100%'}}>
+      <style>{TEMPLATE_CSS}</style>
       <Layout
         height="fill"
         content={
@@ -2513,14 +3580,14 @@ export default function ProductComparisonLandingTemplate() {
             padding={0}
             role="main"
             label="Northbeam vs Gridware comparison landing page">
-            <div ref={pageRef} style={styles.page} onScroll={onPageScroll}>
+            <div ref={pageRef} style={styles.page}>
               {navbar}
               {hero}
               {comparisonSection}
               {whySection}
               {migrationSection}
               {testimonialSection}
-              <div style={bandInnerStyle}>{honestCallout}</div>
+              {honestCallout}
               {pricingSection}
               {faqSection}
               {ctaSection}

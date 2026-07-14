@@ -4,12 +4,11 @@ const template = {
   type: 'page',
   name: 'API Platform Landing',
   description:
-    'Full marketing landing page for a fictional shipping-rates API ("Parcelrate"): sticky navbar with smooth-scrolling anchors that collapse to a menu button at compact widths, a split hero pairing a validating get-API-key email capture with a live-looking request/response pane — a curl/Node/Python TabList swaps the request CodeBlock and a Send-request button stages a 600ms spinner before the JSON response rises in with a 200 OK badge and latency chip. Sections: endpoint showcase Table with method Badges, a requests/month Slider pricing calculator with per-tier best-value highlighting, an SDK grid revealing install commands on hover/tap, a count-up reliability stats band with a p99 chip, a three-pane schematic docs teaser, developer testimonials, and a footer with an operational StatusDot row. Choose it over saas-landing-page when the product is a developer API and the hero should demo a request instead of a product mock.',
+    'Art-directed marketing landing page for a fictional shipping-rates API ("Parcelrate"): a transparent-at-top sticky navbar that gains a tinted surface after 24px of scroll (menu-button dropdown at compact widths), and an aurora-field hero with a 76px gradient-ink display headline, a validating get-API-key email capture, and a staged product theater — the runnable request/response pane (curl/Node/Python TabList swaps the request CodeBlock; Send request stages a 600ms spinner before the JSON response rises in with a 200 OK badge and latency chip) sits scheme-locked dark under a perspective tilt with bobbing satellite cards and pointer parallax. Sections: a pause-on-hover customer wordmark marquee, an asymmetric 5/7 endpoint Table on a dot-grid band that straddles into the pricing band, a requests/month Slider pricing calculator with per-tier best-value highlighting, a hover-raise SDK grid with pinned install commands, a dark reliability band with glass count-up stat cards and a pointer-tracked spotlight, a pinned scroll-story docs section with a clickable filling step rail, offset developer testimonial cards, an aurora final CTA, and a footer with an operational StatusDot row. Choose it over saas-landing-page when the product is a developer API and the hero should demo a request instead of a product mock.',
   category: 'Marketing - API Platform Landing',
   componentsUsed: [
     'Badge',
     'Button',
-    'Card',
     'CodeBlock',
     'Icon',
     'Layout',

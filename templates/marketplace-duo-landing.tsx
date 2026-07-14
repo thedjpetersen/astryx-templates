@@ -6,74 +6,107 @@
  * @file marketplace-duo-landing.tsx
  * @input Deterministic fixtures only (the fictional "Kitloop" peer-to-peer
  *   gear-rental marketplace: two audience themes — renter and owner — each
- *   with headline/subcopy/CTA copy and a quarantined accent pair; eight
- *   gear categories with listing counts, floor prices, and ratings; three
- *   how-it-works steps; four KitCover trust cards; six renter reviews (one
- *   honest 4-star); six earnable item types with daily rates and honest
- *   utilization factors for the earnings calculator; four payout/protection
- *   cards; three top-earner stories plus a median-earnings disclosure; four
- *   marketplace stats; twelve launch cities with listing counts and pickup
- *   distances; five FAQs per audience; and a four-column sitemap footer)
- * @output Complete two-sided marketplace landing page. Signature move: an
- *   audience toggle in the hero ("I want to rent" / "I want to earn") that
- *   swaps the headline, CTA, and hero vignette AND retints every accent
- *   surface down the page between the renter teal and the owner amber —
- *   the sanctioned two-accent exception, both literals carrying contrast
- *   math. The toggle re-docks into the sticky navbar once the hero scrolls
- *   away. Renter path: selectable category tile grid (8), how-it-works
- *   steps, a full-bleed KitCover trust band, and a review wall. Owner path
- *   (swapped in): an earnings calculator (item-type Selector + days/week
- *   Slider driving a count-up estimate with an honest range note), payout/
- *   protection cards, and top-earner stories with a median disclosure.
- *   Shared: count-up stats band, selectable city chips (12), per-audience
- *   FAQ tabs with controlled accordions, a validating email-capture CTA
- *   band, and a sitemap footer whose owner links flip the audience.
+ *   with a split headline (plain lead + gradient-ink tail), subcopy, CTA
+ *   copy, a quarantined accent, and a gradient partner token; three hero
+ *   satellite chips per audience; eight gear categories with listing
+ *   counts, floor prices, and ratings; three how-it-works steps and four
+ *   payout/protection steps (each with a schematic product-mock state for
+ *   the pinned scroll story); four KitCover trust cards; six renter
+ *   reviews (one honest 4-star); six earnable item types with daily rates
+ *   and honest utilization factors for the earnings calculator; three
+ *   top-earner stories plus a median-earnings disclosure; four marketplace
+ *   stats; twelve launch cities with listing counts and pickup distances;
+ *   five FAQs per audience; and a four-column sitemap footer)
+ * @output Art-directed two-sided marketplace landing page. Signature move:
+ *   an audience toggle in the hero ("I want to rent" / "I want to earn")
+ *   that swaps the headline, CTA, staged hero vignette, and satellite chips
+ *   AND retints every accent surface, aurora field, and glow down the page
+ *   between the renter teal and the owner amber — the sanctioned two-accent
+ *   exception, both literals carrying contrast math. The toggle re-docks
+ *   into the sticky navbar once the hero scrolls away. Atmosphere: drifting
+ *   aurora blobs behind the hero and the cities band, a full-page grain
+ *   overlay, a dot-grid band behind the pinned story, and a scheme-locked
+ *   dark CTA band with gradient glows, a pointer-tracked spotlight, and a
+ *   glass email-capture card. The hero is a product theater: a perspective-
+ *   tilted vignette mock with three bobbing satellite mini-cards that
+ *   parallax toward the pointer. Each audience path pins one scroll story —
+ *   renter how-it-works (3 states) or owner payout/protection (4 states) —
+ *   inside a ~240vh container whose progress advances a staged product mock
+ *   and fills a clickable numbered step rail. Renter reviews run as a
+ *   pausable marquee loop; the shared stats panel floats across the section
+ *   boundary into the tinted cities band.
  * @position Page template; emitted by `astryx template marketplace-duo-landing`
  *
  * Frame: Layout height="fill", content-only — the landing page owns its
  * chrome, so there is no LayoutHeader. LayoutContent (padding 0) hosts a
  * single scroll container div; the navbar is position:sticky top:0 inside
- * it, and a centered 1120px column carries hero, audience path, stats,
- * cities, FAQ, and CTA sections. Tinted full-bleed bands (trust,
- * calculator, stats, CTA) alternate with plain bands; the footer paints
- * edge to edge on the muted token.
+ * it (transparent over the hero aurora, gaining a tinted color-mix surface,
+ * hairline, and reduced height after 24px of scroll), and a centered 1120px
+ * column carries hero, audience path, stats, cities, FAQ, and CTA sections.
+ * Tinted full-bleed bands alternate with plain bands; the dark CTA band is
+ * scheme-locked via light-dark(); the footer paints edge to edge on the
+ * muted token. A grain overlay (inline feTurbulence data-URI, opacity .04)
+ * sits above the scroller, pointer-events none.
  *
  * Interaction contract:
- * - The hero audience toggle swaps headline/CTA/vignette (keyed swap-in
- *   animation) and retints accents page-wide; after the hero scrolls past,
- *   a compact copy of the toggle appears in the sticky navbar (tracked by
- *   the scroll container's onScroll against the hero's measured bottom).
+ * - The hero audience toggle swaps headline/CTA/vignette/satellites (keyed
+ *   swap-in animation) and retints accents, auroras, and glows page-wide;
+ *   after the hero scrolls past, a compact copy of the toggle appears in
+ *   the sticky navbar (tracked by the scroll container's onScroll against
+ *   the hero's measured bottom).
+ * - Hero theater: the vignette mock sits in a perspective wrapper; three
+ *   satellite chips bob on independent 6.5-8.5s keyframes (negative
+ *   delays) and parallax ±6-9px toward the pointer over the hero stage
+ *   (CSS vars set from onPointerMove; off under reduced motion and at
+ *   stacked widths).
+ * - Pinned scroll story: a position:sticky stage inside a tall container;
+ *   scroll progress (container rect vs. the scroll container's rect)
+ *   selects the active step, crossfades the staged product mock, and fills
+ *   the step rail. Steps are also clickable buttons that scroll the page
+ *   to the matching progress point. Under reduced motion the story renders
+ *   as a static stacked sequence.
  * - Nav anchors smooth-scroll to real section ids under a sticky-nav
  *   allowance; at compact widths they collapse behind a menu button whose
  *   dropdown closes on Escape, outside pointerdown, or selection.
  * - Category tiles and city chips are selectable (accent ring) and update
- *   a live caption line. The earnings calculator's Selector and Slider
- *   retarget an eased count-up estimate and an honest range readout.
+ *   a live caption line; cards raise a shadow tier and gain an accent glow
+ *   on hover. The earnings calculator's Selector and Slider retarget an
+ *   eased count-up estimate and an honest range readout.
+ * - Renter reviews loop as a 48s marquee (pause on hover); reduced motion
+ *   renders a static wrapped grid.
  * - FAQ tabs follow the audience toggle until the reader overrides them;
  *   accordions are controlled via a Set so several stay open.
- * - The CTA band email form validates (empty/format, inline error) and
- *   flips to a confirmation echoing the address, with a reset action.
+ * - The dark CTA band tracks the pointer with a radial spotlight and hosts
+ *   the validating email form (empty/format, inline error) which flips to
+ *   a confirmation echoing the address, with a reset action.
  * - Footer owner links flip the audience to "earn" before scrolling, so
  *   both paths are reachable without finding the hero toggle.
- * - Motion: sections rise+fade 12px once via IntersectionObserver; stats,
- *   earnings, and earner chips count up on first view. Everything is
- *   gated by prefers-reduced-motion (reveals render visible, counters
- *   render final, swap animations are suppressed).
+ * - Motion: group reveals stagger children 60-90ms (translateY 16px +
+ *   scale .985 → identity, 600ms decelerate bezier, fire once); stats,
+ *   earnings, and earner chips count up ~900ms on first view; primary
+ *   buttons carry a sheen sweep + 1px lift + pressed scale. Everything is
+ *   transform/opacity-only and gated by prefers-reduced-motion (reveals
+ *   render visible, counters render final, auroras/marquee/bob/parallax/
+ *   pinned scene disabled).
  *
  * Color policy: token-pure except the sanctioned two-accent exception for
  * this archetype. Exactly two quarantined accent literals exist (renter
  * teal, owner amber — see PAINT CONSTANTS for the contrast math) plus one
- * neutral on-accent ink pair; every tint is derived from the accents via
- * color-mix(), so retheming the audience is a one-literal edit each.
+ * neutral on-accent ink pair; every tint, aurora, glow, and gradient ink
+ * is derived from the accents via color-mix() with scheme tokens, and the
+ * shadow tiers use neutral rgba() depth values only (no hue literals).
  *
  * Responsive contract (measured with a local ResizeObserver — the demo
  * stage is ~1045px wide, so viewport media queries are not used):
- * - Column: max-width 1120px, centered; tinted bands and footer bleed.
+ * - Column: max-width 1120px, centered; tinted/dark bands and footer bleed.
+ * - Hero display type tiers 76 → 64 → 52 → 40px with the measured width.
  * - <=780px: nav anchor links collapse behind a menu button + dropdown;
  *   the nav CTA moves into the dropdown.
- * - <=840px: hero stacks (vignette below copy); how-it-works drops 3 → 1.
- * - Category grid 4 → 3 → 2 columns; trust and payout cards 4 → 2 → 1;
- *   reviews and stories 3 → 2 → 1; stats 4 → 2; footer sitemap 4 → 2.
+ * - <=840px: hero stacks (vignette below copy) and satellites/parallax
+ *   turn off; the pinned story stage stacks its step chips above the mock.
+ * - Category grid 4 → 3 → 2 columns (staggered column offsets at wide
+ *   widths); trust and payout splits collapse; reviews marquee cards are
+ *   fixed width; stories 3 → 2 → 1; stats 4 → 2; footer sitemap 4 → 2.
  * - <=520px: headline steps down, the email form stacks its button, and
  *   chip rows wrap — the page holds at 390px with no overflow-x.
  */
@@ -83,6 +116,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
   type ReactNode,
   type RefObject,
   type UIEvent,
@@ -98,7 +132,7 @@ import {
 import {Badge} from '@astryxdesign/core/Badge';
 import {Button} from '@astryxdesign/core/Button';
 import {Collapsible} from '@astryxdesign/core/Collapsible';
-import {Heading, Text} from '@astryxdesign/core/Text';
+import {Text} from '@astryxdesign/core/Text';
 import {Icon} from '@astryxdesign/core/Icon';
 import {Selector} from '@astryxdesign/core/Selector';
 import {Slider} from '@astryxdesign/core/Slider';
@@ -135,8 +169,9 @@ type Glyph = ComponentType<SVGProps<SVGSVGElement>>;
 
 // ============= PAINT CONSTANTS =============
 // Sanctioned two-accent exception for the two-sided marketplace archetype:
-// exactly TWO quarantined accent literals, one per audience. All tints are
-// derived from them with color-mix(), so nothing else carries a hue.
+// exactly TWO quarantined accent literals, one per audience. All tints,
+// auroras, glows, and gradient inks are derived from them with color-mix()
+// against scheme tokens, so nothing else carries a hue.
 //
 // Renter accent (teal): light #0F766E on white ≈ 5.5:1 (AA normal text);
 // dark #5EEAD4 on the ~#101418 dark app surface ≈ 11.6:1 (AAA).
@@ -154,8 +189,115 @@ function tint(accent: string, percent: number): string {
   return `color-mix(in srgb, ${accent} ${percent}%, transparent)`;
 }
 
+/**
+ * Scheme-locked pastel of an accent for the dark CTA band: mixing 55%
+ * accent into the stable white --color-on-dark token keeps ≥7:1 against
+ * the band's inverted surface in BOTH schemes.
+ */
+function brighten(accent: string): string {
+  return `color-mix(in srgb, ${accent} 55%, var(--color-on-dark))`;
+}
+
+// ---- scheme-locked dark band surfaces (token-derived, no new hues) ----
+// Light scheme: --color-background-inverted (near-black). Dark scheme: the
+// raised card token so the band still reads as a distinct dark panel.
+const DARK_BG =
+  'light-dark(var(--color-background-inverted), var(--color-background-card))';
+const DARK_TEXT = 'var(--color-on-dark)';
+const DARK_TEXT_SOFT =
+  'color-mix(in srgb, var(--color-on-dark) 72%, transparent)';
+const DARK_HAIRLINE =
+  'color-mix(in srgb, var(--color-on-dark) 15%, transparent)';
+const DARK_GLASS = 'color-mix(in srgb, var(--color-on-dark) 7%, transparent)';
+/** Stable near-black ink for pastel accent fills on the dark band. */
+const DARK_INK = 'var(--color-on-light)';
+
+// ---- depth system: three tiers, neutral rgba depth only ----
+const SHADOW_RAISED =
+  '0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px -12px rgba(0, 0, 0, 0.18)';
+const SHADOW_FLOATING =
+  '0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px -12px rgba(0, 0, 0, 0.18), ' +
+  '0 24px 48px -24px rgba(0, 0, 0, 0.3)';
+const SHADOW_GLASS = `inset 0 0 0 1px ${DARK_HAIRLINE}, ${SHADOW_FLOATING}`;
+
+/** Grain texture: inline feTurbulence data-URI, tiled at 4% opacity. */
+const GRAIN =
+  'url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 ' +
+  'width=%27160%27 height=%27160%27%3E%3Cfilter id=%27n%27%3E' +
+  '%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%270.9%27 ' +
+  'numOctaves=%272%27 stitchTiles=%27stitch%27/%3E%3C/filter%3E' +
+  '%3Crect width=%27160%27 height=%27160%27 filter=%27url(%23n)%27/%3E' +
+  '%3C/svg%3E")';
+
+/** Dot-grid texture (band behind the pinned story). */
+const DOT_GRID =
+  'radial-gradient(color-mix(in srgb, var(--color-text-primary) 9%, transparent) 1px, transparent 1.4px)';
+
 /** Sticky-nav height; smooth-scroll allows for it. */
 const NAV_ALLOWANCE = 64;
+/** Top offset of the pinned story's sticky stage inside the scroller. */
+const STICKY_TOP = 72;
+
+/**
+ * Page-scoped classes + keyframes (transform/opacity only). The reduced-
+ * motion media query flattens the hover choreography at the CSS level;
+ * JS-driven motion (auroras, bob, marquee, pinned scene, reveals,
+ * counters) is separately gated by the usePrefersReducedMotion flag.
+ */
+const PAGE_CSS = `
+@keyframes klSwapIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.99); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes klDriftA {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(48px, -34px, 0) scale(1.12); }
+}
+@keyframes klDriftB {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.06); }
+  50% { transform: translate3d(-42px, 28px, 0) scale(0.94); }
+}
+@keyframes klBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+}
+@keyframes klMarquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.kl-cta { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.kl-cta:hover { transform: translateY(-1px); }
+.kl-cta:active { transform: translateY(0) scale(0.98); }
+.kl-sheen {
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  transform: translateX(-130%) skewX(-14deg);
+  background: linear-gradient(105deg, transparent 38%,
+    color-mix(in srgb, var(--color-on-dark) 32%, transparent) 50%,
+    transparent 62%);
+  transition: transform 0.2s ease;
+}
+.kl-cta:hover .kl-sheen {
+  transform: translateX(130%) skewX(-14deg);
+  transition: transform 0.65s ease;
+}
+.kl-raise {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.kl-raise:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 0 1px var(--kl-glow, transparent),
+    0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px -12px rgba(0, 0, 0, 0.18),
+    0 24px 48px -24px rgba(0, 0, 0, 0.3);
+}
+.kl-navlink:hover { color: var(--color-text-primary); }
+.kl-marquee:hover .kl-marquee-track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .kl-cta, .kl-sheen, .kl-raise { transition: none !important; }
+  .kl-cta:hover, .kl-raise:hover { transform: none; }
+  .kl-cta:hover .kl-sheen { transform: translateX(-130%) skewX(-14deg); }
+}
+`;
 
 // ============= STYLES =============
 
@@ -164,8 +306,18 @@ const styles: Record<string, CSSProperties> = {
     position: 'relative',
     height: '100%',
     overflowY: 'auto',
+    overflowX: 'hidden',
     backgroundColor: 'var(--color-background-body)',
     color: 'var(--color-text-primary)',
+  },
+  grainOverlay: {
+    position: 'absolute',
+    inset: 0,
+    backgroundImage: GRAIN,
+    backgroundSize: '160px 160px',
+    opacity: 0.04,
+    pointerEvents: 'none',
+    zIndex: 60,
   },
   column: {
     width: '100%',
@@ -178,21 +330,21 @@ const styles: Record<string, CSSProperties> = {
     paddingInline: 'var(--spacing-4)',
   },
   section: {
-    paddingBlock: 'var(--spacing-9)',
+    paddingBlock: 112,
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-6)',
   },
   sectionCompact: {
-    paddingBlock: 'var(--spacing-7)',
+    paddingBlock: 64,
   },
-  // ---- sticky navbar ----
+  // ---- sticky navbar (transparent at top; condenses after 24px) ----
   navBar: {
     position: 'sticky',
     top: 0,
     zIndex: 30,
-    backgroundColor: 'var(--color-background-body)',
-    borderBottom: '1px solid var(--color-border)',
+    transition: 'background-color 0.25s ease, border-color 0.25s ease',
+    borderBottom: '1px solid transparent',
   },
   navInner: {
     position: 'relative',
@@ -200,11 +352,10 @@ const styles: Record<string, CSSProperties> = {
     maxWidth: 1120,
     marginInline: 'auto',
     boxSizing: 'border-box',
-    padding: 'var(--spacing-2) var(--spacing-4)',
+    paddingInline: 'var(--spacing-4)',
     display: 'flex',
     alignItems: 'center',
     gap: 'var(--spacing-2)',
-    minHeight: 56,
   },
   logoTile: {
     width: 34,
@@ -217,6 +368,7 @@ const styles: Record<string, CSSProperties> = {
     // Brand mark blends the two sanctioned audience accents.
     background: `linear-gradient(135deg, ${RENT_ACCENT} 0%, ${EARN_ACCENT} 100%)`,
     color: ACCENT_INK,
+    boxShadow: SHADOW_RAISED,
   },
   navLink: {
     display: 'inline-flex',
@@ -231,6 +383,7 @@ const styles: Record<string, CSSProperties> = {
     fontWeight: 600,
     color: 'var(--color-text-secondary)',
     whiteSpace: 'nowrap',
+    transition: 'color 0.2s ease',
   },
   navMenu: {
     position: 'absolute',
@@ -240,8 +393,7 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 14,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-body)',
-    boxShadow:
-      'var(--shadow-high, 0 12px 32px light-dark(rgba(15, 23, 42, 0.18), rgba(0, 0, 0, 0.5)))',
+    boxShadow: SHADOW_FLOATING,
     padding: 'var(--spacing-3)',
     zIndex: 40,
     maxHeight: 'calc(100vh - 120px)',
@@ -279,12 +431,14 @@ const styles: Record<string, CSSProperties> = {
   },
   // ---- accent primary button (retints with the audience) ----
   accentButton: {
+    position: 'relative',
+    overflow: 'hidden',
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    minHeight: 44,
-    paddingInline: 20,
+    minHeight: 46,
+    paddingInline: 22,
     borderRadius: 999,
     border: 'none',
     cursor: 'pointer',
@@ -292,6 +446,7 @@ const styles: Record<string, CSSProperties> = {
     fontWeight: 700,
     whiteSpace: 'nowrap',
     color: ACCENT_INK,
+    boxShadow: SHADOW_RAISED,
   },
   accentButtonSmall: {
     minHeight: 36,
@@ -304,8 +459,10 @@ const styles: Record<string, CSSProperties> = {
     gap: 4,
     padding: 4,
     borderRadius: 999,
-    backgroundColor: 'var(--color-background-muted)',
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-card) 74%, transparent)',
     border: '1px solid var(--color-border)',
+    boxShadow: SHADOW_RAISED,
   },
   togglePill: {
     display: 'inline-flex',
@@ -320,61 +477,87 @@ const styles: Record<string, CSSProperties> = {
     whiteSpace: 'nowrap',
     transition: 'background-color 0.2s ease, color 0.2s ease',
   },
-  // ---- hero ----
+  // ---- hero theater ----
+  heroBand: {
+    position: 'relative',
+    overflow: 'hidden',
+    marginTop: -64,
+  },
   hero: {
+    position: 'relative',
     display: 'flex',
     gap: 'var(--spacing-8)',
     alignItems: 'center',
-    paddingBlock: 'var(--spacing-8)',
   },
   heroStacked: {
     flexDirection: 'column',
     alignItems: 'stretch',
-    gap: 'var(--spacing-5)',
-    paddingBlock: 'var(--spacing-5)',
+    gap: 'var(--spacing-6)',
   },
   heroCopy: {
-    flex: '1 1 0',
+    flex: '7 1 0',
     minWidth: 0,
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-4)',
     alignItems: 'flex-start',
   },
-  heroVignette: {
-    flex: '1 1 0',
+  heroStage: {
+    flex: '5 1 0',
     minWidth: 0,
+    position: 'relative',
   },
   eyebrow: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 8,
+    minHeight: 26,
+    paddingInline: 12,
+    borderRadius: 999,
     fontSize: 11,
-    fontWeight: 700,
-    letterSpacing: '0.08em',
+    fontWeight: 750,
+    letterSpacing: '0.09em',
     textTransform: 'uppercase',
     margin: 0,
   },
   heroHeadline: {
-    fontSize: 46,
-    fontWeight: 700,
-    lineHeight: 1.08,
-    letterSpacing: '-0.02em',
+    fontWeight: 730,
+    lineHeight: 1.03,
+    letterSpacing: '-0.025em',
     margin: 0,
-  },
-  heroHeadlinePhone: {
-    fontSize: 32,
   },
   heroSubcopy: {
     fontSize: 17,
     lineHeight: 1.55,
     color: 'var(--color-text-secondary)',
-    maxWidth: 480,
+    maxWidth: '56ch',
     margin: 0,
   },
-  // ---- vignette cards ----
+  sectionTitle: {
+    fontWeight: 720,
+    lineHeight: 1.08,
+    letterSpacing: '-0.02em',
+    margin: 0,
+  },
+  sectionCopy: {
+    fontSize: 15,
+    lineHeight: 1.55,
+    color: 'var(--color-text-secondary)',
+    maxWidth: '56ch',
+    margin: 0,
+  },
+  auroraBlob: {
+    position: 'absolute',
+    borderRadius: '50%',
+    filter: 'blur(90px)',
+    pointerEvents: 'none',
+  },
+  // ---- vignette + satellites ----
   vignetteCard: {
-    borderRadius: 16,
+    borderRadius: 18,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
-    boxShadow: 'var(--shadow-med)',
+    boxShadow: SHADOW_FLOATING,
     padding: 'var(--spacing-4)',
     display: 'flex',
     flexDirection: 'column',
@@ -421,6 +604,33 @@ const styles: Record<string, CSSProperties> = {
     fontVariantNumeric: 'tabular-nums',
     whiteSpace: 'nowrap',
   },
+  satellite: {
+    position: 'absolute',
+    zIndex: 2,
+    transition: 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)',
+  },
+  satelliteCard: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+    padding: '10px 14px',
+    borderRadius: 12,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_FLOATING,
+    whiteSpace: 'nowrap',
+  },
+  satelliteLabel: {
+    fontSize: 12.5,
+    fontWeight: 700,
+    lineHeight: 1.25,
+  },
+  satelliteSub: {
+    fontSize: 11.5,
+    fontWeight: 500,
+    color: 'var(--color-text-secondary)',
+    lineHeight: 1.25,
+  },
   // ---- category tiles ----
   categoryTile: {
     display: 'flex',
@@ -435,6 +645,7 @@ const styles: Record<string, CSSProperties> = {
     textAlign: 'left',
     boxSizing: 'border-box',
     width: '100%',
+    boxShadow: SHADOW_RAISED,
   },
   categoryGlyph: {
     width: 38,
@@ -451,15 +662,33 @@ const styles: Record<string, CSSProperties> = {
     fontVariantNumeric: 'tabular-nums',
     margin: 0,
   },
-  // ---- steps ----
-  stepCard: {
+  // ---- pinned scroll story ----
+  pinStage: {
+    position: 'sticky',
+    top: STICKY_TOP,
     display: 'flex',
-    flexDirection: 'column',
-    gap: 'var(--spacing-2)',
-    padding: 'var(--spacing-4)',
+    alignItems: 'center',
+    boxSizing: 'border-box',
+  },
+  stepBtn: {
+    display: 'flex',
+    gap: 14,
+    alignItems: 'flex-start',
+    textAlign: 'left',
+    padding: '14px 16px',
     borderRadius: 14,
+    border: '1px solid transparent',
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+    width: '100%',
+    boxSizing: 'border-box',
+    transition:
+      'background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease',
+  },
+  stepBtnActive: {
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_RAISED,
   },
   stepDisc: {
     width: 32,
@@ -470,10 +699,75 @@ const styles: Record<string, CSSProperties> = {
     justifyContent: 'center',
     fontSize: 14,
     fontWeight: 700,
+    flexShrink: 0,
+    fontVariantNumeric: 'tabular-nums',
   },
-  // ---- full-bleed tinted bands ----
-  band: {
-    width: '100%',
+  stepChip: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 8,
+    minHeight: 36,
+    paddingInline: 14,
+    borderRadius: 999,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    cursor: 'pointer',
+    fontSize: 13,
+    fontWeight: 700,
+    whiteSpace: 'nowrap',
+  },
+  railTrack: {
+    position: 'absolute',
+    left: 31,
+    top: 18,
+    bottom: 18,
+    width: 2,
+    borderRadius: 2,
+    backgroundColor: 'var(--color-border)',
+    overflow: 'hidden',
+  },
+  railFill: {
+    position: 'absolute',
+    inset: 0,
+    transformOrigin: 'top',
+    transition: 'transform 0.2s linear',
+  },
+  stagePanel: {
+    position: 'relative',
+    overflow: 'hidden',
+    borderRadius: 20,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_FLOATING,
+    padding: 'var(--spacing-5)',
+    boxSizing: 'border-box',
+  },
+  ghostNumeral: {
+    position: 'absolute',
+    top: -34,
+    right: 4,
+    fontSize: 150,
+    fontWeight: 800,
+    letterSpacing: '-0.04em',
+    lineHeight: 1,
+    pointerEvents: 'none',
+    fontVariantNumeric: 'tabular-nums',
+  },
+  mockRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+    padding: '10px 12px',
+    borderRadius: 10,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-muted)',
+    fontSize: 13.5,
+    fontWeight: 600,
+  },
+  mockSub: {
+    fontSize: 12,
+    fontWeight: 500,
+    color: 'var(--color-text-secondary)',
   },
   // ---- trust / payout cards ----
   infoCard: {
@@ -486,6 +780,7 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: 'var(--color-background-card)',
     height: '100%',
     boxSizing: 'border-box',
+    boxShadow: SHADOW_RAISED,
   },
   infoGlyph: {
     width: 36,
@@ -494,6 +789,13 @@ const styles: Record<string, CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  bigFigure: {
+    fontWeight: 780,
+    letterSpacing: '-0.03em',
+    lineHeight: 1,
+    fontVariantNumeric: 'tabular-nums',
+    margin: 0,
   },
   // ---- reviews / stories ----
   reviewCard: {
@@ -506,6 +808,7 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: 'var(--color-background-card)',
     height: '100%',
     boxSizing: 'border-box',
+    boxShadow: SHADOW_RAISED,
   },
   starRow: {
     fontSize: 14,
@@ -539,35 +842,55 @@ const styles: Record<string, CSSProperties> = {
     fontVariantNumeric: 'tabular-nums',
     whiteSpace: 'nowrap',
   },
+  marqueeBand: {
+    overflow: 'hidden',
+    width: '100%',
+  },
+  marqueeTrack: {
+    display: 'flex',
+    gap: 'var(--spacing-3)',
+    width: 'max-content',
+  },
   // ---- calculator ----
   calcCard: {
-    borderRadius: 16,
+    borderRadius: 20,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
-    boxShadow: 'var(--shadow-med)',
+    boxShadow: SHADOW_FLOATING,
     padding: 'var(--spacing-5)',
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-4)',
-    maxWidth: 720,
     width: '100%',
-    marginInline: 'auto',
     boxSizing: 'border-box',
   },
   calcEstimate: {
-    fontSize: 44,
-    fontWeight: 700,
-    lineHeight: 1.05,
-    letterSpacing: '-0.02em',
+    fontSize: 56,
+    fontWeight: 750,
+    lineHeight: 1,
+    letterSpacing: '-0.03em',
     fontVariantNumeric: 'tabular-nums',
   },
-  // ---- stats ----
+  // ---- stats panel (floats across the cities band boundary) ----
+  statsPanel: {
+    position: 'relative',
+    zIndex: 1,
+    borderRadius: 20,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_FLOATING,
+    padding: 'var(--spacing-6)',
+    boxSizing: 'border-box',
+  },
   statFigure: {
-    fontSize: 34,
-    fontWeight: 700,
-    lineHeight: 1.1,
-    letterSpacing: '-0.02em',
+    fontSize: 46,
+    fontWeight: 750,
+    lineHeight: 1.05,
+    letterSpacing: '-0.03em',
     fontVariantNumeric: 'tabular-nums',
+  },
+  statFigureCompact: {
+    fontSize: 32,
   },
   // ---- city chips ----
   cityChip: {
@@ -584,19 +907,47 @@ const styles: Record<string, CSSProperties> = {
     fontWeight: 600,
     color: 'var(--color-text-primary)',
     whiteSpace: 'nowrap',
+    boxShadow: SHADOW_RAISED,
+  },
+  // ---- dark CTA band ----
+  darkBand: {
+    position: 'relative',
+    overflow: 'hidden',
+    backgroundColor: DARK_BG,
+    color: DARK_TEXT,
+  },
+  glowBlob: {
+    position: 'absolute',
+    borderRadius: '50%',
+    filter: 'blur(90px)',
+    pointerEvents: 'none',
+  },
+  spotlight: {
+    position: 'absolute',
+    inset: 0,
+    pointerEvents: 'none',
+  },
+  glassCard: {
+    position: 'relative',
+    borderRadius: 20,
+    backgroundColor: DARK_GLASS,
+    boxShadow: SHADOW_GLASS,
+    padding: 'var(--spacing-5)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-3)',
+    boxSizing: 'border-box',
   },
   // ---- email capture ----
   emailRow: {
     display: 'flex',
     gap: 'var(--spacing-2)',
     alignItems: 'flex-start',
-    maxWidth: 460,
     width: '100%',
   },
   emailRowStacked: {
     flexDirection: 'column',
     alignItems: 'stretch',
-    maxWidth: 'none',
   },
   emailInput: {
     flex: '1 1 0',
@@ -605,7 +956,8 @@ const styles: Record<string, CSSProperties> = {
   emailError: {
     fontSize: 13,
     margin: 0,
-    color: 'var(--color-error, light-dark(#B3261E, #F2B8B5))',
+    // Error token lightened toward on-dark so it reads on the dark band.
+    color: 'color-mix(in srgb, var(--color-error) 55%, var(--color-on-dark))',
   },
   successDisc: {
     width: 44,
@@ -615,6 +967,19 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
+  },
+  darkGhostButton: {
+    alignSelf: 'flex-start',
+    border: 'none',
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+    padding: 0,
+    minHeight: 32,
+    fontSize: 13,
+    fontWeight: 600,
+    color: DARK_TEXT_SOFT,
+    textDecoration: 'underline',
+    textUnderlineOffset: 3,
   },
   // ---- footer ----
   footer: {
@@ -646,7 +1011,10 @@ interface AudienceTheme {
   toggleLabel: string;
   shortLabel: string;
   accent: string;
-  headline: string;
+  /** Token partner for the gradient ink + aurora mixes (no new literals). */
+  partner: string;
+  headlineLead: string;
+  headlineTail: string;
   subcopy: string;
   primaryCta: string;
   primaryTarget: SectionId;
@@ -669,7 +1037,9 @@ const AUDIENCES: Record<Audience, AudienceTheme> = {
     toggleLabel: 'I want to rent',
     shortLabel: 'Rent',
     accent: RENT_ACCENT,
-    headline: 'Rent the good gear. Skip the garage full of it.',
+    partner: 'var(--color-icon-cyan)',
+    headlineLead: 'Rent the good gear.',
+    headlineTail: 'Skip the garage full of it.',
     subcopy:
       'Cameras, ski setups, e-bikes, and power tools from verified ' +
       'neighbors — for a weekend, not a mortgage. Every rental is covered ' +
@@ -693,7 +1063,9 @@ const AUDIENCES: Record<Audience, AudienceTheme> = {
     toggleLabel: 'I want to earn',
     shortLabel: 'Earn',
     accent: EARN_ACCENT,
-    headline: 'Your gear already exists. Make it pay rent.',
+    partner: 'var(--color-icon-pink)',
+    headlineLead: 'Your gear already exists.',
+    headlineTail: 'Make it pay rent.',
     subcopy:
       'List the camera, e-bike, or tool wall gathering dust and set your ' +
       'own rules. You approve every renter; KitCover backs every handoff ' +
@@ -712,6 +1084,27 @@ const AUDIENCES: Record<Audience, AudienceTheme> = {
       'a checklist and a pricing suggestion for your first item.',
     ctaButton: 'List my gear',
   },
+};
+
+/** Hero satellite mini-cards; retargeted per audience. */
+interface SatelliteChip {
+  id: string;
+  icon: Glyph;
+  label: string;
+  sub: string;
+}
+
+const SATELLITES: Record<Audience, readonly SatelliteChip[]> = {
+  rent: [
+    {id: 'rating', icon: SparklesIcon, label: '4.9★ average', sub: '28,400 completed rentals'},
+    {id: 'cover', icon: ShieldCheckIcon, label: 'KitCover attached', sub: 'up to $25,000'},
+    {id: 'members', icon: UserCheckIcon, label: '92,400 members', sub: 'ID-verified'},
+  ],
+  earn: [
+    {id: 'payout', icon: BanknoteIcon, label: 'Payout sent · $184', sub: 'lands Friday'},
+    {id: 'deductible', icon: ShieldCheckIcon, label: '$0 owner deductible', sub: 'KitCover for owners'},
+    {id: 'live', icon: SparklesIcon, label: 'Live in 11 minutes', sub: 'median first listing'},
+  ],
 };
 
 interface GearCategory {
@@ -734,14 +1127,15 @@ const CATEGORIES: readonly GearCategory[] = [
   {id: 'water', label: 'Water sports', icon: WavesIcon, listings: 2890, fromPrice: 19, rating: 4.9},
 ];
 
-interface HowStep {
+/** A pinned-story step: rail copy + a staged product-mock state. */
+interface PinStep {
   id: string;
   icon: Glyph;
   title: string;
   copy: string;
 }
 
-const HOW_STEPS: readonly HowStep[] = [
+const HOW_STEPS: readonly PinStep[] = [
   {
     id: 'find',
     icon: SearchIcon,
@@ -904,14 +1298,7 @@ const CALC_DISCLOSURE =
   'last 12 months, after the 15% Kitloop fee. Dense cities earn more; new ' +
   'listings typically take 3–4 weeks to get their first booking.';
 
-interface PayoutCard {
-  id: string;
-  icon: Glyph;
-  title: string;
-  copy: string;
-}
-
-const PAYOUT_CARDS: readonly PayoutCard[] = [
+const PAYOUT_STEPS: readonly PinStep[] = [
   {
     id: 'paid',
     icon: BanknoteIcon,
@@ -945,6 +1332,23 @@ const PAYOUT_CARDS: readonly PayoutCard[] = [
       'and peak season. Override it per listing any time.',
   },
 ];
+
+/** The pinned scroll story per audience path. */
+const PIN_STORIES: Record<
+  Audience,
+  {eyebrow: string; title: string; steps: readonly PinStep[]}
+> = {
+  rent: {
+    eyebrow: 'How it works',
+    title: 'Three steps between you and the good gear',
+    steps: HOW_STEPS,
+  },
+  earn: {
+    eyebrow: 'Payouts & protection',
+    title: 'Lend on your terms, paid on ours: fast',
+    steps: PAYOUT_STEPS,
+  },
+};
 
 interface EarnerStory {
   id: string;
@@ -1209,6 +1613,26 @@ function useElementWidth(ref: RefObject<HTMLDivElement | null>): number {
   return width;
 }
 
+/** Measured height of the scrollport; sizes the pinned story's stage. */
+function useElementHeight(ref: RefObject<HTMLDivElement | null>): number {
+  const [height, setHeight] = useState(0);
+  useEffect(() => {
+    const element = ref.current;
+    if (element == null) {
+      return undefined;
+    }
+    const observer = new ResizeObserver(entries => {
+      const rect = entries[0]?.contentRect;
+      if (rect != null) {
+        setHeight(rect.height);
+      }
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref]);
+  return height;
+}
+
 /** Live prefers-reduced-motion flag; gates reveals, counters, and swaps. */
 function usePrefersReducedMotion(): boolean {
   const [reduced, setReduced] = useState(false);
@@ -1259,7 +1683,11 @@ function useInViewOnce(): [RefObject<HTMLDivElement | null>, boolean] {
 
 // ============= SMALL PIECES =============
 
-/** Rise+fade scroll reveal; renders visible under reduced motion. */
+/**
+ * Rise+fade+settle scroll reveal (translateY 16px + scale .985 →
+ * identity over 600ms on a decelerate bezier); parents stagger children
+ * via `delay` in 60-90ms steps. Renders visible under reduced motion.
+ */
 function Reveal({
   reduced,
   delay = 0,
@@ -1278,10 +1706,11 @@ function Reveal({
       ref={ref}
       style={{
         opacity: shown ? 1 : 0,
-        transform: shown ? 'none' : 'translateY(12px)',
+        transform: shown ? 'none' : 'translateY(16px) scale(0.985)',
         transition: reduced
           ? 'none'
-          : `opacity 0.55s ease ${delay}ms, transform 0.55s ease ${delay}ms`,
+          : `opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms, ` +
+            `transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
         ...style,
       }}>
       {children}
@@ -1290,9 +1719,9 @@ function Reveal({
 }
 
 /**
- * Eases toward `value` in 32 fixed setInterval steps once active; retargets
- * from the current display when `value` changes (calculator), and snaps
- * instantly under reduced motion.
+ * Eases toward `value` in 40 fixed setInterval steps (~900ms, decelerate)
+ * once active; retargets from the current display when `value` changes
+ * (calculator), and snaps instantly under reduced motion.
  */
 function AnimatedNumber({
   value,
@@ -1321,7 +1750,7 @@ function AnimatedNumber({
     if (from === value) {
       return undefined;
     }
-    const steps = 32;
+    const steps = 40;
     let i = 0;
     const id = setInterval(() => {
       i += 1;
@@ -1417,61 +1846,213 @@ function AudienceToggle({
   );
 }
 
-/** Audience-accent primary CTA (the retint story needs a literal fill). */
+/**
+ * Audience-accent primary CTA with the sheen-sweep micro-interaction
+ * (the retint story needs a literal fill). `fill`/`ink` overrides let the
+ * dark band use the scheme-locked pastel + near-black ink pair.
+ */
 function AccentButton({
   label,
   accent,
   onClick,
   small,
   icon,
+  fill,
+  ink,
 }: {
   label: string;
   accent: string;
   onClick: () => void;
   small?: boolean;
   icon?: Glyph;
+  fill?: string;
+  ink?: string;
 }) {
   return (
     <button
       type="button"
+      className="kl-cta"
       onClick={onClick}
       style={{
         ...styles.accentButton,
         ...(small ? styles.accentButtonSmall : null),
-        backgroundColor: accent,
+        backgroundColor: fill ?? accent,
+        ...(ink != null ? {color: ink} : null),
       }}>
       {label}
       {icon != null ? <Icon icon={icon} size="sm" color="inherit" /> : null}
+      <span className="kl-sheen" aria-hidden="true" />
     </button>
   );
 }
 
-/** Section intro: tracked accent eyebrow + heading + supporting copy. */
+/**
+ * Section intro: tracked accent eyebrow chip + display heading +
+ * supporting copy capped at ~56ch. `onDark` swaps to the scheme-locked
+ * on-dark ink pair for the dark CTA band.
+ */
 function SectionHead({
   eyebrow,
   title,
   copy,
   accent,
+  compact,
+  onDark,
 }: {
   eyebrow: string;
   title: string;
   copy?: string;
   accent: string;
+  compact: boolean;
+  onDark?: boolean;
 }) {
+  const inkAccent = onDark ? brighten(accent) : accent;
   return (
-    <VStack gap={2}>
-      <p style={{...styles.eyebrow, color: accent}}>{eyebrow}</p>
-      <Heading level={2}>{title}</Heading>
+    <VStack gap={3}>
+      <p
+        style={{
+          ...styles.eyebrow,
+          color: inkAccent,
+          backgroundColor: tint(inkAccent, 10),
+          alignSelf: 'flex-start',
+        }}>
+        {eyebrow}
+      </p>
+      <h2
+        style={{
+          ...styles.sectionTitle,
+          fontSize: compact ? 30 : 40,
+          color: onDark ? DARK_TEXT : 'var(--color-text-primary)',
+        }}>
+        {title}
+      </h2>
       {copy != null ? (
-        <Text type="supporting" color="secondary">
+        <p
+          style={{
+            ...styles.sectionCopy,
+            ...(onDark ? {color: DARK_TEXT_SOFT} : null),
+          }}>
           {copy}
-        </Text>
+        </p>
       ) : null}
     </VStack>
   );
 }
 
-/** Renter hero vignette: schematic search-and-book card. */
+/**
+ * Aurora field: three drifting accent blobs derived via color-mix from
+ * the active accent + partner/success tokens. Absolute inside a
+ * position:relative overflow:hidden band; static under reduced motion.
+ */
+function Aurora({
+  accent,
+  partner,
+  reduced,
+  dim,
+}: {
+  accent: string;
+  partner: string;
+  reduced: boolean;
+  dim?: boolean;
+}) {
+  const blobs: readonly CSSProperties[] = [
+    {
+      width: 540,
+      height: 540,
+      top: '-18%',
+      left: '-8%',
+      opacity: dim ? 0.35 : 0.45,
+      background: `radial-gradient(circle at 30% 30%, color-mix(in srgb, ${accent} 55%, ${partner}), transparent 70%)`,
+      animation: reduced ? undefined : 'klDriftA 38s ease-in-out infinite',
+    },
+    {
+      width: 460,
+      height: 460,
+      top: '2%',
+      right: '-12%',
+      opacity: dim ? 0.35 : 0.4,
+      background: `radial-gradient(circle at 60% 40%, color-mix(in srgb, ${accent} 45%, var(--color-success)), transparent 70%)`,
+      animation: reduced ? undefined : 'klDriftB 44s ease-in-out infinite',
+    },
+    {
+      width: 380,
+      height: 380,
+      bottom: '-32%',
+      left: '34%',
+      opacity: dim ? 0.35 : 0.42,
+      background: `radial-gradient(circle at 50% 50%, ${tint(accent, 60)}, transparent 70%)`,
+      animation: reduced
+        ? undefined
+        : 'klDriftA 32s ease-in-out -12s infinite reverse',
+    },
+  ];
+  return (
+    <div aria-hidden="true" style={{position: 'absolute', inset: 0, pointerEvents: 'none'}}>
+      {blobs.map((blob, index) => (
+        <div key={index} style={{...styles.auroraBlob, ...blob}} />
+      ))}
+    </div>
+  );
+}
+
+/**
+ * Hero satellite: an absolutely-positioned mini-card that bobs on its own
+ * keyframe (negative delay) inside a parallax wrapper driven by the
+ * --kl-px/--kl-py pointer vars set on the hero stage.
+ */
+function Satellite({
+  chip,
+  accent,
+  reduced,
+  position,
+  parallax,
+  bob,
+}: {
+  chip: SatelliteChip;
+  accent: string;
+  reduced: boolean;
+  position: CSSProperties;
+  parallax: {x: number; y: number};
+  bob: {duration: number; delay: number};
+}) {
+  return (
+    <div
+      style={{
+        ...styles.satellite,
+        ...position,
+        transform: reduced
+          ? undefined
+          : `translate3d(calc(var(--kl-px, 0) * ${parallax.x}px), calc(var(--kl-py, 0) * ${parallax.y}px), 0)`,
+      }}>
+      <div
+        style={{
+          ...styles.satelliteCard,
+          animation: reduced
+            ? undefined
+            : `klBob ${bob.duration}s ease-in-out ${bob.delay}s infinite`,
+        }}>
+        <span
+          style={{
+            ...styles.categoryGlyph,
+            width: 30,
+            height: 30,
+            borderRadius: 8,
+            backgroundColor: tint(accent, 14),
+            color: accent,
+          }}
+          aria-hidden="true">
+          <Icon icon={chip.icon} size="xsm" color="inherit" />
+        </span>
+        <VStack gap={0}>
+          <span style={styles.satelliteLabel}>{chip.label}</span>
+          <span style={styles.satelliteSub}>{chip.sub}</span>
+        </VStack>
+      </div>
+    </div>
+  );
+}
+
+/** Renter hero vignette: schematic search-and-book product mock. */
 function RentVignette({accent}: {accent: string}) {
   const results = [
     {name: 'Rossignol Experience 86 set', meta: '$24/day · 0.6 mi', rating: '4.9★', instant: true},
@@ -1519,7 +2100,7 @@ function RentVignette({accent}: {accent: string}) {
   );
 }
 
-/** Owner hero vignette: schematic listings-dashboard card. */
+/** Owner hero vignette: schematic listings-dashboard product mock. */
 function EarnVignette({accent}: {accent: string}) {
   const bars = [34, 52, 41, 68, 57, 84];
   return (
@@ -1578,21 +2159,28 @@ function EarnVignette({accent}: {accent: string}) {
   );
 }
 
-/** One stats-band figure with its own first-view count-up. */
+/** One stats-panel figure with its own first-view count-up. */
 function StatFigure({
   stat,
   accent,
   reduced,
+  compact,
 }: {
   stat: Stat;
   accent: string;
   reduced: boolean;
+  compact: boolean;
 }) {
   const [ref, inView] = useInViewOnce();
   return (
     <div ref={ref}>
       <VStack gap={1}>
-        <span style={{...styles.statFigure, color: accent}}>
+        <span
+          style={{
+            ...styles.statFigure,
+            ...(compact ? styles.statFigureCompact : null),
+            color: accent,
+          }}>
           <AnimatedNumber
             value={stat.value}
             isActive={inView}
@@ -1624,7 +2212,10 @@ function EarnerStoryCard({
 }) {
   const [ref, inView] = useInViewOnce();
   return (
-    <div ref={ref} style={styles.reviewCard}>
+    <div
+      ref={ref}
+      className="kl-raise"
+      style={{...styles.reviewCard, '--kl-glow': tint(accent, 45)} as CSSProperties}>
       <HStack gap={3} vAlign="center">
         <div
           style={{
@@ -1666,6 +2257,452 @@ function EarnerStoryCard({
   );
 }
 
+/** Review card; fixed-width inside the marquee, fluid in the grid. */
+function ReviewCard({
+  review,
+  accent,
+  fixedWidth,
+}: {
+  review: Review;
+  accent: string;
+  fixedWidth?: boolean;
+}) {
+  return (
+    <div
+      className="kl-raise"
+      style={
+        {
+          ...styles.reviewCard,
+          ...(fixedWidth ? {width: 320, flexShrink: 0} : null),
+          '--kl-glow': tint(accent, 45),
+        } as CSSProperties
+      }>
+      <span
+        style={{...styles.starRow, color: accent}}
+        aria-label={`${review.stars} out of 5 stars`}>
+        {starString(review.stars)}
+      </span>
+      <p style={styles.quote}>“{review.quote}”</p>
+      <Text type="supporting" color="secondary">
+        {review.name} · {review.city} · rented a {review.item}
+      </Text>
+    </div>
+  );
+}
+
+/** Schematic mock row for the pinned-story stage panels. */
+function MockRow({
+  icon,
+  label,
+  sub,
+  trailing,
+  accent,
+}: {
+  icon: Glyph;
+  label: string;
+  sub?: string;
+  trailing?: string;
+  accent: string;
+}) {
+  return (
+    <div style={styles.mockRow}>
+      <span style={{color: accent, display: 'inline-flex', flexShrink: 0}}>
+        <Icon icon={icon} size="xsm" color="inherit" />
+      </span>
+      <span style={{flex: '1 1 0', minWidth: 0}}>
+        {label}
+        {sub != null ? (
+          <>
+            {' '}
+            <span style={styles.mockSub}>· {sub}</span>
+          </>
+        ) : null}
+      </span>
+      {trailing != null ? (
+        <span style={{...styles.ratingChip, color: accent}}>{trailing}</span>
+      ) : null}
+    </div>
+  );
+}
+
+/**
+ * The staged product-mock state for one pinned-story step. Composed from
+ * real layout — search pills, list rows, checklists, chips — per step id.
+ */
+function StageMock({stepId, accent}: {stepId: string; accent: string}) {
+  const chip = (label: string) => (
+    <span
+      style={{
+        ...styles.earnChip,
+        backgroundColor: tint(accent, 14),
+        color: accent,
+        alignSelf: 'flex-start',
+      }}>
+      {label}
+    </span>
+  );
+  switch (stepId) {
+    case 'find':
+      return (
+        <VStack gap={2}>
+          <div style={styles.vignetteSearch}>
+            <Icon icon={SearchIcon} size="sm" color="inherit" />
+            <span>Ski &amp; snowboard · Denver · Feb 13–16</span>
+          </div>
+          <MockRow
+            icon={MountainSnowIcon}
+            label="Rossignol Experience 86 set"
+            sub="$24/day · 0.6 mi"
+            trailing="4.9★"
+            accent={accent}
+          />
+          <MockRow
+            icon={CameraIcon}
+            label="Sony A7 IV + 24-70 f/2.8"
+            sub="$38/day · 1.1 mi"
+            trailing="5.0★"
+            accent={accent}
+          />
+          {chip('41,300 listings live today')}
+        </VStack>
+      );
+    case 'book':
+      return (
+        <VStack gap={2}>
+          <MockRow
+            icon={CalendarCheckIcon}
+            label="Rossignol Experience 86 set"
+            sub="3 days · Feb 13–16"
+            trailing="$72"
+            accent={accent}
+          />
+          <MockRow
+            icon={ShieldCheckIcon}
+            label="KitCover attached automatically"
+            sub="up to $25,000 · $75 max deductible"
+            accent={accent}
+          />
+          <MockRow
+            icon={CheckIcon}
+            label="No deposit — your card is never held"
+            accent={accent}
+          />
+          {chip('Booked · confirmation sent')}
+        </VStack>
+      );
+    case 'pickup':
+      return (
+        <VStack gap={2}>
+          <MockRow
+            icon={CheckIcon}
+            label="Photo check-in · owner"
+            sub="Sat 8:04 AM"
+            accent={accent}
+          />
+          <MockRow
+            icon={CheckIcon}
+            label="Photo check-in · renter"
+            sub="Sat 8:06 AM"
+            accent={accent}
+          />
+          <MockRow
+            icon={TruckIcon}
+            label="Doorstep delivery"
+            sub="from $9 in core zones"
+            accent={accent}
+          />
+          {chip('Condition on record — both directions')}
+        </VStack>
+      );
+    case 'paid':
+      return (
+        <VStack gap={2}>
+          <MockRow
+            icon={BanknoteIcon}
+            label="Payout started · $184"
+            sub="pickup confirmed"
+            accent={accent}
+          />
+          <MockRow
+            icon={CheckIcon}
+            label="Bank transfer · 1–2 business days"
+            sub="•••• 4821"
+            accent={accent}
+          />
+          {chip('No invoices, no chasing')}
+        </VStack>
+      );
+    case 'cover':
+      return (
+        <VStack gap={2}>
+          <MockRow
+            icon={ShieldCheckIcon}
+            label="$25,000 coverage · $0 owner deductible"
+            accent={accent}
+          />
+          <HStack gap={2} wrap="wrap">
+            {chip('Filed · day 0')}
+            {chip('Verified · day 1')}
+            {chip('Paid · day 3')}
+          </HStack>
+          <MockRow
+            icon={CheckIcon}
+            label="Median claim resolves in 3 days"
+            accent={accent}
+          />
+        </VStack>
+      );
+    case 'rules':
+      return (
+        <VStack gap={2}>
+          <MockRow icon={CheckIcon} label="Approve every request" accent={accent} />
+          <MockRow
+            icon={CheckIcon}
+            label="Buffer day between rentals"
+            accent={accent}
+          />
+          <MockRow
+            icon={CheckIcon}
+            label="Deposit required over $2,000"
+            accent={accent}
+          />
+          {chip('Block dates whenever you like')}
+        </VStack>
+      );
+    default:
+      return (
+        <VStack gap={2}>
+          <MockRow
+            icon={SparklesIcon}
+            label="$42/day suggested"
+            sub="from 214 comparable listings"
+            accent={accent}
+          />
+          {chip('+ weekend & peak-season bumps')}
+          <MockRow
+            icon={CheckIcon}
+            label="Override any time, per listing"
+            accent={accent}
+          />
+        </VStack>
+      );
+  }
+}
+
+/**
+ * The pinned scroll story: a sticky stage inside a tall container whose
+ * scroll progress selects the active step, crossfades the staged mock,
+ * and fills the numbered rail. Steps are clickable (scrolls the page to
+ * the matching progress point). Under reduced motion this renders as a
+ * static stacked sequence instead.
+ */
+function PinnedStory({
+  story,
+  accent,
+  reduced,
+  stacked,
+  compactHead,
+  stickyH,
+  rangeH,
+  progress,
+  onStepJump,
+  pinRef,
+  columnStyle,
+}: {
+  story: {eyebrow: string; title: string; steps: readonly PinStep[]};
+  accent: string;
+  reduced: boolean;
+  stacked: boolean;
+  compactHead: boolean;
+  stickyH: number;
+  rangeH: number;
+  progress: number;
+  onStepJump: (index: number, count: number) => void;
+  pinRef: RefObject<HTMLDivElement | null>;
+  columnStyle: CSSProperties;
+}) {
+  const steps = story.steps;
+  const count = steps.length;
+  const active = Math.min(count - 1, Math.floor((progress / 100) * count));
+
+  if (reduced) {
+    // Static stacked sequence — everything visible, no pinning.
+    return (
+      <div style={{...columnStyle, paddingBlock: 64}}>
+        <VStack gap={6}>
+          <SectionHead
+            accent={accent}
+            eyebrow={story.eyebrow}
+            title={story.title}
+            compact={compactHead}
+          />
+          {steps.map((step, index) => (
+            <div key={step.id} style={{...styles.stagePanel, overflow: 'visible'}}>
+              <VStack gap={3}>
+                <HStack gap={3} vAlign="center">
+                  <div
+                    style={{
+                      ...styles.stepDisc,
+                      backgroundColor: tint(accent, 14),
+                      color: accent,
+                    }}
+                    aria-hidden="true">
+                    {index + 1}
+                  </div>
+                  <Text type="label">{step.title}</Text>
+                </HStack>
+                <Text type="body" color="secondary">
+                  {step.copy}
+                </Text>
+                <StageMock stepId={step.id} accent={accent} />
+              </VStack>
+            </div>
+          ))}
+        </VStack>
+      </div>
+    );
+  }
+
+  const stageHeight = Math.max(300, Math.min(430, stickyH - (stacked ? 240 : 170)));
+
+  return (
+    <div ref={pinRef} style={{position: 'relative', height: stickyH + rangeH}}>
+      <div style={{...styles.pinStage, height: stickyH}}>
+        <div style={{...columnStyle}}>
+          <VStack gap={5}>
+            <SectionHead
+              accent={accent}
+              eyebrow={story.eyebrow}
+              title={story.title}
+              compact={compactHead}
+            />
+            <div
+              style={{
+                display: 'flex',
+                gap: 'var(--spacing-6)',
+                flexDirection: stacked ? 'column' : 'row',
+                alignItems: 'stretch',
+              }}>
+              {stacked ? (
+                <HStack gap={2} wrap="wrap">
+                  {steps.map((step, index) => (
+                    <button
+                      key={step.id}
+                      type="button"
+                      aria-pressed={index === active}
+                      onClick={() => onStepJump(index, count)}
+                      style={{
+                        ...styles.stepChip,
+                        ...(index === active
+                          ? {
+                              borderColor: accent,
+                              boxShadow: `0 0 0 1px ${accent}`,
+                              color: accent,
+                            }
+                          : null),
+                      }}>
+                      <span aria-hidden="true">{index + 1}</span>
+                      {step.title}
+                    </button>
+                  ))}
+                </HStack>
+              ) : (
+                <div style={{flex: '5 1 0', minWidth: 0, position: 'relative'}}>
+                  <div style={styles.railTrack} aria-hidden="true">
+                    <div
+                      style={{
+                        ...styles.railFill,
+                        backgroundColor: accent,
+                        transform: `scaleY(${progress / 100})`,
+                      }}
+                    />
+                  </div>
+                  <VStack gap={2}>
+                    {steps.map((step, index) => (
+                      <button
+                        key={step.id}
+                        type="button"
+                        aria-pressed={index === active}
+                        onClick={() => onStepJump(index, count)}
+                        style={{
+                          ...styles.stepBtn,
+                          ...(index === active ? styles.stepBtnActive : null),
+                        }}>
+                        <div
+                          style={{
+                            ...styles.stepDisc,
+                            backgroundColor:
+                              index <= active ? accent : tint(accent, 14),
+                            color: index <= active ? ACCENT_INK : accent,
+                            transition: 'background-color 0.3s ease, color 0.3s ease',
+                          }}
+                          aria-hidden="true">
+                          {index + 1}
+                        </div>
+                        <VStack gap={1}>
+                          <Text type="label">{step.title}</Text>
+                          <Text type="supporting" color="secondary">
+                            {step.copy}
+                          </Text>
+                        </VStack>
+                      </button>
+                    ))}
+                  </VStack>
+                </div>
+              )}
+              <div
+                style={{
+                  flex: stacked ? undefined : '7 1 0',
+                  minWidth: 0,
+                  position: 'relative',
+                  height: stageHeight,
+                }}>
+                {steps.map((step, index) => (
+                  <div
+                    key={step.id}
+                    aria-hidden={index !== active}
+                    style={{
+                      ...styles.stagePanel,
+                      position: 'absolute',
+                      inset: 0,
+                      opacity: index === active ? 1 : 0,
+                      transform:
+                        index === active ? 'none' : 'translateY(14px) scale(0.99)',
+                      transition:
+                        'opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
+                      pointerEvents: index === active ? 'auto' : 'none',
+                    }}>
+                    <span
+                      style={{...styles.ghostNumeral, color: tint(accent, 12)}}
+                      aria-hidden="true">
+                      0{index + 1}
+                    </span>
+                    <VStack gap={3}>
+                      <HStack gap={2} vAlign="center">
+                        <span
+                          style={{
+                            ...styles.infoGlyph,
+                            backgroundColor: tint(accent, 14),
+                            color: accent,
+                          }}
+                          aria-hidden="true">
+                          <Icon icon={step.icon} size="sm" color="inherit" />
+                        </span>
+                        <Text type="label">{step.title}</Text>
+                      </HStack>
+                      <StageMock stepId={step.id} accent={accent} />
+                    </VStack>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </VStack>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ============= PAGE =============
 
 export default function MarketplaceDuoLandingTemplate() {
@@ -1681,31 +2718,104 @@ export default function MarketplaceDuoLandingTemplate() {
   const isHeroStacked = width > 0 && width <= 840;
   const isPhone = width > 0 && width <= 520;
   const catCols = width > 1000 ? 4 : width > 680 ? 3 : 2;
-  const cardCols4 = width > 1000 ? 4 : width > 640 ? 2 : 1;
   const reviewCols = width > 1000 ? 3 : width > 640 ? 2 : 1;
   const storyCols = width > 900 ? 3 : width > 620 ? 2 : 1;
-  const stepCols = width > 840 ? 3 : 1;
   const statCols = width > 680 ? 4 : 2;
   const footerCols = width > 900 ? 4 : 2;
+  const heroFont = width > 1000 ? 76 : width > 820 ? 64 : width > 600 ? 52 : 40;
 
   const reduced = usePrefersReducedMotion();
 
-  // ---- sticky-nav toggle: appears after the hero toggle scrolls away ----
+  // ---- scroll chrome: condensed nav, re-docked toggle, pinned scene ----
   const pageRef = useRef<HTMLDivElement | null>(null);
   const heroRef = useRef<HTMLDivElement | null>(null);
+  const pinRef = useRef<HTMLDivElement | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [showNavToggle, setShowNavToggle] = useState(false);
+  const [pinProgress, setPinProgress] = useState(0);
+
+  const viewH = useElementHeight(pageRef);
+  const stickyH = Math.max(430, Math.min(660, (viewH || 720) - STICKY_TOP - 24));
+  const rangeH = Math.round(stickyH * 1.45);
 
   const onPageScroll = (event: UIEvent<HTMLDivElement>) => {
+    const container = event.currentTarget;
+    const top = container.scrollTop;
+    setIsScrolled(top > 24);
     const hero = heroRef.current;
     const gate =
       hero != null ? hero.offsetTop + hero.offsetHeight - NAV_ALLOWANCE : 360;
-    setShowNavToggle(event.currentTarget.scrollTop > gate);
+    setShowNavToggle(top > gate);
+    const pin = pinRef.current;
+    if (pin != null && !reduced) {
+      const pinRect = pin.getBoundingClientRect();
+      const pageRect = container.getBoundingClientRect();
+      const range = pinRect.height - stickyH;
+      if (range > 0) {
+        const raw = (pageRect.top + STICKY_TOP - pinRect.top) / range;
+        setPinProgress(Math.round(Math.max(0, Math.min(1, raw)) * 100));
+      }
+    }
+  };
+
+  /** Button path into the pinned scene: scroll to a step's progress point. */
+  const jumpToPinStep = (index: number, count: number) => {
+    const container = pageRef.current;
+    const pin = pinRef.current;
+    if (container == null || pin == null) {
+      return;
+    }
+    const pinTop =
+      pin.getBoundingClientRect().top -
+      container.getBoundingClientRect().top +
+      container.scrollTop;
+    const range = pin.offsetHeight - stickyH;
+    const target = pinTop - STICKY_TOP + ((index + 0.5) / count) * range;
+    container.scrollTo({top: target, behavior: reduced ? 'auto' : 'smooth'});
+  };
+
+  // ---- hero parallax: pointer vars drive the satellite transforms ----
+  const heroStageRef = useRef<HTMLDivElement | null>(null);
+  const onHeroPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (reduced || isHeroStacked) {
+      return;
+    }
+    const stage = heroStageRef.current;
+    if (stage == null) {
+      return;
+    }
+    const rect = stage.getBoundingClientRect();
+    const px = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+    const py = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+    stage.style.setProperty('--kl-px', px.toFixed(3));
+    stage.style.setProperty('--kl-py', py.toFixed(3));
+  };
+  const onHeroPointerLeave = () => {
+    const stage = heroStageRef.current;
+    if (stage != null) {
+      stage.style.setProperty('--kl-px', '0');
+      stage.style.setProperty('--kl-py', '0');
+    }
+  };
+
+  // ---- dark CTA band spotlight (CSS vars, no re-render) ----
+  const ctaRef = useRef<HTMLDivElement | null>(null);
+  const onCtaPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (reduced) {
+      return;
+    }
+    const band = ctaRef.current;
+    if (band == null) {
+      return;
+    }
+    const rect = band.getBoundingClientRect();
+    band.style.setProperty('--kl-mx', `${Math.round(event.clientX - rect.left)}px`);
+    band.style.setProperty('--kl-my', `${Math.round(event.clientY - rect.top)}px`);
   };
 
   // ---- nav menu (compact widths) ----
   const [isNavMenuOpen, setIsNavMenuOpen] = useState(false);
   const navRef = useRef<HTMLElement | null>(null);
-  const menuTriggerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!isNavMenuOpen) {
@@ -1811,7 +2921,7 @@ export default function MarketplaceDuoLandingTemplate() {
     setEmailError(null);
   };
 
-  const swapAnimation = reduced ? undefined : 'kitloopSwapIn 360ms ease both';
+  const swapAnimation = reduced ? undefined : 'klSwapIn 420ms cubic-bezier(0.16, 1, 0.3, 1) both';
   const columnStyle: CSSProperties = {
     ...styles.column,
     ...(isPhone ? styles.columnPhone : null),
@@ -1820,6 +2930,7 @@ export default function MarketplaceDuoLandingTemplate() {
     ...styles.section,
     ...(isPhone ? styles.sectionCompact : null),
   };
+  const glowVar = {'--kl-glow': tint(accent, 45)} as CSSProperties;
   const anchors: readonly {id: SectionId; label: string}[] = [
     {id: 'path', label: theme.pathAnchorLabel},
     {id: 'trust', label: theme.trustAnchorLabel},
@@ -1830,8 +2941,19 @@ export default function MarketplaceDuoLandingTemplate() {
   // ============= CHROME =============
 
   const navBar = (
-    <nav ref={navRef} style={styles.navBar} aria-label="Kitloop">
-      <div style={styles.navInner}>
+    <nav
+      ref={navRef}
+      style={{
+        ...styles.navBar,
+        backgroundColor: isScrolled
+          ? 'color-mix(in srgb, var(--color-background-body) 88%, transparent)'
+          : 'transparent',
+        borderBottom: isScrolled
+          ? '1px solid var(--color-border)'
+          : '1px solid transparent',
+      }}
+      aria-label="Kitloop">
+      <div style={{...styles.navInner, minHeight: isScrolled ? 48 : 60}}>
         <BrandMark />
         {!isNavCompact ? (
           <HStack gap={0} vAlign="center">
@@ -1839,6 +2961,7 @@ export default function MarketplaceDuoLandingTemplate() {
               <button
                 key={anchor.id}
                 type="button"
+                className="kl-navlink"
                 style={styles.navLink}
                 onClick={() => jumpToSection(anchor.id)}>
                 {anchor.label}
@@ -1866,14 +2989,12 @@ export default function MarketplaceDuoLandingTemplate() {
             onClick={() => jumpToSection('cta')}
           />
         ) : (
-          <div ref={menuTriggerRef}>
-            <IconButton40
-              label={isNavMenuOpen ? 'Close menu' : 'Open menu'}
-              icon={isNavMenuOpen ? XIcon : MenuIcon}
-              ariaExpanded={isNavMenuOpen}
-              onClick={() => setIsNavMenuOpen(open => !open)}
-            />
-          </div>
+          <IconButton40
+            label={isNavMenuOpen ? 'Close menu' : 'Open menu'}
+            icon={isNavMenuOpen ? XIcon : MenuIcon}
+            ariaExpanded={isNavMenuOpen}
+            onClick={() => setIsNavMenuOpen(open => !open)}
+          />
         )}
         {isNavCompact && isNavMenuOpen ? (
           <div style={styles.navMenu} role="menu" aria-label="Site menu">
@@ -1903,61 +3024,119 @@ export default function MarketplaceDuoLandingTemplate() {
     </nav>
   );
 
-  // ============= HERO =============
+  // ============= HERO THEATER =============
+
+  const satellitePositions: readonly CSSProperties[] = [
+    {top: -22, right: -6},
+    {bottom: 28, left: -28},
+    {top: '58%', right: -26},
+  ];
+  const satelliteParallax = [
+    {x: 9, y: 7},
+    {x: -7, y: 5},
+    {x: 6, y: -6},
+  ];
+  const satelliteBob = [
+    {duration: 7.2, delay: -2.1},
+    {duration: 8.4, delay: -4.3},
+    {duration: 6.6, delay: -1.2},
+  ];
 
   const hero = (
-    <div ref={heroRef} style={columnStyle}>
+    <div ref={heroRef} style={styles.heroBand}>
+      <Aurora accent={accent} partner={theme.partner} reduced={reduced} />
       <div
         style={{
-          ...styles.hero,
-          ...(isHeroStacked ? styles.heroStacked : null),
+          ...columnStyle,
+          position: 'relative',
+          paddingTop: isPhone ? 104 : 136,
+          paddingBottom: isPhone ? 56 : 104,
         }}>
-        <div style={styles.heroCopy}>
-          <p style={{...styles.eyebrow, color: accent}}>
-            Peer-to-peer gear rental · 12 cities
-          </p>
-          <AudienceToggle
-            audience={audience}
-            onChange={switchAudience}
-            size="lg"
-          />
-          <div key={`copy-${audience}`} style={{animation: swapAnimation}}>
-            <VStack gap={3}>
-              <h1
-                style={{
-                  ...styles.heroHeadline,
-                  ...(isPhone ? styles.heroHeadlinePhone : null),
-                }}>
-                {theme.headline}
-              </h1>
-              <p style={styles.heroSubcopy}>{theme.subcopy}</p>
-            </VStack>
-          </div>
-          <HStack gap={2} vAlign="center" wrap="wrap">
-            <AccentButton
-              label={theme.primaryCta}
-              accent={accent}
-              icon={ArrowRightIcon}
-              onClick={() => jumpToSection(theme.primaryTarget)}
-            />
-            <Button
-              label={theme.secondaryCta}
-              variant="secondary"
-              onClick={() => jumpToSection(theme.secondaryTarget)}
-            />
-          </HStack>
-          <Text type="supporting" color="secondary">
-            {theme.finePrint}
-          </Text>
-        </div>
         <div
-          key={`vignette-${audience}`}
-          style={{...styles.heroVignette, animation: swapAnimation}}>
-          {audience === 'rent' ? (
-            <RentVignette accent={accent} />
-          ) : (
-            <EarnVignette accent={accent} />
-          )}
+          style={{
+            ...styles.hero,
+            ...(isHeroStacked ? styles.heroStacked : null),
+          }}>
+          <div style={styles.heroCopy}>
+            <p style={{...styles.eyebrow, color: accent, backgroundColor: tint(accent, 10)}}>
+              Peer-to-peer gear rental · 12 cities
+            </p>
+            <AudienceToggle
+              audience={audience}
+              onChange={switchAudience}
+              size="lg"
+            />
+            <div key={`copy-${audience}`} style={{animation: swapAnimation}}>
+              <VStack gap={3}>
+                <h1 style={{...styles.heroHeadline, fontSize: heroFont}}>
+                  {theme.headlineLead}{' '}
+                  <span
+                    style={{
+                      backgroundImage: `linear-gradient(94deg, ${accent} 10%, color-mix(in srgb, ${accent} 42%, ${theme.partner}) 90%)`,
+                      WebkitBackgroundClip: 'text',
+                      backgroundClip: 'text',
+                      color: 'transparent',
+                    }}>
+                    {theme.headlineTail}
+                  </span>
+                </h1>
+                <p style={styles.heroSubcopy}>{theme.subcopy}</p>
+              </VStack>
+            </div>
+            <HStack gap={2} vAlign="center" wrap="wrap">
+              <AccentButton
+                label={theme.primaryCta}
+                accent={accent}
+                icon={ArrowRightIcon}
+                onClick={() => jumpToSection(theme.primaryTarget)}
+              />
+              <Button
+                label={theme.secondaryCta}
+                variant="secondary"
+                onClick={() => jumpToSection(theme.secondaryTarget)}
+              />
+            </HStack>
+            <Text type="supporting" color="secondary">
+              {theme.finePrint}
+            </Text>
+          </div>
+          <div
+            ref={heroStageRef}
+            style={styles.heroStage}
+            onPointerMove={onHeroPointerMove}
+            onPointerLeave={onHeroPointerLeave}>
+            <div
+              key={`vignette-${audience}`}
+              style={{animation: swapAnimation, position: 'relative'}}>
+              <div style={{perspective: 1400}}>
+                <div
+                  style={{
+                    transform: isHeroStacked
+                      ? undefined
+                      : 'rotateY(-6deg) rotateX(2.5deg)',
+                  }}>
+                  {audience === 'rent' ? (
+                    <RentVignette accent={accent} />
+                  ) : (
+                    <EarnVignette accent={accent} />
+                  )}
+                </div>
+              </div>
+              {!isHeroStacked
+                ? SATELLITES[audience].map((chip, index) => (
+                    <Satellite
+                      key={chip.id}
+                      chip={chip}
+                      accent={accent}
+                      reduced={reduced}
+                      position={satellitePositions[index]}
+                      parallax={satelliteParallax[index]}
+                      bob={satelliteBob[index]}
+                    />
+                  ))
+                : null}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1967,36 +3146,48 @@ export default function MarketplaceDuoLandingTemplate() {
 
   const renterPath = (
     <>
-      <section ref={registerSection('path')} style={{...columnStyle, ...sectionStyle}}>
+      <section
+        ref={registerSection('path')}
+        style={{...columnStyle, ...sectionStyle}}>
         <Reveal reduced={reduced}>
           <SectionHead
             accent={accent}
+            compact={isPhone}
             eyebrow="Browse by category"
             title="41,300 listings, eight aisles, zero storage units"
             copy="Pick a category to see what it looks like near you."
           />
         </Reveal>
-        <Reveal reduced={reduced} delay={80}>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: `repeat(${catCols}, minmax(0, 1fr))`,
-              gap: 'var(--spacing-3)',
-            }}>
-            {CATEGORIES.map(cat => {
-              const isSelected = cat.id === selectedCategory;
-              return (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: `repeat(${catCols}, minmax(0, 1fr))`,
+            gap: 'var(--spacing-3)',
+          }}>
+          {CATEGORIES.map((cat, index) => {
+            const isSelected = cat.id === selectedCategory;
+            const column = index % catCols;
+            return (
+              <Reveal
+                key={cat.id}
+                reduced={reduced}
+                delay={(index % catCols) * 70}
+                style={{
+                  // Staggered column offsets break the flat grid at wide widths.
+                  marginTop: !isPhone && catCols === 4 && column % 2 === 1 ? 20 : 0,
+                }}>
                 <button
-                  key={cat.id}
                   type="button"
                   aria-pressed={isSelected}
                   onClick={() => setSelectedCategory(cat.id)}
+                  className="kl-raise"
                   style={{
                     ...styles.categoryTile,
+                    ...glowVar,
                     ...(isSelected
                       ? {
                           borderColor: accent,
-                          boxShadow: `0 0 0 1px ${accent}`,
+                          boxShadow: `0 0 0 1px ${accent}, ${SHADOW_RAISED}`,
                         }
                       : null),
                   }}>
@@ -2017,128 +3208,155 @@ export default function MarketplaceDuoLandingTemplate() {
                     /day
                   </Text>
                 </button>
-              );
-            })}
-          </div>
-        </Reveal>
+              </Reveal>
+            );
+          })}
+        </div>
         <p style={styles.captionLine} aria-live="polite">
           {category.label} — {formatCount(category.listings)} listings · from $
           {category.fromPrice}/day · avg owner rating {category.rating}★
         </p>
       </section>
 
-      <section ref={registerSection('how')} style={{...columnStyle, ...sectionStyle}}>
-        <Reveal reduced={reduced}>
-          <SectionHead
-            accent={accent}
-            eyebrow="How it works"
-            title="Three steps between you and the good gear"
-          />
-        </Reveal>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: `repeat(${stepCols}, minmax(0, 1fr))`,
-            gap: 'var(--spacing-3)',
-          }}>
-          {HOW_STEPS.map((step, index) => (
-            <Reveal key={step.id} reduced={reduced} delay={index * 90}>
-              <div style={styles.stepCard}>
-                <HStack gap={2} vAlign="center">
-                  <div
-                    style={{
-                      ...styles.stepDisc,
-                      backgroundColor: tint(accent, 14),
-                      color: accent,
-                    }}
-                    aria-hidden="true">
-                    {index + 1}
-                  </div>
-                  <span style={{color: accent, display: 'inline-flex'}}>
-                    <Icon icon={step.icon} size="sm" color="inherit" />
-                  </span>
-                </HStack>
-                <Text type="label">{step.title}</Text>
-                <Text type="body" color="secondary">
-                  {step.copy}
-                </Text>
-              </div>
-            </Reveal>
-          ))}
-        </div>
+      <section
+        ref={registerSection('how')}
+        style={{
+          backgroundImage: DOT_GRID,
+          backgroundSize: '22px 22px',
+        }}>
+        <PinnedStory
+          story={PIN_STORIES.rent}
+          accent={accent}
+          reduced={reduced}
+          stacked={isHeroStacked}
+          compactHead={isPhone}
+          stickyH={stickyH}
+          rangeH={rangeH}
+          progress={pinProgress}
+          onStepJump={jumpToPinStep}
+          pinRef={pinRef}
+          columnStyle={columnStyle}
+        />
       </section>
 
       <div
         ref={registerSection('trust')}
-        style={{...styles.band, backgroundColor: tint(accent, 7)}}>
+        style={{backgroundColor: tint(accent, 7)}}>
         <section style={{...columnStyle, ...sectionStyle}}>
-          <Reveal reduced={reduced}>
-            <SectionHead
-              accent={accent}
-              eyebrow="Trust & insurance"
-              title="KitCover rides along on every rental"
-              copy="Borrowing a stranger’s $3,000 camera should feel boring. Here’s why it does."
-            />
-          </Reveal>
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: `repeat(${cardCols4}, minmax(0, 1fr))`,
-              gap: 'var(--spacing-3)',
+              display: 'flex',
+              gap: 'var(--spacing-7)',
+              flexDirection: isHeroStacked ? 'column' : 'row',
+              alignItems: isHeroStacked ? 'stretch' : 'center',
             }}>
-            {TRUST_CARDS.map((card, index) => (
-              <Reveal key={card.id} reduced={reduced} delay={index * 80}>
-                <div style={styles.infoCard}>
-                  <div
-                    style={{
-                      ...styles.infoGlyph,
-                      backgroundColor: tint(accent, 14),
-                      color: accent,
-                    }}
-                    aria-hidden="true">
-                    <Icon icon={card.icon} size="sm" color="inherit" />
-                  </div>
-                  <Text type="label">{card.title}</Text>
-                  <Text type="body" color="secondary">
-                    {card.copy}
-                  </Text>
-                </div>
+            <div style={{flex: '5 1 0', minWidth: 0}}>
+              <Reveal reduced={reduced}>
+                <VStack gap={4}>
+                  <SectionHead
+                    accent={accent}
+                    compact={isPhone}
+                    eyebrow="Trust & insurance"
+                    title="KitCover rides along on every rental"
+                    copy="Borrowing a stranger’s $3,000 camera should feel boring. Here’s why it does."
+                  />
+                  <VStack gap={1}>
+                    <p
+                      style={{
+                        ...styles.bigFigure,
+                        fontSize: isPhone ? 48 : 64,
+                        backgroundImage: `linear-gradient(94deg, ${accent} 10%, color-mix(in srgb, ${accent} 42%, ${theme.partner}) 90%)`,
+                        WebkitBackgroundClip: 'text',
+                        backgroundClip: 'text',
+                        color: 'transparent',
+                      }}>
+                      $25,000
+                    </p>
+                    <Text type="supporting" color="secondary">
+                      of coverage on every rental, automatically
+                    </Text>
+                  </VStack>
+                </VStack>
               </Reveal>
-            ))}
+            </div>
+            <div style={{flex: '7 1 0', minWidth: 0}}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: `repeat(${width > 640 ? 2 : 1}, minmax(0, 1fr))`,
+                  gap: 'var(--spacing-3)',
+                }}>
+                {TRUST_CARDS.map((card, index) => (
+                  <Reveal key={card.id} reduced={reduced} delay={index * 80}>
+                    <div className="kl-raise" style={{...styles.infoCard, ...glowVar}}>
+                      <div
+                        style={{
+                          ...styles.infoGlyph,
+                          backgroundColor: tint(accent, 14),
+                          color: accent,
+                        }}
+                        aria-hidden="true">
+                        <Icon icon={card.icon} size="sm" color="inherit" />
+                      </div>
+                      <Text type="label">{card.title}</Text>
+                      <Text type="body" color="secondary">
+                        {card.copy}
+                      </Text>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
       </div>
 
-      <section style={{...columnStyle, ...sectionStyle}}>
-        <Reveal reduced={reduced}>
-          <SectionHead
-            accent={accent}
-            eyebrow="Renter reviews"
-            title="4.9 average across 28,400 completed rentals"
-          />
-        </Reveal>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: `repeat(${reviewCols}, minmax(0, 1fr))`,
-            gap: 'var(--spacing-3)',
-          }}>
-          {REVIEWS.map((review, index) => (
-            <Reveal key={review.id} reduced={reduced} delay={(index % 3) * 80}>
-              <div style={styles.reviewCard}>
-                <span
-                  style={{...styles.starRow, color: accent}}
-                  aria-label={`${review.stars} out of 5 stars`}>
-                  {starString(review.stars)}
-                </span>
-                <p style={styles.quote}>“{review.quote}”</p>
-                <Text type="supporting" color="secondary">
-                  {review.name} · {review.city} · rented a {review.item}
-                </Text>
-              </div>
-            </Reveal>
-          ))}
+      <section
+        style={{
+          ...sectionStyle,
+          paddingBottom: isPhone ? 120 : 176,
+        }}>
+        <div style={columnStyle}>
+          <Reveal reduced={reduced}>
+            <SectionHead
+              accent={accent}
+              compact={isPhone}
+              eyebrow="Renter reviews"
+              title="4.9 average across 28,400 completed rentals"
+            />
+          </Reveal>
         </div>
+        {reduced ? (
+          <div style={columnStyle}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: `repeat(${reviewCols}, minmax(0, 1fr))`,
+                gap: 'var(--spacing-3)',
+              }}>
+              {REVIEWS.map(review => (
+                <ReviewCard key={review.id} review={review} accent={accent} />
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="kl-marquee" style={styles.marqueeBand}>
+            <div
+              className="kl-marquee-track"
+              style={{
+                ...styles.marqueeTrack,
+                animation: 'klMarquee 48s linear infinite',
+              }}>
+              {[...REVIEWS, ...REVIEWS].map((review, index) => (
+                <div
+                  key={`${review.id}-${index}`}
+                  aria-hidden={index >= REVIEWS.length}>
+                  <ReviewCard review={review} accent={accent} fixedWidth />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
     </>
   );
@@ -2149,108 +3367,115 @@ export default function MarketplaceDuoLandingTemplate() {
     <>
       <div
         ref={registerSection('path')}
-        style={{...styles.band, backgroundColor: tint(accent, 7)}}>
+        style={{backgroundColor: tint(accent, 7)}}>
         <section style={{...columnStyle, ...sectionStyle}}>
-          <Reveal reduced={reduced}>
-            <SectionHead
-              accent={accent}
-              eyebrow="Earnings calculator"
-              title="What would your gear make?"
-              copy="Pick what you’d list and how often it’s free. We’ll give you an honest number."
-            />
-          </Reveal>
-          <div ref={calcRef}>
-            <Reveal reduced={reduced} delay={80}>
-              <div style={styles.calcCard}>
-                <Selector
-                  label="What would you list?"
-                  options={ITEM_TYPES.map(type => ({
-                    value: type.id,
-                    label: `${type.label} · ~$${type.dailyRate}/day`,
-                  }))}
-                  value={itemTypeId}
-                  onChange={value => setItemTypeId(value)}
+          <div
+            style={{
+              display: 'flex',
+              gap: 'var(--spacing-7)',
+              flexDirection: isHeroStacked ? 'column' : 'row',
+              alignItems: isHeroStacked ? 'stretch' : 'center',
+            }}>
+            <div style={{flex: '5 1 0', minWidth: 0}}>
+              <Reveal reduced={reduced}>
+                <SectionHead
+                  accent={accent}
+                  compact={isPhone}
+                  eyebrow="Earnings calculator"
+                  title="What would your gear make?"
+                  copy="Pick what you’d list and how often it’s free. We’ll give you an honest number."
                 />
-                <Slider
-                  label="Days your gear is free each week"
-                  min={1}
-                  max={7}
-                  step={1}
-                  value={daysPerWeek}
-                  onChange={setDaysPerWeek}
-                  valueDisplay="text"
-                  formatValue={d => `${d} ${d === 1 ? 'day' : 'days'}/week`}
-                />
-                <VStack gap={1}>
-                  <span style={{...styles.calcEstimate, color: accent}}>
-                    <AnimatedNumber
-                      value={monthlyEstimate}
-                      isActive={calcInView}
-                      reduced={reduced}
-                      format={n => `$${formatCount(n)}/mo`}
-                    />
-                  </span>
-                  <Text type="body">
-                    Typical range ${formatCount(rangeLow)}–$
-                    {formatCount(rangeHigh)}/mo at{' '}
-                    {Math.round(itemType.utilization * 100)}% of your listed
-                    days booked.
-                  </Text>
-                  {itemType.note != null ? (
-                    <Text type="supporting" color="secondary">
-                      {itemType.note}
+              </Reveal>
+            </div>
+            <div ref={calcRef} style={{flex: '7 1 0', minWidth: 0}}>
+              <Reveal reduced={reduced} delay={80}>
+                <div style={styles.calcCard}>
+                  <Selector
+                    label="What would you list?"
+                    options={ITEM_TYPES.map(type => ({
+                      value: type.id,
+                      label: `${type.label} · ~$${type.dailyRate}/day`,
+                    }))}
+                    value={itemTypeId}
+                    onChange={value => setItemTypeId(value)}
+                  />
+                  <Slider
+                    label="Days your gear is free each week"
+                    min={1}
+                    max={7}
+                    step={1}
+                    value={daysPerWeek}
+                    onChange={setDaysPerWeek}
+                    valueDisplay="text"
+                    formatValue={d => `${d} ${d === 1 ? 'day' : 'days'}/week`}
+                  />
+                  <VStack gap={1}>
+                    <span
+                      style={{
+                        ...styles.calcEstimate,
+                        fontSize: isPhone ? 40 : 56,
+                        color: accent,
+                      }}>
+                      <AnimatedNumber
+                        value={monthlyEstimate}
+                        isActive={calcInView}
+                        reduced={reduced}
+                        format={n => `$${formatCount(n)}/mo`}
+                      />
+                    </span>
+                    <Text type="body">
+                      Typical range ${formatCount(rangeLow)}–$
+                      {formatCount(rangeHigh)}/mo at{' '}
+                      {Math.round(itemType.utilization * 100)}% of your listed
+                      days booked.
                     </Text>
-                  ) : null}
-                  <Text type="supporting" color="secondary">
-                    {CALC_DISCLOSURE}
-                  </Text>
-                </VStack>
-              </div>
-            </Reveal>
+                    {itemType.note != null ? (
+                      <Text type="supporting" color="secondary">
+                        {itemType.note}
+                      </Text>
+                    ) : null}
+                    <Text type="supporting" color="secondary">
+                      {CALC_DISCLOSURE}
+                    </Text>
+                  </VStack>
+                </div>
+              </Reveal>
+            </div>
           </div>
         </section>
       </div>
 
-      <section ref={registerSection('trust')} style={{...columnStyle, ...sectionStyle}}>
-        <Reveal reduced={reduced}>
-          <SectionHead
-            accent={accent}
-            eyebrow="Payouts & protection"
-            title="Lend on your terms, paid on ours: fast"
-          />
-        </Reveal>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: `repeat(${cardCols4}, minmax(0, 1fr))`,
-            gap: 'var(--spacing-3)',
-          }}>
-          {PAYOUT_CARDS.map((card, index) => (
-            <Reveal key={card.id} reduced={reduced} delay={index * 80}>
-              <div style={styles.infoCard}>
-                <div
-                  style={{
-                    ...styles.infoGlyph,
-                    backgroundColor: tint(accent, 14),
-                    color: accent,
-                  }}
-                  aria-hidden="true">
-                  <Icon icon={card.icon} size="sm" color="inherit" />
-                </div>
-                <Text type="label">{card.title}</Text>
-                <Text type="body" color="secondary">
-                  {card.copy}
-                </Text>
-              </div>
-            </Reveal>
-          ))}
-        </div>
+      <section
+        ref={registerSection('trust')}
+        style={{
+          backgroundImage: DOT_GRID,
+          backgroundSize: '22px 22px',
+        }}>
+        <PinnedStory
+          story={PIN_STORIES.earn}
+          accent={accent}
+          reduced={reduced}
+          stacked={isHeroStacked}
+          compactHead={isPhone}
+          stickyH={stickyH}
+          rangeH={rangeH}
+          progress={pinProgress}
+          onStepJump={jumpToPinStep}
+          pinRef={pinRef}
+          columnStyle={columnStyle}
+        />
       </section>
 
-      <section style={{...columnStyle, ...sectionStyle}}>
+      <section
+        style={{
+          ...columnStyle,
+          ...sectionStyle,
+          paddingBottom: isPhone ? 120 : 176,
+        }}>
         <Reveal reduced={reduced}>
           <SectionHead
             accent={accent}
+            compact={isPhone}
             eyebrow="Top-earner stories"
             title="The gear shelf that pays for itself"
           />
@@ -2276,194 +3501,323 @@ export default function MarketplaceDuoLandingTemplate() {
 
   // ============= SHARED SECTIONS =============
 
-  const statsBand = (
-    <div style={{...styles.band, backgroundColor: tint(accent, 7)}}>
-      <section style={{...columnStyle, ...sectionStyle}}>
-        <Reveal reduced={reduced}>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: `repeat(${statCols}, minmax(0, 1fr))`,
-              gap: 'var(--spacing-4)',
-            }}>
-            {STATS.map(stat => (
-              <StatFigure
-                key={stat.id}
-                stat={stat}
-                accent={accent}
-                reduced={reduced}
-              />
-            ))}
+  // The cities band: tinted, aurora-lit, and entered by the floating stats
+  // panel that deliberately crosses the section boundary above it.
+  const citiesBand = (
+    <div
+      style={{
+        position: 'relative',
+        overflow: 'hidden',
+        backgroundColor: tint(accent, 6),
+      }}>
+      <Aurora accent={accent} partner={theme.partner} reduced={reduced} dim />
+      <div style={{...columnStyle, position: 'relative'}}>
+        <Reveal
+          reduced={reduced}
+          style={{marginTop: isPhone ? -72 : -96}}>
+          <div style={styles.statsPanel}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: `repeat(${statCols}, minmax(0, 1fr))`,
+                gap: 'var(--spacing-4)',
+              }}>
+              {STATS.map(stat => (
+                <StatFigure
+                  key={stat.id}
+                  stat={stat}
+                  accent={accent}
+                  reduced={reduced}
+                  compact={isPhone}
+                />
+              ))}
+            </div>
           </div>
         </Reveal>
+      </div>
+      <section
+        ref={registerSection('cities')}
+        style={{...columnStyle, ...sectionStyle, position: 'relative'}}>
+        <div
+          style={{
+            display: 'flex',
+            gap: 'var(--spacing-7)',
+            flexDirection: isHeroStacked ? 'column' : 'row',
+            alignItems: isHeroStacked ? 'stretch' : 'flex-start',
+          }}>
+          <div style={{flex: '5 1 0', minWidth: 0}}>
+            <Reveal reduced={reduced}>
+              <VStack gap={4}>
+                <SectionHead
+                  accent={accent}
+                  compact={isPhone}
+                  eyebrow="Where Kitloop lives"
+                  title="Live in 12 cities and counting"
+                  copy="Tap a city to see how deep the local shelf goes."
+                />
+                <p style={styles.captionLine} aria-live="polite">
+                  {city.name} — {formatCount(city.listings)} listings · avg
+                  pickup {city.pickupMiles} mi · top category: {city.topCategory}
+                </p>
+              </VStack>
+            </Reveal>
+          </div>
+          <div style={{flex: '7 1 0', minWidth: 0}}>
+            <Reveal reduced={reduced} delay={80}>
+              <HStack gap={2} wrap="wrap">
+                {CITIES.map(c => {
+                  const isSelected = c.id === selectedCity;
+                  return (
+                    <button
+                      key={c.id}
+                      type="button"
+                      aria-pressed={isSelected}
+                      onClick={() => setSelectedCity(c.id)}
+                      style={{
+                        ...styles.cityChip,
+                        ...(isSelected
+                          ? {
+                              borderColor: accent,
+                              boxShadow: `0 0 0 1px ${accent}, ${SHADOW_RAISED}`,
+                              color: accent,
+                            }
+                          : null),
+                      }}>
+                      <Icon icon={MapPinIcon} size="xsm" color="inherit" />
+                      {c.name}
+                    </button>
+                  );
+                })}
+              </HStack>
+            </Reveal>
+          </div>
+        </div>
       </section>
     </div>
   );
 
-  const citiesSection = (
-    <section ref={registerSection('cities')} style={{...columnStyle, ...sectionStyle}}>
-      <Reveal reduced={reduced}>
-        <SectionHead
-          accent={accent}
-          eyebrow="Where Kitloop lives"
-          title="Live in 12 cities and counting"
-          copy="Tap a city to see how deep the local shelf goes."
-        />
-      </Reveal>
-      <Reveal reduced={reduced} delay={80}>
-        <HStack gap={2} wrap="wrap">
-          {CITIES.map(c => {
-            const isSelected = c.id === selectedCity;
-            return (
-              <button
-                key={c.id}
-                type="button"
-                aria-pressed={isSelected}
-                onClick={() => setSelectedCity(c.id)}
-                style={{
-                  ...styles.cityChip,
-                  ...(isSelected
-                    ? {
-                        borderColor: accent,
-                        boxShadow: `0 0 0 1px ${accent}`,
-                        color: accent,
-                      }
-                    : null),
-                }}>
-                <Icon icon={MapPinIcon} size="xsm" color="inherit" />
-                {c.name}
-              </button>
-            );
-          })}
-        </HStack>
-      </Reveal>
-      <p style={styles.captionLine} aria-live="polite">
-        {city.name} — {formatCount(city.listings)} listings · avg pickup{' '}
-        {city.pickupMiles} mi · top category: {city.topCategory}
-      </p>
-    </section>
-  );
-
   const faqSection = (
-    <section ref={registerSection('faq')} style={{...columnStyle, ...sectionStyle}}>
-      <Reveal reduced={reduced}>
-        <SectionHead accent={accent} eyebrow="FAQ" title="Fair questions, straight answers" />
-      </Reveal>
-      <TabList
-        value={faqAudience}
-        onChange={value => setFaqOverride(value as Audience)}
-        aria-label="FAQ audience"
-        hasDivider>
-        <Tab value="rent" label="For renters" />
-        <Tab value="earn" label="For owners" />
-      </TabList>
-      <VStack gap={2}>
-        {FAQ[faqAudience].map(entry => {
-          const key = `${faqAudience}-${entry.id}`;
-          return (
-            <div
-              key={key}
-              style={{
-                border: '1px solid var(--color-border)',
-                borderRadius: 12,
-                padding: 'var(--spacing-2) var(--spacing-3)',
-                backgroundColor: 'var(--color-background-card)',
-              }}>
-              <Collapsible
-                isOpen={openFaqs.has(key)}
-                onOpenChange={isOpen => toggleFaq(key, isOpen)}
-                trigger={entry.question}>
-                <div style={{padding: 'var(--spacing-2) 0 var(--spacing-1)'}}>
-                  <Text type="body" color="secondary">
-                    {entry.answer}
-                  </Text>
-                </div>
-              </Collapsible>
-            </div>
-          );
-        })}
-      </VStack>
+    <section
+      ref={registerSection('faq')}
+      style={{...columnStyle, ...sectionStyle}}>
+      <div
+        style={{
+          display: 'flex',
+          gap: 'var(--spacing-7)',
+          flexDirection: isHeroStacked ? 'column' : 'row',
+          alignItems: isHeroStacked ? 'stretch' : 'flex-start',
+        }}>
+        <div style={{flex: '4 1 0', minWidth: 0}}>
+          <Reveal reduced={reduced}>
+            <SectionHead
+              accent={accent}
+              compact={isPhone}
+              eyebrow="FAQ"
+              title="Fair questions, straight answers"
+              copy="Deposit math, damage claims, taxes — the parts other marketplaces bury."
+            />
+          </Reveal>
+        </div>
+        <div style={{flex: '8 1 0', minWidth: 0}}>
+          <VStack gap={4}>
+            <TabList
+              value={faqAudience}
+              onChange={value => setFaqOverride(value as Audience)}
+              aria-label="FAQ audience"
+              hasDivider>
+              <Tab value="rent" label="For renters" />
+              <Tab value="earn" label="For owners" />
+            </TabList>
+            <VStack gap={2}>
+              {FAQ[faqAudience].map((entry, index) => {
+                const key = `${faqAudience}-${entry.id}`;
+                return (
+                  <Reveal key={key} reduced={reduced} delay={index * 60}>
+                    <div
+                      style={{
+                        border: '1px solid var(--color-border)',
+                        borderRadius: 12,
+                        padding: 'var(--spacing-2) var(--spacing-3)',
+                        backgroundColor: 'var(--color-background-card)',
+                        boxShadow: SHADOW_RAISED,
+                      }}>
+                      <Collapsible
+                        isOpen={openFaqs.has(key)}
+                        onOpenChange={isOpen => toggleFaq(key, isOpen)}
+                        trigger={entry.question}>
+                        <div style={{padding: 'var(--spacing-2) 0 var(--spacing-1)'}}>
+                          <Text type="body" color="secondary">
+                            {entry.answer}
+                          </Text>
+                        </div>
+                      </Collapsible>
+                    </div>
+                  </Reveal>
+                );
+              })}
+            </VStack>
+          </VStack>
+        </div>
+      </div>
     </section>
   );
 
+  // The signature scheme-locked dark band: gradient glows, a pointer-
+  // tracked spotlight, and a glass card hosting the email capture.
+  const brightAccent = brighten(accent);
   const ctaBand = (
-    <div
-      ref={registerSection('cta')}
-      style={{...styles.band, backgroundColor: tint(accent, 10)}}>
-      <section style={{...columnStyle, ...sectionStyle}}>
-        <Reveal reduced={reduced}>
-          <div key={`cta-${audience}`} style={{animation: swapAnimation}}>
-            <VStack gap={3}>
-              <Heading level={2}>{theme.ctaHeading}</Heading>
-              <Text type="body" color="secondary">
-                {theme.ctaCopy}
-              </Text>
-              {confirmedEmail == null ? (
-                <VStack gap={2}>
-                  <div
-                    style={{
-                      ...styles.emailRow,
-                      ...(isPhone ? styles.emailRowStacked : null),
-                    }}>
-                    <div style={styles.emailInput}>
-                      <TextInput
-                        label="Email address"
-                        isLabelHidden
-                        placeholder="you@example.com"
-                        value={email}
-                        onChange={value => {
-                          setEmail(value);
-                          setEmailError(null);
-                        }}
-                      />
-                    </div>
-                    <AccentButton
-                      label={theme.ctaButton}
-                      accent={accent}
-                      icon={ArrowRightIcon}
-                      onClick={submitEmail}
-                    />
-                  </div>
-                  {emailError != null ? (
-                    <p style={styles.emailError} role="alert">
-                      {emailError}
-                    </p>
-                  ) : null}
-                </VStack>
-              ) : (
-                <HStack gap={3} vAlign="center">
-                  <div
-                    style={{
-                      ...styles.successDisc,
-                      backgroundColor: tint(accent, 16),
-                      color: accent,
-                    }}
-                    aria-hidden="true">
-                    <Icon icon={MailCheckIcon} size="sm" color="inherit" />
-                  </div>
-                  <StackItem size="fill">
-                    <VStack gap={0}>
-                      <Text type="label">Check your inbox</Text>
-                      <Text type="body" color="secondary">
-                        We sent your link to {confirmedEmail}.
-                      </Text>
-                    </VStack>
-                  </StackItem>
-                  <Button
-                    label="Use a different email"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setConfirmedEmail(null)}
+    <div ref={registerSection('cta')} style={{display: 'block'}}>
+      <div
+        ref={ctaRef}
+        onPointerMove={onCtaPointerMove}
+        style={styles.darkBand}>
+        <div
+          aria-hidden="true"
+          style={{
+            ...styles.glowBlob,
+            width: 520,
+            height: 520,
+            top: '-30%',
+            left: '-10%',
+            opacity: 0.4,
+            background: `radial-gradient(circle at 40% 40%, color-mix(in srgb, ${accent} 55%, ${theme.partner}), transparent 70%)`,
+            animation: reduced ? undefined : 'klDriftA 40s ease-in-out infinite',
+          }}
+        />
+        <div
+          aria-hidden="true"
+          style={{
+            ...styles.glowBlob,
+            width: 440,
+            height: 440,
+            bottom: '-36%',
+            right: '-8%',
+            opacity: 0.35,
+            background: `radial-gradient(circle at 60% 40%, ${tint(accent, 70)}, transparent 70%)`,
+            animation: reduced ? undefined : 'klDriftB 46s ease-in-out infinite',
+          }}
+        />
+        {!reduced ? (
+          <div
+            aria-hidden="true"
+            style={{
+              ...styles.spotlight,
+              background: `radial-gradient(480px circle at var(--kl-mx, 60%) var(--kl-my, 40%), ${tint(brightAccent, 13)}, transparent 70%)`,
+            }}
+          />
+        ) : null}
+        <section
+          style={{...columnStyle, ...sectionStyle, position: 'relative'}}>
+          <div
+            key={`cta-${audience}`}
+            style={{
+              animation: swapAnimation,
+              display: 'flex',
+              gap: 'var(--spacing-7)',
+              flexDirection: isHeroStacked ? 'column' : 'row',
+              alignItems: isHeroStacked ? 'stretch' : 'center',
+            }}>
+            <div style={{flex: '6 1 0', minWidth: 0}}>
+              <Reveal reduced={reduced}>
+                <VStack gap={3}>
+                  <SectionHead
+                    accent={accent}
+                    compact={isPhone}
+                    onDark
+                    eyebrow={audience === 'rent' ? 'Ready when you are' : 'Start earning'}
+                    title={theme.ctaHeading}
+                    copy={theme.ctaCopy}
                   />
-                </HStack>
-              )}
-              <Text type="supporting" color="secondary">
-                {theme.finePrint}
-              </Text>
-            </VStack>
+                  <span style={{fontSize: 13, color: DARK_TEXT_SOFT}}>
+                    {theme.finePrint}
+                  </span>
+                </VStack>
+              </Reveal>
+            </div>
+            <div style={{flex: '6 1 0', minWidth: 0}}>
+              <Reveal reduced={reduced} delay={90}>
+                <div style={styles.glassCard}>
+                  {confirmedEmail == null ? (
+                    <>
+                      <span
+                        style={{
+                          ...styles.eyebrow,
+                          color: brightAccent,
+                          backgroundColor: tint(brightAccent, 12),
+                          alignSelf: 'flex-start',
+                        }}>
+                        {audience === 'rent' ? 'Get the app link' : 'Get the checklist'}
+                      </span>
+                      <div
+                        style={{
+                          ...styles.emailRow,
+                          ...(isPhone ? styles.emailRowStacked : null),
+                        }}>
+                        <div style={styles.emailInput}>
+                          <TextInput
+                            label="Email address"
+                            isLabelHidden
+                            placeholder="you@example.com"
+                            value={email}
+                            onChange={value => {
+                              setEmail(value);
+                              setEmailError(null);
+                            }}
+                          />
+                        </div>
+                        <AccentButton
+                          label={theme.ctaButton}
+                          accent={accent}
+                          fill={brightAccent}
+                          ink={DARK_INK}
+                          icon={ArrowRightIcon}
+                          onClick={submitEmail}
+                        />
+                      </div>
+                      {emailError != null ? (
+                        <p style={styles.emailError} role="alert">
+                          {emailError}
+                        </p>
+                      ) : null}
+                      <span style={{fontSize: 12.5, color: DARK_TEXT_SOFT}}>
+                        No spam — one link, one checklist, unsubscribe anytime.
+                      </span>
+                    </>
+                  ) : (
+                    <HStack gap={3} vAlign="center">
+                      <div
+                        style={{
+                          ...styles.successDisc,
+                          backgroundColor: tint(brightAccent, 18),
+                          color: brightAccent,
+                        }}
+                        aria-hidden="true">
+                        <Icon icon={MailCheckIcon} size="sm" color="inherit" />
+                      </div>
+                      <StackItem size="fill">
+                        <VStack gap={0}>
+                          <span style={{fontSize: 15, fontWeight: 700, color: DARK_TEXT}}>
+                            Check your inbox
+                          </span>
+                          <span style={{fontSize: 14, color: DARK_TEXT_SOFT}}>
+                            We sent your link to {confirmedEmail}.
+                          </span>
+                        </VStack>
+                      </StackItem>
+                      <button
+                        type="button"
+                        style={styles.darkGhostButton}
+                        onClick={() => setConfirmedEmail(null)}>
+                        Use a different email
+                      </button>
+                    </HStack>
+                  )}
+                </div>
+              </Reveal>
+            </div>
           </div>
-        </Reveal>
-      </section>
+        </section>
+      </div>
     </div>
   );
 
@@ -2491,6 +3845,7 @@ export default function MarketplaceDuoLandingTemplate() {
                   <button
                     key={link.label}
                     type="button"
+                    className="kl-navlink"
                     style={styles.footerLink}
                     onClick={
                       link.target != null
@@ -2526,20 +3881,20 @@ export default function MarketplaceDuoLandingTemplate() {
   return (
     <Layout height="fill">
       <LayoutContent padding={0}>
-        <div ref={wrapRef} style={{height: '100%'}}>
-          <style>{`@keyframes kitloopSwapIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+        <div ref={wrapRef} style={{height: '100%', position: 'relative'}}>
+          <style>{PAGE_CSS}</style>
           <div ref={pageRef} style={styles.page} onScroll={onPageScroll}>
             {navBar}
             {hero}
             <div key={`path-${audience}`} style={{animation: swapAnimation}}>
               {audience === 'rent' ? renterPath : ownerPath}
             </div>
-            {statsBand}
-            {citiesSection}
+            {citiesBand}
             {faqSection}
             {ctaBand}
             {footer}
           </div>
+          <div style={styles.grainOverlay} aria-hidden="true" />
         </div>
       </LayoutContent>
     </Layout>

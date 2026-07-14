@@ -1,1 +1,0 @@
-import{A as e}from"./index-Z40q0Y4M.js";var t=e(`slash`,[[`path`,{d:`M22 2 2 22`,key:`y4kqgn`}]]);export{t};

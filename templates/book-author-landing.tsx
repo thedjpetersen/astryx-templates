@@ -12,23 +12,30 @@
  *   summaries, five praise quotes with roles, an author bio with
  *   speaking/press chips, three purchase formats with a highlighted
  *   bundle and launch-week bonus list, and an ISBN/publisher footer row)
- * @output Full book-launch landing page: sticky navbar (brand mark, four
- *   smooth-scrolling anchor links that collapse behind a menu button at
- *   compact widths, Get-the-book CTA), a split hero whose signature
- *   moment is a 3D CSS book cover with spine and page edges that sways
- *   idly on a setInterval tick and straightens on hover (reduced-motion
- *   renders it flat and static), retailer buttons that fire receipt
- *   Toasts, a tinted count-up stats band, a sample-chapter reader with
- *   three fixture pages, page-turn slide animation, progress bar, and
- *   prev/next controls, a six-card learn grid that expands into a
- *   12-chapter accordion (controlled Collapsible Set), a five-card
- *   praise wall, an author bio split with speaking/press chips, a
- *   three-format pricing row with the Bundle highlighted and a
- *   launch-week bonus list, a validating free-chapter email capture that
- *   flips to a success state, and a scheme-locked footer with an ISBN
- *   mono row. Scroll-reveals rise+fade 12px and fire once via
- *   IntersectionObserver; all motion is gated by prefers-reduced-motion
- *   (reveals render visible, counters render final).
+ * @output Art-directed book-launch landing page. The sticky navbar starts
+ *   transparent and gains a tinted color-mix surface, hairline, and
+ *   slightly reduced height after 24px of scroll. The hero is staged
+ *   product theater over an aurora field (three drifting color-mix blobs
+ *   + a grain texture overlay): 40-76px display serif headline with a
+ *   gradient-ink key phrase, sheen-sweep CTA buttons, and the signature
+ *   3D CSS book cover (idle sway on a setInterval, straightens on hover)
+ *   restaged with an accent under-glow, pointer parallax driven by CSS
+ *   vars (mouse only, off when stacked/reduced), and three bobbing
+ *   satellite mini-cards (reader metric, mini praise quote, page/diagram
+ *   chip). A floating glass stats card with count-up tickers straddles
+ *   the hero/sample band boundary. Below: the sample-chapter reader
+ *   (three fixture pages, direction-aware page-turn slide, progress bar,
+ *   prev/next controls) in a floating frame; a dot-grid texture band
+ *   with the six-card learn grid and 12-chapter Collapsible-Set
+ *   accordion; a five-card praise wall with hover-raise depth; the
+ *   author bio split; a three-format pricing row over a second aurora
+ *   with the highlighted Bundle floated a tier above its siblings; the
+ *   scheme-locked dark newsletter band elevated with gradient glows,
+ *   grain, a pointer-tracked radial spotlight, and a glass capture card
+ *   (validating email form); and the ISBN footer. Reveals rise 16px with
+ *   a slight scale settle and fire once via IntersectionObserver; ALL
+ *   motion is gated by prefers-reduced-motion (reveals render visible,
+ *   counters render final, aurora/bob/parallax/sheen render static).
  * @position Page template; emitted by `astryx template book-author-landing`
  *
  * Frame: Layout height="fill", content-only — a landing page owns its own
@@ -36,58 +43,69 @@
  * single scroll container div; the navbar inside it is position:sticky
  * top:0 and anchors smooth-scroll the container under a sticky-nav
  * allowance. A centered 1080px column carries each section; full-bleed
- * tinted bands (stats, inside-the-book, author, newsletter, footer)
- * alternate with plain bands and paint edge to edge around their own
- * inner columns. The Toast sits fixed bottom-right.
+ * bands (aurora hero, dot-grid inside band, author band, aurora formats,
+ * dark newsletter, footer) paint edge to edge around their own inner
+ * columns and clip their own blur bleed. The Toast sits fixed
+ * bottom-right.
  *
  * Interaction contract:
  * - Nav anchors and both hero CTAs smooth-scroll to real section ids; the
  *   compact menu button opens a dropdown that closes on Escape (refocusing
  *   the trigger), outside pointerdown, or any selection.
- * - The 3D cover sways between two poses on a 3.2s setInterval (spring-ish
- *   ease via a long CSS transition); pointer hover straightens it to
- *   near-flat and pauses the sway; prefers-reduced-motion renders a flat,
- *   static cover.
+ * - The 3D cover sways between two poses on a 3.2s setInterval (long CSS
+ *   transition); pointer hover straightens it to near-flat and pauses the
+ *   sway; prefers-reduced-motion renders a flat, static cover. The whole
+ *   composition parallaxes ±7-9px toward the pointer over the hero band
+ *   via --px/--py CSS vars set from onPointerMove (mouse pointers only;
+ *   off when stacked or reduced; satellites counter-move).
  * - The sample reader's prev/next buttons page through 3 fixture pages
  *   with a keyed slide-in animation (direction-aware, skipped under
  *   reduced motion) and drive a determinate progress bar.
  * - The chapter-outline toggle expands a 12-chapter accordion; each
  *   chapter is a controlled Collapsible tracked in a Set so several can
  *   be open at once (chapter 1 ships open).
- * - Stats count up from 0 on first reveal via a fixed 28-step setInterval
- *   ramp (reduced motion renders final values immediately).
+ * - Stats count up from 0 on first reveal via a fixed 30-step setInterval
+ *   ramp (~900ms, cubic ease-out; reduced motion renders final values).
  * - The newsletter form validates (empty + format errors inline) and
  *   success swaps the form for a confirmation echoing the address with a
- *   "Use a different email" reset.
+ *   "Use a different email" reset. The band tracks the pointer with a
+ *   radial spotlight via --mx/--my vars (static under reduced motion).
  * - Retailer, format, and footer resource buttons fire named receipt
  *   Toasts (they would leave the page in a real deployment).
  *
  * Color policy: token/light-dark hybrid. ONE quarantined accent literal
- * (ember terracotta, see ACCENT) carries the brand; every other in-flow
- * surface uses var(--color-*) tokens. Literal colors are KEPT only on
+ * (ember terracotta, see ACCENT) carries the brand; every aurora blob,
+ * glow, ink gradient, and hover ring is DERIVED from it via color-mix
+ * with tokens — no new color literals. Literal colors are KEPT only on
  * deliberately scheme-locked art surfaces, each with colorScheme:'dark'
  * in its style: the book cover (front, spine, page edges), the author
  * portrait tile, the newsletter band, and the footer — cover art and
  * dark bands must not reflow with the app theme. Text sitting on those
- * locked surfaces (DARK_TEXT*) is literal on purpose.
+ * locked surfaces (DARK_TEXT*) is literal on purpose. Shadow depth tiers
+ * use the neutral rgba stack from the polish contract (SHADOW_RAISED /
+ * SHADOW_FLOATING + hairline inset for glass).
  *
  * Responsive contract (element-measured; the inline demo stage is
  * ~1045px, so the page observes its own width with a ResizeObserver
  * instead of viewport media queries):
- * - Column: max-width 1080px, centered; tinted bands bleed full width.
- * - >960px: nav shows inline anchors + CTA; hero is split copy/cover;
- *   learn grid 3-up; praise 3-up; formats 3-up; author split.
+ * - Column: max-width 1080px, centered; bands bleed full width.
+ * - >960px: nav shows inline anchors + CTA; hero is an asymmetric split
+ *   (copy 1.15fr / staged cover 0.85fr) with 76px display type; learn
+ *   grid 3-up; praise 3-up; formats 3-up with the Bundle floated -10px.
  * - <=960px: nav links collapse behind a 44px menu button + dropdown;
- *   the hero stacks (cover centered below copy).
- * - <=720px: author split stacks; reader controls wrap; grids drop to
- *   2-up then 1-up via Grid minWidth; formats stack.
- * - <=560px: headline and stat sizes step down, section paddings
- *   tighten, retailer buttons wrap full-width, and the newsletter form
- *   stacks its button under the input. Holds at 390px with no
- *   overflow-x in the phone artboard.
+ *   the hero stacks (staged cover centered below copy); parallax off;
+ *   headline 62px.
+ * - <=720px: headline 50px; author split stacks; reader controls wrap;
+ *   grids drop to 2-up then 1-up via Grid minWidth; formats stack and
+ *   the Bundle un-floats; section paddings tighten to 64px.
+ * - <=560px: headline 40px, satellite cards hide to protect the 390px
+ *   phone artboard, stat sizes step down, retailer buttons wrap
+ *   full-width, and the newsletter form stacks its button under the
+ *   input. Holds at 390px with no overflow-x (aurora bands clip their
+ *   own blur bleed with overflow:hidden).
  * - Tap targets: nav links, menu button, reader controls, and retailer
- *   buttons are 40px+; nothing on the page requires hover (the cover
- *   hover is decorative only).
+ *   buttons are 40px+; nothing on the page requires hover (cover hover,
+ *   parallax, spotlight, and hover-raise are decorative only).
  */
 
 import {
@@ -95,6 +113,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
   type ReactNode,
   type RefObject,
 } from 'react';
@@ -156,9 +175,24 @@ type Glyph = ComponentType<SVGProps<SVGSVGElement>>;
  */
 const ACCENT = 'light-dark(#9A3B16, #F09B76)';
 /** 12% wash of the same accent for tinted chips/fills (no new literal). */
-const ACCENT_TINT = 'color-mix(in srgb, light-dark(#9A3B16, #F09B76) 12%, transparent)';
-/** 32% mix for the progress/meter fills' borders. */
-const ACCENT_EDGE = 'color-mix(in srgb, light-dark(#9A3B16, #F09B76) 32%, transparent)';
+const ACCENT_TINT = `color-mix(in srgb, ${ACCENT} 12%, transparent)`;
+/** 32% mix for meter borders and hover rings. */
+const ACCENT_EDGE = `color-mix(in srgb, ${ACCENT} 32%, transparent)`;
+/** 45% mix for the cover under-glow and CTA glow shadows. */
+const ACCENT_GLOW = `color-mix(in srgb, ${ACCENT} 45%, transparent)`;
+
+// Aurora blob paints — the accent color-mixed with system tokens, then
+// faded toward transparent (no new literals; see Color policy).
+const AURORA_A = `color-mix(in srgb, ${ACCENT} 50%, transparent)`;
+const AURORA_B = `color-mix(in srgb, color-mix(in srgb, ${ACCENT} 42%, var(--color-icon-blue)) 42%, transparent)`;
+const AURORA_C = `color-mix(in srgb, color-mix(in srgb, ${ACCENT} 38%, var(--color-success)) 36%, transparent)`;
+
+// Depth tiers (values from the polish contract; neutral shadow stack).
+const SHADOW_RAISED =
+  '0 1px 2px rgba(0,0,0,0.06), 0 8px 24px -12px rgba(0,0,0,0.18)';
+const SHADOW_FLOATING = `${SHADOW_RAISED}, 0 24px 48px -24px rgba(0,0,0,0.28)`;
+const HAIRLINE_INSET =
+  'inset 0 0 0 1px color-mix(in srgb, var(--color-border) 60%, transparent)';
 
 // Scheme-locked dark surfaces (cover art, newsletter band, footer) use
 // literal paint with colorScheme:'dark' so they read identically in both
@@ -167,12 +201,23 @@ const DARK_TEXT = '#FFFFFF';
 const DARK_TEXT_SOFT = 'rgba(231, 225, 212, 0.82)';
 const DARK_TEXT_FAINT = 'rgba(231, 225, 212, 0.6)';
 const DARK_CHIP_BORDER = 'rgba(231, 225, 212, 0.26)';
+const DARK_GLASS = 'rgba(231, 225, 212, 0.07)';
 const ERROR_ON_DARK = '#FECACA';
+
+/** Grain texture: inline SVG feTurbulence data URI, tiled at 4% opacity. */
+const GRAIN_URI =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E\")";
 
 /** Sticky-nav height allowance for smooth-scroll targets. */
 const NAV_ALLOWANCE = 76;
 
-/** Page-turn keyframes; the reduce guard backstops the JS gating. */
+/** Sheen sweep for CTAs — the existing #FFFFFF literal, mixed down. */
+const SHEEN_GRADIENT = `linear-gradient(115deg, transparent 32%, color-mix(in srgb, ${DARK_TEXT} 32%, transparent) 50%, transparent 68%)`;
+
+/**
+ * Keyframes + hover classes. The reduce media block backstops the JS
+ * gating for every animated class on the page.
+ */
 const MOTION_CSS = `
 @keyframes bal-page-next {
   from { opacity: 0; transform: translateX(24px); }
@@ -182,8 +227,50 @@ const MOTION_CSS = `
   from { opacity: 0; transform: translateX(-24px); }
   to { opacity: 1; transform: translateX(0); }
 }
+@keyframes bal-aurora-a {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(48px, -32px, 0) scale(1.12); }
+  100% { transform: translate3d(-28px, 26px, 0) scale(0.94); }
+}
+@keyframes bal-aurora-b {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-52px, 30px, 0) scale(1.1); }
+  100% { transform: translate3d(32px, -22px, 0) scale(0.96); }
+}
+@keyframes bal-bob {
+  from { transform: translateY(-6px); }
+  to { transform: translateY(7px); }
+}
+.bal-cta {
+  position: relative;
+  overflow: hidden;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+.bal-cta::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: ${SHEEN_GRADIENT};
+  transform: translateX(-160%);
+  transition: transform 640ms ease;
+  pointer-events: none;
+}
+.bal-cta:hover::after { transform: translateX(160%); }
+.bal-cta:hover { transform: translateY(-1px); }
+.bal-cta:active { transform: translateY(0) scale(0.98); }
+.bal-raise {
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.bal-raise:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 0 1px ${ACCENT_EDGE}, ${SHADOW_FLOATING} !important;
+}
 @media (prefers-reduced-motion: reduce) {
-  .bal-page { animation: none !important; }
+  .bal-page, .bal-aurora, .bal-bob { animation: none !important; }
+  .bal-cta, .bal-raise { transition: none !important; }
+  .bal-cta::after { display: none; }
+  .bal-cta:hover, .bal-raise:hover { transform: none !important; }
 }
 `;
 
@@ -208,18 +295,28 @@ const styles: Record<string, CSSProperties> = {
     paddingInline: 'var(--spacing-4)',
   },
   section: {
-    paddingBlock: 'var(--spacing-10, 64px)',
+    paddingBlock: 104,
   },
-  sectionPhone: {
-    paddingBlock: 'var(--spacing-8)',
+  sectionCompact: {
+    paddingBlock: 64,
   },
-  // ---- sticky navbar ----
+  // ---- sticky navbar (transparent → tinted surface after 24px) ----
   navBar: {
     position: 'sticky',
     top: 0,
     zIndex: 30,
-    backgroundColor: 'var(--color-background-body)',
+    backgroundColor: 'transparent',
+    borderBottom: '1px solid transparent',
+    transition:
+      'background-color 240ms ease, border-color 240ms ease, box-shadow 240ms ease',
+  },
+  navBarScrolled: {
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-body) 88%, transparent)',
+    backdropFilter: 'blur(10px)',
+    WebkitBackdropFilter: 'blur(10px)',
     borderBottom: '1px solid var(--color-border)',
+    boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
   },
   navInner: {
     position: 'relative',
@@ -227,11 +324,10 @@ const styles: Record<string, CSSProperties> = {
     maxWidth: 1080,
     marginInline: 'auto',
     boxSizing: 'border-box',
-    padding: 'var(--spacing-2) var(--spacing-4)',
+    paddingInline: 'var(--spacing-4)',
     display: 'flex',
     alignItems: 'center',
     gap: 'var(--spacing-2)',
-    minHeight: 56,
   },
   brandTile: {
     width: 34,
@@ -267,7 +363,7 @@ const styles: Record<string, CSSProperties> = {
     justifyContent: 'center',
     borderRadius: 8,
     border: '1px solid var(--color-border)',
-    backgroundColor: 'transparent',
+    backgroundColor: 'var(--color-background-body)',
     cursor: 'pointer',
     padding: 0,
     flexShrink: 0,
@@ -281,8 +377,7 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 14,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-body)',
-    boxShadow:
-      'var(--shadow-high, 0 12px 32px light-dark(rgba(15, 23, 42, 0.18), rgba(0, 0, 0, 0.5)))',
+    boxShadow: SHADOW_FLOATING,
     padding: 'var(--spacing-3)',
     zIndex: 40,
   },
@@ -302,8 +397,37 @@ const styles: Record<string, CSSProperties> = {
     color: 'var(--color-text-primary)',
     textAlign: 'left',
   },
-  // ---- hero ----
+  // ---- layered atmosphere ----
+  auroraLayer: {
+    position: 'absolute',
+    inset: 0,
+    overflow: 'hidden',
+    pointerEvents: 'none',
+  },
+  auroraBlob: {
+    position: 'absolute',
+    borderRadius: '50%',
+    filter: 'blur(84px)',
+    pointerEvents: 'none',
+  },
+  grain: {
+    position: 'absolute',
+    inset: 0,
+    backgroundImage: GRAIN_URI,
+    backgroundSize: '160px 160px',
+    opacity: 0.04,
+    pointerEvents: 'none',
+  },
+  // ---- hero band + product theater ----
+  heroBand: {
+    position: 'relative',
+    overflow: 'hidden',
+    borderBottom: '1px solid var(--color-border)',
+    background: `linear-gradient(180deg, transparent 44%, color-mix(in srgb, ${ACCENT} 5%, transparent) 100%)`,
+  },
   heroRow: {
+    position: 'relative',
+    zIndex: 2,
     display: 'flex',
     gap: 'var(--spacing-8)',
     alignItems: 'center',
@@ -314,33 +438,67 @@ const styles: Record<string, CSSProperties> = {
     gap: 'var(--spacing-6)',
   },
   heroText: {
-    flex: '1 1 0',
+    flex: '1.15 1 0',
     minWidth: 0,
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-4)',
   },
   heroHeadline: {
-    fontSize: 48,
     fontWeight: 700,
-    lineHeight: 1.08,
-    letterSpacing: '-0.02em',
+    lineHeight: 1.02,
+    letterSpacing: '-0.03em',
     margin: 0,
     fontFamily: "Georgia, 'Times New Roman', serif",
   },
-  heroHeadlinePhone: {
-    fontSize: 34,
+  heroInk: {
+    backgroundImage: `linear-gradient(96deg, ${ACCENT} 8%, color-mix(in srgb, ${ACCENT} 55%, var(--color-text-primary)) 92%)`,
+    WebkitBackgroundClip: 'text',
+    backgroundClip: 'text',
+    color: 'transparent',
+    WebkitTextFillColor: 'transparent',
   },
   heroSubcopy: {
-    fontSize: 17,
+    fontSize: 18,
     lineHeight: 1.55,
     color: 'var(--color-text-secondary)',
-    maxWidth: 480,
+    maxWidth: '56ch',
     margin: 0,
+  },
+  ctaPrimary: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 8,
+    height: 48,
+    paddingInline: 22,
+    borderRadius: 12,
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: 15,
+    fontWeight: 700,
+    backgroundColor: ACCENT,
+    color: 'light-dark(#FFFFFF, #0B1220)',
+    boxShadow: `0 12px 28px -12px ${ACCENT_GLOW}, ${SHADOW_RAISED}`,
+  },
+  ctaSecondary: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 8,
+    height: 48,
+    paddingInline: 20,
+    borderRadius: 12,
+    border: '1px solid var(--color-border)',
+    cursor: 'pointer',
+    fontSize: 15,
+    fontWeight: 600,
+    backgroundColor: 'var(--color-background-card)',
+    color: 'var(--color-text-primary)',
+    boxShadow: SHADOW_RAISED,
   },
   retailerButton: {
     display: 'inline-flex',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: 8,
     height: 44,
     paddingInline: 16,
@@ -353,15 +511,49 @@ const styles: Record<string, CSSProperties> = {
     letterSpacing: '0.04em',
     color: 'var(--color-text-primary)',
     whiteSpace: 'nowrap',
+    boxShadow: SHADOW_RAISED,
   },
-  // ---- 3D cover (scheme-locked art; see Color policy) ----
+  // ---- staged cover (parallax + under-glow + satellites) ----
   coverStage: {
-    flex: '1 1 0',
+    flex: '0.85 1 0',
     minWidth: 0,
+    position: 'relative',
     display: 'flex',
     justifyContent: 'center',
-    paddingBlock: 'var(--spacing-4)',
+    paddingBlock: 'var(--spacing-6)',
     perspective: 1200,
+  },
+  coverParallax: {
+    position: 'relative',
+    transform:
+      'translate3d(calc(var(--px, 0) * 9px), calc(var(--py, 0) * 7px), 0)',
+    transition: 'transform 480ms cubic-bezier(0.22, 1, 0.36, 1)',
+  },
+  coverGlow: {
+    position: 'absolute',
+    bottom: -4,
+    left: '50%',
+    transform: 'translateX(-50%)',
+    width: 260,
+    height: 48,
+    borderRadius: '50%',
+    background: `radial-gradient(closest-side, ${ACCENT_GLOW}, transparent)`,
+    filter: 'blur(18px)',
+    opacity: 0.75,
+    pointerEvents: 'none',
+  },
+  satellite: {
+    position: 'absolute',
+    zIndex: 3,
+    borderRadius: 14,
+    border: '1px solid var(--color-border)',
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-card) 92%, transparent)',
+    boxShadow: `${SHADOW_FLOATING}, ${HAIRLINE_INSET}`,
+    padding: '10px 14px',
+    transform:
+      'translate3d(calc(var(--px, 0) * -7px), calc(var(--py, 0) * -5px), 0)',
+    transition: 'transform 480ms cubic-bezier(0.22, 1, 0.36, 1)',
   },
   coverBook: {
     position: 'relative',
@@ -444,10 +636,17 @@ const styles: Record<string, CSSProperties> = {
     textTransform: 'uppercase',
     color: DARK_TEXT_SOFT,
   },
-  // ---- tinted full-bleed bands ----
-  tintedBand: {
-    backgroundColor: 'var(--color-background-muted)',
-    borderBlock: '1px solid var(--color-border)',
+  // ---- floating stats card (crosses the hero/sample band boundary) ----
+  statsWrap: {
+    position: 'relative',
+    zIndex: 2,
+  },
+  statsCard: {
+    borderRadius: 24,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: `${SHADOW_FLOATING}, ${HAIRLINE_INSET}`,
+    padding: 'var(--spacing-6)',
   },
   statValue: {
     fontSize: 40,
@@ -464,9 +663,21 @@ const styles: Record<string, CSSProperties> = {
   eyebrow: {
     fontSize: 11,
     fontWeight: 700,
-    letterSpacing: '0.14em',
+    letterSpacing: '0.1em',
     textTransform: 'uppercase',
     color: ACCENT,
+    display: 'inline-flex',
+    alignItems: 'center',
+    height: 24,
+    paddingInline: 10,
+    borderRadius: 999,
+    backgroundColor: ACCENT_TINT,
+    border: `1px solid ${ACCENT_EDGE}`,
+  },
+  sectionHeading: {
+    fontFamily: "Georgia, 'Times New Roman', serif",
+    letterSpacing: '-0.02em',
+    lineHeight: 1.12,
   },
   // ---- sample reader ----
   readerFrame: {
@@ -474,7 +685,7 @@ const styles: Record<string, CSSProperties> = {
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
     overflow: 'hidden',
-    boxShadow: 'var(--shadow-med)',
+    boxShadow: `${SHADOW_FLOATING}, ${HAIRLINE_INSET}`,
     maxWidth: 760,
     marginInline: 'auto',
   },
@@ -526,7 +737,19 @@ const styles: Record<string, CSSProperties> = {
     padding: 'var(--spacing-3) var(--spacing-4)',
     borderTop: '1px solid var(--color-border)',
   },
-  // ---- learn grid / outline ----
+  // ---- inside the book (dot-grid texture band) ----
+  insideBand: {
+    backgroundColor: 'var(--color-background-muted)',
+    backgroundImage:
+      'radial-gradient(circle, color-mix(in srgb, var(--color-border) 55%, transparent) 1px, transparent 1.5px)',
+    backgroundSize: '26px 26px',
+    borderBlock: '1px solid var(--color-border)',
+  },
+  learnCard: {
+    boxShadow: SHADOW_RAISED,
+    height: '100%',
+    boxSizing: 'border-box',
+  },
   learnGlyph: {
     width: 38,
     height: 38,
@@ -552,11 +775,15 @@ const styles: Record<string, CSSProperties> = {
     display: 'inline-flex',
   },
   // ---- author (portrait tile scheme-locked; see Color policy) ----
+  authorBand: {
+    backgroundColor: 'var(--color-background-muted)',
+    borderBlock: '1px solid var(--color-border)',
+  },
   portraitTile: {
-    width: 168,
-    height: 168,
+    width: 190,
+    height: 190,
     flexShrink: 0,
-    borderRadius: 20,
+    borderRadius: 24,
     colorScheme: 'dark',
     backgroundImage: [
       'radial-gradient(80% 70% at 80% 12%, rgba(240, 155, 118, 0.5), transparent 62%)',
@@ -567,13 +794,24 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     fontFamily: "Georgia, 'Times New Roman', serif",
-    fontSize: 52,
+    fontSize: 56,
     fontWeight: 700,
+    boxShadow: SHADOW_FLOATING,
+    transform: 'rotate(-2deg)',
   },
-  // ---- formats ----
+  // ---- formats (second aurora field) ----
+  formatsBand: {
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  formatCard: {
+    boxShadow: SHADOW_RAISED,
+    height: '100%',
+    boxSizing: 'border-box',
+  },
   formatCardHighlighted: {
     borderColor: ACCENT,
-    boxShadow: `0 0 0 1px ${ACCENT}`,
+    boxShadow: `0 0 0 1px ${ACCENT_EDGE}, ${SHADOW_FLOATING}`,
   },
   formatPrice: {
     fontSize: 36,
@@ -597,14 +835,37 @@ const styles: Record<string, CSSProperties> = {
     flexDirection: 'column',
     gap: 'var(--spacing-2)',
   },
-  // ---- newsletter band (scheme-locked; see Color policy) ----
+  // ---- newsletter band (scheme-locked signature dark section) ----
   newsletterBand: {
+    position: 'relative',
+    overflow: 'hidden',
     colorScheme: 'dark',
     color: DARK_TEXT,
     backgroundImage: [
       'radial-gradient(70% 90% at 85% 0%, rgba(240, 155, 118, 0.28), transparent 60%)',
+      'radial-gradient(50% 70% at 8% 100%, rgba(34, 48, 78, 0.9), transparent 70%)',
       'linear-gradient(180deg, #16213A 0%, #0B1220 100%)',
     ].join(', '),
+  },
+  spotlight: {
+    position: 'absolute',
+    inset: 0,
+    pointerEvents: 'none',
+    background:
+      'radial-gradient(420px circle at var(--mx, 72%) var(--my, 18%), rgba(240, 155, 118, 0.16), transparent 70%)',
+  },
+  glassCard: {
+    position: 'relative',
+    zIndex: 2,
+    maxWidth: 720,
+    marginInline: 'auto',
+    borderRadius: 24,
+    backgroundColor: DARK_GLASS,
+    boxShadow: `inset 0 0 0 1px ${DARK_CHIP_BORDER}, ${SHADOW_FLOATING}`,
+    padding: 'var(--spacing-8)',
+  },
+  glassCardPhone: {
+    padding: 'var(--spacing-5)',
   },
   emailRow: {
     display: 'flex',
@@ -1160,8 +1421,8 @@ function useRevealOnce(reduced: boolean): {
 }
 
 /**
- * Count from 0 to target once active: 28 fixed setInterval steps with a
- * cubic ease-out. Reduced motion renders the final value immediately.
+ * Count from 0 to target once active: 30 fixed setInterval steps (~900ms)
+ * with a cubic ease-out. Reduced motion renders the final value at once.
  */
 function useCountUp(target: number, isActive: boolean, reduced: boolean): number {
   const [value, setValue] = useState(0);
@@ -1173,7 +1434,7 @@ function useCountUp(target: number, isActive: boolean, reduced: boolean): number
       setValue(target);
       return undefined;
     }
-    const steps = 28;
+    const steps = 30;
     let step = 0;
     const timer = setInterval(() => {
       step += 1;
@@ -1191,7 +1452,7 @@ function useCountUp(target: number, isActive: boolean, reduced: boolean): number
 
 // ============= SMALL PIECES =============
 
-/** Rise+fade scroll reveal wrapper (12px, fire once). */
+/** Rise + settle scroll reveal wrapper (16px + scale .985, fires once). */
 function Reveal({
   reduced,
   delay = 0,
@@ -1207,32 +1468,38 @@ function Reveal({
       ref={ref}
       style={{
         opacity: isVisible ? 1 : 0,
-        transform: isVisible ? 'none' : 'translateY(12px)',
+        transform: isVisible ? 'none' : 'translateY(16px) scale(0.985)',
         transition: reduced
           ? 'none'
-          : `opacity 480ms ease ${delay}ms, transform 480ms ease ${delay}ms`,
+          : `opacity 560ms cubic-bezier(0.22, 1, 0.36, 1) ${delay}ms, transform 560ms cubic-bezier(0.22, 1, 0.36, 1) ${delay}ms`,
       }}>
       {children}
     </div>
   );
 }
 
-/** Section intro: uppercase eyebrow + serif-adjacent heading + copy. */
+/** Section intro: accent eyebrow chip + display serif heading + copy. */
 function SectionIntro({
   eyebrow,
   title,
   copy,
   align = 'center',
+  compact = false,
 }: {
   eyebrow: string;
   title: string;
   copy?: string;
   align?: 'center' | 'start';
+  compact?: boolean;
 }) {
   return (
-    <VStack gap={2} hAlign={align === 'center' ? 'center' : 'start'}>
+    <VStack gap={3} hAlign={align === 'center' ? 'center' : 'start'}>
       <span style={styles.eyebrow}>{eyebrow}</span>
-      <Heading level={2}>{title}</Heading>
+      <Heading
+        level={2}
+        style={{...styles.sectionHeading, fontSize: compact ? 30 : 38}}>
+        {title}
+      </Heading>
       {copy !== undefined && (
         <Text
           type="supporting"
@@ -1246,7 +1513,7 @@ function SectionIntro({
   );
 }
 
-/** One count-up stat cell in the tinted stats band. */
+/** One count-up stat cell in the floating stats card. */
 function StatCell({
   stat,
   isActive,
@@ -1292,15 +1559,10 @@ function CheckRow({label}: {label: string}) {
 /**
  * 3D-ish book cover: front face, spine, and page edges in a preserve-3d
  * box. Idle sway alternates between two poses on a setInterval; hover
- * straightens; reduced motion renders a flat, static cover.
+ * straightens; reduced motion renders a flat, static cover. The hero
+ * stages this inside a parallax wrapper with under-glow and satellites.
  */
-function BookCover({
-  reduced,
-  width,
-}: {
-  reduced: boolean;
-  width: number;
-}) {
+function BookCover({reduced, width}: {reduced: boolean; width: number}) {
   const [isHovered, setIsHovered] = useState(false);
   const [swayTick, setSwayTick] = useState(false);
   useEffect(() => {
@@ -1325,86 +1587,84 @@ function BookCover({
   }
 
   return (
-    <div style={styles.coverStage}>
+    <div
+      role="img"
+      aria-label={`Cover of ${BOOK.title} by ${BOOK.author}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      style={{
+        ...styles.coverBook,
+        width,
+        height,
+        transform,
+        transition,
+      }}>
+      {!reduced && (
+        <>
+          <div style={{...styles.coverSpine, height}} aria-hidden="true">
+            <span style={styles.coverSpineText}>
+              {BOOK.title.toUpperCase()} · {BOOK.author.toUpperCase()}
+            </span>
+          </div>
+          <div style={styles.coverPages} aria-hidden="true" />
+        </>
+      )}
       <div
-        role="img"
-        aria-label={`Cover of ${BOOK.title} by ${BOOK.author}`}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
         style={{
-          ...styles.coverBook,
+          ...styles.coverFront,
           width,
           height,
-          transform,
-          transition,
+          transform: reduced ? 'none' : 'translateZ(18px)',
         }}>
-        {!reduced && (
-          <>
-            <div style={{...styles.coverSpine, height}} aria-hidden="true">
-              <span style={styles.coverSpineText}>
-                {BOOK.title.toUpperCase()} · {BOOK.author.toUpperCase()}
-              </span>
-            </div>
-            <div style={styles.coverPages} aria-hidden="true" />
-          </>
-        )}
-        <div
-          style={{
-            ...styles.coverFront,
-            width,
-            height,
-            transform: reduced ? 'none' : 'translateZ(18px)',
-          }}>
-          <VStack gap={3}>
-            <span style={styles.coverEyebrow}>{BOOK.publisher}</span>
-            {/* Schematic stacked-planes motif: three offset layers. */}
-            <svg
-              width={width - 48}
-              height={72}
-              viewBox="0 0 200 72"
-              aria-hidden="true">
-              <rect
-                x={40}
-                y={6}
-                width={120}
-                height={16}
-                rx={4}
-                fill="none"
-                stroke="rgba(231, 225, 212, 0.4)"
-                strokeWidth={1.5}
-              />
-              <rect
-                x={26}
-                y={28}
-                width={148}
-                height={16}
-                rx={4}
-                fill="rgba(240, 155, 118, 0.28)"
-                stroke="#F09B76"
-                strokeWidth={1.5}
-              />
-              <rect
-                x={12}
-                y={50}
-                width={176}
-                height={16}
-                rx={4}
-                fill="none"
-                stroke="rgba(231, 225, 212, 0.4)"
-                strokeWidth={1.5}
-              />
-            </svg>
-          </VStack>
-          <VStack gap={2}>
-            <p style={{...styles.coverTitle, fontSize: width < 230 ? 26 : 30}}>
-              The Interface Layer
-            </p>
-            <p style={styles.coverSubtitle}>
-              A field guide to the seams where software meets people
-            </p>
-          </VStack>
-          <span style={styles.coverAuthor}>{BOOK.author}</span>
-        </div>
+        <VStack gap={3}>
+          <span style={styles.coverEyebrow}>{BOOK.publisher}</span>
+          {/* Schematic stacked-planes motif: three offset layers. */}
+          <svg
+            width={width - 48}
+            height={72}
+            viewBox="0 0 200 72"
+            aria-hidden="true">
+            <rect
+              x={40}
+              y={6}
+              width={120}
+              height={16}
+              rx={4}
+              fill="none"
+              stroke="rgba(231, 225, 212, 0.4)"
+              strokeWidth={1.5}
+            />
+            <rect
+              x={26}
+              y={28}
+              width={148}
+              height={16}
+              rx={4}
+              fill="rgba(240, 155, 118, 0.28)"
+              stroke="#F09B76"
+              strokeWidth={1.5}
+            />
+            <rect
+              x={12}
+              y={50}
+              width={176}
+              height={16}
+              rx={4}
+              fill="none"
+              stroke="rgba(231, 225, 212, 0.4)"
+              strokeWidth={1.5}
+            />
+          </svg>
+        </VStack>
+        <VStack gap={2}>
+          <p style={{...styles.coverTitle, fontSize: width < 230 ? 26 : 30}}>
+            The Interface Layer
+          </p>
+          <p style={styles.coverSubtitle}>
+            A field guide to the seams where software meets people
+          </p>
+        </VStack>
+        <span style={styles.coverAuthor}>{BOOK.author}</span>
       </div>
     </div>
   );
@@ -1423,14 +1683,19 @@ export default function BookAuthorLandingTemplate() {
   const isCompact = wrapWidth > 0 && wrapWidth <= 720;
   const isPhone = wrapWidth > 0 && wrapWidth <= 560;
 
-  // ---- nav menu (compact) ----
+  // ---- nav (compact menu + scrolled surface) ----
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const navRef = useRef<HTMLElement | null>(null);
   const menuTriggerRef = useRef<HTMLButtonElement | null>(null);
 
   // ---- smooth scroll ----
   const pageRef = useRef<HTMLDivElement | null>(null);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
+
+  // ---- hero parallax + newsletter spotlight (CSS vars, no re-render) ----
+  const heroBandRef = useRef<HTMLDivElement | null>(null);
+  const newsletterRef = useRef<HTMLDivElement | null>(null);
 
   // ---- sample reader ----
   const [reader, setReader] = useState<{
@@ -1444,7 +1709,7 @@ export default function BookAuthorLandingTemplate() {
     () => new Set([CHAPTERS[0].id]),
   );
 
-  // ---- stats band reveal (shared by all four count-ups) ----
+  // ---- stats card reveal (shared by all four count-ups) ----
   const statsReveal = useRevealOnce(reduced);
 
   // ---- newsletter capture ----
@@ -1545,20 +1810,76 @@ export default function BookAuthorLandingTemplate() {
     setEmailError(null);
   };
 
+  /** Nav surface state: transparent at top, tinted hairline after 24px. */
+  const onPageScroll = () => {
+    const container = pageRef.current;
+    if (container !== null) {
+      setIsScrolled(container.scrollTop > 24);
+    }
+  };
+
+  /** Hero parallax: ±1 pointer vars on the band (mouse only). */
+  const onHeroPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (reduced || isStacked || event.pointerType !== 'mouse') {
+      return;
+    }
+    const band = heroBandRef.current;
+    if (band === null) {
+      return;
+    }
+    const rect = band.getBoundingClientRect();
+    const px = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    const py = ((event.clientY - rect.top) / rect.height) * 2 - 1;
+    band.style.setProperty('--px', px.toFixed(3));
+    band.style.setProperty('--py', py.toFixed(3));
+  };
+
+  const onHeroPointerLeave = () => {
+    const band = heroBandRef.current;
+    if (band !== null) {
+      band.style.setProperty('--px', '0');
+      band.style.setProperty('--py', '0');
+    }
+  };
+
+  /** Dark-band spotlight: pointer position vars (static under reduced). */
+  const onNewsletterPointerMove = (
+    event: ReactPointerEvent<HTMLDivElement>,
+  ) => {
+    if (reduced) {
+      return;
+    }
+    const band = newsletterRef.current;
+    if (band === null) {
+      return;
+    }
+    const rect = band.getBoundingClientRect();
+    band.style.setProperty('--mx', `${Math.round(event.clientX - rect.left)}px`);
+    band.style.setProperty('--my', `${Math.round(event.clientY - rect.top)}px`);
+  };
+
   const column = {
     ...styles.column,
     ...(isPhone ? styles.columnPhone : null),
   };
   const sectionPad = {
     ...styles.section,
-    ...(isPhone ? styles.sectionPhone : null),
+    ...(isCompact ? styles.sectionCompact : null),
   };
 
   // ============= NAVBAR =============
 
   const navbar = (
-    <nav ref={navRef} style={styles.navBar} aria-label="Book site">
-      <div style={styles.navInner}>
+    <nav
+      ref={navRef}
+      style={{...styles.navBar, ...(isScrolled ? styles.navBarScrolled : null)}}
+      aria-label="Book site">
+      <div
+        style={{
+          ...styles.navInner,
+          minHeight: isScrolled ? 52 : 64,
+          paddingBlock: isScrolled ? 4 : 8,
+        }}>
         <HStack gap={2} vAlign="center">
           <div style={styles.brandTile} aria-hidden="true">
             <Icon icon={LayersIcon} size="sm" color="inherit" />
@@ -1626,83 +1947,232 @@ export default function BookAuthorLandingTemplate() {
     </nav>
   );
 
-  // ============= HERO =============
+  // ============= HERO (aurora field + staged product theater) =============
 
-  const hero = (
-    <div style={{...column, ...sectionPad}}>
+  const heroFontSize =
+    wrapWidth > 960 ? 76 : wrapWidth > 720 ? 62 : wrapWidth > 560 ? 50 : 40;
+
+  const heroAurora = (
+    <div style={styles.auroraLayer} aria-hidden="true">
       <div
+        className="bal-aurora"
         style={{
-          ...styles.heroRow,
-          ...(isStacked ? styles.heroRowStacked : null),
-        }}>
-        <div style={styles.heroText}>
-          <HStack gap={2} wrap="wrap">
-            <Token
-              label={`New from ${BOOK.publisher}`}
-              size="sm"
-              color="orange"
-            />
-            <Token label={BOOK.shipDate} size="sm" color="gray" />
+          ...styles.auroraBlob,
+          width: 540,
+          height: 540,
+          top: -180,
+          left: -140,
+          background: AURORA_A,
+          opacity: 0.5,
+          animation: reduced
+            ? undefined
+            : 'bal-aurora-a 38s ease-in-out infinite alternate',
+        }}
+      />
+      <div
+        className="bal-aurora"
+        style={{
+          ...styles.auroraBlob,
+          width: 440,
+          height: 440,
+          top: 30,
+          right: -160,
+          background: AURORA_B,
+          opacity: 0.45,
+          animation: reduced
+            ? undefined
+            : 'bal-aurora-b 44s ease-in-out infinite alternate',
+          animationDelay: reduced ? undefined : '-12s',
+        }}
+      />
+      <div
+        className="bal-aurora"
+        style={{
+          ...styles.auroraBlob,
+          width: 380,
+          height: 380,
+          bottom: -200,
+          left: '32%',
+          background: AURORA_C,
+          opacity: 0.4,
+          animation: reduced
+            ? undefined
+            : 'bal-aurora-a 32s ease-in-out infinite alternate',
+          animationDelay: reduced ? undefined : '-20s',
+        }}
+      />
+    </div>
+  );
+
+  const satellites = !isPhone && (
+    <>
+      <div style={{...styles.satellite, top: 18, left: '3%'}}>
+        <div
+          className="bal-bob"
+          style={{
+            animation: reduced
+              ? undefined
+              : 'bal-bob 7s ease-in-out infinite alternate',
+            animationDelay: reduced ? undefined : '-2.4s',
+          }}>
+          <HStack gap={2} vAlign="center">
+            <span style={{color: ACCENT, display: 'inline-flex'}}>
+              <Icon icon={ActivityIcon} size="sm" color="inherit" />
+            </span>
+            <VStack gap={0}>
+              <Text size="sm" weight="bold">
+                9,214 readers
+              </Text>
+              <Text type="supporting" color="secondary">
+                in early access
+              </Text>
+            </VStack>
           </HStack>
-          <h1
-            style={{
-              ...styles.heroHeadline,
-              ...(isPhone ? styles.heroHeadlinePhone : null),
-            }}>
-            {BOOK.title}
-          </h1>
-          <p style={styles.heroSubcopy}>{BOOK.subtitle}</p>
-          <Text size="sm" color="secondary">
-            By {BOOK.author} · 312 pages · Hardcover, ebook, and bundle
-          </Text>
-          <HStack gap={2} wrap="wrap">
-            <Button
-              label="Read a sample"
-              variant="primary"
-              icon={<Icon icon={BookOpenIcon} size="sm" color="inherit" />}
-              onClick={() => jumpToSection('sample')}
-            />
-            <Button
-              label="See formats & pricing"
-              variant="secondary"
-              onClick={() => jumpToSection('formats')}
-            />
-          </HStack>
-          <VStack gap={2}>
-            <Text type="supporting" color="secondary">
-              Available at launch from
+        </div>
+      </div>
+      <div style={{...styles.satellite, bottom: 56, left: '1%', maxWidth: 236}}>
+        <div
+          className="bal-bob"
+          style={{
+            animation: reduced
+              ? undefined
+              : 'bal-bob 8.5s ease-in-out infinite alternate',
+            animationDelay: reduced ? undefined : '-5.1s',
+          }}>
+          <VStack gap={1}>
+            <span style={styles.quoteGlyph} aria-hidden="true">
+              <Icon icon={QuoteIcon} size="xsm" color="inherit" />
+            </span>
+            <Text size="sm" style={{lineHeight: 1.45}}>
+              Worth the cover price.
             </Text>
-            <HStack gap={2} wrap="wrap">
-              {RETAILERS.map(retailer => (
-                <button
-                  key={retailer}
-                  type="button"
-                  style={{
-                    ...styles.retailerButton,
-                    ...(isPhone ? {flex: '1 1 40%'} : null),
-                  }}
-                  onClick={() =>
-                    fireToast(`Opening the ${retailer} listing (demo).`)
-                  }>
-                  {retailer}
-                  <Icon icon={ExternalLinkIcon} size="xsm" color="inherit" />
-                </button>
-              ))}
-            </HStack>
+            <Text type="supporting" color="secondary">
+              Sofia Lindqvist · Fielder
+            </Text>
           </VStack>
         </div>
-        <BookCover reduced={reduced} width={isPhone ? 208 : 250} />
+      </div>
+      <div style={{...styles.satellite, top: 108, right: '2%'}}>
+        <div
+          className="bal-bob"
+          style={{
+            animation: reduced
+              ? undefined
+              : 'bal-bob 6.2s ease-in-out infinite alternate',
+            animationDelay: reduced ? undefined : '-3.7s',
+          }}>
+          <HStack gap={2} vAlign="center">
+            <span style={{color: ACCENT, display: 'inline-flex'}}>
+              <Icon icon={BookOpenIcon} size="sm" color="inherit" />
+            </span>
+            <Text size="sm" weight="semibold" style={{whiteSpace: 'nowrap'}}>
+              312 pages · 88 diagrams
+            </Text>
+          </HStack>
+        </div>
+      </div>
+    </>
+  );
+
+  const hero = (
+    <div
+      ref={heroBandRef}
+      style={styles.heroBand}
+      onPointerMove={onHeroPointerMove}
+      onPointerLeave={onHeroPointerLeave}>
+      {heroAurora}
+      <div style={styles.grain} aria-hidden="true" />
+      <div
+        style={{
+          ...column,
+          paddingTop: isPhone ? 48 : 80,
+          paddingBottom: isPhone ? 104 : 140,
+        }}>
+        <div
+          style={{
+            ...styles.heroRow,
+            ...(isStacked ? styles.heroRowStacked : null),
+          }}>
+          <div style={styles.heroText}>
+            <HStack gap={2} wrap="wrap">
+              <Token
+                label={`New from ${BOOK.publisher}`}
+                size="sm"
+                color="orange"
+              />
+              <Token label={BOOK.shipDate} size="sm" color="gray" />
+            </HStack>
+            <h1 style={{...styles.heroHeadline, fontSize: heroFontSize}}>
+              The <span style={styles.heroInk}>Interface Layer</span>
+            </h1>
+            <p style={styles.heroSubcopy}>{BOOK.subtitle}</p>
+            <Text size="sm" color="secondary">
+              By {BOOK.author} · 312 pages · Hardcover, ebook, and bundle
+            </Text>
+            <HStack gap={2} wrap="wrap">
+              <button
+                type="button"
+                className="bal-cta"
+                style={styles.ctaPrimary}
+                onClick={() => jumpToSection('sample')}>
+                <Icon icon={BookOpenIcon} size="sm" color="inherit" />
+                Read a sample
+              </button>
+              <button
+                type="button"
+                className="bal-cta"
+                style={styles.ctaSecondary}
+                onClick={() => jumpToSection('formats')}>
+                See formats & pricing
+                <Icon icon={ArrowRightIcon} size="sm" color="inherit" />
+              </button>
+            </HStack>
+            <VStack gap={2}>
+              <Text type="supporting" color="secondary">
+                Available at launch from
+              </Text>
+              <HStack gap={2} wrap="wrap">
+                {RETAILERS.map(retailer => (
+                  <button
+                    key={retailer}
+                    type="button"
+                    className="bal-raise"
+                    style={{
+                      ...styles.retailerButton,
+                      ...(isPhone ? {flex: '1 1 40%'} : null),
+                    }}
+                    onClick={() =>
+                      fireToast(`Opening the ${retailer} listing (demo).`)
+                    }>
+                    {retailer}
+                    <Icon icon={ExternalLinkIcon} size="xsm" color="inherit" />
+                  </button>
+                ))}
+              </HStack>
+            </VStack>
+          </div>
+          <div style={styles.coverStage}>
+            <div style={styles.coverGlow} aria-hidden="true" />
+            <div style={styles.coverParallax}>
+              <BookCover reduced={reduced} width={isPhone ? 208 : 250} />
+            </div>
+            {satellites}
+          </div>
+        </div>
       </div>
     </div>
   );
 
-  // ============= STATS BAND =============
+  // ==== FLOATING STATS CARD (crosses the hero/sample boundary) ====
 
   const statsBand = (
-    <div style={styles.tintedBand}>
-      <div
-        ref={statsReveal.ref}
-        style={{...column, paddingBlock: 'var(--spacing-6)'}}>
+    <div
+      style={{
+        ...column,
+        ...styles.statsWrap,
+        marginTop: isPhone ? -64 : -76,
+      }}>
+      <div ref={statsReveal.ref} style={styles.statsCard}>
         <Grid columns={{minWidth: isPhone ? 130 : 200, max: 4}} gap={4}>
           {STATS.map(stat => (
             <StatCell
@@ -1734,6 +2204,7 @@ export default function BookAuthorLandingTemplate() {
             eyebrow="Read a sample"
             title="Chapter 1 — The Seam"
             copy="Three pages from the opening chapter, exactly as they appear in the hardcover."
+            compact={isCompact}
           />
           <div style={styles.readerFrame}>
             <div style={styles.readerChrome}>
@@ -1817,10 +2288,10 @@ export default function BookAuthorLandingTemplate() {
     </section>
   );
 
-  // ============= INSIDE THE BOOK =============
+  // ============= INSIDE THE BOOK (dot-grid band) =============
 
   const insideSection = (
-    <div style={styles.tintedBand}>
+    <div style={styles.insideBand}>
       <section
         ref={registerSection('inside')}
         aria-label="Inside the book"
@@ -1831,12 +2302,16 @@ export default function BookAuthorLandingTemplate() {
               eyebrow="Inside the book"
               title="What you'll learn"
               copy="Six working ideas, developed across twelve chapters and a field kit you can bring to Monday's review."
+              compact={isCompact}
             />
           </Reveal>
-          <Reveal reduced={reduced} delay={80}>
-            <Grid columns={{minWidth: 264, max: 3}} gap={3}>
-              {LEARN_ITEMS.map(item => (
-                <Card key={item.id} padding={4}>
+          <Grid columns={{minWidth: 264, max: 3}} gap={3}>
+            {LEARN_ITEMS.map((item, index) => (
+              <Reveal key={item.id} reduced={reduced} delay={index * 70}>
+                <Card
+                  padding={4}
+                  className="bal-raise"
+                  style={styles.learnCard}>
                   <VStack gap={3}>
                     <div style={styles.learnGlyph} aria-hidden="true">
                       <Icon icon={item.icon} size="sm" color="inherit" />
@@ -1847,9 +2322,9 @@ export default function BookAuthorLandingTemplate() {
                     </Text>
                   </VStack>
                 </Card>
-              ))}
-            </Grid>
-          </Reveal>
+              </Reveal>
+            ))}
+          </Grid>
           <Reveal reduced={reduced} delay={120}>
             <VStack gap={3} hAlign="center">
               <Button
@@ -1927,12 +2402,13 @@ export default function BookAuthorLandingTemplate() {
             eyebrow="Praise"
             title="What early readers say"
             copy="From the 9,214 engineers and designers who read the early-access edition."
+            compact={isCompact}
           />
         </Reveal>
-        <Reveal reduced={reduced} delay={80}>
-          <Grid columns={{minWidth: 280, max: 3}} gap={3}>
-            {PRAISE.map(entry => (
-              <Card key={entry.id} padding={4}>
+        <Grid columns={{minWidth: 280, max: 3}} gap={3}>
+          {PRAISE.map((entry, index) => (
+            <Reveal key={entry.id} reduced={reduced} delay={index * 70}>
+              <Card padding={4} className="bal-raise" style={styles.learnCard}>
                 <VStack gap={3}>
                   <span style={styles.quoteGlyph} aria-hidden="true">
                     <Icon icon={QuoteIcon} size="sm" color="inherit" />
@@ -1950,9 +2426,9 @@ export default function BookAuthorLandingTemplate() {
                   </VStack>
                 </VStack>
               </Card>
-            ))}
-          </Grid>
-        </Reveal>
+            </Reveal>
+          ))}
+        </Grid>
       </VStack>
     </section>
   );
@@ -1960,7 +2436,7 @@ export default function BookAuthorLandingTemplate() {
   // ============= AUTHOR =============
 
   const authorSection = (
-    <div style={styles.tintedBand}>
+    <div style={styles.authorBand}>
       <section
         ref={registerSection('author')}
         aria-label="About the author"
@@ -1969,7 +2445,7 @@ export default function BookAuthorLandingTemplate() {
           <div
             style={{
               display: 'flex',
-              gap: 'var(--spacing-6)',
+              gap: 'var(--spacing-7, 40px)',
               alignItems: isCompact ? 'center' : 'flex-start',
               flexDirection: isCompact ? 'column' : 'row',
             }}>
@@ -1981,6 +2457,7 @@ export default function BookAuthorLandingTemplate() {
                 eyebrow="About the author"
                 title={AUTHOR.name}
                 align={isCompact ? 'center' : 'start'}
+                compact={isCompact}
               />
               <Text
                 size="sm"
@@ -2014,158 +2491,219 @@ export default function BookAuthorLandingTemplate() {
     </div>
   );
 
-  // ============= FORMATS =============
+  // ============= FORMATS (second aurora field) =============
 
   const formatsSection = (
-    <section
-      ref={registerSection('formats')}
-      aria-label="Formats and pricing"
-      style={{...column, ...sectionPad}}>
-      <VStack gap={6}>
-        <Reveal reduced={reduced}>
-          <SectionIntro
-            eyebrow="Get the book"
-            title="Choose your format"
-            copy={LAUNCH_NOTE}
-          />
-        </Reveal>
-        <Reveal reduced={reduced} delay={80}>
+    <div style={styles.formatsBand}>
+      <div style={styles.auroraLayer} aria-hidden="true">
+        <div
+          className="bal-aurora"
+          style={{
+            ...styles.auroraBlob,
+            width: 460,
+            height: 460,
+            top: -180,
+            right: -140,
+            background: AURORA_B,
+            opacity: 0.4,
+            animation: reduced
+              ? undefined
+              : 'bal-aurora-b 42s ease-in-out infinite alternate',
+          }}
+        />
+        <div
+          className="bal-aurora"
+          style={{
+            ...styles.auroraBlob,
+            width: 400,
+            height: 400,
+            bottom: -160,
+            left: -120,
+            background: AURORA_A,
+            opacity: 0.35,
+            animation: reduced
+              ? undefined
+              : 'bal-aurora-a 36s ease-in-out infinite alternate',
+            animationDelay: reduced ? undefined : '-16s',
+          }}
+        />
+      </div>
+      <section
+        ref={registerSection('formats')}
+        aria-label="Formats and pricing"
+        style={{...column, ...sectionPad, position: 'relative', zIndex: 1}}>
+        <VStack gap={6}>
+          <Reveal reduced={reduced}>
+            <SectionIntro
+              eyebrow="Get the book"
+              title="Choose your format"
+              copy={LAUNCH_NOTE}
+              compact={isCompact}
+            />
+          </Reveal>
           <Grid columns={{minWidth: 264, max: 3}} gap={3}>
-            {FORMATS.map(format => (
-              <Card
-                key={format.id}
-                padding={5}
-                style={format.isHighlighted ? styles.formatCardHighlighted : undefined}>
-                <VStack gap={3}>
-                  <HStack gap={2} vAlign="center" wrap="wrap">
-                    <Text type="label">{format.name}</Text>
-                    {format.savingsNote !== undefined && (
-                      <Badge variant="orange" label={format.savingsNote} />
-                    )}
-                  </HStack>
-                  <span style={styles.formatPrice}>${format.price}</span>
-                  <Text size="sm" color="secondary">
-                    {format.tagline}
-                  </Text>
-                  <VStack gap={2}>
-                    {format.features.map(feature => (
-                      <CheckRow key={feature} label={feature} />
-                    ))}
-                  </VStack>
-                  {format.isHighlighted && (
-                    <div style={styles.bonusList}>
-                      <HStack gap={2} vAlign="center">
-                        <Icon icon={SparklesIcon} size="sm" color="inherit" />
-                        <Text size="sm" weight="semibold">
-                          Launch-week bonuses
-                        </Text>
-                      </HStack>
-                      {LAUNCH_BONUSES.map(bonus => (
-                        <Text key={bonus} size="sm" color="secondary">
-                          {bonus}
-                        </Text>
+            {FORMATS.map((format, index) => (
+              <Reveal key={format.id} reduced={reduced} delay={index * 90}>
+                <Card
+                  padding={5}
+                  className={format.isHighlighted ? undefined : 'bal-raise'}
+                  style={
+                    format.isHighlighted
+                      ? {
+                          ...styles.formatCard,
+                          ...styles.formatCardHighlighted,
+                          transform: isCompact ? undefined : 'translateY(-10px)',
+                        }
+                      : styles.formatCard
+                  }>
+                  <VStack gap={3}>
+                    <HStack gap={2} vAlign="center" wrap="wrap">
+                      <Text type="label">{format.name}</Text>
+                      {format.savingsNote !== undefined && (
+                        <Badge variant="orange" label={format.savingsNote} />
+                      )}
+                    </HStack>
+                    <span style={styles.formatPrice}>${format.price}</span>
+                    <Text size="sm" color="secondary">
+                      {format.tagline}
+                    </Text>
+                    <VStack gap={2}>
+                      {format.features.map(feature => (
+                        <CheckRow key={feature} label={feature} />
                       ))}
-                    </div>
-                  )}
-                  <Button
-                    label={format.cta}
-                    variant={format.isHighlighted ? 'primary' : 'secondary'}
-                    onClick={() =>
-                      fireToast(
-                        `Checkout — ${format.name} ($${format.price}) added (demo).`,
-                      )
-                    }
-                  />
-                </VStack>
-              </Card>
+                    </VStack>
+                    {format.isHighlighted && (
+                      <div style={styles.bonusList}>
+                        <HStack gap={2} vAlign="center">
+                          <Icon icon={SparklesIcon} size="sm" color="inherit" />
+                          <Text size="sm" weight="semibold">
+                            Launch-week bonuses
+                          </Text>
+                        </HStack>
+                        {LAUNCH_BONUSES.map(bonus => (
+                          <Text key={bonus} size="sm" color="secondary">
+                            {bonus}
+                          </Text>
+                        ))}
+                      </div>
+                    )}
+                    <Button
+                      label={format.cta}
+                      variant={format.isHighlighted ? 'primary' : 'secondary'}
+                      onClick={() =>
+                        fireToast(
+                          `Checkout — ${format.name} ($${format.price}) added (demo).`,
+                        )
+                      }
+                    />
+                  </VStack>
+                </Card>
+              </Reveal>
             ))}
           </Grid>
-        </Reveal>
-      </VStack>
-    </section>
+        </VStack>
+      </section>
+    </div>
   );
 
-  // ============= NEWSLETTER =============
+  // ============= NEWSLETTER (signature dark band) =============
 
   const newsletterBand = (
-    <div style={styles.newsletterBand}>
-      <div style={{...column, ...sectionPad}}>
-        <Reveal reduced={reduced}>
-          <VStack gap={4} hAlign="center">
-            <Heading level={2} style={{color: DARK_TEXT}}>
-              {NEWSLETTER.heading}
-            </Heading>
-            <Text
-              size="sm"
-              color="inherit"
-              justify="center"
-              style={{color: DARK_TEXT_SOFT, maxWidth: 520, lineHeight: 1.6}}>
-              {NEWSLETTER.copy}
-            </Text>
-            {confirmedEmail === null ? (
-              <VStack gap={2} hAlign="center" style={{width: '100%'}}>
-                <div
-                  style={{
-                    ...styles.emailRow,
-                    ...(isPhone ? styles.emailRowStacked : null),
-                    marginInline: 'auto',
-                  }}>
-                  <div style={styles.emailInput}>
-                    <TextInput
-                      label="Email address"
-                      isLabelHidden
-                      type="email"
-                      value={email}
-                      placeholder="you@example.com"
-                      width="100%"
-                      onChange={value => {
-                        setEmail(value);
-                        if (emailError !== null) {
-                          setEmailError(null);
-                        }
-                      }}
-                      onEnter={submitNewsletter}
+    <div
+      ref={newsletterRef}
+      style={styles.newsletterBand}
+      onPointerMove={onNewsletterPointerMove}>
+      <div style={styles.spotlight} aria-hidden="true" />
+      <div style={styles.grain} aria-hidden="true" />
+      <div style={{...column, ...sectionPad, position: 'relative', zIndex: 2}}>
+        <div
+          style={{
+            ...styles.glassCard,
+            ...(isPhone ? styles.glassCardPhone : null),
+          }}>
+          <Reveal reduced={reduced}>
+            <VStack gap={4} hAlign="center">
+              <Heading
+                level={2}
+                style={{
+                  ...styles.sectionHeading,
+                  fontSize: isCompact ? 30 : 38,
+                  color: DARK_TEXT,
+                }}>
+                {NEWSLETTER.heading}
+              </Heading>
+              <Text
+                size="sm"
+                color="inherit"
+                justify="center"
+                style={{color: DARK_TEXT_SOFT, maxWidth: 520, lineHeight: 1.6}}>
+                {NEWSLETTER.copy}
+              </Text>
+              {confirmedEmail === null ? (
+                <VStack gap={2} hAlign="center" style={{width: '100%'}}>
+                  <div
+                    style={{
+                      ...styles.emailRow,
+                      ...(isPhone ? styles.emailRowStacked : null),
+                      marginInline: 'auto',
+                    }}>
+                    <div style={styles.emailInput}>
+                      <TextInput
+                        label="Email address"
+                        isLabelHidden
+                        type="email"
+                        value={email}
+                        placeholder="you@example.com"
+                        width="100%"
+                        onChange={value => {
+                          setEmail(value);
+                          if (emailError !== null) {
+                            setEmailError(null);
+                          }
+                        }}
+                        onEnter={submitNewsletter}
+                      />
+                    </div>
+                    <Button
+                      label="Send me Chapter 1"
+                      variant="primary"
+                      icon={<Icon icon={SendIcon} size="sm" color="inherit" />}
+                      onClick={submitNewsletter}
                     />
                   </div>
-                  <Button
-                    label="Send me Chapter 1"
-                    variant="primary"
-                    icon={<Icon icon={SendIcon} size="sm" color="inherit" />}
-                    onClick={submitNewsletter}
-                  />
-                </div>
-                {emailError !== null && (
-                  <p style={styles.emailError} role="alert">
-                    {emailError}
-                  </p>
-                )}
-              </VStack>
-            ) : (
-              <HStack gap={3} vAlign="center" wrap="wrap" hAlign="center">
-                <div style={styles.successDisc} aria-hidden="true">
-                  <Icon icon={MailCheckIcon} size="sm" color="inherit" />
-                </div>
-                <VStack gap={0} hAlign="start">
-                  <Text weight="semibold" color="inherit">
-                    Chapter 1 is on its way to {confirmedEmail}
-                  </Text>
-                  <Text
-                    type="supporting"
-                    color="inherit"
-                    style={{color: DARK_TEXT_FAINT}}>
-                    Check your inbox in the next few minutes.
-                  </Text>
+                  {emailError !== null && (
+                    <p style={styles.emailError} role="alert">
+                      {emailError}
+                    </p>
+                  )}
                 </VStack>
-                <Button
-                  label="Use a different email"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setConfirmedEmail(null)}
-                />
-              </HStack>
-            )}
-          </VStack>
-        </Reveal>
+              ) : (
+                <HStack gap={3} vAlign="center" wrap="wrap" hAlign="center">
+                  <div style={styles.successDisc} aria-hidden="true">
+                    <Icon icon={MailCheckIcon} size="sm" color="inherit" />
+                  </div>
+                  <VStack gap={0} hAlign="start">
+                    <Text weight="semibold" color="inherit">
+                      Chapter 1 is on its way to {confirmedEmail}
+                    </Text>
+                    <Text
+                      type="supporting"
+                      color="inherit"
+                      style={{color: DARK_TEXT_FAINT}}>
+                      Check your inbox in the next few minutes.
+                    </Text>
+                  </VStack>
+                  <Button
+                    label="Use a different email"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setConfirmedEmail(null)}
+                  />
+                </HStack>
+              )}
+            </VStack>
+          </Reveal>
+        </div>
       </div>
     </div>
   );
@@ -2280,7 +2818,7 @@ export default function BookAuthorLandingTemplate() {
         height="fill"
         content={
           <LayoutContent padding={0} role="main" label="Book launch page">
-            <div ref={pageRef} style={styles.page}>
+            <div ref={pageRef} style={styles.page} onScroll={onPageScroll}>
               {navbar}
               {hero}
               {statsBand}

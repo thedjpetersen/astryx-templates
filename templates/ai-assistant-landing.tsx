@@ -7,32 +7,38 @@
  * @input Deterministic fixtures only (the fictional "Murmur" AI work
  *   assistant: hero copy with a validating email capture, a scripted
  *   five-item chat demo transcript with tool-call chips and an artifact
- *   card, six capability cards each with a CSS-drawn schematic, eight
- *   invented integration tiles with gradient monograms, three count-up
- *   stats, four compliance chips plus four security practice rows, eight
- *   example prompts for the scroll-snap carousel, a two-tier CTA band
- *   with independent email captures, and a three-column sitemap footer)
- * @output Complete vertical-specific marketing landing page for an AI
- *   assistant product: sticky navbar (brand mark + four smooth-scrolling
- *   anchor links + CTA; collapses to a menu button with a dropdown at
- *   compact widths), a split hero whose framed chat demo AUTOPLAYS a
- *   scripted conversation (typing dots → user ask → assistant reply with
- *   a tool-call chip → artifact card → follow-up turn), loops with a
- *   replay button and pauses on hover, a capability grid, a full-bleed
- *   "works where you work" integration band with count-up stats, a
- *   security strip ("your data is never trained on"), a prompt-examples
- *   scroll-snap carousel whose chips fill a demo input, a dark two-tier
- *   CTA band (Try free / Book demo, both validating email forms), and a
- *   footer. Scroll-reveals rise+fade once per section.
+ *   card, three floating hero satellite cards, six capability cards each
+ *   with a CSS-drawn schematic, eight invented integration tiles with
+ *   gradient monograms, three count-up stats, four compliance chips plus
+ *   four titled security practices each with a CSS-drawn console panel,
+ *   eight example prompts for the scroll-snap carousel, a two-tier CTA
+ *   band with independent email captures, and a three-column sitemap
+ *   footer)
+ * @output Art-directed marketing landing page for an AI assistant
+ *   product. Sticky navbar starts transparent and condenses (tinted
+ *   surface + hairline + reduced height) after 24px of scroll. The hero
+ *   sits on an aurora field (drifting color-mix blobs + feTurbulence
+ *   grain) with 72-78px gradient-ink display type; its framed chat demo
+ *   AUTOPLAYS a scripted conversation (typing dots → user ask →
+ *   assistant reply with a tool-call chip → artifact card → follow-up
+ *   turn), loops with a replay button, pauses on hover, and is STAGED as
+ *   product theater: perspective tilt + three bobbing satellite cards
+ *   that parallax toward the pointer. Sections: asymmetric-header
+ *   capability grid with hover-lift cards, a dot-grid integration band
+ *   whose tiles run as a marquee loop with count-up stats, a PINNED
+ *   SECURITY SCROLL STORY (sticky stage in a 250vh container; scroll or
+ *   click advances four numbered practices, each swapping a CSS console
+ *   panel), a prompt-examples carousel whose demo card overlaps into the
+ *   dark CTA band, a scheme-locked dark CTA band with aurora glows,
+ *   pointer-tracked spotlight, and glass tier cards (Try free / Book
+ *   demo, both validating email forms), and a footer.
  * @position Page template; emitted by `astryx template ai-assistant-landing`
  *
  * Frame: Layout height="fill", content-only — the landing page owns its
  * own chrome so there is no LayoutHeader. LayoutContent (padding 0)
  * hosts a single scroll container; the navbar inside it is
- * position:sticky top:0. A centered 1100px column carries the hero,
- * capabilities, and examples sections; the integrations band, security
- * strip, CTA band, and footer paint full-bleed with their own inner
- * columns so tinted bands alternate with plain bands.
+ * position:sticky top:0. Sections are full-bleed with their own 1140px
+ * inner columns so tinted/textured bands alternate with plain bands.
  *
  * Interaction contract:
  * - Chat demo: a step timer appends one scripted item at a time with
@@ -41,20 +47,39 @@
  *   script completes it waits ~4s and loops; the Replay button restarts
  *   it immediately. prefers-reduced-motion renders the completed
  *   transcript statically (no dots, no loop, no replay affordance).
+ * - Hero theater: pointer movement over the demo stage tilts the chat
+ *   frame ±2.6deg and parallaxes the satellites ±6-10px (spring
+ *   transition); disabled under reduced motion and at stacked widths,
+ *   where the satellites are hidden entirely.
+ * - Security story: at wide widths without reduced motion, the section
+ *   is a 250vh container with a sticky stage; scroll progress fills the
+ *   step rail and swaps the console panel across the four practices;
+ *   each step is also a button that scrolls the container to its band.
+ *   Reduced motion or stacked widths render the four practices as a
+ *   static stacked sequence instead.
+ * - Nav anchors and the nav CTA smooth-scroll the container to real
+ *   section ids with a sticky-nav allowance; the compact menu closes on
+ *   Escape, outside pointerdown, or any selection. The navbar condenses
+ *   after 24px of scroll (background/border/shadow transition only —
+ *   the height change is instant, never animated).
  * - Hero primary CTA reveals a validating email capture inline (empty +
  *   format errors, success flips to a confirmation echoing the address);
  *   the secondary CTA smooth-scrolls to the prompt examples.
- * - Nav anchors and the nav CTA smooth-scroll the container to real
- *   section ids with a sticky-nav allowance; the compact menu closes on
- *   Escape, outside pointerdown, or any selection.
  * - Prompt carousel chips fill the demo input (editable); "Ask Murmur"
- *   validates non-empty and flips an inline confirmation line.
+ *   validates non-empty and flips an inline confirmation line. The demo
+ *   card overlaps the dark CTA band below it (deliberate section-
+ *   boundary crossing).
  * - CTA band forms are independent copies of the email contract with
- *   their own success states. Footer anchor links smooth-scroll;
- *   remaining sitemap links are exits and intentionally no-op.
- * - Scroll reveals (IntersectionObserver, fire once, 12px rise+fade) and
- *   the three count-up stats are gated by prefers-reduced-motion:
- *   reveals render visible, counters render final values.
+ *   their own success states; the band tracks the pointer with a radial
+ *   spotlight (CSS vars, no re-render). Footer anchor links smooth-
+ *   scroll; remaining sitemap links are exits and intentionally no-op.
+ * - Primary CTAs get a sheen sweep + 1px lift on hover and a .98 pressed
+ *   scale via a wrapper (transform/opacity only, reduced-motion gated).
+ * - Scroll reveals (IntersectionObserver, fire once, 16px rise + .985
+ *   scale, decelerate bezier, 60-90ms child stagger) and the count-up
+ *   stats (~900ms eased) are gated by prefers-reduced-motion: reveals
+ *   render visible, counters render final values, auroras/marquee/bob
+ *   keyframes only run under (prefers-reduced-motion: no-preference).
  *
  * Color policy: token-pure with ONE quarantined accent literal (Murmur
  * violet, see ACCENT) plus scheme-locked brand-art gradients: the logo
@@ -62,20 +87,26 @@
  * literal fixture gradients locked with colorScheme:'dark' so the art
  * reads identically in both app themes (hue gradients cannot be built
  * from tokens). Text sitting on those locked surfaces (DARK_TEXT*) is
- * literal on purpose so it stays readable there.
+ * literal on purpose so it stays readable there. Every aurora blob,
+ * glow, spotlight, and gradient ink is derived from ACCENT via
+ * color-mix with tokens; depth shadows use neutral black at low alpha
+ * (standard shadow ink, not palette color).
  *
  * Responsive contract (useElementWidth on the page wrapper — the demo
  * stage is ~1045px inside a 1440px window, so viewport media queries
  * never fire in the inline stage):
  * - >880px: navbar shows inline anchor links + CTA; hero is split
- *   copy/demo; capability grid sits 3-up; CTA band is 2-up.
+ *   copy/demo with satellites; capability grid sits 3-up; CTA band is
+ *   2-up; the security story pins.
  * - <=880px: nav links collapse behind a 40px menu button whose dropdown
  *   lists the anchors and the CTA.
- * - <=780px: hero stacks (demo below copy), capability grid drops to
- *   2-up then 1-up (Grid minWidth), integration tiles rewrap, the CTA
- *   band stacks, and section paddings tighten.
- * - <=540px: headline steps down, email forms stack the button under the
- *   input, stats stack vertically, and the chat frame shortens. All
+ * - <=780px: hero stacks (demo below copy, satellites hidden, parallax
+ *   off), the security story unpins to a stacked sequence, capability
+ *   grid drops to 2-up then 1-up (Grid minWidth), integration marquee
+ *   density tightens, the CTA band stacks, and section paddings drop to
+ *   the compact tier (56-72px).
+ * - <=540px: display type steps down, email forms stack the button under
+ *   the input, stats stack vertically, and the chat frame shortens. All
  *   action rows wrap, so the page holds at 390px with no overflow-x.
  */
 
@@ -84,6 +115,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
   type ReactNode,
   type RefObject,
 } from 'react';
@@ -95,7 +127,7 @@ import {
   StackItem,
   VStack,
 } from '@astryxdesign/core/Layout';
-import {Heading, Text} from '@astryxdesign/core/Text';
+import {Text} from '@astryxdesign/core/Text';
 import {Badge} from '@astryxdesign/core/Badge';
 import {Button} from '@astryxdesign/core/Button';
 import {Divider} from '@astryxdesign/core/Divider';
@@ -136,7 +168,8 @@ type Glyph = ComponentType<SVGProps<SVGSVGElement>>;
  * Quarantined accent literal (Murmur violet — the brand personality).
  * Contrast math: light #6D28D9 on white = 7.1:1; dark #C4B5FD on a
  * ~#111 dark body = 9.5:1 — both clear WCAG AA for text and UI chrome.
- * Every tint below derives from this one literal via color-mix.
+ * Every tint, aurora, glow, and gradient below derives from this one
+ * literal via color-mix.
  */
 const ACCENT = 'light-dark(#6D28D9, #C4B5FD)';
 const ACCENT_TINT = `color-mix(in srgb, ${ACCENT} 11%, transparent)`;
@@ -157,6 +190,56 @@ const NAV_ALLOWANCE = 76;
 
 const MONO = 'var(--font-family-mono, ui-monospace, monospace)';
 
+// Depth tiers (neutral shadow ink at low alpha; per the shadow system).
+const SHADOW_RAISED =
+  '0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px -12px rgba(0, 0, 0, 0.18)';
+const SHADOW_FLOATING = `${SHADOW_RAISED}, 0 24px 48px -24px rgba(0, 0, 0, 0.22)`;
+const HAIRLINE_INSET =
+  'inset 0 0 0 1px color-mix(in srgb, var(--color-border) 72%, transparent)';
+
+// Atmosphere inks — all color-mix derivations of the quarantined accent.
+const AURORA_VIOLET = `color-mix(in srgb, ${ACCENT} 62%, var(--color-accent))`;
+const AURORA_TEAL = `color-mix(in srgb, ${ACCENT} 45%, var(--color-success))`;
+const SPOTLIGHT_INK = `color-mix(in srgb, ${ACCENT} 16%, transparent)`;
+const SHEEN_INK = `color-mix(in srgb, ${DARK_TEXT} 32%, transparent)`;
+const GRADIENT_INK = `linear-gradient(94deg, ${ACCENT} 8%, color-mix(in srgb, ${ACCENT} 55%, var(--color-accent)) 62%, color-mix(in srgb, ${ACCENT} 60%, var(--color-success)) 100%)`;
+
+/** Grain texture: inline feTurbulence SVG, tiled at 4% opacity. */
+const GRAIN_URI =
+  "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='aalNoise'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='160' height='160' filter='url(%23aalNoise)' opacity='0.6'/></svg>\")";
+
+/**
+ * Keyframes + hover choreography. Every transform animation lives under
+ * (prefers-reduced-motion: no-preference); hover color/shadow shifts
+ * stay available to everyone.
+ */
+const MOTION_CSS = `
+@keyframes aal-typing-dot { 0%, 60%, 100% { opacity: 0.3; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-2px); } }
+@keyframes aal-drift-a { from { transform: translate3d(0, 0, 0) scale(1); } to { transform: translate3d(70px, 44px, 0) scale(1.18); } }
+@keyframes aal-drift-b { from { transform: translate3d(0, 0, 0) scale(1.08); } to { transform: translate3d(-64px, -38px, 0) scale(0.92); } }
+@keyframes aal-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+@keyframes aal-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.aal-lift:hover { box-shadow: ${SHADOW_FLOATING}, 0 0 0 1px ${ACCENT_BORDER}; }
+.aal-navlink:hover { color: var(--color-text-primary); background-color: ${ACCENT_TINT}; }
+.aal-chip:hover { border-color: ${ACCENT_BORDER}; }
+@media (prefers-reduced-motion: no-preference) {
+  .aal-lift { transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
+  .aal-lift:hover { transform: translateY(-3px); }
+  .aal-aurora-a { animation: aal-drift-a 36s ease-in-out infinite alternate; }
+  .aal-aurora-b { animation: aal-drift-b 44s ease-in-out infinite alternate; }
+  .aal-bob-1 { animation: aal-bob 7s ease-in-out -2.2s infinite; }
+  .aal-bob-2 { animation: aal-bob 8.6s ease-in-out -4.1s infinite; }
+  .aal-bob-3 { animation: aal-bob 6.4s ease-in-out -1.3s infinite; }
+  .aal-marquee-track { animation: aal-marquee 52s linear infinite; }
+  .aal-marquee:hover .aal-marquee-track { animation-play-state: paused; }
+  .aal-shine { transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+  .aal-shine:hover { transform: translateY(-1px); }
+  .aal-shine:active { transform: scale(0.98); }
+  .aal-sheen-bar { transition: transform 0.2s ease; }
+  .aal-shine:hover .aal-sheen-bar { transform: translateX(340%); transition: transform 0.65s ease; }
+}
+`;
+
 // ============= STYLES =============
 
 const styles: Record<string, CSSProperties> = {
@@ -167,60 +250,41 @@ const styles: Record<string, CSSProperties> = {
     position: 'relative',
     height: '100%',
     overflowY: 'auto',
+    overflowX: 'hidden',
     backgroundColor: 'var(--color-background-body)',
     color: 'var(--color-text-primary)',
   },
-  column: {
-    width: '100%',
-    maxWidth: 1100,
-    marginInline: 'auto',
-    padding: 'var(--spacing-6)',
-    boxSizing: 'border-box',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 'var(--spacing-10, 64px)',
-  },
-  columnCompact: {
-    padding: 'var(--spacing-4)',
-    gap: 'var(--spacing-8)',
-  },
-  // Full-bleed tinted bands alternate with plain bands.
-  band: {
-    backgroundColor: 'var(--color-background-muted)',
-    borderBlock: '1px solid var(--color-border)',
-  },
-  bandInner: {
-    width: '100%',
-    maxWidth: 1100,
-    marginInline: 'auto',
-    boxSizing: 'border-box',
-    padding: 'var(--spacing-8) var(--spacing-6)',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 'var(--spacing-5)',
-  },
-  bandInnerCompact: {
-    padding: 'var(--spacing-6) var(--spacing-4)',
-  },
-  // ---- sticky navbar ----
+  // ---- sticky navbar (transparent → condensed tinted surface) ----
   navBar: {
     position: 'sticky',
     top: 0,
     zIndex: 30,
-    backgroundColor: 'var(--color-background-body)',
+    backgroundColor: 'transparent',
+    borderBottom: '1px solid transparent',
+    transition:
+      'background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease',
+  },
+  navBarCondensed: {
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-body) 92%, transparent)',
     borderBottom: '1px solid var(--color-border)',
+    boxShadow: SHADOW_RAISED,
   },
   navInner: {
     position: 'relative',
     width: '100%',
-    maxWidth: 1100,
+    maxWidth: 1140,
     marginInline: 'auto',
     boxSizing: 'border-box',
-    padding: 'var(--spacing-2) var(--spacing-4)',
+    padding: 'var(--spacing-3) var(--spacing-4)',
     display: 'flex',
     alignItems: 'center',
     gap: 'var(--spacing-2)',
-    minHeight: 56,
+    minHeight: 64,
+  },
+  navInnerCondensed: {
+    padding: 'var(--spacing-1) var(--spacing-4)',
+    minHeight: 52,
   },
   // Scheme-locked brand art (see Color policy): violet brand gradient
   // reads identically in both themes.
@@ -258,7 +322,7 @@ const styles: Record<string, CSSProperties> = {
     justifyContent: 'center',
     borderRadius: 8,
     border: '1px solid var(--color-border)',
-    backgroundColor: 'transparent',
+    backgroundColor: 'var(--color-background-body)',
     cursor: 'pointer',
     padding: 0,
     flexShrink: 0,
@@ -272,8 +336,7 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 14,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-body)',
-    boxShadow:
-      'var(--shadow-high, 0 12px 32px light-dark(rgba(15, 23, 42, 0.18), rgba(0, 0, 0, 0.5)))',
+    boxShadow: SHADOW_FLOATING,
     padding: 'var(--spacing-3)',
     zIndex: 40,
   },
@@ -292,35 +355,103 @@ const styles: Record<string, CSSProperties> = {
     color: 'var(--color-text-primary)',
     textAlign: 'left',
   },
-  // ---- eyebrow ----
+  // ---- eyebrow (accent-tinted chip) ----
   eyebrow: {
     display: 'inline-flex',
     alignItems: 'center',
     gap: 6,
+    padding: '4px 12px',
+    borderRadius: 999,
+    border: `1px solid ${ACCENT_BORDER}`,
+    backgroundColor: ACCENT_TINT,
     fontSize: 11,
     fontWeight: 700,
-    letterSpacing: '0.12em',
+    letterSpacing: '0.1em',
     textTransform: 'uppercase',
     color: ACCENT,
+    whiteSpace: 'nowrap',
+  },
+  // ---- atmosphere layers ----
+  atmosLayer: {
+    position: 'absolute',
+    inset: 0,
+    overflow: 'hidden',
+    pointerEvents: 'none',
+  },
+  auroraBlob: {
+    position: 'absolute',
+    borderRadius: '50%',
+    filter: 'blur(90px)',
+  },
+  grain: {
+    position: 'absolute',
+    inset: 0,
+    backgroundImage: GRAIN_URI,
+    backgroundSize: '160px 160px',
+    opacity: 0.04,
+    pointerEvents: 'none',
+  },
+  // ---- section shells ----
+  sectionInner: {
+    position: 'relative',
+    width: '100%',
+    maxWidth: 1140,
+    marginInline: 'auto',
+    boxSizing: 'border-box',
+    padding: '104px var(--spacing-6)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-6)',
+  },
+  sectionInnerCompact: {
+    padding: '60px var(--spacing-4)',
+    gap: 'var(--spacing-5)',
+  },
+  sectionHeading: {
+    fontWeight: 700,
+    lineHeight: 1.08,
+    letterSpacing: '-0.02em',
+    margin: 0,
+    color: 'var(--color-text-primary)',
+  },
+  sectionKicker: {
+    fontSize: 16,
+    lineHeight: 1.55,
+    color: 'var(--color-text-secondary)',
+    maxWidth: '56ch',
+    margin: 0,
   },
   // ---- hero ----
+  heroSection: {
+    position: 'relative',
+  },
+  heroInner: {
+    position: 'relative',
+    width: '100%',
+    maxWidth: 1140,
+    marginInline: 'auto',
+    boxSizing: 'border-box',
+    padding: '88px var(--spacing-6) 112px',
+  },
+  heroInnerCompact: {
+    padding: '40px var(--spacing-4) 64px',
+  },
   heroRow: {
     display: 'flex',
     gap: 'var(--spacing-8)',
     alignItems: 'center',
-    paddingBlock: 'var(--spacing-4)',
   },
   heroRowStacked: {
     flexDirection: 'column',
     alignItems: 'stretch',
-    gap: 'var(--spacing-5)',
-    paddingBlock: 0,
+    gap: 'var(--spacing-6)',
   },
   heroText: {
     flex: '6 1 0',
     minWidth: 0,
     display: 'flex',
     flexDirection: 'column',
+    alignItems: 'flex-start',
     gap: 'var(--spacing-4)',
   },
   heroDemo: {
@@ -328,21 +459,72 @@ const styles: Record<string, CSSProperties> = {
     minWidth: 0,
   },
   heroHeadline: {
-    fontSize: 46,
-    fontWeight: 700,
-    lineHeight: 1.1,
-    letterSpacing: '-0.02em',
+    fontWeight: 725,
+    lineHeight: 1.03,
+    letterSpacing: '-0.03em',
     margin: 0,
   },
-  heroHeadlineCompact: {
-    fontSize: 32,
+  gradientInk: {
+    backgroundImage: GRADIENT_INK,
+    WebkitBackgroundClip: 'text',
+    backgroundClip: 'text',
+    color: 'transparent',
   },
   heroSubcopy: {
     fontSize: 17,
-    lineHeight: 1.55,
+    lineHeight: 1.6,
     color: 'var(--color-text-secondary)',
-    maxWidth: 480,
+    maxWidth: '56ch',
     margin: 0,
+  },
+  // ---- product theater stage ----
+  heroStage: {
+    position: 'relative',
+    perspective: '1400px',
+  },
+  satellite: {
+    position: 'absolute',
+    zIndex: 2,
+    transform:
+      'translate(calc(var(--mx, 0) * 9px), calc(var(--my, 0) * 7px))',
+    transition: 'transform 0.55s cubic-bezier(0.22, 1, 0.36, 1)',
+    willChange: 'transform',
+  },
+  satelliteCard: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+    padding: '10px 14px',
+    borderRadius: 14,
+    border: '1px solid var(--color-border)',
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-card) 90%, transparent)',
+    boxShadow: `${SHADOW_RAISED}, ${HAIRLINE_INSET}`,
+  },
+  satelliteGlyph: {
+    width: 30,
+    height: 30,
+    flexShrink: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 9,
+    backgroundColor: ACCENT_TINT,
+    color: ACCENT,
+  },
+  satelliteAvatar: {
+    width: 24,
+    height: 24,
+    borderRadius: '50%',
+    border: '2px solid var(--color-background-card)',
+    backgroundColor: ACCENT_TINT_STRONG,
+    color: ACCENT,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: 9,
+    fontWeight: 700,
+    boxSizing: 'border-box',
   },
   // ---- shared email capture ----
   emailRow: {
@@ -386,13 +568,19 @@ const styles: Record<string, CSSProperties> = {
   },
   // ---- chat demo frame ----
   chatFrame: {
-    borderRadius: 16,
+    borderRadius: 18,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
-    boxShadow: 'var(--shadow-med)',
+    boxShadow: `${SHADOW_FLOATING}, ${HAIRLINE_INSET}`,
     overflow: 'hidden',
     display: 'flex',
     flexDirection: 'column',
+  },
+  chatFrameStaged: {
+    transform:
+      'rotateY(calc(var(--mx, 0) * 2.6deg)) rotateX(calc(var(--my, 0) * -2deg))',
+    transition: 'transform 0.55s cubic-bezier(0.22, 1, 0.36, 1)',
+    willChange: 'transform',
   },
   chatHeader: {
     display: 'flex',
@@ -477,7 +665,7 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 12,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
-    boxShadow: 'var(--shadow-low)',
+    boxShadow: SHADOW_RAISED,
   },
   artifactGlyph: {
     width: 36,
@@ -544,8 +732,13 @@ const styles: Record<string, CSSProperties> = {
     color: ACCENT,
   },
   // ---- capability cards ----
+  capHeaderRow: {
+    display: 'flex',
+    gap: 'var(--spacing-6)',
+    alignItems: 'flex-end',
+  },
   capabilityCard: {
-    borderRadius: 14,
+    borderRadius: 16,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
     padding: 'var(--spacing-4)',
@@ -554,6 +747,7 @@ const styles: Record<string, CSSProperties> = {
     gap: 'var(--spacing-3)',
     boxSizing: 'border-box',
     height: '100%',
+    boxShadow: SHADOW_RAISED,
   },
   capabilityGlyph: {
     width: 36,
@@ -633,7 +827,40 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 3,
     backgroundColor: 'var(--color-border)',
   },
-  // ---- integrations ----
+  // ---- integrations band (dot-grid texture + marquee) ----
+  band: {
+    position: 'relative',
+    backgroundColor: 'var(--color-background-muted)',
+    backgroundImage:
+      'radial-gradient(color-mix(in srgb, var(--color-text-primary) 7%, transparent) 1px, transparent 1px)',
+    backgroundSize: '22px 22px',
+    borderBlock: '1px solid var(--color-border)',
+  },
+  bandInner: {
+    width: '100%',
+    maxWidth: 1140,
+    marginInline: 'auto',
+    boxSizing: 'border-box',
+    padding: '96px var(--spacing-6)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-6)',
+  },
+  bandInnerCompact: {
+    padding: '56px var(--spacing-4)',
+    gap: 'var(--spacing-5)',
+  },
+  marqueeViewport: {
+    overflow: 'hidden',
+    maskImage:
+      'linear-gradient(90deg, transparent, black 8%, black 92%, transparent)',
+    WebkitMaskImage:
+      'linear-gradient(90deg, transparent, black 8%, black 92%, transparent)',
+  },
+  marqueeTrack: {
+    display: 'flex',
+    width: 'max-content',
+  },
   integrationCard: {
     display: 'flex',
     flexDirection: 'column',
@@ -645,6 +872,12 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: 'var(--color-background-card)',
     textAlign: 'center',
     boxSizing: 'border-box',
+    boxShadow: SHADOW_RAISED,
+  },
+  marqueeCard: {
+    width: 148,
+    marginRight: 16,
+    flexShrink: 0,
   },
   // Scheme-locked brand art (see Color policy): invented partner-app
   // gradients must not reflow with the theme.
@@ -663,14 +896,115 @@ const styles: Record<string, CSSProperties> = {
     flexShrink: 0,
   },
   statValue: {
-    fontSize: 34,
-    fontWeight: 700,
-    lineHeight: 1.1,
+    fontWeight: 725,
+    lineHeight: 1.05,
     letterSpacing: '-0.02em',
     fontVariantNumeric: 'tabular-nums',
     color: 'var(--color-text-primary)',
   },
-  // ---- security strip ----
+  // ---- security scroll story ----
+  storyOuter: {
+    position: 'relative',
+  },
+  storySticky: {
+    position: 'sticky',
+    top: 0,
+  },
+  storySplit: {
+    display: 'flex',
+    gap: 'var(--spacing-8)',
+    alignItems: 'stretch',
+  },
+  storyRail: {
+    flex: '5 1 0',
+    minWidth: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-2)',
+  },
+  storyStep: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 6,
+    padding: 'var(--spacing-3)',
+    borderRadius: 14,
+    border: '1px solid transparent',
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+    textAlign: 'left',
+    width: '100%',
+    boxSizing: 'border-box',
+  },
+  storyStepActive: {
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_RAISED,
+  },
+  storyNumeral: {
+    fontSize: 40,
+    fontWeight: 750,
+    lineHeight: 1,
+    letterSpacing: '-0.02em',
+    fontVariantNumeric: 'tabular-nums',
+  },
+  storyFillTrack: {
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: 'var(--color-border)',
+    overflow: 'hidden',
+  },
+  storyFill: {
+    height: '100%',
+    backgroundColor: ACCENT,
+    transformOrigin: 'left center',
+  },
+  storyStage: {
+    flex: '7 1 0',
+    minWidth: 0,
+    position: 'relative',
+    borderRadius: 20,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: `${SHADOW_FLOATING}, ${HAIRLINE_INSET}`,
+    padding: 'var(--spacing-5)',
+    boxSizing: 'border-box',
+    minHeight: 380,
+    overflow: 'hidden',
+  },
+  storyPanel: {
+    position: 'absolute',
+    inset: 'var(--spacing-5)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-3)',
+    transition:
+      'opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
+  },
+  consolePane: {
+    borderRadius: 12,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-muted)',
+    padding: 'var(--spacing-3)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 10,
+  },
+  regionCard: {
+    flex: '1 1 0',
+    minWidth: 0,
+    borderRadius: 12,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    padding: 'var(--spacing-3)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 4,
+    boxSizing: 'border-box',
+  },
+  regionCardActive: {
+    borderColor: ACCENT_BORDER,
+    backgroundColor: ACCENT_TINT,
+  },
   complianceChip: {
     display: 'flex',
     alignItems: 'center',
@@ -680,6 +1014,7 @@ const styles: Record<string, CSSProperties> = {
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
     boxSizing: 'border-box',
+    boxShadow: SHADOW_RAISED,
   },
   securityBulletDisc: {
     width: 28,
@@ -725,16 +1060,19 @@ const styles: Record<string, CSSProperties> = {
     color: ACCENT,
   },
   promptDemoCard: {
-    borderRadius: 14,
+    borderRadius: 16,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
     padding: 'var(--spacing-4)',
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-2)',
+    boxShadow: `${SHADOW_FLOATING}, ${HAIRLINE_INSET}`,
   },
-  // ---- CTA band (scheme-locked dark surface; see Color policy) ----
+  // ---- CTA band (scheme-locked dark signature section) ----
   ctaBand: {
+    position: 'relative',
+    overflow: 'hidden',
     colorScheme: 'dark',
     color: DARK_TEXT,
     backgroundImage: [
@@ -742,10 +1080,16 @@ const styles: Record<string, CSSProperties> = {
       'linear-gradient(180deg, #14101F 0%, #1E1B4B 100%)',
     ].join(', '),
   },
+  ctaSpotlight: {
+    position: 'absolute',
+    inset: 0,
+    pointerEvents: 'none',
+    background: `radial-gradient(440px circle at var(--sx, 50%) var(--sy, 30%), ${SPOTLIGHT_INK}, transparent 70%)`,
+  },
   ctaCard: {
-    borderRadius: 14,
-    border: `1px solid ${DARK_CHIP_BORDER}`,
+    borderRadius: 16,
     backgroundColor: DARK_CHIP_BG,
+    boxShadow: `inset 0 0 0 1px ${DARK_CHIP_BORDER}, 0 24px 48px -24px rgba(0, 0, 0, 0.55)`,
     padding: 'var(--spacing-5)',
     display: 'flex',
     flexDirection: 'column',
@@ -754,15 +1098,15 @@ const styles: Record<string, CSSProperties> = {
     height: '100%',
   },
   ctaHeadline: {
-    fontSize: 32,
+    fontSize: 40,
     fontWeight: 700,
-    lineHeight: 1.2,
+    lineHeight: 1.12,
     letterSpacing: '-0.02em',
     margin: 0,
     textAlign: 'center',
   },
   ctaHeadlineCompact: {
-    fontSize: 24,
+    fontSize: 28,
   },
   // ---- footer (scheme-locked dark surface; see Color policy) ----
   footer: {
@@ -809,12 +1153,22 @@ const NAV_ANCHORS: readonly {id: SectionId; label: string}[] = [
 
 const HERO = {
   eyebrow: 'AI work assistant',
-  headline: 'Hand your busywork to Murmur',
+  // Rendered as pre + gradient-ink phrase + post (one headline).
+  headlinePre: 'Hand your ',
+  headlineInk: 'busywork',
+  headlinePost: ' to Murmur',
   subcopy:
     'Murmur drafts, researches, and automates inside the tools you ' +
     'already use. Ask once — it pulls the data, writes the doc, and ' +
     'schedules the send while you stay in flow.',
   finePrint: 'Free for teams up to 5 · no credit card required',
+};
+
+/** Floating satellite cards staged around the hero chat frame. */
+const HERO_SATELLITES = {
+  metric: {value: '8.5 hrs', caption: 'saved weekly per teammate'},
+  toast: {title: 'Digest scheduled', meta: 'Mon 9:00 AM · #support-standup'},
+  teams: {initials: ['AK', 'JP', 'MT'], caption: '12,400 teams'},
 };
 
 // ---- scripted chat demo ----
@@ -983,25 +1337,36 @@ const COMPLIANCE_CHIPS: readonly {id: string; label: string; note: string}[] = [
   {id: 'sso', label: 'SSO + SCIM', note: 'On Business plan'},
 ];
 
-const SECURITY_POINTS: readonly {id: string; icon: Glyph; text: string}[] = [
+type SecurityPanelVariant = 'training' | 'encryption' | 'residency' | 'audit';
+
+const SECURITY_POINTS: readonly {
+  id: SecurityPanelVariant;
+  icon: Glyph;
+  title: string;
+  text: string;
+}[] = [
   {
     id: 'training',
     icon: ShieldCheckIcon,
+    title: 'Never trained on',
     text: 'Your data is never trained on — by Murmur or any model provider. Contractually, not just by default.',
   },
   {
     id: 'encryption',
     icon: LockIcon,
+    title: 'Encrypted end to end',
     text: 'AES-256 encryption at rest and TLS 1.3 in transit, with per-workspace keys.',
   },
   {
     id: 'residency',
     icon: GlobeIcon,
+    title: 'Residency you choose',
     text: 'EU or US data residency — your workspace, memory, and artifacts stay in the region you pick.',
   },
   {
     id: 'audit',
     icon: ScrollTextIcon,
+    title: 'Every call audited',
     text: 'Every tool call is logged: admin audit trail with 90-day retention controls and CSV export.',
   },
 ];
@@ -1191,7 +1556,11 @@ const EMPTY_EMAIL_FORM: EmailFormState = {
 
 // ============= MOTION PIECES =============
 
-/** Scroll reveal: fires once via IntersectionObserver; 12px rise+fade. */
+/**
+ * Scroll reveal: fires once via IntersectionObserver; 16px rise + .985
+ * scale settling on a decelerate bezier. Parents stagger children via
+ * delayMs (60-90ms steps).
+ */
 function Reveal({
   children,
   isReducedMotion,
@@ -1232,27 +1601,32 @@ function Reveal({
       style={{
         ...style,
         opacity: isShown ? 1 : 0,
-        transform: isShown ? 'none' : 'translateY(12px)',
+        transform: isShown ? 'none' : 'translateY(16px) scale(0.985)',
         transition: isReducedMotion
           ? 'none'
-          : `opacity 0.55s ease ${delayMs}ms, transform 0.55s ease ${delayMs}ms`,
+          : `opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${delayMs}ms, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${delayMs}ms`,
       }}>
       {children}
     </div>
   );
 }
 
-/** Count-up on first view; deterministic eased steps via setInterval. */
+/**
+ * Count-up on first view; deterministic eased steps via setInterval
+ * (28 × 32ms ≈ 900ms, cubic decelerate).
+ */
 function CountUp({
   target,
   decimals,
   suffix,
   isReducedMotion,
+  fontSize,
 }: {
   target: number;
   decimals: number;
   suffix: string;
   isReducedMotion: boolean;
+  fontSize: number;
 }) {
   const ref = useRef<HTMLSpanElement | null>(null);
   const [isStarted, setIsStarted] = useState(false);
@@ -1296,12 +1670,57 @@ function CountUp({
     return () => clearInterval(id);
   }, [isStarted, isReducedMotion, target]);
   return (
-    <span ref={ref} style={styles.statValue}>
+    <span ref={ref} style={{...styles.statValue, fontSize}}>
       {value.toLocaleString('en-US', {
         minimumFractionDigits: decimals,
         maximumFractionDigits: decimals,
       })}
       {suffix}
+    </span>
+  );
+}
+
+/**
+ * Sheen wrapper for primary CTAs: hover sweeps a light bar across the
+ * button, lifts 1px, and presses to scale .98 (all reduced-motion
+ * gated via MOTION_CSS). Column-stretch layout so a stacked email form
+ * still gets a full-width button (Button has no full-width prop).
+ */
+function Shine({children, style}: {children: ReactNode; style?: CSSProperties}) {
+  return (
+    <span
+      className="aal-shine"
+      style={{
+        position: 'relative',
+        display: 'inline-flex',
+        flexDirection: 'column',
+        alignItems: 'stretch',
+        verticalAlign: 'top',
+        ...style,
+      }}>
+      {children}
+      <span
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 1,
+          borderRadius: 9,
+          overflow: 'hidden',
+          pointerEvents: 'none',
+        }}>
+        <span
+          className="aal-sheen-bar"
+          style={{
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: '-60%',
+            width: '45%',
+            transform: 'translateX(0)',
+            background: `linear-gradient(105deg, transparent, ${SHEEN_INK}, transparent)`,
+          }}
+        />
+      </span>
     </span>
   );
 }
@@ -1325,6 +1744,36 @@ function Eyebrow({icon, label}: {icon?: Glyph; label: string}) {
       {icon != null && <Icon icon={icon} size="xsm" color="inherit" />}
       {label}
     </span>
+  );
+}
+
+/** Aurora blob: color-mix ink, blurred, drifting via MOTION_CSS class. */
+function AuroraBlob({
+  className,
+  size,
+  ink,
+  opacity,
+  style,
+}: {
+  className?: string;
+  size: number;
+  ink: string;
+  opacity: number;
+  style?: CSSProperties;
+}) {
+  return (
+    <div
+      aria-hidden="true"
+      className={className}
+      style={{
+        ...styles.auroraBlob,
+        width: size,
+        height: size,
+        opacity,
+        background: `radial-gradient(closest-side, ${ink}, transparent 72%)`,
+        ...style,
+      }}
+    />
   );
 }
 
@@ -1462,6 +1911,109 @@ function CapabilitySchematic({variant}: {variant: SchematicVariant}) {
   );
 }
 
+/** CSS-drawn "privacy console" panel for one security practice. */
+function SecurityConsolePanel({variant}: {variant: SecurityPanelVariant}) {
+  if (variant === 'training') {
+    return (
+      <div style={styles.consolePane} aria-hidden="true">
+        <div style={{...styles.schematicBar, width: '86%'}} />
+        <div style={{...styles.schematicBar, width: '70%'}} />
+        <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+          <div style={styles.schematicNode}>
+            <Icon icon={FileTextIcon} size="xsm" color="inherit" />
+          </div>
+          <div style={styles.schematicWire} />
+          <div
+            style={{
+              ...styles.schematicNode,
+              color: 'var(--color-error, light-dark(#B3261E, #F2B8B5))',
+            }}>
+            <Icon icon={XIcon} size="xsm" color="inherit" />
+          </div>
+          <div style={{...styles.schematicWire, opacity: 0.4}} />
+          <span style={styles.schematicChip}>model training</span>
+        </div>
+        <span style={{...styles.schematicMono, color: ACCENT}}>
+          training = off · contractual, all providers
+        </span>
+      </div>
+    );
+  }
+  if (variant === 'encryption') {
+    return (
+      <div style={styles.consolePane} aria-hidden="true">
+        <span style={styles.schematicMono}>AES-256 · at rest</span>
+        <span style={styles.schematicMono}>TLS 1.3 · in transit</span>
+        <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+          <div style={styles.schematicNode}>
+            <Icon icon={LockIcon} size="xsm" color="inherit" />
+          </div>
+          <div style={styles.schematicWire} />
+          <div style={styles.schematicNode}>
+            <Icon icon={LockIcon} size="xsm" color="inherit" />
+          </div>
+          <div style={styles.schematicWire} />
+          <div
+            style={{
+              ...styles.schematicNode,
+              backgroundColor: ACCENT_TINT,
+              borderColor: ACCENT_BORDER,
+              color: ACCENT,
+            }}>
+            <Icon icon={LockIcon} size="xsm" color="inherit" />
+          </div>
+        </div>
+        <span style={{...styles.schematicChip, alignSelf: 'flex-start'}}>
+          per-workspace keys · rotated 90d
+        </span>
+      </div>
+    );
+  }
+  if (variant === 'residency') {
+    return (
+      <div style={{display: 'flex', gap: 12}} aria-hidden="true">
+        <div style={{...styles.regionCard, ...styles.regionCardActive}}>
+          <HStack gap={1} vAlign="center">
+            <Icon icon={CheckIcon} size="xsm" color="inherit" />
+            <Text size="sm" weight="semibold">
+              EU · Frankfurt
+            </Text>
+          </HStack>
+          <span style={styles.schematicMono}>
+            workspace + memory + artifacts
+          </span>
+        </div>
+        <div style={styles.regionCard}>
+          <HStack gap={1} vAlign="center">
+            <Icon icon={GlobeIcon} size="xsm" color="secondary" />
+            <Text size="sm" weight="semibold" color="secondary">
+              US · Virginia
+            </Text>
+          </HStack>
+          <span style={styles.schematicMono}>available on switch</span>
+        </div>
+      </div>
+    );
+  }
+  // audit
+  return (
+    <div style={styles.consolePane} aria-hidden="true">
+      <span style={styles.schematicMono}>
+        09:02:14 tickets.search · ok · 1.8s
+      </span>
+      <span style={styles.schematicMono}>
+        09:02:31 docs.create · ok · 412 words
+      </span>
+      <span style={styles.schematicMono}>
+        09:03:02 scheduler.create · ok · weekly
+      </span>
+      <span style={{...styles.schematicChip, alignSelf: 'flex-start'}}>
+        audit trail · 90-day retention · CSV export
+      </span>
+    </div>
+  );
+}
+
 // ============= PAGE =============
 
 export default function AiAssistantLandingTemplate() {
@@ -1473,14 +2025,27 @@ export default function AiAssistantLandingTemplate() {
   const isPhone = wrapWidth > 0 && wrapWidth <= 540;
 
   const isReducedMotion = usePrefersReducedMotion();
+  /** Hero theater parallax: pointer-tracked at wide widths only. */
+  const isTheaterOn = !isReducedMotion && !isStacked;
+  /** Security story pins only when there is motion + width for it. */
+  const isStoryPinned = !isReducedMotion && !isStacked;
 
   // ---- nav ----
   const [isNavMenuOpen, setIsNavMenuOpen] = useState(false);
+  const [isNavCondensed, setIsNavCondensed] = useState(false);
   const navRef = useRef<HTMLElement | null>(null);
   const menuTriggerRef = useRef<HTMLButtonElement | null>(null);
   const pageRef = useRef<HTMLDivElement | null>(null);
   const sectionRefs = useRef<Partial<Record<SectionId, HTMLElement | null>>>(
     {},
+  );
+
+  // ---- security scroll story ----
+  const storyRef = useRef<HTMLElement | null>(null);
+  const [storyProgress, setStoryProgress] = useState(0);
+  const storyStep = Math.min(
+    SECURITY_POINTS.length - 1,
+    Math.floor(storyProgress * SECURITY_POINTS.length),
   );
 
   // ---- chat demo autoplay ----
@@ -1566,6 +2131,34 @@ export default function AiAssistantLandingTemplate() {
 
   // ---- interactions ----
 
+  /** Single scroll handler: nav condensation + story progress. */
+  const handlePageScroll = () => {
+    const page = pageRef.current;
+    if (page == null) {
+      return;
+    }
+    const condensed = page.scrollTop > 24;
+    setIsNavCondensed(previous =>
+      previous === condensed ? previous : condensed,
+    );
+    if (!isStoryPinned) {
+      return;
+    }
+    const story = storyRef.current;
+    if (story == null) {
+      return;
+    }
+    const travel = story.offsetHeight - page.clientHeight;
+    if (travel <= 0) {
+      return;
+    }
+    const raw = (page.scrollTop - story.offsetTop) / travel;
+    const clamped = Math.min(1, Math.max(0, Math.round(raw * 250) / 250));
+    setStoryProgress(previous =>
+      Math.abs(previous - clamped) < 0.004 ? previous : clamped,
+    );
+  };
+
   const jumpToSection = (id: SectionId) => {
     setIsNavMenuOpen(false);
     const container = pageRef.current;
@@ -1581,6 +2174,62 @@ export default function AiAssistantLandingTemplate() {
 
   const registerSection = (id: SectionId) => (node: HTMLElement | null) => {
     sectionRefs.current[id] = node;
+  };
+
+  /** Story steps are buttons: scroll the container into that step's band. */
+  const jumpToStoryStep = (index: number) => {
+    const page = pageRef.current;
+    const story = storyRef.current;
+    if (page == null || story == null) {
+      return;
+    }
+    const travel = story.offsetHeight - page.clientHeight;
+    if (travel <= 0) {
+      return;
+    }
+    page.scrollTo({
+      top:
+        story.offsetTop +
+        ((index + 0.55) / SECURITY_POINTS.length) * travel,
+      behavior: 'smooth',
+    });
+  };
+
+  /** Hero theater parallax: CSS vars only, no re-render per pointer move. */
+  const handleStagePointerMove = (
+    event: ReactPointerEvent<HTMLDivElement>,
+  ) => {
+    if (!isTheaterOn) {
+      return;
+    }
+    const rect = event.currentTarget.getBoundingClientRect();
+    const mx = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+    const my = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+    event.currentTarget.style.setProperty('--mx', mx.toFixed(3));
+    event.currentTarget.style.setProperty('--my', my.toFixed(3));
+  };
+
+  const handleStagePointerLeave = (
+    event: ReactPointerEvent<HTMLDivElement>,
+  ) => {
+    event.currentTarget.style.setProperty('--mx', '0');
+    event.currentTarget.style.setProperty('--my', '0');
+  };
+
+  /** Dark-band spotlight follows the pointer via CSS vars. */
+  const handleCtaPointerMove = (event: ReactPointerEvent<HTMLElement>) => {
+    if (isReducedMotion) {
+      return;
+    }
+    const rect = event.currentTarget.getBoundingClientRect();
+    event.currentTarget.style.setProperty(
+      '--sx',
+      `${Math.round(event.clientX - rect.left)}px`,
+    );
+    event.currentTarget.style.setProperty(
+      '--sy',
+      `${Math.round(event.clientY - rect.top)}px`,
+    );
   };
 
   const submitHeroForm = () => {
@@ -1629,11 +2278,35 @@ export default function AiAssistantLandingTemplate() {
     setIsPromptSaved(true);
   };
 
+  // ---- typographic tiers (measured width, not viewport) ----
+  const heroHeadlineSize =
+    wrapWidth === 0 || wrapWidth > 1020
+      ? 78
+      : wrapWidth > 880
+        ? 66
+        : wrapWidth > 780
+          ? 58
+          : wrapWidth > 540
+            ? 50
+            : 40;
+  const sectionHeadingSize = isPhone ? 28 : isStacked ? 32 : 38;
+  const statSize = isPhone ? 34 : 46;
+
   // ============= CHROME =============
 
   const navbar = (
-    <nav ref={navRef} style={styles.navBar} aria-label="Main">
-      <div style={styles.navInner}>
+    <nav
+      ref={navRef}
+      style={{
+        ...styles.navBar,
+        ...(isNavCondensed ? styles.navBarCondensed : null),
+      }}
+      aria-label="Main">
+      <div
+        style={{
+          ...styles.navInner,
+          ...(isNavCondensed ? styles.navInnerCondensed : null),
+        }}>
         <BrandMark />
         <StackItem size="fill">
           {!isNavCompact && (
@@ -1642,6 +2315,7 @@ export default function AiAssistantLandingTemplate() {
                 <button
                   key={anchor.id}
                   type="button"
+                  className="aal-navlink"
                   style={styles.navLink}
                   onClick={() => jumpToSection(anchor.id)}>
                   {anchor.label}
@@ -1651,12 +2325,14 @@ export default function AiAssistantLandingTemplate() {
           )}
         </StackItem>
         {!isNavCompact && (
-          <Button
-            label="Try Murmur free"
-            variant="primary"
-            size="sm"
-            onClick={() => jumpToSection('cta')}
-          />
+          <Shine>
+            <Button
+              label="Try Murmur free"
+              variant="primary"
+              size="sm"
+              onClick={() => jumpToSection('cta')}
+            />
+          </Shine>
         )}
         {isNavCompact && (
           <button
@@ -1718,6 +2394,7 @@ export default function AiAssistantLandingTemplate() {
         <div
           style={{
             ...styles.emailRow,
+            width: '100%',
             ...(isPhone ? styles.emailRowStacked : null),
           }}>
           <div style={styles.emailInput}>
@@ -1731,12 +2408,14 @@ export default function AiAssistantLandingTemplate() {
               }
             />
           </div>
-          <Button
-            label="Get started"
-            variant="primary"
-            icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
-            onClick={submitHeroForm}
-          />
+          <Shine>
+            <Button
+              label="Get started"
+              variant="primary"
+              icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
+              onClick={submitHeroForm}
+            />
+          </Shine>
         </div>
         {heroForm.error != null && (
           <p style={styles.emailError} role="alert">
@@ -1760,7 +2439,10 @@ export default function AiAssistantLandingTemplate() {
 
   const chatDemo = (
     <div
-      style={styles.chatFrame}
+      style={{
+        ...styles.chatFrame,
+        ...(isTheaterOn ? styles.chatFrameStaged : null),
+      }}
       onMouseEnter={() => setIsChatPaused(true)}
       onMouseLeave={() => setIsChatPaused(false)}
       role="figure"
@@ -1875,74 +2557,216 @@ export default function AiAssistantLandingTemplate() {
       ? 'Paused — move the pointer away to resume.'
       : 'Demo autoplays and loops · hover to pause.';
 
-  const hero = (
+  // Product theater: perspective stage + bobbing, parallaxing satellites.
+  const heroStage = (
     <div
-      style={{
-        ...styles.heroRow,
-        ...(isStacked ? styles.heroRowStacked : null),
-      }}>
-      <div style={styles.heroText}>
-        <Eyebrow icon={SparklesIcon} label={HERO.eyebrow} />
-        <h1
-          style={{
-            ...styles.heroHeadline,
-            ...(isPhone ? styles.heroHeadlineCompact : null),
-          }}>
-          {HERO.headline}
-        </h1>
-        <p style={styles.heroSubcopy}>{HERO.subcopy}</p>
-        {!isHeroCaptureOpen && heroForm.confirmedEmail == null ? (
-          <HStack gap={2} vAlign="center" wrap="wrap">
-            <Button
-              label="Try Murmur free"
-              variant="primary"
-              icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
-              onClick={() => setIsHeroCaptureOpen(true)}
-            />
-            <Button
-              label="Browse example prompts"
-              variant="secondary"
-              onClick={() => jumpToSection('examples')}
-            />
-          </HStack>
-        ) : (
-          heroCapture
-        )}
-      </div>
-      <div style={styles.heroDemo}>
-        <VStack gap={1}>
-          {chatDemo}
-          <Text type="supporting" color="secondary">
-            {chatCaption}
-          </Text>
-        </VStack>
-      </div>
+      style={styles.heroStage}
+      onPointerMove={handleStagePointerMove}
+      onPointerLeave={handleStagePointerLeave}>
+      {!isStacked && (
+        <>
+          <div
+            style={{
+              ...styles.satellite,
+              top: -22,
+              left: -34,
+              transform:
+                'translate(calc(var(--mx, 0) * 10px), calc(var(--my, 0) * 8px))',
+            }}>
+            <div className="aal-bob-1" style={styles.satelliteCard}>
+              <div style={styles.satelliteGlyph} aria-hidden="true">
+                <Icon icon={ZapIcon} size="sm" color="inherit" />
+              </div>
+              <VStack gap={0}>
+                <Text size="sm" weight="semibold">
+                  {HERO_SATELLITES.metric.value}
+                </Text>
+                <Text type="supporting" color="secondary">
+                  {HERO_SATELLITES.metric.caption}
+                </Text>
+              </VStack>
+            </div>
+          </div>
+          <div
+            style={{
+              ...styles.satellite,
+              bottom: -26,
+              left: -46,
+              transform:
+                'translate(calc(var(--mx, 0) * -7px), calc(var(--my, 0) * -6px))',
+            }}>
+            <div className="aal-bob-2" style={styles.satelliteCard}>
+              <div
+                style={{
+                  ...styles.satelliteGlyph,
+                  backgroundColor:
+                    'var(--color-success-muted, var(--color-background-muted))',
+                  color: 'var(--color-success)',
+                }}
+                aria-hidden="true">
+                <Icon icon={CheckIcon} size="sm" color="inherit" />
+              </div>
+              <VStack gap={0}>
+                <Text size="sm" weight="semibold">
+                  {HERO_SATELLITES.toast.title}
+                </Text>
+                <Text type="supporting" color="secondary">
+                  {HERO_SATELLITES.toast.meta}
+                </Text>
+              </VStack>
+            </div>
+          </div>
+          <div
+            style={{
+              ...styles.satellite,
+              top: 96,
+              right: -26,
+              transform:
+                'translate(calc(var(--mx, 0) * 8px), calc(var(--my, 0) * -7px))',
+            }}>
+            <div className="aal-bob-3" style={styles.satelliteCard}>
+              <div style={{display: 'flex'}} aria-hidden="true">
+                {HERO_SATELLITES.teams.initials.map((initials, index) => (
+                  <div
+                    key={initials}
+                    style={{
+                      ...styles.satelliteAvatar,
+                      marginLeft: index === 0 ? 0 : -8,
+                    }}>
+                    {initials}
+                  </div>
+                ))}
+              </div>
+              <Text size="sm" weight="semibold">
+                {HERO_SATELLITES.teams.caption}
+              </Text>
+            </div>
+          </div>
+        </>
+      )}
+      {chatDemo}
     </div>
   );
 
-  // ---- capabilities ----
+  const hero = (
+    <section style={styles.heroSection} aria-label="Introduction">
+      <div style={styles.atmosLayer}>
+        <AuroraBlob
+          className="aal-aurora-a"
+          size={560}
+          ink={AURORA_VIOLET}
+          opacity={0.5}
+          style={{top: -180, left: -120}}
+        />
+        <AuroraBlob
+          className="aal-aurora-b"
+          size={480}
+          ink={AURORA_TEAL}
+          opacity={0.4}
+          style={{top: 60, right: -150}}
+        />
+        <div style={styles.grain} />
+      </div>
+      <div
+        style={{
+          ...styles.heroInner,
+          ...(isPhone ? styles.heroInnerCompact : null),
+        }}>
+        <div
+          style={{
+            ...styles.heroRow,
+            ...(isStacked ? styles.heroRowStacked : null),
+          }}>
+          <div style={styles.heroText}>
+            <Eyebrow icon={SparklesIcon} label={HERO.eyebrow} />
+            <h1 style={{...styles.heroHeadline, fontSize: heroHeadlineSize}}>
+              {HERO.headlinePre}
+              <span style={styles.gradientInk}>{HERO.headlineInk}</span>
+              {HERO.headlinePost}
+            </h1>
+            <p style={styles.heroSubcopy}>{HERO.subcopy}</p>
+            {!isHeroCaptureOpen && heroForm.confirmedEmail == null ? (
+              <HStack gap={2} vAlign="center" wrap="wrap">
+                <Shine>
+                  <Button
+                    label="Try Murmur free"
+                    variant="primary"
+                    icon={
+                      <Icon icon={ArrowRightIcon} size="sm" color="inherit" />
+                    }
+                    onClick={() => setIsHeroCaptureOpen(true)}
+                  />
+                </Shine>
+                <Button
+                  label="Browse example prompts"
+                  variant="secondary"
+                  onClick={() => jumpToSection('examples')}
+                />
+              </HStack>
+            ) : (
+              heroCapture
+            )}
+          </div>
+          <div style={styles.heroDemo}>
+            <VStack gap={1}>
+              {heroStage}
+              <Text type="supporting" color="secondary">
+                {chatCaption}
+              </Text>
+            </VStack>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+
+  // ---- capabilities (asymmetric 7/5 header + hover-lift grid) ----
   const capabilities = (
-    <section
-      ref={registerSection('capabilities')}
-      aria-label="Capabilities">
-      <VStack gap={5}>
+    <section ref={registerSection('capabilities')} aria-label="Capabilities">
+      <div
+        style={{
+          ...styles.sectionInner,
+          ...(isStacked ? styles.sectionInnerCompact : null),
+        }}>
         <Reveal isReducedMotion={isReducedMotion}>
-          <VStack gap={2} hAlign="center">
-            <Eyebrow label="Capabilities" />
-            <Heading level={2}>One assistant, six day-jobs</Heading>
-            <Text type="supporting" color="secondary" justify="center">
+          <div
+            style={{
+              ...styles.capHeaderRow,
+              ...(isStacked
+                ? {
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    gap: 'var(--spacing-3)',
+                  }
+                : null),
+            }}>
+            <div
+              style={{
+                flex: '7 1 0',
+                minWidth: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                gap: 'var(--spacing-3)',
+              }}>
+              <Eyebrow label="Capabilities" />
+              <h2 style={{...styles.sectionHeading, fontSize: sectionHeadingSize}}>
+                One assistant, six day-jobs
+              </h2>
+            </div>
+            <p style={{...styles.sectionKicker, flex: '5 1 0', minWidth: 0}}>
               Murmur isn't a chat window bolted onto your stack — it works
               inside it, with real access and real output.
-            </Text>
-          </VStack>
+            </p>
+          </div>
         </Reveal>
         <Grid columns={{minWidth: 280, max: 3}} gap={4}>
           {CAPABILITIES.map((capability, index) => (
             <Reveal
               key={capability.id}
               isReducedMotion={isReducedMotion}
-              delayMs={index * 60}>
-              <div style={styles.capabilityCard}>
+              delayMs={index * 70}>
+              <div className="aal-lift" style={styles.capabilityCard}>
                 <HStack gap={2} vAlign="center">
                   <div style={styles.capabilityGlyph} aria-hidden="true">
                     <Icon icon={capability.icon} size="sm" color="inherit" />
@@ -1957,11 +2781,29 @@ export default function AiAssistantLandingTemplate() {
             </Reveal>
           ))}
         </Grid>
-      </VStack>
+      </div>
     </section>
   );
 
-  // ---- integrations band (full-bleed tinted) ----
+  // ---- integrations band (dot-grid texture + marquee loop + stats) ----
+  const renderIntegrationTile = (tile: IntegrationTile) => (
+    <>
+      <div
+        style={{...styles.integrationTile, background: tile.gradient}}
+        aria-hidden="true">
+        {tile.monogram}
+      </div>
+      <VStack gap={0} hAlign="center">
+        <Text size="sm" weight="semibold">
+          {tile.name}
+        </Text>
+        <Text type="supporting" color="secondary">
+          {tile.role}
+        </Text>
+      </VStack>
+    </>
+  );
+
   const integrations = (
     <section
       ref={registerSection('integrations')}
@@ -1973,45 +2815,56 @@ export default function AiAssistantLandingTemplate() {
           ...(isPhone ? styles.bandInnerCompact : null),
         }}>
         <Reveal isReducedMotion={isReducedMotion}>
-          <VStack gap={2} hAlign="center">
+          <VStack gap={3} hAlign="center">
             <Eyebrow label="Integrations" />
-            <Heading level={2}>Works where you work</Heading>
-            <Text type="supporting" color="secondary" justify="center">
+            <h2
+              style={{
+                ...styles.sectionHeading,
+                fontSize: sectionHeadingSize,
+                textAlign: 'center',
+              }}>
+              Works where you work
+            </h2>
+            <p style={{...styles.sectionKicker, textAlign: 'center'}}>
               Connect a tool once and Murmur can read, write, and act in it
               — with per-tool permissions your admin controls.
-            </Text>
+            </p>
           </VStack>
         </Reveal>
         <Reveal isReducedMotion={isReducedMotion} delayMs={80}>
-          <Grid columns={{minWidth: 116, max: 8}} gap={3}>
-            {INTEGRATIONS.map(tile => (
-              <div key={tile.id} style={styles.integrationCard}>
-                <div
-                  style={{
-                    ...styles.integrationTile,
-                    background: tile.gradient,
-                  }}
-                  aria-hidden="true">
-                  {tile.monogram}
+          {isReducedMotion ? (
+            // Static wrapped grid replaces the marquee under reduced motion.
+            <Grid columns={{minWidth: 116, max: 8}} gap={3}>
+              {INTEGRATIONS.map(tile => (
+                <div key={tile.id} style={styles.integrationCard}>
+                  {renderIntegrationTile(tile)}
                 </div>
-                <VStack gap={0} hAlign="center">
-                  <Text size="sm" weight="semibold">
-                    {tile.name}
-                  </Text>
-                  <Text type="supporting" color="secondary">
-                    {tile.role}
-                  </Text>
-                </VStack>
+              ))}
+            </Grid>
+          ) : (
+            // Marquee loop: duplicated track translates -50%; hover pauses.
+            <div className="aal-marquee" style={styles.marqueeViewport}>
+              <div className="aal-marquee-track" style={styles.marqueeTrack}>
+                {[...INTEGRATIONS, ...INTEGRATIONS].map((tile, index) => (
+                  <div
+                    key={`${tile.id}-${index}`}
+                    style={{...styles.integrationCard, ...styles.marqueeCard}}
+                    aria-hidden={
+                      index >= INTEGRATIONS.length ? true : undefined
+                    }>
+                    {renderIntegrationTile(tile)}
+                  </div>
+                ))}
               </div>
-            ))}
-          </Grid>
+            </div>
+          )}
         </Reveal>
-        <Reveal isReducedMotion={isReducedMotion} delayMs={140}>
+        <Reveal isReducedMotion={isReducedMotion} delayMs={150}>
           <div
             style={{
               display: 'flex',
               flexDirection: isPhone ? 'column' : 'row',
-              gap: isPhone ? 'var(--spacing-4)' : 'var(--spacing-6)',
+              gap: isPhone ? 'var(--spacing-4)' : 'var(--spacing-8)',
               justifyContent: 'center',
               alignItems: isPhone ? 'flex-start' : 'center',
               paddingTop: 'var(--spacing-2)',
@@ -2023,6 +2876,7 @@ export default function AiAssistantLandingTemplate() {
                   decimals={stat.decimals}
                   suffix={stat.suffix}
                   isReducedMotion={isReducedMotion}
+                  fontSize={statSize}
                 />
                 <Text type="supporting" color="secondary">
                   {stat.caption}
@@ -2035,80 +2889,248 @@ export default function AiAssistantLandingTemplate() {
     </section>
   );
 
-  // ---- security strip ----
-  const security = (
-    <section ref={registerSection('security')} aria-label="Security">
-      <VStack gap={5}>
-        <Reveal isReducedMotion={isReducedMotion}>
-          <VStack gap={2} hAlign="center">
-            <Eyebrow icon={ShieldCheckIcon} label="Security" />
-            <Heading level={2}>Private by default</Heading>
-            <Text type="supporting" color="secondary" justify="center">
-              Murmur sees a lot of your work, so the bar is simple: your
-              data is never trained on, never sold, and never leaves the
-              region you choose.
+  // ---- security scroll story ----
+  const storyHeader = (
+    <Reveal isReducedMotion={isReducedMotion}>
+      <VStack gap={3} hAlign="center">
+        <Eyebrow icon={ShieldCheckIcon} label="Security" />
+        <h2
+          style={{
+            ...styles.sectionHeading,
+            fontSize: sectionHeadingSize,
+            textAlign: 'center',
+          }}>
+          Private by default
+        </h2>
+        <p style={{...styles.sectionKicker, textAlign: 'center'}}>
+          Murmur sees a lot of your work, so the bar is simple: your data is
+          never trained on, never sold, and never leaves the region you
+          choose.
+        </p>
+      </VStack>
+    </Reveal>
+  );
+
+  const complianceRow = (
+    <Grid columns={{minWidth: 200, max: 4}} gap={3}>
+      {COMPLIANCE_CHIPS.map(chip => (
+        <div key={chip.id} className="aal-lift" style={styles.complianceChip}>
+          <div style={styles.securityBulletDisc} aria-hidden="true">
+            <Icon icon={ShieldCheckIcon} size="sm" color="inherit" />
+          </div>
+          <VStack gap={0}>
+            <Text size="sm" weight="semibold">
+              {chip.label}
+            </Text>
+            <Text type="supporting" color="secondary">
+              {chip.note}
             </Text>
           </VStack>
-        </Reveal>
-        <Reveal isReducedMotion={isReducedMotion} delayMs={60}>
-          <Grid columns={{minWidth: 200, max: 4}} gap={3}>
-            {COMPLIANCE_CHIPS.map(chip => (
-              <div key={chip.id} style={styles.complianceChip}>
-                <div style={styles.securityBulletDisc} aria-hidden="true">
-                  <Icon icon={ShieldCheckIcon} size="sm" color="inherit" />
-                </div>
-                <VStack gap={0}>
-                  <Text size="sm" weight="semibold">
-                    {chip.label}
-                  </Text>
-                  <Text type="supporting" color="secondary">
-                    {chip.note}
-                  </Text>
-                </VStack>
+        </div>
+      ))}
+    </Grid>
+  );
+
+  // Pinned mode: sticky stage; scroll fills the rail and swaps panels.
+  const storyPinnedContent = (
+    <div style={styles.storySticky}>
+      <div
+        style={{
+          ...styles.sectionInner,
+          gap: 'var(--spacing-5)',
+          padding: '88px var(--spacing-6) 56px',
+        }}>
+        {storyHeader}
+        <div style={styles.storySplit}>
+          <div style={styles.storyRail}>
+            {SECURITY_POINTS.map((point, index) => {
+              const isActive = index === storyStep;
+              const fill = Math.min(
+                1,
+                Math.max(0, storyProgress * SECURITY_POINTS.length - index),
+              );
+              return (
+                <button
+                  key={point.id}
+                  type="button"
+                  aria-current={isActive ? 'step' : undefined}
+                  style={{
+                    ...styles.storyStep,
+                    ...(isActive ? styles.storyStepActive : null),
+                  }}
+                  onClick={() => jumpToStoryStep(index)}>
+                  <HStack gap={3} vAlign="center">
+                    <span
+                      style={{
+                        ...styles.storyNumeral,
+                        color: isActive
+                          ? ACCENT
+                          : 'color-mix(in srgb, var(--color-text-secondary) 40%, transparent)',
+                      }}>
+                      {`0${index + 1}`}
+                    </span>
+                    <VStack gap={0}>
+                      <Text weight="semibold">{point.title}</Text>
+                      {isActive && (
+                        <Text type="supporting" color="secondary">
+                          {point.text}
+                        </Text>
+                      )}
+                    </VStack>
+                  </HStack>
+                  <div style={styles.storyFillTrack} aria-hidden="true">
+                    <div
+                      style={{
+                        ...styles.storyFill,
+                        transform: `scaleX(${fill})`,
+                      }}
+                    />
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          <div style={styles.storyStage}>
+            {SECURITY_POINTS.map((point, index) => (
+              <div
+                key={point.id}
+                style={{
+                  ...styles.storyPanel,
+                  opacity: index === storyStep ? 1 : 0,
+                  transform:
+                    index === storyStep ? 'none' : 'translateY(12px)',
+                  pointerEvents: index === storyStep ? 'auto' : 'none',
+                }}>
+                <HStack gap={2} vAlign="center">
+                  <div style={styles.securityBulletDisc} aria-hidden="true">
+                    <Icon icon={point.icon} size="sm" color="inherit" />
+                  </div>
+                  <Text type="label">{point.title}</Text>
+                </HStack>
+                <Text type="supporting" color="secondary">
+                  {point.text}
+                </Text>
+                <SecurityConsolePanel variant={point.id} />
               </div>
             ))}
-          </Grid>
+          </div>
+        </div>
+        {complianceRow}
+      </div>
+    </div>
+  );
+
+  // Static mode (reduced motion / stacked): the same four practices as a
+  // stacked sequence — everything visible, no pinning.
+  const storyStaticContent = (
+    <div
+      style={{
+        ...styles.sectionInner,
+        ...(isStacked ? styles.sectionInnerCompact : null),
+        gap: 'var(--spacing-4)',
+      }}>
+      {storyHeader}
+      {SECURITY_POINTS.map((point, index) => (
+        <Reveal
+          key={point.id}
+          isReducedMotion={isReducedMotion}
+          delayMs={index * 70}>
+          <div
+            style={{
+              borderRadius: 16,
+              border: '1px solid var(--color-border)',
+              backgroundColor: 'var(--color-background-card)',
+              boxShadow: SHADOW_RAISED,
+              padding: 'var(--spacing-4)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'var(--spacing-3)',
+            }}>
+            <HStack gap={3} vAlign="center">
+              <span
+                style={{...styles.storyNumeral, fontSize: 28, color: ACCENT}}>
+                {`0${index + 1}`}
+              </span>
+              <div style={styles.securityBulletDisc} aria-hidden="true">
+                <Icon icon={point.icon} size="sm" color="inherit" />
+              </div>
+              <Text type="label">{point.title}</Text>
+            </HStack>
+            <Text type="supporting" color="secondary">
+              {point.text}
+            </Text>
+            <SecurityConsolePanel variant={point.id} />
+          </div>
         </Reveal>
-        <Reveal isReducedMotion={isReducedMotion} delayMs={120}>
-          <Grid columns={{minWidth: 320, max: 2}} gap={3}>
-            {SECURITY_POINTS.map(point => (
-              <HStack key={point.id} gap={2} vAlign="start">
-                <div style={styles.securityBulletDisc} aria-hidden="true">
-                  <Icon icon={point.icon} size="sm" color="inherit" />
-                </div>
-                <StackItem size="fill">
-                  <Text type="supporting" color="secondary">
-                    {point.text}
-                  </Text>
-                </StackItem>
-              </HStack>
-            ))}
-          </Grid>
-        </Reveal>
-      </VStack>
+      ))}
+      <Reveal isReducedMotion={isReducedMotion} delayMs={300}>
+        {complianceRow}
+      </Reveal>
+    </div>
+  );
+
+  const security = (
+    <section
+      ref={node => {
+        sectionRefs.current.security = node;
+        storyRef.current = node;
+      }}
+      aria-label="Security"
+      style={{
+        ...styles.storyOuter,
+        ...(isStoryPinned ? {height: '250vh'} : null),
+      }}>
+      {isStoryPinned ? storyPinnedContent : storyStaticContent}
     </section>
   );
 
-  // ---- prompt examples ----
+  // ---- prompt examples (demo card crosses into the CTA band) ----
+  const promptOverlap = isPhone ? -44 : -72;
   const examples = (
-    <section ref={registerSection('examples')} aria-label="Example prompts">
-      <VStack gap={4}>
+    <section
+      ref={registerSection('examples')}
+      aria-label="Example prompts"
+      style={{position: 'relative'}}>
+      <div style={styles.atmosLayer}>
+        <AuroraBlob
+          className="aal-aurora-b"
+          size={520}
+          ink={AURORA_VIOLET}
+          opacity={0.35}
+          style={{bottom: -160, left: -180}}
+        />
+      </div>
+      <div
+        style={{
+          ...styles.sectionInner,
+          ...(isStacked ? styles.sectionInnerCompact : null),
+          paddingBottom: 0,
+          gap: 'var(--spacing-5)',
+        }}>
         <Reveal isReducedMotion={isReducedMotion}>
-          <VStack gap={2} hAlign="center">
+          <VStack gap={3} hAlign="center">
             <Eyebrow label="Examples" />
-            <Heading level={2}>Steal a prompt to start</Heading>
-            <Text type="supporting" color="secondary" justify="center">
+            <h2
+              style={{
+                ...styles.sectionHeading,
+                fontSize: sectionHeadingSize,
+                textAlign: 'center',
+              }}>
+              Steal a prompt to start
+            </h2>
+            <p style={{...styles.sectionKicker, textAlign: 'center'}}>
               Tap a chip to load it into the demo composer — these are the
               eight most-run prompts across Murmur workspaces.
-            </Text>
+            </p>
           </VStack>
         </Reveal>
-        <Reveal isReducedMotion={isReducedMotion} delayMs={60}>
+        <Reveal isReducedMotion={isReducedMotion} delayMs={70}>
           <div style={styles.promptRail} aria-label="Prompt examples">
             {PROMPTS.map(prompt => (
               <button
                 key={prompt.id}
                 type="button"
+                className="aal-chip"
                 aria-pressed={prompt.id === activePromptId}
                 style={{
                   ...styles.promptChip,
@@ -2123,7 +3145,14 @@ export default function AiAssistantLandingTemplate() {
             ))}
           </div>
         </Reveal>
-        <Reveal isReducedMotion={isReducedMotion} delayMs={100}>
+        <Reveal
+          isReducedMotion={isReducedMotion}
+          delayMs={130}
+          style={{
+            position: 'relative',
+            zIndex: 2,
+            marginBottom: promptOverlap,
+          }}>
           <div style={styles.promptDemoCard}>
             <div
               style={{
@@ -2144,12 +3173,14 @@ export default function AiAssistantLandingTemplate() {
                   }}
                 />
               </div>
-              <Button
-                label="Ask Murmur"
-                variant="primary"
-                icon={<Icon icon={SendIcon} size="sm" color="inherit" />}
-                onClick={submitPrompt}
-              />
+              <Shine>
+                <Button
+                  label="Ask Murmur"
+                  variant="primary"
+                  icon={<Icon icon={SendIcon} size="sm" color="inherit" />}
+                  onClick={submitPrompt}
+                />
+              </Shine>
             </div>
             {promptError != null && (
               <p style={styles.emailError} role="alert">
@@ -2171,20 +3202,41 @@ export default function AiAssistantLandingTemplate() {
             )}
           </div>
         </Reveal>
-      </VStack>
+      </div>
     </section>
   );
 
-  // ---- tiered CTA band (scheme-locked dark surface) ----
+  // ---- tiered CTA band (signature dark section: glows + spotlight) ----
   const ctaBand = (
     <section
       ref={registerSection('cta')}
       aria-label="Get started"
-      style={styles.ctaBand}>
+      style={styles.ctaBand}
+      onPointerMove={handleCtaPointerMove}>
+      <div style={styles.atmosLayer}>
+        <AuroraBlob
+          className="aal-aurora-a"
+          size={540}
+          ink={`color-mix(in srgb, ${ACCENT} 55%, transparent)`}
+          opacity={0.5}
+          style={{top: -160, left: '12%'}}
+        />
+        <AuroraBlob
+          className="aal-aurora-b"
+          size={460}
+          ink={AURORA_TEAL}
+          opacity={0.35}
+          style={{bottom: -180, right: '-6%'}}
+        />
+        <div style={styles.grain} />
+      </div>
+      {!isReducedMotion && <div style={styles.ctaSpotlight} />}
       <div
         style={{
           ...styles.bandInner,
           ...(isPhone ? styles.bandInnerCompact : null),
+          position: 'relative',
+          paddingTop: isPhone ? 108 : 176,
         }}>
         <Reveal isReducedMotion={isReducedMotion}>
           <VStack gap={2} hAlign="center">
@@ -2210,7 +3262,7 @@ export default function AiAssistantLandingTemplate() {
             {CTA_TIERS.map(tier => {
               const form = ctaForms[tier.id];
               return (
-                <div key={tier.id} style={styles.ctaCard}>
+                <div key={tier.id} className="aal-lift" style={styles.ctaCard}>
                   <VStack gap={1}>
                     <Text type="label" color="inherit">
                       {tier.name}
@@ -2270,11 +3322,15 @@ export default function AiAssistantLandingTemplate() {
                             }
                           />
                         </div>
-                        <Button
-                          label={tier.buttonLabel}
-                          variant={tier.id === 'free' ? 'primary' : 'secondary'}
-                          onClick={() => submitCtaForm(tier.id)}
-                        />
+                        <Shine>
+                          <Button
+                            label={tier.buttonLabel}
+                            variant={
+                              tier.id === 'free' ? 'primary' : 'secondary'
+                            }
+                            onClick={() => submitCtaForm(tier.id)}
+                          />
+                        </Shine>
                       </div>
                       {form.error != null && (
                         <p
@@ -2303,7 +3359,9 @@ export default function AiAssistantLandingTemplate() {
       <div
         style={{
           ...styles.bandInner,
-          ...(isPhone ? styles.bandInnerCompact : null),
+          padding: '64px var(--spacing-6)',
+          ...(isPhone ? {padding: '48px var(--spacing-4)'} : null),
+          gap: 'var(--spacing-5)',
         }}>
         <HStack gap={6} vAlign="start" wrap="wrap">
           <StackItem size="fill">
@@ -2368,31 +3426,18 @@ export default function AiAssistantLandingTemplate() {
 
   return (
     <div ref={wrapRef} style={styles.wrap}>
-      {/* Typing-dot keyframes (dots only render when motion is allowed). */}
-      <style>{`@keyframes aal-typing-dot { 0%, 60%, 100% { opacity: 0.3; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-2px); } }`}</style>
+      <style>{MOTION_CSS}</style>
       <Layout
         height="fill"
         content={
           <LayoutContent padding={0} role="main" label="Murmur landing page">
-            <div ref={pageRef} style={styles.page}>
+            <div ref={pageRef} style={styles.page} onScroll={handlePageScroll}>
               {navbar}
-              <div
-                style={{
-                  ...styles.column,
-                  ...(isPhone ? styles.columnCompact : null),
-                }}>
-                {hero}
-                {capabilities}
-              </div>
+              {hero}
+              {capabilities}
               {integrations}
-              <div
-                style={{
-                  ...styles.column,
-                  ...(isPhone ? styles.columnCompact : null),
-                }}>
-                {security}
-                {examples}
-              </div>
+              {security}
+              {examples}
               {ctaBand}
               {footer}
             </div>

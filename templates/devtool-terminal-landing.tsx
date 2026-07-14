@@ -90,6 +90,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
   type ReactNode,
   type RefObject,
   type UIEvent,
@@ -153,6 +154,21 @@ const TERM_COMMAND = '#E6EDF3';
 const TERM_GREEN = '#7EE787';
 const TERM_AMBER = '#FBBF24';
 
+// Depth tiers (used consistently: cards = raised; staged hero and hovered
+// cards = floating; glass chips add an inset hairline on top).
+const SHADOW_RAISED =
+  '0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px -12px rgba(0, 0, 0, 0.18)';
+const SHADOW_FLOATING =
+  '0 1px 2px rgba(0, 0, 0, 0.08), 0 8px 24px -12px rgba(0, 0, 0, 0.22), ' +
+  '0 24px 48px -24px rgba(0, 0, 0, 0.35)';
+
+// Aurora hues reuse literals already quarantined on this page (TERM_AMBER,
+// TERM_GREEN and the Nightjar monogram indigo) — no new hues introduced.
+const AURORA_INDIGO = '#6366F1';
+
+// Grain texture: inline feTurbulence SVG data URI; opacity set per layer.
+const GRAIN_URI = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E")`;
+
 /** Sticky-nav height; smooth-scroll and scroll-spy both allow for it. */
 const NAV_ALLOWANCE = 68;
 const SPY_OFFSET = 140;
@@ -182,23 +198,32 @@ const styles: Record<string, CSSProperties> = {
     paddingInline: 'var(--spacing-4)',
   },
   band: {
-    paddingBlock: 'var(--spacing-9)',
+    paddingBlock: 104,
   },
   bandPhone: {
-    paddingBlock: 'var(--spacing-6)',
+    paddingBlock: 60,
   },
   bandMuted: {
     backgroundColor: 'var(--color-background-muted)',
     borderTop: '1px solid var(--color-border)',
     borderBottom: '1px solid var(--color-border)',
   },
-  // ---- sticky navbar ----
+  // ---- sticky navbar (scheme-locked dark chrome for a dark-first tool;
+  // transparent over the hero, condensing to a tinted hairline surface
+  // after 24px of scroll) ----
   navBar: {
     position: 'sticky',
     top: 0,
     zIndex: 30,
-    backgroundColor: 'var(--color-background-body)',
-    borderBottom: '1px solid var(--color-border)',
+    colorScheme: 'dark',
+    color: DARK_TEXT,
+    backgroundColor: 'transparent',
+    borderBottom: '1px solid transparent',
+    transition: 'background-color 260ms ease, border-color 260ms ease',
+  },
+  navBarScrolled: {
+    backgroundColor: 'color-mix(in srgb, #0B0F14 92%, transparent)',
+    borderBottom: `1px solid ${TERM_BORDER}`,
   },
   navInner: {
     position: 'relative',
@@ -210,7 +235,11 @@ const styles: Record<string, CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     gap: 'var(--spacing-2)',
-    minHeight: 56,
+    minHeight: 64,
+    transition: 'min-height 260ms ease',
+  },
+  navInnerScrolled: {
+    minHeight: 52,
   },
   // Scheme-locked brand art (see Color policy): amber→ember gradient with
   // a white glyph, identical in both app themes.
@@ -287,8 +316,12 @@ const styles: Record<string, CSSProperties> = {
     color: 'var(--color-text-primary)',
     textAlign: 'left',
   },
-  // ---- hero (scheme-locked dark band; dark-first product) ----
+  // ---- hero (scheme-locked dark band; dark-first product). The band is
+  // a composed atmosphere: aurora blobs + grain + pointer spotlight sit in
+  // absolutely-positioned layers behind a zIndex:1 content column. ----
   hero: {
+    position: 'relative',
+    overflow: 'hidden',
     colorScheme: 'dark',
     color: DARK_TEXT,
     backgroundImage: [
@@ -296,16 +329,30 @@ const styles: Record<string, CSSProperties> = {
       'linear-gradient(180deg, #0B0F14 0%, #111826 100%)',
     ].join(', '),
   },
+  heroLayer: {
+    position: 'absolute',
+    inset: 0,
+    pointerEvents: 'none',
+  },
+  auroraBlob: {
+    position: 'absolute',
+    borderRadius: '50%',
+    filter: 'blur(90px)',
+    opacity: 0.45,
+    pointerEvents: 'none',
+  },
   heroRow: {
+    position: 'relative',
+    zIndex: 1,
     display: 'flex',
     gap: 'var(--spacing-8)',
     alignItems: 'center',
-    paddingBlock: 'var(--spacing-9)',
+    paddingBlock: 96,
   },
   heroRowStacked: {
     flexDirection: 'column',
     alignItems: 'stretch',
-    gap: 'var(--spacing-5)',
+    gap: 'var(--spacing-6)',
     paddingBlock: 'var(--spacing-6)',
   },
   heroText: {
@@ -316,14 +363,66 @@ const styles: Record<string, CSSProperties> = {
     gap: 'var(--spacing-4)',
   },
   heroHeadline: {
-    fontSize: 46,
+    fontSize: 74,
     fontWeight: 750,
-    lineHeight: 1.08,
-    letterSpacing: '-0.025em',
+    lineHeight: 1.03,
+    letterSpacing: '-0.03em',
     margin: 0,
   },
+  heroHeadlineMid: {
+    fontSize: 56,
+  },
   heroHeadlinePhone: {
-    fontSize: 31,
+    fontSize: 38,
+    lineHeight: 1.05,
+  },
+  // Gradient ink on the key phrase (WebkitBackgroundClip: text).
+  headlineInk: {
+    backgroundImage: `linear-gradient(94deg, ${TERM_AMBER} 10%, color-mix(in srgb, ${TERM_AMBER} 45%, ${TERM_GREEN}) 90%)`,
+    WebkitBackgroundClip: 'text',
+    backgroundClip: 'text',
+    color: 'transparent',
+  },
+  // ---- staged product theater (perspective wrapper + satellites) ----
+  heroStage: {
+    position: 'relative',
+    flex: '1 1 0',
+    minWidth: 0,
+    perspective: 1400,
+  },
+  terminalTilt: {
+    borderRadius: 12,
+    transform: 'rotateY(-5deg) rotateX(2deg)',
+    boxShadow: `0 48px 96px -32px color-mix(in srgb, ${TERM_AMBER} 30%, transparent)`,
+  },
+  terminalTiltStacked: {
+    transform: 'none',
+    boxShadow: 'none',
+  },
+  // Parallax shell: translated by --dtl-px / --dtl-py set from onPointerMove
+  // on the hero (spring-ish transition; vars stay 0 under reduced motion).
+  satellite: {
+    position: 'absolute',
+    zIndex: 2,
+    transform:
+      'translate3d(calc(var(--dtl-px, 0) * 9px), calc(var(--dtl-py, 0) * 7px), 0)',
+    transition: 'transform 640ms cubic-bezier(0.22, 1, 0.36, 1)',
+  },
+  // Glass mini-card (bob animation lives on this inner element).
+  satelliteCard: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    padding: '9px 13px',
+    borderRadius: 12,
+    colorScheme: 'dark',
+    border: `1px solid ${CHIP_BORDER}`,
+    backgroundColor: 'color-mix(in srgb, #0D1117 84%, transparent)',
+    boxShadow: `inset 0 0 0 1px ${CHIP_BG}, ${SHADOW_FLOATING}`,
+    fontFamily: MONO,
+    fontSize: 12,
+    color: DARK_TEXT_SOFT,
+    whiteSpace: 'nowrap',
   },
   heroSubcopy: {
     fontSize: 17,
@@ -451,14 +550,14 @@ const styles: Record<string, CSSProperties> = {
     marginBottom: 'var(--spacing-6)',
   },
   sectionTitle: {
-    fontSize: 30,
+    fontSize: 36,
     fontWeight: 700,
-    lineHeight: 1.15,
+    lineHeight: 1.12,
     letterSpacing: '-0.02em',
     margin: 0,
   },
   sectionTitlePhone: {
-    fontSize: 24,
+    fontSize: 26,
   },
   // ---- why cards ----
   whyCard: {
@@ -471,6 +570,7 @@ const styles: Record<string, CSSProperties> = {
     gap: 'var(--spacing-3)',
     height: '100%',
     boxSizing: 'border-box',
+    boxShadow: SHADOW_RAISED,
   },
   whyGlyph: {
     width: 38,
@@ -590,12 +690,27 @@ const styles: Record<string, CSSProperties> = {
       'light-dark(rgba(52, 168, 83, 0.14), rgba(52, 168, 83, 0.24))',
     color: 'var(--color-success, light-dark(#1E8E3E, #6DD58C))',
   },
-  // ---- logo strip ----
+  // ---- logo strip (marquee loop; static wrap under reduced motion) ----
   logoStrip: {
     display: 'flex',
     flexWrap: 'wrap',
     gap: 'var(--spacing-3)',
     justifyContent: 'center',
+  },
+  marquee: {
+    overflow: 'hidden',
+    width: '100%',
+    maskImage:
+      'linear-gradient(90deg, transparent, black 12%, black 88%, transparent)',
+    WebkitMaskImage:
+      'linear-gradient(90deg, transparent, black 12%, black 88%, transparent)',
+  },
+  marqueeTrack: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 'var(--spacing-7)',
+    width: 'max-content',
+    animation: 'dtl-marquee 48s linear infinite',
   },
   logoItem: {
     display: 'flex',
@@ -630,6 +745,7 @@ const styles: Record<string, CSSProperties> = {
     gap: 'var(--spacing-3)',
     height: '100%',
     boxSizing: 'border-box',
+    boxShadow: SHADOW_RAISED,
   },
   stepNumber: {
     fontFamily: MONO,
@@ -714,7 +830,9 @@ const NAV_ANCHORS: readonly {id: SectionId; label: string}[] = [
 
 const HERO = {
   eyebrow: 'Open-source incremental build tool',
-  headline: 'Builds that finish before you tab away',
+  // The trailing phrase renders in gradient ink (see styles.headlineInk).
+  headline: 'Builds that finish',
+  headlineInk: 'before you tab away',
   subcopy:
     'Quarry tracks your task graph down to the function, caches every ' +
     'artifact by content hash, and shares the cache across laptops and ' +
@@ -1033,7 +1151,7 @@ function useCountUp(
   target: number,
   isActive: boolean,
   reducedMotion: boolean,
-  durationMs = 1400,
+  durationMs = 900,
 ): number {
   const [value, setValue] = useState(0);
   useEffect(() => {
@@ -1114,10 +1232,11 @@ function Reveal({
       ref={ref}
       style={{
         opacity: isRevealed ? 1 : 0,
-        transform: isRevealed ? 'none' : 'translateY(12px)',
+        transform: isRevealed ? 'none' : 'translateY(16px) scale(0.985)',
         transition: reducedMotion
           ? 'none'
-          : `opacity 520ms ease ${delayMs}ms, transform 520ms ease ${delayMs}ms`,
+          : `opacity 560ms cubic-bezier(0.16, 1, 0.3, 1) ${delayMs}ms, ` +
+            `transform 560ms cubic-bezier(0.16, 1, 0.3, 1) ${delayMs}ms`,
       }}>
       {children}
     </div>
@@ -1410,6 +1529,9 @@ export default function DevtoolTerminalLandingTemplate() {
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
   const [activeSection, setActiveSection] = useState<SectionId | null>(null);
 
+  // ---- condensing nav: transparent over the hero, tinted after 24px ----
+  const [isScrolled, setIsScrolled] = useState(false);
+
   // ---- feature tabs ----
   const [featureTab, setFeatureTab] = useState<FeatureTabId>('config');
   const activeFeature =
@@ -1473,6 +1595,7 @@ export default function DevtoolTerminalLandingTemplate() {
   /** Scroll-spy: the last anchor above the fold line wins. */
   const onPageScroll = (event: UIEvent<HTMLDivElement>) => {
     const container = event.currentTarget;
+    setIsScrolled(container.scrollTop > 24);
     let active: SectionId | null = null;
     for (const anchor of NAV_ANCHORS) {
       const section = sectionRefs.current[anchor.id];
@@ -1509,8 +1632,18 @@ export default function DevtoolTerminalLandingTemplate() {
   // ============= CHROME =============
 
   const navbar = (
-    <nav ref={navRef} style={styles.navBar} aria-label="Primary">
-      <div style={styles.navInner}>
+    <nav
+      ref={navRef}
+      style={{
+        ...styles.navBar,
+        ...(isScrolled || isNavMenuOpen ? styles.navBarScrolled : null),
+      }}
+      aria-label="Primary">
+      <div
+        style={{
+          ...styles.navInner,
+          ...(isScrolled ? styles.navInnerScrolled : null),
+        }}>
         <BrandMark />
         <StackItem size="fill">
           {!isNavCompact && (
@@ -1579,9 +1712,91 @@ export default function DevtoolTerminalLandingTemplate() {
     </nav>
   );
 
-  // ---- hero (scheme-locked dark band) ----
+  // ---- hero (scheme-locked dark band, staged product theater) ----
+  /**
+   * Pointer parallax + spotlight: writes --dtl-px/--dtl-py (unitless -1..1)
+   * and --dtl-mx/--dtl-my (%) onto the hero element; satellites and the
+   * spotlight overlay read them via calc(). Disabled under reduced motion
+   * and at stacked (touch-ish) widths.
+   */
+  const onHeroPointerMove =
+    reducedMotion || isStacked
+      ? undefined
+      : (event: ReactPointerEvent<HTMLElement>) => {
+          const element = event.currentTarget;
+          const rect = element.getBoundingClientRect();
+          const x = (event.clientX - rect.left) / Math.max(1, rect.width);
+          const y = (event.clientY - rect.top) / Math.max(1, rect.height);
+          element.style.setProperty('--dtl-mx', `${(x * 100).toFixed(1)}%`);
+          element.style.setProperty('--dtl-my', `${(y * 100).toFixed(1)}%`);
+          element.style.setProperty('--dtl-px', ((x - 0.5) * 2).toFixed(3));
+          element.style.setProperty('--dtl-py', ((y - 0.5) * 2).toFixed(3));
+        };
+
+  const satelliteBob = (durationS: number, delayS: number): CSSProperties => ({
+    ...styles.satelliteCard,
+    animation: reducedMotion
+      ? 'none'
+      : `dtl-bob ${durationS}s ease-in-out ${delayS}s infinite alternate`,
+  });
+
   const hero = (
-    <header style={styles.hero}>
+    <header style={styles.hero} onPointerMove={onHeroPointerMove}>
+      {/* Atmosphere: drifting aurora blobs (static under reduced motion),
+          a grain overlay, and a pointer-tracked spotlight. */}
+      <div style={styles.heroLayer} aria-hidden="true">
+        <div
+          style={{
+            ...styles.auroraBlob,
+            width: 520,
+            height: 520,
+            top: -200,
+            right: -100,
+            background: `radial-gradient(circle, color-mix(in srgb, ${TERM_AMBER} 52%, transparent) 0%, transparent 70%)`,
+            animation: reducedMotion
+              ? 'none'
+              : 'dtl-drift-a 38s ease-in-out infinite alternate',
+          }}
+        />
+        <div
+          style={{
+            ...styles.auroraBlob,
+            width: 460,
+            height: 460,
+            bottom: -220,
+            left: -120,
+            background: `radial-gradient(circle, color-mix(in srgb, ${AURORA_INDIGO} 46%, transparent) 0%, transparent 70%)`,
+            animation: reducedMotion
+              ? 'none'
+              : 'dtl-drift-b 44s ease-in-out infinite alternate',
+          }}
+        />
+        <div
+          style={{
+            ...styles.auroraBlob,
+            width: 360,
+            height: 360,
+            top: 40,
+            left: '36%',
+            opacity: 0.3,
+            background: `radial-gradient(circle, color-mix(in srgb, ${TERM_GREEN} 40%, transparent) 0%, transparent 70%)`,
+            animation: reducedMotion
+              ? 'none'
+              : 'dtl-drift-a 31s ease-in-out infinite alternate-reverse',
+          }}
+        />
+      </div>
+      <div
+        style={{...styles.heroLayer, backgroundImage: GRAIN_URI, opacity: 0.04}}
+        aria-hidden="true"
+      />
+      <div
+        style={{
+          ...styles.heroLayer,
+          background: `radial-gradient(480px circle at var(--dtl-mx, 76%) var(--dtl-my, 24%), color-mix(in srgb, ${TERM_AMBER} 9%, transparent), transparent 70%)`,
+        }}
+        aria-hidden="true"
+      />
       <div style={columnStyle}>
         <div
           style={{
@@ -1595,9 +1810,11 @@ export default function DevtoolTerminalLandingTemplate() {
             <h1
               style={{
                 ...styles.heroHeadline,
+                ...(isStacked && !isPhone ? styles.heroHeadlineMid : null),
                 ...(isPhone ? styles.heroHeadlinePhone : null),
               }}>
-              {HERO.headline}
+              {HERO.headline}{' '}
+              <span style={styles.headlineInk}>{HERO.headlineInk}</span>
             </h1>
             <p style={styles.heroSubcopy}>{HERO.subcopy}</p>
             <HStack gap={2} vAlign="center" wrap="wrap">
@@ -1626,7 +1843,64 @@ export default function DevtoolTerminalLandingTemplate() {
               ))}
             </HStack>
           </div>
-          <HeroTerminal reducedMotion={reducedMotion} />
+          <div style={styles.heroStage}>
+            <div
+              style={{
+                ...styles.terminalTilt,
+                ...(isStacked ? styles.terminalTiltStacked : null),
+              }}>
+              <HeroTerminal reducedMotion={reducedMotion} />
+            </div>
+            {!isPhone && (
+              <>
+                <div
+                  style={{...styles.satellite, top: -22, right: -6}}
+                  aria-hidden="true">
+                  <div style={satelliteBob(7, -2)}>
+                    <Icon icon={ZapIcon} size="xsm" color="inherit" />
+                    <span>
+                      <span style={{color: TERM_AMBER}}>0.9s</span>{' '}
+                      incremental rebuild
+                    </span>
+                  </div>
+                </div>
+                <div
+                  style={{...styles.satellite, bottom: -24, left: -14}}
+                  aria-hidden="true">
+                  <div style={satelliteBob(8.5, -4)}>
+                    <Icon icon={DatabaseIcon} size="xsm" color="inherit" />
+                    <span>
+                      cache hit ·{' '}
+                      <span style={{color: TERM_GREEN}}>1,842 / 1,847</span>{' '}
+                      tasks
+                    </span>
+                  </div>
+                </div>
+                <div
+                  style={{...styles.satellite, top: '44%', left: -30}}
+                  aria-hidden="true">
+                  <div style={satelliteBob(6.5, -1.5)}>
+                    <span style={{display: 'flex'}}>
+                      {COMPANIES.slice(0, 3).map((company, index) => (
+                        <span
+                          key={company.name}
+                          style={{
+                            width: 20,
+                            height: 20,
+                            borderRadius: '50%',
+                            background: company.bg,
+                            border: `2px solid ${TERM_BG}`,
+                            marginLeft: index === 0 ? 0 : -7,
+                          }}
+                        />
+                      ))}
+                    </span>
+                    <span>1,940 contributors</span>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </header>
@@ -1655,8 +1929,13 @@ export default function DevtoolTerminalLandingTemplate() {
             <Reveal
               key={card.id}
               reducedMotion={reducedMotion}
-              delayMs={index * 110}>
-              <div style={styles.whyCard}>
+              delayMs={index * 80}>
+              <div
+                className="dtl-card"
+                style={{
+                  ...styles.whyCard,
+                  ...(index === 1 && !isStacked ? {marginTop: 20} : null),
+                }}>
                 <div style={styles.whyGlyph} aria-hidden="true">
                   <Icon icon={card.icon} size="sm" color="inherit" />
                 </div>
@@ -1815,8 +2094,8 @@ export default function DevtoolTerminalLandingTemplate() {
             <Reveal
               key={step.id}
               reducedMotion={reducedMotion}
-              delayMs={index * 110}>
-              <div style={styles.stepCard}>
+              delayMs={index * 80}>
+              <div className="dtl-card" style={styles.stepCard}>
                 <HStack gap={2} vAlign="center">
                   <span style={styles.stepNumber}>{step.number}</span>
                   <Text type="label">{step.title}</Text>
@@ -1930,8 +2209,18 @@ export default function DevtoolTerminalLandingTemplate() {
             <div ref={wrapRef} style={{height: '100%'}}>
               {/* Caret blink keyframes for the hero terminal (unused under
                   reduced motion — the caret is never rendered there). */}
+              {/* Keyframes (caret, aurora drift, satellite bob, marquee) and
+                  the hover-raise card class; JS gates animations under
+                  reduced motion, the media query is the backstop. */}
               <style>
-                {'@keyframes dtl-caret { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }'}
+                {`@keyframes dtl-caret { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes dtl-drift-a { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(56px, 36px, 0); } }
+@keyframes dtl-drift-b { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-48px, -28px, 0); } }
+@keyframes dtl-bob { from { transform: translate3d(0, -5px, 0); } to { transform: translate3d(0, 5px, 0); } }
+@keyframes dtl-marquee { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
+.dtl-card { transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 320ms cubic-bezier(0.22, 1, 0.36, 1); }
+.dtl-card:hover { transform: translateY(-4px); box-shadow: 0 0 0 1px color-mix(in srgb, ${ACCENT} 45%, transparent), ${SHADOW_FLOATING}; }
+@media (prefers-reduced-motion: reduce) { .dtl-card, .dtl-card:hover { transition: none; transform: none; } }`}
               </style>
               <div ref={pageRef} style={styles.page} onScroll={onPageScroll}>
                 {navbar}

@@ -5,54 +5,75 @@
 /**
  * @file hardware-product-landing.tsx
  * @input Deterministic fixtures only (the fictional "Perch" smart desk
- *   sensor: hero copy with a preorder price line, four exploded-view SVG
- *   layers with labels, six spec tiles with count-up values, four
+ *   sensor: hero copy with a gradient-ink phrase and a preorder price
+ *   line, four exploded-view SVG layers with labels, three floating
+ *   satellite readouts, six spec tiles with count-up values, four
  *   in-the-box items, three colorways and three pack sizes with fixed
- *   price math, a three-step dated shipping timeline, six invented
+ *   price math, a three-step dated shipping story, six invented
  *   ecosystem compatibility tiles, three review quotes with star rows,
  *   four FAQ entries including an honest battery footnote, and a footer
  *   warranty note)
- * @output Full hardware-product marketing landing page: a sticky navbar
- *   (brand mark + four smooth-scrolling anchor links with scroll-spy +
- *   preorder CTA; links collapse behind a menu button at compact widths),
- *   a split hero pairing copy with a layered schematic SVG product render
- *   whose EXPLODED-VIEW toggle springs the four layers apart with labeled
- *   hairline leader lines, a spec-highlights grid whose tabular values
- *   count up on first reveal, an in-the-box row, a working configurator
- *   (color swatches retint every render on the page; pack-size control
- *   recomputes a tabular total with a savings chip; preorder email
- *   capture validates and flips to a reservation summary), a dated
- *   shipping timeline, a compatibility strip, review quotes, an honest
- *   FAQ accordion, and a footer with the warranty note. Scroll-reveals
- *   rise 12px and fire once; everything is gated by
- *   prefers-reduced-motion (reveals render visible, counters render
- *   final, the exploded view snaps instantly).
+ * @output Elevated hardware-product marketing landing page: a sticky
+ *   navbar that starts transparent and gains a tinted hairline surface
+ *   after 24px of scroll (links collapse behind a menu button at compact
+ *   widths), an aurora-and-grain hero staging a display headline
+ *   (64-78px, gradient ink on one phrase) beside a product theater — the
+ *   layered schematic SVG render in a glass panel with pointer parallax,
+ *   three bobbing satellite readout cards, and the EXPLODED-VIEW toggle
+ *   that springs the four layers apart with labeled leader lines — an
+ *   asymmetric spec grid on a dot-grid band (featured battery tile with
+ *   an oversized count-up numeral), an in-the-box row, a floating
+ *   configurator card that crosses the section boundary into a
+ *   scheme-locked dark band (swatches retint every render; pack sizes
+ *   recompute a tabular total with a savings chip; the preorder email
+ *   capture validates and flips to a reservation summary), a pinned
+ *   scroll-story shipping timeline inside that dark band (sticky stage,
+ *   progress-filled step rail, clickable steps, pointer spotlight,
+ *   glass panels), a marquee compatibility strip, offset review cards,
+ *   an honest FAQ accordion, and a footer with the warranty note.
+ *   Reveals rise 16px with a slight scale and fire once; everything is
+ *   gated by prefers-reduced-motion (reveals render visible, counters
+ *   render final, the exploded view snaps, auroras hold still, the
+ *   marquee wraps static, and the scroll story renders as a stacked
+ *   sequence).
  * @position Page template; emitted by `astryx template hardware-product-landing`
  *
  * Frame: Layout height="fill", content-only — the landing page owns its
  * chrome so there is no LayoutHeader. LayoutContent (padding 0) hosts a
- * single scroll container that owns scroll-spy; the navbar is
- * position:sticky top:0 inside it, and full-bleed tinted bands (specs,
- * configurator, compatibility, footer) alternate with plain bands, each
- * centering a 1100px column.
+ * single scroll container that owns scroll-spy, the nav condensation
+ * threshold, and the scroll-story progress; the navbar is
+ * position:sticky top:0 inside it, and full-bleed bands (dot-grid specs,
+ * accent configurator, scheme-locked dark story, muted compatibility,
+ * footer) alternate with plain bands, each centering a 1100px column.
  *
  * Interaction contract:
  * - Nav anchors and both hero CTAs smooth-scroll the container to real
  *   section ids with a sticky-nav allowance; onScroll spies the last
- *   anchor above the fold and highlights it (aria-current). At <=720px
- *   the links collapse behind a 40px menu button whose dropdown closes
- *   on Escape, outside pointerdown, or selection.
- * - The exploded-view toggle (aria-pressed) translates the four SVG
- *   layers apart on a springy cubic-bezier with staggered delays and
- *   fades in labels + hairline leader lines; reduced motion snaps.
+ *   anchor above the fold (aria-current). At <=720px the links collapse
+ *   behind a 40px menu button whose dropdown closes on Escape, outside
+ *   pointerdown, or selection.
+ * - The product theater parallaxes ±8px toward the pointer (spring
+ *   transition, direct ref mutation; off under reduced motion and at
+ *   stacked widths). Satellites bob on independent 7-9.5s keyframes
+ *   with negative delays. The exploded-view toggle (aria-pressed)
+ *   translates the four SVG layers apart on a springy cubic-bezier with
+ *   staggered delays and fades in labels + hairline leader lines;
+ *   reduced motion snaps.
+ * - The shipping story pins a sticky stage inside a ~240vh container;
+ *   scroll progress (container rect vs the measured scrollport) fills
+ *   the step rail (scaleY) and crossfades three panels. Steps are also
+ *   buttons that scroll to their band. Reduced motion or compact widths
+ *   render a static stacked sequence.
  * - Configurator swatches (aria-pressed) retint the hero render, the
  *   configurator render, and the order readout; the pack-size
  *   SegmentedControl recomputes unit price, tabular total, and the
  *   "Save $N" Badge honestly. The preorder form validates (empty +
  *   format errors inline) and success swaps to a reservation card
  *   echoing email, colorway, pack, and total, with a reset link.
- * - Spec-tile values count up over ~900ms the first time the grid
- *   scrolls into view; reduced motion renders final values.
+ * - Spec-tile values count up over ~900ms on first reveal; primary CTAs
+ *   sheen-sweep on hover, lift 1px, and press to scale .98 (all
+ *   suppressed under reduced motion); cards raise a shadow tier with an
+ *   accent ring on hover; the ecosystem marquee pauses on hover.
  * - FAQ Collapsibles are controlled via a Set; the battery entry ships
  *   open because its honest footnote is the section's point.
  *
@@ -61,22 +82,31 @@
  * white 5.2:1 and white on #C2410C 5.2:1 (AA for text and for the solid
  * CTA); #FDBA74 on the dark app background (~#141519) 11.9:1 (AAA).
  * ACCENT_SOFT/ACCENT_LINE are alpha variants of the same two hexes.
+ * Every aurora, glow, spotlight, gradient ink, and hover ring is derived
+ * from ACCENT via color-mix with existing tokens — no second accent hue.
+ * The dark story band scheme-locks tokens with colorScheme:'dark' rather
+ * than introducing literals; CTA ink is var(--color-background-body) so
+ * the documented contrast pair holds in both schemes. Shadow tiers use
+ * the neutral rgba values specified by the house depth system.
  * Device-art literals (colorway shells, PCB, battery cell) are
  * scheme-stable product-render paint inside the SVG only — a physical
  * object does not reflow with the app theme.
  *
  * Responsive contract (useElementWidth on the page wrapper — the demo
  * stage is ~1045px wide, so viewport media queries never fire inline):
- * - >880px: split hero (copy | render), specs 3-up, box row 4-up,
- *   configurator split, horizontal timeline, reviews 3-up.
- * - <=880px: hero stacks (render below copy), specs drop to 2-up,
- *   box row 2-up, reviews stack single-column.
+ * - >880px: split hero (copy | theater with satellites + parallax),
+ *   4-track asymmetric spec grid, box row 4-up, configurator split with
+ *   the overlap crossing into the dark band, pinned scroll story,
+ *   reviews 3-up with an offset middle card.
+ * - <=880px: hero stacks (theater below copy, parallax off), specs drop
+ *   to 2 tracks, box row 2-up, reviews stack single-column.
  * - <=720px: nav links collapse behind the menu button; the
- *   configurator stacks (render above controls); the shipping timeline
- *   goes vertical with a left rail.
- * - <=520px: specs drop to 1-up, headline and section paddings step
- *   down, the preorder form stacks its button, swatch/pack rows wrap.
- *   Holds at 390px in the phone artboard with no overflow-x.
+ *   configurator stacks (render above controls) and no longer overlaps;
+ *   the shipping story renders as the static stacked sequence.
+ * - <=520px: specs drop to 1 track, satellites hide, headline and band
+ *   paddings step down, the preorder form stacks its button,
+ *   swatch/pack rows wrap. Holds at 390px in the phone artboard with no
+ *   overflow-x.
  */
 
 import {
@@ -84,6 +114,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
   type ReactNode,
   type RefObject,
   type UIEvent,
@@ -96,10 +127,9 @@ import {
   StackItem,
   VStack,
 } from '@astryxdesign/core/Layout';
-import {Heading, Text} from '@astryxdesign/core/Text';
+import {Text} from '@astryxdesign/core/Text';
 import {Badge} from '@astryxdesign/core/Badge';
 import {Button} from '@astryxdesign/core/Button';
-import {Card} from '@astryxdesign/core/Card';
 import {Collapsible} from '@astryxdesign/core/Collapsible';
 import {Divider} from '@astryxdesign/core/Divider';
 import {Grid} from '@astryxdesign/core/Grid';
@@ -113,6 +143,7 @@ import {
   ActivityIcon,
   ArrowRightIcon,
   BatteryFullIcon,
+  BellIcon,
   BirdIcon,
   BluetoothIcon,
   BookOpenIcon,
@@ -128,6 +159,7 @@ import {
   RotateCcwIcon,
   ShieldCheckIcon,
   TruckIcon,
+  WindIcon,
   XIcon,
 } from 'lucide-react';
 import type {ComponentType, SVGProps} from 'react';
@@ -139,7 +171,8 @@ type Glyph = ComponentType<SVGProps<SVGSVGElement>>;
 // #C2410C on #FFFFFF = 5.2:1 and #FFFFFF on #C2410C = 5.2:1 (AA for
 // normal text and for the solid preorder CTA); #FDBA74 on the dark app
 // background (~#141519) = 11.9:1 (AAA). SOFT/LINE are alpha variants of
-// the same two hexes — no second accent hue exists on this page.
+// the same two hexes — no second accent hue exists on this page; every
+// glow below is a color-mix of ACCENT with existing tokens.
 const ACCENT = 'light-dark(#C2410C, #FDBA74)';
 const ACCENT_SOFT =
   'light-dark(rgba(194, 65, 12, 0.08), rgba(253, 186, 116, 0.10))';
@@ -152,6 +185,25 @@ const SPY_OFFSET = 132;
 
 /** Springy overshoot for the exploded-view layers. */
 const SPRING = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
+/** Decelerate bezier for reveals and hover raises. */
+const EASE_OUT = 'cubic-bezier(0.16, 1, 0.3, 1)';
+
+// House depth system (neutral shadow ink per the depth-tier spec).
+const SHADOW_RAISED =
+  '0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px -12px rgba(0, 0, 0, 0.18)';
+const SHADOW_FLOATING =
+  '0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px -12px rgba(0, 0, 0, 0.18), ' +
+  '0 24px 48px -24px rgba(0, 0, 0, 0.28)';
+const GLASS_INSET =
+  'inset 0 0 0 1px color-mix(in srgb, var(--color-border) 65%, transparent)';
+
+/** Grain texture: inline feTurbulence data-URI, painted at ~4% opacity. */
+const GRAIN =
+  `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' ` +
+  `width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence ` +
+  `type='fractalNoise' baseFrequency='0.85' numOctaves='2' ` +
+  `stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' ` +
+  `filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E")`;
 
 // Scheme-stable device-art literals (see Color policy): the product
 // render is a physical object and paints identically in both themes.
@@ -166,6 +218,29 @@ const ART = {
   seam: 'rgba(10, 14, 20, 0.25)',
   sheen: 'rgba(255, 255, 255, 0.10)',
 };
+
+// Scoped stylesheet: keyframes (aurora drift, satellite bob, marquee),
+// CTA sheen/lift, card hover raises, marquee pause — with a
+// prefers-reduced-motion block that stills all of it.
+const PAGE_CSS = `
+@keyframes hpl-drift-a { 0%, 100% { transform: translate3d(0, 0, 0) scale(1); } 50% { transform: translate3d(-48px, 34px, 0) scale(1.12); } }
+@keyframes hpl-drift-b { 0%, 100% { transform: translate3d(0, 0, 0) scale(1); } 50% { transform: translate3d(44px, -28px, 0) scale(0.92); } }
+@keyframes hpl-drift-c { 0%, 100% { transform: translate3d(0, 0, 0) scale(1); } 50% { transform: translate3d(-30px, -42px, 0) scale(1.06); } }
+@keyframes hpl-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+@keyframes hpl-marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.tpl-hpl .hpl-cta { box-shadow: ${SHADOW_RAISED}; transition: transform 180ms ease, box-shadow 180ms ease; }
+.tpl-hpl .hpl-cta:hover { transform: translateY(-1px); box-shadow: ${SHADOW_FLOATING}, 0 0 0 1px color-mix(in srgb, ${ACCENT} 55%, transparent); }
+.tpl-hpl .hpl-cta:active { transform: translateY(0) scale(0.98); }
+.tpl-hpl .hpl-cta-sheen { transition: transform 700ms ease; }
+.tpl-hpl .hpl-cta:hover .hpl-cta-sheen { transform: translateX(130%); }
+.tpl-hpl .hpl-raise { box-shadow: ${SHADOW_RAISED}; transition: transform 220ms ${EASE_OUT}, box-shadow 220ms ${EASE_OUT}; }
+.tpl-hpl .hpl-raise:hover { transform: translateY(-3px); box-shadow: ${SHADOW_FLOATING}, 0 0 0 1px color-mix(in srgb, ${ACCENT} 45%, transparent); }
+.tpl-hpl .hpl-marquee-wrap:hover .hpl-marquee-track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .tpl-hpl .hpl-cta:hover, .tpl-hpl .hpl-cta:active, .tpl-hpl .hpl-raise:hover { transform: none; }
+  .tpl-hpl .hpl-cta-sheen { display: none; }
+}
+`;
 
 // ============= STYLES =============
 
@@ -191,27 +266,40 @@ const styles: Record<string, CSSProperties> = {
     paddingInline: 'var(--spacing-4)',
   },
   band: {
-    paddingBlock: 'var(--spacing-9)',
+    paddingBlock: 112,
   },
   bandCompact: {
-    paddingBlock: 'var(--spacing-6)',
+    paddingBlock: 64,
   },
   bandMuted: {
     backgroundColor: 'var(--color-background-muted)',
     borderTop: '1px solid var(--color-border)',
     borderBottom: '1px solid var(--color-border)',
   },
+  // Hairline dot-grid texture layered over the muted specs band.
+  bandDotGrid: {
+    backgroundImage:
+      'radial-gradient(circle at 1px 1px, var(--color-border) 1px, transparent 1.6px)',
+    backgroundSize: '24px 24px',
+  },
   bandAccent: {
+    position: 'relative',
     backgroundColor: ACCENT_SOFT,
     borderTop: `1px solid ${ACCENT_LINE}`,
     borderBottom: `1px solid ${ACCENT_LINE}`,
   },
-  // ---- sticky navbar ----
+  // ---- sticky navbar (surface + height animate past 24px scroll) ----
   navBar: {
     position: 'sticky',
     top: 0,
     zIndex: 30,
-    backgroundColor: 'var(--color-background-body)',
+    backgroundColor: 'transparent',
+    borderBottom: '1px solid transparent',
+    transition: 'background-color 240ms ease, border-color 240ms ease',
+  },
+  navBarScrolled: {
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-body) 92%, transparent)',
     borderBottom: '1px solid var(--color-border)',
   },
   navInner: {
@@ -224,7 +312,11 @@ const styles: Record<string, CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     gap: 'var(--spacing-2)',
-    minHeight: 56,
+    minHeight: 64,
+    transition: 'min-height 240ms ease',
+  },
+  navInnerScrolled: {
+    minHeight: 50,
   },
   logoTile: {
     width: 34,
@@ -279,8 +371,7 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 14,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-body)',
-    boxShadow:
-      'var(--shadow-high, 0 12px 32px light-dark(rgba(15, 23, 42, 0.18), rgba(0, 0, 0, 0.5)))',
+    boxShadow: SHADOW_FLOATING,
     padding: 'var(--spacing-3)',
     zIndex: 40,
   },
@@ -301,16 +392,87 @@ const styles: Record<string, CSSProperties> = {
     textAlign: 'left',
   },
   // ---- section furniture ----
-  eyebrow: {
+  eyebrowChip: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+    height: 24,
+    paddingInline: 10,
+    borderRadius: 999,
+    backgroundColor: ACCENT_SOFT,
+    border: `1px solid ${ACCENT_LINE}`,
+    color: ACCENT,
     fontSize: 11,
     fontWeight: 700,
-    letterSpacing: '0.12em',
+    letterSpacing: '0.09em',
     textTransform: 'uppercase',
-    color: ACCENT,
-    margin: 0,
+    width: 'fit-content',
   },
-  // ---- hero ----
+  sectionTitle: {
+    fontSize: 38,
+    fontWeight: 700,
+    lineHeight: 1.08,
+    letterSpacing: '-0.02em',
+    margin: 0,
+    color: 'var(--color-text-primary)',
+  },
+  sectionTitleCompact: {
+    fontSize: 28,
+  },
+  // ---- primary CTA (sheen sweep + lift live in PAGE_CSS) ----
+  cta: {
+    position: 'relative',
+    overflow: 'hidden',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    height: 44,
+    paddingInline: 20,
+    borderRadius: 12,
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: 15,
+    fontWeight: 700,
+    letterSpacing: '-0.01em',
+    backgroundColor: ACCENT,
+    color: 'var(--color-background-body)',
+    whiteSpace: 'nowrap',
+  },
+  ctaSmall: {
+    height: 36,
+    paddingInline: 14,
+    fontSize: 13.5,
+    borderRadius: 10,
+  },
+  ctaSheen: {
+    position: 'absolute',
+    inset: 0,
+    pointerEvents: 'none',
+    transform: 'translateX(-130%)',
+    background:
+      'linear-gradient(115deg, transparent 35%, color-mix(in srgb, var(--color-background-body) 45%, transparent) 50%, transparent 65%)',
+  },
+  // ---- hero atmosphere ----
+  heroBand: {
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  aurora: {
+    position: 'absolute',
+    borderRadius: '50%',
+    filter: 'blur(90px)',
+    pointerEvents: 'none',
+  },
+  grain: {
+    position: 'absolute',
+    inset: 0,
+    backgroundImage: GRAIN,
+    opacity: 0.04,
+    pointerEvents: 'none',
+  },
   heroRow: {
+    position: 'relative',
     display: 'flex',
     gap: 'var(--spacing-8)',
     alignItems: 'center',
@@ -318,44 +480,106 @@ const styles: Record<string, CSSProperties> = {
   heroRowStacked: {
     flexDirection: 'column',
     alignItems: 'stretch',
-    gap: 'var(--spacing-5)',
+    gap: 'var(--spacing-6)',
   },
   heroText: {
-    flex: '1 1 0',
+    flex: '1.05 1 0',
     minWidth: 0,
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-4)',
   },
   heroHeadline: {
-    fontSize: 46,
     fontWeight: 700,
-    lineHeight: 1.08,
-    letterSpacing: '-0.02em',
+    lineHeight: 1.03,
+    letterSpacing: '-0.03em',
     margin: 0,
   },
-  heroHeadlineCompact: {
-    fontSize: 31,
+  heroInk: {
+    backgroundImage: `linear-gradient(96deg, ${ACCENT} 0%, color-mix(in srgb, ${ACCENT} 60%, var(--color-icon-red)) 55%, color-mix(in srgb, ${ACCENT} 55%, var(--color-icon-yellow)) 100%)`,
+    WebkitBackgroundClip: 'text',
+    backgroundClip: 'text',
+    color: 'transparent',
+    WebkitTextFillColor: 'transparent',
   },
   heroSubcopy: {
     fontSize: 17,
     lineHeight: 1.55,
     color: 'var(--color-text-secondary)',
-    maxWidth: 500,
+    maxWidth: '54ch',
     margin: 0,
   },
-  // ---- device render panel ----
-  renderPanel: {
+  // ---- product theater ----
+  theater: {
     flex: '1 1 0',
     minWidth: 0,
-    borderRadius: 16,
-    border: `1px solid ${ACCENT_LINE}`,
-    backgroundColor: ACCENT_SOFT,
+    position: 'relative',
+    perspective: 1200,
+  },
+  theaterGlow: {
+    position: 'absolute',
+    inset: '8% 4%',
+    borderRadius: '50%',
+    background: `radial-gradient(closest-side, color-mix(in srgb, ${ACCENT} 30%, transparent), transparent 72%)`,
+    filter: 'blur(40px)',
+    pointerEvents: 'none',
+  },
+  deviceStage: {
+    position: 'relative',
+  },
+  renderPanel: {
+    position: 'relative',
+    borderRadius: 20,
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-card) 82%, transparent)',
+    boxShadow: `${SHADOW_FLOATING}, ${GLASS_INSET}`,
     padding: 'var(--spacing-4)',
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-2)',
     boxSizing: 'border-box',
+  },
+  satelliteLayer: {
+    position: 'absolute',
+    inset: 0,
+    pointerEvents: 'none',
+    zIndex: 2,
+  },
+  satellite: {
+    position: 'absolute',
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: 10,
+    borderRadius: 14,
+    padding: '10px 14px',
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-card) 90%, transparent)',
+    boxShadow: `${SHADOW_FLOATING}, ${GLASS_INSET}`,
+  },
+  satelliteDisc: {
+    width: 30,
+    height: 30,
+    borderRadius: 9,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    backgroundColor: ACCENT_SOFT,
+    border: `1px solid ${ACCENT_LINE}`,
+    color: ACCENT,
+  },
+  satelliteTitle: {
+    fontSize: 12.5,
+    fontWeight: 700,
+    margin: 0,
+    color: 'var(--color-text-primary)',
+    whiteSpace: 'nowrap',
+  },
+  satelliteNote: {
+    fontSize: 11.5,
+    margin: 0,
+    color: 'var(--color-text-secondary)',
+    whiteSpace: 'nowrap',
   },
   explodeToggle: {
     display: 'inline-flex',
@@ -376,7 +600,11 @@ const styles: Record<string, CSSProperties> = {
     color: ACCENT,
     boxShadow: `inset 0 0 0 1px ${ACCENT}`,
   },
-  // ---- spec tiles ----
+  // ---- spec tiles (asymmetric grid; hover raise via .hpl-raise) ----
+  specGrid: {
+    display: 'grid',
+    gap: 'var(--spacing-3)',
+  },
   specTile: {
     borderRadius: 14,
     border: '1px solid var(--color-border)',
@@ -385,8 +613,13 @@ const styles: Record<string, CSSProperties> = {
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-1)',
-    minHeight: 118,
+    minHeight: 128,
     boxSizing: 'border-box',
+  },
+  specTileFeatured: {
+    border: `1px solid ${ACCENT_LINE}`,
+    background: `linear-gradient(135deg, ${ACCENT_SOFT}, var(--color-background-card) 70%)`,
+    justifyContent: 'flex-end',
   },
   specValue: {
     fontSize: 30,
@@ -395,6 +628,11 @@ const styles: Record<string, CSSProperties> = {
     letterSpacing: '-0.02em',
     fontVariantNumeric: 'tabular-nums',
     color: 'var(--color-text-primary)',
+  },
+  specValueFeatured: {
+    fontSize: 64,
+    letterSpacing: '-0.03em',
+    lineHeight: 1,
   },
   specUnit: {
     fontSize: 16,
@@ -424,7 +662,15 @@ const styles: Record<string, CSSProperties> = {
     border: '1.5px solid var(--color-text-secondary)',
     color: 'var(--color-text-secondary)',
   },
-  // ---- configurator ----
+  // ---- configurator (floating card crosses into the dark band) ----
+  floatCard: {
+    borderRadius: 20,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_FLOATING,
+    padding: 'var(--spacing-6)',
+    boxSizing: 'border-box',
+  },
   configRow: {
     display: 'flex',
     gap: 'var(--spacing-6)',
@@ -438,7 +684,7 @@ const styles: Record<string, CSSProperties> = {
     minWidth: 0,
     borderRadius: 14,
     border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-background-card)',
+    backgroundColor: 'var(--color-background-muted)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -519,52 +765,186 @@ const styles: Record<string, CSSProperties> = {
     border: `1px solid ${ACCENT_LINE}`,
     color: ACCENT,
   },
-  // ---- shipping timeline ----
-  timelineRow: {
+  // ---- shipping story (scheme-locked dark, pinned scroll stage) ----
+  storySection: {
+    position: 'relative',
+    colorScheme: 'dark',
+    backgroundColor: 'var(--color-background-body)',
+    color: 'var(--color-text-primary)',
+  },
+  storyStage: {
+    position: 'sticky',
+    top: 0,
+    overflow: 'hidden',
     display: 'flex',
-    gap: 'var(--spacing-4)',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    boxSizing: 'border-box',
+    paddingTop: 96,
+    paddingBottom: 40,
+  },
+  spotlight: {
+    position: 'absolute',
+    inset: 0,
+    pointerEvents: 'none',
+    background: `radial-gradient(560px circle at var(--hpl-mx, 62%) var(--hpl-my, 28%), color-mix(in srgb, ${ACCENT} 12%, transparent), transparent 62%)`,
+  },
+  storyRow: {
+    display: 'flex',
+    gap: 'var(--spacing-7)',
     alignItems: 'stretch',
   },
-  timelineRowStacked: {
-    flexDirection: 'column',
-  },
-  timelineStep: {
-    flex: '1 1 0',
-    minWidth: 0,
+  storyRail: {
+    position: 'relative',
+    flex: '0 0 280px',
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-2)',
-    position: 'relative',
+    paddingBlock: 4,
   },
-  timelineDot: {
+  railTrack: {
+    position: 'absolute',
+    left: 19,
+    top: 12,
+    bottom: 12,
+    width: 2,
+    backgroundColor:
+      'color-mix(in srgb, var(--color-border) 80%, transparent)',
+  },
+  railFill: {
+    position: 'absolute',
+    left: 19,
+    top: 12,
+    bottom: 12,
+    width: 2,
+    backgroundColor: ACCENT,
+    transformOrigin: 'top',
+    transition: 'transform 160ms linear',
+  },
+  railStep: {
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: 14,
+    padding: '12px 0',
+    border: 'none',
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+    textAlign: 'left',
+  },
+  railDisc: {
     width: 40,
     height: 40,
     borderRadius: '50%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    flexShrink: 0,
+    fontSize: 13,
+    fontWeight: 700,
+    fontVariantNumeric: 'tabular-nums',
+    color: 'var(--color-text-secondary)',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: GLASS_INSET,
+  },
+  railDiscActive: {
+    color: ACCENT,
+    backgroundColor: ACCENT_SOFT,
+    boxShadow: `inset 0 0 0 1px ${ACCENT}`,
+  },
+  storyPanelWrap: {
+    position: 'relative',
+    flex: '1 1 0',
+    minWidth: 0,
+    minHeight: 380,
+  },
+  storyPanel: {
+    position: 'absolute',
+    inset: 0,
+    borderRadius: 20,
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-card) 72%, transparent)',
+    boxShadow: `${SHADOW_FLOATING}, ${GLASS_INSET}`,
+    padding: 'var(--spacing-7)',
+    boxSizing: 'border-box',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    gap: 'var(--spacing-3)',
+    overflow: 'hidden',
+  },
+  ghostNumeral: {
+    position: 'absolute',
+    top: -22,
+    right: 8,
+    fontSize: 148,
+    fontWeight: 700,
+    lineHeight: 1,
+    letterSpacing: '-0.04em',
+    color: `color-mix(in srgb, ${ACCENT} 16%, transparent)`,
+    pointerEvents: 'none',
+    userSelect: 'none',
+  },
+  stepIconDisc: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: ACCENT_SOFT,
     border: `1px solid ${ACCENT_LINE}`,
     color: ACCENT,
-    flexShrink: 0,
   },
-  timelineTrack: {
+  storyStepTitle: {
+    fontSize: 30,
+    fontWeight: 700,
+    letterSpacing: '-0.02em',
+    lineHeight: 1.1,
+    margin: 0,
+    color: 'var(--color-text-primary)',
+  },
+  storyCopy: {
+    fontSize: 16,
+    lineHeight: 1.6,
+    margin: 0,
+    maxWidth: '52ch',
+    color: 'var(--color-text-secondary)',
+  },
+  // Static (reduced-motion / compact) story card.
+  glassCard: {
+    position: 'relative',
+    borderRadius: 18,
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-card) 78%, transparent)',
+    boxShadow: `${SHADOW_RAISED}, ${GLASS_INSET}`,
+    padding: 'var(--spacing-5)',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+  },
+  // ---- compatibility marquee ----
+  marqueeWrap: {
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  marqueeTrack: {
+    display: 'flex',
+    width: 'max-content',
+    animation: 'hpl-marquee 48s linear infinite',
+  },
+  marqueeGroup: {
+    display: 'flex',
+    gap: 'var(--spacing-3)',
+    paddingRight: 'var(--spacing-3)',
+  },
+  marqueeFade: {
     position: 'absolute',
-    top: 20,
-    left: 48,
-    right: 8,
-    height: 1,
-    backgroundColor: 'var(--color-border)',
+    top: 0,
+    bottom: 0,
+    width: 90,
+    pointerEvents: 'none',
+    zIndex: 1,
   },
-  timelineTrackVertical: {
-    position: 'absolute',
-    top: 48,
-    bottom: -8,
-    left: 20,
-    width: 1,
-    backgroundColor: 'var(--color-border)',
-  },
-  // ---- compatibility ----
   ecoTile: {
     display: 'flex',
     alignItems: 'center',
@@ -591,6 +971,14 @@ const styles: Record<string, CSSProperties> = {
     fontWeight: 700,
   },
   // ---- reviews ----
+  reviewCard: {
+    height: '100%',
+    borderRadius: 16,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    padding: 'var(--spacing-5)',
+    boxSizing: 'border-box',
+  },
   starRow: {
     display: 'flex',
     gap: 2,
@@ -604,6 +992,15 @@ const styles: Record<string, CSSProperties> = {
     lineHeight: 1.55,
     margin: 0,
     color: 'var(--color-text-primary)',
+  },
+  // ---- FAQ ----
+  faqCard: {
+    borderRadius: 18,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_RAISED,
+    padding: 'var(--spacing-5)',
+    boxSizing: 'border-box',
   },
   // ---- footer ----
   footer: {
@@ -641,9 +1038,13 @@ const NAV_ANCHORS: readonly {id: SectionId; label: string}[] = [
   {id: 'faq', label: 'FAQ'},
 ];
 
+// Headline is split so one phrase can carry gradient ink.
 const HERO = {
   eyebrow: 'Perch · smart desk sensor',
-  headline: 'A tiny sensor. A noticeably better workday.',
+  headlineLead: 'A tiny sensor.',
+  headlineInkLead: 'A ',
+  headlineInk: 'noticeably better',
+  headlineTail: ' workday.',
   subcopy:
     'Perch sits under your monitor and quietly reads posture, air ' +
     'quality, light, and focus time — then nudges you at exactly the ' +
@@ -658,6 +1059,51 @@ const LAYER_LABELS: readonly string[] = [
   'Li-ion cell · 14 mo typical',
   '6061 aluminum shell · USB-C',
 ];
+
+/** Floating satellite readouts staged around the hero render. */
+const SATELLITES: readonly {
+  id: string;
+  title: string;
+  note: string;
+  icon: Glyph;
+  /** Percent-based anchor within the theater. */
+  position: CSSProperties;
+  bobDurationMs: number;
+  bobDelayMs: number;
+  withSparkline?: boolean;
+}[] = [
+  {
+    id: 'air',
+    title: 'CO₂ 642 ppm',
+    note: 'Fresh — that window worked',
+    icon: WindIcon,
+    position: {top: '4%', right: '-2%'},
+    bobDurationMs: 7000,
+    bobDelayMs: -2000,
+    withSparkline: true,
+  },
+  {
+    id: 'nudge',
+    title: 'Posture nudge',
+    note: 'Slumped 12 min · gentle tap queued',
+    icon: BellIcon,
+    position: {top: '38%', left: '-4%'},
+    bobDurationMs: 8600,
+    bobDelayMs: -4200,
+  },
+  {
+    id: 'battery',
+    title: '14 mo battery',
+    note: '82% today · one charge a year',
+    icon: BatteryFullIcon,
+    position: {bottom: '2%', right: '6%'},
+    bobDurationMs: 9400,
+    bobDelayMs: -1100,
+  },
+];
+
+/** Fixed sparkline for the air-quality satellite (no randomness). */
+const SPARK_POINTS = '0,14 10,12 20,15 30,9 40,11 52,6 64,8';
 
 interface Colorway {
   id: string;
@@ -935,6 +1381,26 @@ function useElementWidth(ref: RefObject<HTMLDivElement | null>): number {
   return width;
 }
 
+/** Measured scrollport height — the scroll-story math needs real px. */
+function useElementHeight(ref: RefObject<HTMLDivElement | null>): number {
+  const [height, setHeight] = useState(0);
+  useEffect(() => {
+    const element = ref.current;
+    if (element == null) {
+      return undefined;
+    }
+    const observer = new ResizeObserver(entries => {
+      const rect = entries[0]?.contentRect;
+      if (rect != null) {
+        setHeight(rect.height);
+      }
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref]);
+  return height;
+}
+
 /** Reduced-motion gate: reveals render visible, counters render final. */
 function usePrefersReducedMotion(): boolean {
   const [prefers, setPrefers] = useState<boolean>(
@@ -954,9 +1420,10 @@ function usePrefersReducedMotion(): boolean {
 // ============= SMALL PIECES =============
 
 /**
- * Fire-once scroll reveal: rise 12px + fade over 520ms. Children may be
- * a render function to key count-ups off the reveal moment. Reduced
- * motion renders visible immediately with no transition.
+ * Fire-once scroll reveal: rise 16px + settle from scale .985 over
+ * 560ms on a decelerate bezier. Children may be a render function to
+ * key count-ups off the reveal moment. Reduced motion renders visible
+ * immediately with no transition.
  */
 function Reveal({
   reduced,
@@ -995,10 +1462,10 @@ function Reveal({
       ref={ref}
       style={{
         opacity: isRevealed ? 1 : 0,
-        transform: isRevealed ? 'none' : 'translateY(12px)',
+        transform: isRevealed ? 'none' : 'translateY(16px) scale(0.985)',
         transition: reduced
           ? 'none'
-          : `opacity 520ms ease ${delayMs}ms, transform 520ms ease ${delayMs}ms`,
+          : `opacity 560ms ${EASE_OUT} ${delayMs}ms, transform 560ms ${EASE_OUT} ${delayMs}ms`,
       }}>
       {typeof children === 'function' ? children(isRevealed) : children}
     </div>
@@ -1066,26 +1533,64 @@ function StarRow({count}: {count: number}) {
   );
 }
 
-/** Section intro: uppercase eyebrow + heading + supporting copy. */
+/** Section intro: accent eyebrow chip + display heading + support copy. */
 function SectionIntro({
   eyebrow,
   title,
   description,
+  compact,
 }: {
   eyebrow: string;
   title: string;
   description?: string;
+  compact: boolean;
 }) {
   return (
-    <VStack gap={2}>
-      <p style={styles.eyebrow}>{eyebrow}</p>
-      <Heading level={2}>{title}</Heading>
+    <VStack gap={3}>
+      <span style={styles.eyebrowChip}>{eyebrow}</span>
+      <h2
+        style={{
+          ...styles.sectionTitle,
+          ...(compact ? styles.sectionTitleCompact : undefined),
+        }}>
+        {title}
+      </h2>
       {description !== undefined ? (
         <Text type="supporting" color="secondary">
           {description}
         </Text>
       ) : null}
     </VStack>
+  );
+}
+
+/**
+ * Primary CTA with a sheen sweep, 1px hover lift, and .98 press scale
+ * (all via the scoped stylesheet; suppressed under reduced motion).
+ */
+function CtaButton({
+  label,
+  onClick,
+  small = false,
+  withArrow = false,
+}: {
+  label: string;
+  onClick: () => void;
+  small?: boolean;
+  withArrow?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      className="hpl-cta"
+      style={{...styles.cta, ...(small ? styles.ctaSmall : undefined)}}
+      onClick={onClick}>
+      <span className="hpl-cta-sheen" style={styles.ctaSheen} aria-hidden="true" />
+      {label}
+      {withArrow ? (
+        <Icon icon={ArrowRightIcon} size="sm" color="inherit" />
+      ) : null}
+    </button>
   );
 }
 
@@ -1243,18 +1748,33 @@ export default function HardwareProductLandingTemplate() {
 
   const reduced = usePrefersReducedMotion();
 
-  // ---- navbar ----
+  // ---- navbar (condenses + gains a surface after 24px of scroll) ----
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const navRef = useRef<HTMLElement | null>(null);
   const menuTriggerRef = useRef<HTMLButtonElement | null>(null);
 
   // ---- scroll-spy ----
   const pageRef = useRef<HTMLDivElement | null>(null);
+  const viewportH = useElementHeight(pageRef);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
   const [activeSection, setActiveSection] = useState<SectionId | null>(null);
 
-  // ---- signature hero moment: exploded view ----
+  // ---- signature hero moment: exploded view + pointer parallax ----
   const [isExploded, setIsExploded] = useState(false);
+  const theaterRef = useRef<HTMLDivElement | null>(null);
+  const deviceStageRef = useRef<HTMLDivElement | null>(null);
+  const satelliteLayerRef = useRef<HTMLDivElement | null>(null);
+
+  // ---- pinned scroll story (shipping timeline) ----
+  const storyTallRef = useRef<HTMLDivElement | null>(null);
+  const stageRef = useRef<HTMLDivElement | null>(null);
+  const [storyProgress, setStoryProgress] = useState(0);
+  const storyStatic = reduced || isCompact || viewportH < 480;
+  const activeStep = Math.min(
+    TIMELINE_STEPS.length - 1,
+    Math.floor(storyProgress * TIMELINE_STEPS.length),
+  );
 
   // ---- configurator ----
   const [colorwayId, setColorwayId] = useState(COLORWAYS[0].id);
@@ -1273,6 +1793,9 @@ export default function HardwareProductLandingTemplate() {
   const pack = PACKS.find(entry => entry.id === packId) ?? PACKS[0];
   const perUnit = pack.total / pack.units;
   const savings = SINGLE_PRICE * pack.units - pack.total;
+
+  // The configurator card crosses the boundary into the dark band.
+  const overlap = !isCompact;
 
   // Menu dismisses on Escape (refocusing the trigger) and on outside
   // pointerdown; listeners only run while it is open.
@@ -1323,9 +1846,31 @@ export default function HardwareProductLandingTemplate() {
     });
   };
 
-  /** Scroll-spy: the last nav anchor above the fold line wins. */
+  /** Scroll a rail step's band of the pinned story into place. */
+  const jumpToStoryStep = (index: number) => {
+    const container = pageRef.current;
+    const tall = storyTallRef.current;
+    if (container === null || tall === null || viewportH === 0) {
+      return;
+    }
+    const tallRect = tall.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    const tallTop = tallRect.top - containerRect.top + container.scrollTop;
+    const total = tallRect.height - viewportH;
+    container.scrollTo({
+      top: tallTop + ((index + 0.5) / TIMELINE_STEPS.length) * total,
+      behavior: reduced ? 'auto' : 'smooth',
+    });
+  };
+
+  /**
+   * One scroll pass: spy the last nav anchor above the fold, flip the
+   * nav surface past 24px, and drive the story stage from the tall
+   * container's rect against the measured scrollport.
+   */
   const onPageScroll = (event: UIEvent<HTMLDivElement>) => {
     const container = event.currentTarget;
+    setIsScrolled(container.scrollTop > 24);
     let active: SectionId | null = null;
     for (const anchor of NAV_ANCHORS) {
       const section = sectionRefs.current[anchor.id];
@@ -1337,6 +1882,64 @@ export default function HardwareProductLandingTemplate() {
       }
     }
     setActiveSection(active);
+    if (!storyStatic) {
+      const tall = storyTallRef.current;
+      if (tall !== null && viewportH > 0) {
+        const tallRect = tall.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        const total = tallRect.height - viewportH;
+        if (total > 0) {
+          const raw = (containerRect.top - tallRect.top) / total;
+          const clamped = Math.min(1, Math.max(0, raw));
+          setStoryProgress(Math.round(clamped * 200) / 200);
+        }
+      }
+    }
+  };
+
+  /** Hero theater parallax: ±8px toward the pointer via ref mutation. */
+  const onTheaterPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (reduced || isMid) {
+      return;
+    }
+    const host = theaterRef.current;
+    const device = deviceStageRef.current;
+    const sats = satelliteLayerRef.current;
+    if (host === null || device === null) {
+      return;
+    }
+    const rect = host.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    const y = ((event.clientY - rect.top) / rect.height) * 2 - 1;
+    device.style.transform = `translate3d(${(x * 8).toFixed(1)}px, ${(y * 8).toFixed(1)}px, 0)`;
+    if (sats !== null) {
+      sats.style.transform = `translate3d(${(x * -6).toFixed(1)}px, ${(y * -6).toFixed(1)}px, 0)`;
+    }
+  };
+
+  const onTheaterPointerLeave = () => {
+    const device = deviceStageRef.current;
+    const sats = satelliteLayerRef.current;
+    if (device !== null) {
+      device.style.transform = 'translate3d(0, 0, 0)';
+    }
+    if (sats !== null) {
+      sats.style.transform = 'translate3d(0, 0, 0)';
+    }
+  };
+
+  /** Dark-stage spotlight: pointer position feeds --hpl-mx/--hpl-my. */
+  const onStagePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (reduced) {
+      return;
+    }
+    const stage = stageRef.current;
+    if (stage === null) {
+      return;
+    }
+    const rect = stage.getBoundingClientRect();
+    stage.style.setProperty('--hpl-mx', `${(event.clientX - rect.left).toFixed(0)}px`);
+    stage.style.setProperty('--hpl-my', `${(event.clientY - rect.top).toFixed(0)}px`);
   };
 
   const submitPreorder = () => {
@@ -1371,6 +1974,15 @@ export default function HardwareProductLandingTemplate() {
     ...(isCompact ? styles.bandCompact : undefined),
   };
 
+  /** Display type tiers by measured container width (never <56 wide). */
+  const headlineSize =
+    wrapWidth > 1000 ? 78 : wrapWidth > 880 ? 66 : wrapWidth > 720 ? 58 : wrapWidth > 520 ? 46 : 38;
+
+  const parallaxSpring: CSSProperties = {
+    transition:
+      reduced || isMid ? undefined : 'transform 520ms cubic-bezier(0.22, 1, 0.36, 1)',
+  };
+
   // ============= CHROME =============
 
   const brandMark = (
@@ -1390,8 +2002,18 @@ export default function HardwareProductLandingTemplate() {
   );
 
   const navBar = (
-    <nav ref={navRef} style={styles.navBar} aria-label="Site">
-      <div style={styles.navInner}>
+    <nav
+      ref={navRef}
+      style={{
+        ...styles.navBar,
+        ...(isScrolled ? styles.navBarScrolled : undefined),
+      }}
+      aria-label="Site">
+      <div
+        style={{
+          ...styles.navInner,
+          ...(isScrolled ? styles.navInnerScrolled : undefined),
+        }}>
         {brandMark}
         <StackItem size="fill">
           {!isCompact ? (
@@ -1418,10 +2040,9 @@ export default function HardwareProductLandingTemplate() {
             <div />
           )}
         </StackItem>
-        <Button
+        <CtaButton
           label={isPhone ? 'Preorder' : 'Preorder · $89'}
-          variant="primary"
-          size="sm"
+          small
           onClick={() => jumpToSection('configure')}
         />
         {isCompact ? (
@@ -1458,67 +2079,163 @@ export default function HardwareProductLandingTemplate() {
 
   // ============= HERO =============
 
-  const hero = (
-    <div style={{...columnStyle, ...bandPad}}>
+  const heroAurora = (
+    <>
       <div
+        aria-hidden="true"
         style={{
-          ...styles.heroRow,
-          ...(isMid ? styles.heroRowStacked : undefined),
-        }}>
-        <div style={styles.heroText}>
-          <p style={styles.eyebrow}>{HERO.eyebrow}</p>
-          <h1
+          ...styles.aurora,
+          width: 560,
+          height: 560,
+          top: -180,
+          right: -120,
+          opacity: 0.5,
+          background: `radial-gradient(closest-side, color-mix(in srgb, ${ACCENT} 60%, transparent), transparent 72%)`,
+          animation: reduced ? undefined : 'hpl-drift-a 38s ease-in-out infinite',
+        }}
+      />
+      <div
+        aria-hidden="true"
+        style={{
+          ...styles.aurora,
+          width: 420,
+          height: 420,
+          bottom: -160,
+          left: -140,
+          opacity: 0.4,
+          background: `radial-gradient(closest-side, color-mix(in srgb, color-mix(in srgb, ${ACCENT} 45%, var(--color-icon-yellow)) 55%, transparent), transparent 70%)`,
+          animation: reduced ? undefined : 'hpl-drift-b 34s ease-in-out infinite',
+        }}
+      />
+      <div
+        aria-hidden="true"
+        style={{
+          ...styles.aurora,
+          width: 340,
+          height: 340,
+          top: '30%',
+          left: '38%',
+          opacity: 0.35,
+          background: `radial-gradient(closest-side, color-mix(in srgb, color-mix(in srgb, ${ACCENT} 40%, var(--color-success)) 45%, transparent), transparent 70%)`,
+          animation: reduced ? undefined : 'hpl-drift-c 42s ease-in-out infinite',
+        }}
+      />
+    </>
+  );
+
+  const satellites =
+    isPhone ? null : (
+      <div ref={satelliteLayerRef} style={{...styles.satelliteLayer, ...parallaxSpring}} aria-hidden="true">
+        {SATELLITES.map(satellite => (
+          <div
+            key={satellite.id}
             style={{
-              ...styles.heroHeadline,
-              ...(isPhone ? styles.heroHeadlineCompact : undefined),
+              ...styles.satellite,
+              ...satellite.position,
+              animation: reduced
+                ? undefined
+                : `hpl-bob ${satellite.bobDurationMs}ms ease-in-out ${satellite.bobDelayMs}ms infinite`,
             }}>
-            {HERO.headline}
-          </h1>
-          <p style={styles.heroSubcopy}>{HERO.subcopy}</p>
-          <HStack gap={2} vAlign="center" wrap="wrap">
-            <Badge variant="success" label="Preorder open" />
-            <Text type="supporting" color="secondary">
-              {HERO.priceLine}
-            </Text>
-          </HStack>
-          <HStack gap={2} wrap="wrap">
-            <Button
-              label="Preorder — $89"
-              variant="primary"
-              icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
-              onClick={() => jumpToSection('configure')}
-            />
-            <Button
-              label="See full specs"
-              variant="secondary"
-              onClick={() => jumpToSection('specs')}
-            />
-          </HStack>
-        </div>
-        <div style={styles.renderPanel}>
-          <DeviceRender
-            colorway={colorway}
-            isExploded={isExploded}
-            withLabels
-            reduced={reduced}
-            ariaLabel={`Schematic render of the Perch sensor in ${colorway.label}${isExploded ? ', exploded into four labeled layers' : ''}`}
-          />
-          <HStack gap={2} vAlign="center" wrap="wrap">
-            <button
-              type="button"
-              aria-pressed={isExploded}
-              style={{
-                ...styles.explodeToggle,
-                ...(isExploded ? styles.explodeToggleOn : undefined),
-              }}
-              onClick={() => setIsExploded(open => !open)}>
-              <Icon icon={LayersIcon} size="sm" color="inherit" />
-              {isExploded ? 'Assemble' : 'Exploded view'}
-            </button>
-            <Text type="supporting" color="secondary">
-              4 layers · CNC 6061 shell · {colorway.label}
-            </Text>
-          </HStack>
+            <div style={styles.satelliteDisc}>
+              <Icon icon={satellite.icon} size="sm" color="inherit" />
+            </div>
+            <div>
+              <p style={styles.satelliteTitle}>{satellite.title}</p>
+              <p style={styles.satelliteNote}>{satellite.note}</p>
+              {satellite.withSparkline === true ? (
+                <svg width={64} height={20} viewBox="0 0 64 20" style={{display: 'block', marginTop: 4}}>
+                  <polyline
+                    points={SPARK_POINTS}
+                    fill="none"
+                    style={{stroke: ACCENT}}
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              ) : null}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+
+  const hero = (
+    <div style={styles.heroBand}>
+      {heroAurora}
+      <div style={styles.grain} aria-hidden="true" />
+      <div style={{...columnStyle, ...bandPad, position: 'relative'}}>
+        <div
+          style={{
+            ...styles.heroRow,
+            ...(isMid ? styles.heroRowStacked : undefined),
+          }}>
+          <div style={styles.heroText}>
+            <span style={styles.eyebrowChip}>{HERO.eyebrow}</span>
+            <h1 style={{...styles.heroHeadline, fontSize: headlineSize}}>
+              {HERO.headlineLead}
+              <br />
+              {HERO.headlineInkLead}
+              <span style={styles.heroInk}>{HERO.headlineInk}</span>
+              {HERO.headlineTail}
+            </h1>
+            <p style={styles.heroSubcopy}>{HERO.subcopy}</p>
+            <HStack gap={2} vAlign="center" wrap="wrap">
+              <Badge variant="success" label="Preorder open" />
+              <Text type="supporting" color="secondary">
+                {HERO.priceLine}
+              </Text>
+            </HStack>
+            <HStack gap={2} vAlign="center" wrap="wrap">
+              <CtaButton
+                label="Preorder — $89"
+                withArrow
+                onClick={() => jumpToSection('configure')}
+              />
+              <Button
+                label="See full specs"
+                variant="secondary"
+                onClick={() => jumpToSection('specs')}
+              />
+            </HStack>
+          </div>
+          <div
+            ref={theaterRef}
+            style={styles.theater}
+            onPointerMove={onTheaterPointerMove}
+            onPointerLeave={onTheaterPointerLeave}>
+            <div style={styles.theaterGlow} aria-hidden="true" />
+            <div
+              ref={deviceStageRef}
+              style={{...styles.deviceStage, ...parallaxSpring}}>
+              <div style={styles.renderPanel}>
+                <DeviceRender
+                  colorway={colorway}
+                  isExploded={isExploded}
+                  withLabels
+                  reduced={reduced}
+                  ariaLabel={`Schematic render of the Perch sensor in ${colorway.label}${isExploded ? ', exploded into four labeled layers' : ''}`}
+                />
+                <HStack gap={2} vAlign="center" wrap="wrap">
+                  <button
+                    type="button"
+                    aria-pressed={isExploded}
+                    style={{
+                      ...styles.explodeToggle,
+                      ...(isExploded ? styles.explodeToggleOn : undefined),
+                    }}
+                    onClick={() => setIsExploded(open => !open)}>
+                    <Icon icon={LayersIcon} size="sm" color="inherit" />
+                    {isExploded ? 'Assemble' : 'Exploded view'}
+                  </button>
+                  <Text type="supporting" color="secondary">
+                    4 layers · CNC 6061 shell · {colorway.label}
+                  </Text>
+                </HStack>
+              </div>
+            </div>
+            {satellites}
+          </div>
         </div>
       </div>
     </div>
@@ -1526,15 +2243,27 @@ export default function HardwareProductLandingTemplate() {
 
   // ============= SPECS =============
 
+  /** Asymmetric spans: battery + one anchor tile break the grid rhythm. */
+  const specSpan = (id: string): number => {
+    if (isPhone) {
+      return 1;
+    }
+    if (isMid) {
+      return id === 'battery' || id === 'connectivity' ? 2 : 1;
+    }
+    return id === 'battery' || id === 'materials' ? 2 : 1;
+  };
+
   const specsSection = (
     <section
       id="specs"
       ref={registerSection('specs')}
-      style={styles.bandMuted}>
+      style={{...styles.bandMuted, ...styles.bandDotGrid}}>
       <div style={{...columnStyle, ...bandPad}}>
-        <VStack gap={5}>
+        <VStack gap={6}>
           <Reveal reduced={reduced}>
             <SectionIntro
+              compact={isPhone}
               eyebrow="Spec highlights"
               title="Small object, serious hardware"
               description="Every number below is measured, not aspirational — the battery methodology is spelled out in the FAQ."
@@ -1542,39 +2271,68 @@ export default function HardwareProductLandingTemplate() {
           </Reveal>
           <Reveal reduced={reduced} delayMs={80}>
             {isRevealed => (
-              <Grid
-                columns={isPhone ? 1 : isMid ? 2 : 3}
-                gap={3}>
-                {SPEC_TILES.map(tile => (
-                  <div key={tile.id} style={styles.specTile}>
-                    <HStack gap={2} vAlign="center">
-                      <Icon icon={tile.icon} size="sm" color="secondary" />
+              <div
+                style={{
+                  ...styles.specGrid,
+                  gridTemplateColumns: isPhone
+                    ? '1fr'
+                    : isMid
+                      ? 'repeat(2, 1fr)'
+                      : 'repeat(4, 1fr)',
+                }}>
+                {SPEC_TILES.map((tile, index) => {
+                  const isFeatured = tile.id === 'battery';
+                  return (
+                    <div
+                      key={tile.id}
+                      className="hpl-raise"
+                      style={{
+                        ...styles.specTile,
+                        ...(isFeatured ? styles.specTileFeatured : undefined),
+                        gridColumn: `span ${specSpan(tile.id)}`,
+                        opacity: isRevealed ? 1 : 0,
+                        transform: isRevealed
+                          ? undefined
+                          : 'translateY(14px) scale(0.985)',
+                        transition: reduced
+                          ? undefined
+                          : `opacity 540ms ${EASE_OUT} ${index * 70}ms, transform 540ms ${EASE_OUT} ${index * 70}ms`,
+                      }}>
+                      <HStack gap={2} vAlign="center">
+                        <Icon icon={tile.icon} size="sm" color="secondary" />
+                        <Text type="supporting" color="secondary">
+                          {tile.label}
+                        </Text>
+                      </HStack>
+                      <div>
+                        <span
+                          style={{
+                            ...styles.specValue,
+                            ...(isFeatured && !isPhone
+                              ? styles.specValueFeatured
+                              : undefined),
+                          }}>
+                          {typeof tile.value === 'number' ? (
+                            <CountUpValue
+                              target={tile.value}
+                              isActive={isRevealed}
+                              reduced={reduced}
+                            />
+                          ) : (
+                            tile.value
+                          )}
+                        </span>
+                        {tile.unit !== undefined ? (
+                          <span style={styles.specUnit}>{tile.unit}</span>
+                        ) : null}
+                      </div>
                       <Text type="supporting" color="secondary">
-                        {tile.label}
+                        {tile.detail}
                       </Text>
-                    </HStack>
-                    <div>
-                      <span style={styles.specValue}>
-                        {typeof tile.value === 'number' ? (
-                          <CountUpValue
-                            target={tile.value}
-                            isActive={isRevealed}
-                            reduced={reduced}
-                          />
-                        ) : (
-                          tile.value
-                        )}
-                      </span>
-                      {tile.unit !== undefined ? (
-                        <span style={styles.specUnit}>{tile.unit}</span>
-                      ) : null}
                     </div>
-                    <Text type="supporting" color="secondary">
-                      {tile.detail}
-                    </Text>
-                  </div>
-                ))}
-              </Grid>
+                  );
+                })}
+              </div>
             )}
           </Reveal>
         </VStack>
@@ -1586,9 +2344,10 @@ export default function HardwareProductLandingTemplate() {
 
   const boxSection = (
     <div style={{...columnStyle, ...bandPad}}>
-      <VStack gap={5}>
+      <VStack gap={6}>
         <Reveal reduced={reduced}>
           <SectionIntro
+            compact={isPhone}
             eyebrow="In the box"
             title="Everything you need, nothing to recycle"
           />
@@ -1662,12 +2421,7 @@ export default function HardwareProductLandingTemplate() {
               }}
             />
           </div>
-          <Button
-            label="Reserve my Perch"
-            variant="primary"
-            icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
-            onClick={submitPreorder}
-          />
+          <CtaButton label="Reserve my Perch" withArrow onClick={submitPreorder} />
         </div>
         {emailError !== null ? (
           <p style={styles.emailError} role="alert">
@@ -1705,18 +2459,44 @@ export default function HardwareProductLandingTemplate() {
     <section
       id="configure"
       ref={registerSection('configure')}
-      style={styles.bandAccent}>
-      <div style={{...columnStyle, ...bandPad}}>
-        <VStack gap={5}>
+      style={{...styles.bandAccent, zIndex: 2}}>
+      <div
+        aria-hidden="true"
+        style={{
+          ...styles.aurora,
+          width: 420,
+          height: 300,
+          top: 30,
+          right: '-6%',
+          opacity: 0.4,
+          background: `radial-gradient(closest-side, color-mix(in srgb, ${ACCENT} 50%, transparent), transparent 72%)`,
+          animation: reduced ? undefined : 'hpl-drift-b 40s ease-in-out infinite',
+        }}
+      />
+      <div
+        style={{
+          ...columnStyle,
+          ...bandPad,
+          position: 'relative',
+          ...(overlap ? {paddingBottom: 0} : undefined),
+        }}>
+        <VStack gap={6}>
           <Reveal reduced={reduced}>
             <SectionIntro
+              compact={isPhone}
               eyebrow="Configure"
               title="Pick a finish. Pick a pack. Done."
               description="Three anodized finishes, one honest price curve — packs just pass the shipping savings back to you."
             />
           </Reveal>
           <Reveal reduced={reduced} delayMs={80}>
-            <Card padding={5}>
+            {/* Floating card; at wide widths it crosses into the dark band. */}
+            <div
+              style={{
+                ...styles.floatCard,
+                position: 'relative',
+                marginBottom: overlap ? -76 : 0,
+              }}>
               <div
                 style={{
                   ...styles.configRow,
@@ -1776,109 +2556,266 @@ export default function HardwareProductLandingTemplate() {
                   {preorderForm}
                 </div>
               </div>
-            </Card>
+            </div>
           </Reveal>
         </VStack>
       </div>
     </section>
   );
 
-  // ============= SHIPPING TIMELINE =============
+  // ============= SHIPPING STORY (dark, pinned) =============
 
-  const timelineSection = (
-    <div style={{...columnStyle, ...bandPad}}>
-      <VStack gap={5}>
-        <Reveal reduced={reduced}>
-          <SectionIntro
-            eyebrow="From reserve to desk"
-            title="What happens after you click reserve"
-          />
-        </Reveal>
-        <Reveal reduced={reduced} delayMs={80}>
-          <div
-            style={{
-              ...styles.timelineRow,
-              ...(isCompact ? styles.timelineRowStacked : undefined),
-            }}>
+  const storyGlows = (
+    <>
+      <div
+        aria-hidden="true"
+        style={{
+          ...styles.aurora,
+          width: 520,
+          height: 520,
+          top: '-18%',
+          left: '-10%',
+          opacity: 0.45,
+          background: `radial-gradient(closest-side, color-mix(in srgb, ${ACCENT} 45%, transparent), transparent 70%)`,
+          animation: reduced ? undefined : 'hpl-drift-a 40s ease-in-out infinite',
+        }}
+      />
+      <div
+        aria-hidden="true"
+        style={{
+          ...styles.aurora,
+          width: 420,
+          height: 420,
+          bottom: '-22%',
+          right: '-8%',
+          opacity: 0.35,
+          background: `radial-gradient(closest-side, color-mix(in srgb, color-mix(in srgb, ${ACCENT} 40%, var(--color-success)) 50%, transparent), transparent 70%)`,
+          animation: reduced ? undefined : 'hpl-drift-c 36s ease-in-out infinite',
+        }}
+      />
+    </>
+  );
+
+  const storyIntro = (
+    <SectionIntro
+      compact={isPhone}
+      eyebrow="From reserve to desk"
+      title="What happens after you click reserve"
+    />
+  );
+
+  const storyStepCard = (stepIndex: number) => {
+    const step = TIMELINE_STEPS[stepIndex];
+    return (
+      <>
+        <span style={styles.ghostNumeral} aria-hidden="true">
+          {`0${stepIndex + 1}`}
+        </span>
+        <div style={styles.stepIconDisc} aria-hidden="true">
+          <Icon icon={step.icon} size="md" color="inherit" />
+        </div>
+        <HStack gap={2} vAlign="center" wrap="wrap">
+          <h3 style={styles.storyStepTitle}>{step.title}</h3>
+          <Badge variant="neutral" label={step.date} />
+        </HStack>
+        <p style={styles.storyCopy}>{step.copy}</p>
+      </>
+    );
+  };
+
+  const storySection = storyStatic ? (
+    // Reduced motion / compact: the story renders as a stacked sequence.
+    <section style={styles.storySection}>
+      <div
+        style={{
+          ...columnStyle,
+          ...bandPad,
+          position: 'relative',
+          ...(overlap ? {paddingTop: 160} : undefined),
+        }}>
+        <VStack gap={6}>
+          {storyIntro}
+          <VStack gap={3}>
             {TIMELINE_STEPS.map((step, index) => (
-              <div
-                key={step.id}
-                style={{
-                  ...styles.timelineStep,
-                  ...(isCompact
-                    ? {
-                        flexDirection: 'row',
-                        gap: 'var(--spacing-3)',
-                        paddingBottom:
-                          index < TIMELINE_STEPS.length - 1
-                            ? 'var(--spacing-4)'
-                            : 0,
-                      }
-                    : undefined),
-                }}>
-                {index < TIMELINE_STEPS.length - 1 ? (
-                  <div
-                    aria-hidden="true"
-                    style={
-                      isCompact
-                        ? styles.timelineTrackVertical
-                        : styles.timelineTrack
-                    }
-                  />
-                ) : null}
-                <div style={styles.timelineDot} aria-hidden="true">
-                  <Icon icon={step.icon} size="sm" color="inherit" />
+              <div key={step.id} style={styles.glassCard}>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 'var(--spacing-3)',
+                  }}>
+                  {storyStepCard(index)}
                 </div>
-                <VStack gap={1}>
-                  <HStack gap={2} vAlign="center" wrap="wrap">
-                    <Text type="label">{step.title}</Text>
-                    <Badge variant="neutral" label={step.date} />
-                  </HStack>
-                  <Text type="supporting" color="secondary">
-                    {step.copy}
-                  </Text>
-                </VStack>
               </div>
             ))}
+          </VStack>
+        </VStack>
+      </div>
+    </section>
+  ) : (
+    <section style={styles.storySection}>
+      <div ref={storyTallRef} style={{height: Math.round(viewportH * 2.4)}}>
+        <div
+          ref={stageRef}
+          onPointerMove={onStagePointerMove}
+          style={{
+            ...styles.storyStage,
+            height: viewportH,
+            ...(overlap ? {paddingTop: 132} : undefined),
+          }}>
+          {storyGlows}
+          <div style={styles.spotlight} aria-hidden="true" />
+          <div style={{...columnStyle, position: 'relative'}}>
+            <VStack gap={6}>
+              {storyIntro}
+              <div style={styles.storyRow}>
+                <div
+                  style={{
+                    ...styles.storyRail,
+                    ...(isMid ? {flexBasis: 220} : undefined),
+                  }}>
+                  <div style={styles.railTrack} aria-hidden="true" />
+                  <div
+                    style={{
+                      ...styles.railFill,
+                      transform: `scaleY(${storyProgress})`,
+                    }}
+                    aria-hidden="true"
+                  />
+                  {TIMELINE_STEPS.map((step, index) => (
+                    <button
+                      key={step.id}
+                      type="button"
+                      style={styles.railStep}
+                      aria-current={index === activeStep ? 'step' : undefined}
+                      onClick={() => jumpToStoryStep(index)}>
+                      <span
+                        style={{
+                          ...styles.railDisc,
+                          ...(index === activeStep
+                            ? styles.railDiscActive
+                            : undefined),
+                        }}>
+                        {`0${index + 1}`}
+                      </span>
+                      <VStack gap={0}>
+                        <Text
+                          type="label"
+                          color={index === activeStep ? undefined : 'secondary'}>
+                          {step.title}
+                        </Text>
+                        <Text type="supporting" color="secondary">
+                          {step.date}
+                        </Text>
+                      </VStack>
+                    </button>
+                  ))}
+                </div>
+                <div style={styles.storyPanelWrap}>
+                  {TIMELINE_STEPS.map((step, index) => (
+                    <div
+                      key={step.id}
+                      aria-hidden={index !== activeStep}
+                      style={{
+                        ...styles.storyPanel,
+                        opacity: index === activeStep ? 1 : 0,
+                        transform:
+                          index === activeStep
+                            ? 'none'
+                            : 'translateY(14px) scale(0.99)',
+                        transition: `opacity 420ms ${EASE_OUT}, transform 420ms ${EASE_OUT}`,
+                        pointerEvents: index === activeStep ? 'auto' : 'none',
+                      }}>
+                      {storyStepCard(index)}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </VStack>
           </div>
-        </Reveal>
-      </VStack>
-    </div>
+        </div>
+      </div>
+    </section>
   );
 
   // ============= COMPATIBILITY =============
 
+  const ecoTile = (partner: (typeof ECOSYSTEM)[number], fixedWidth: boolean) => (
+    <div
+      style={{...styles.ecoTile, ...(fixedWidth ? {width: 210} : undefined)}}>
+      <div
+        style={{...styles.ecoMonogram, background: partner.art}}
+        aria-hidden="true">
+        {partner.monogram}
+      </div>
+      <VStack gap={0}>
+        <Text size="sm" weight="semibold">
+          {partner.name}
+        </Text>
+        <Text type="supporting" color="secondary">
+          {partner.note}
+        </Text>
+      </VStack>
+    </div>
+  );
+
   const compatibilitySection = (
     <div style={styles.bandMuted}>
       <div style={{...columnStyle, ...bandPad}}>
-        <VStack gap={5}>
+        <VStack gap={6}>
           <Reveal reduced={reduced}>
             <SectionIntro
+              compact={isPhone}
               eyebrow="Compatibility"
               title="Plays nicely with the desk you already have"
               description="Perch speaks Thread and BLE, so it slots into these ecosystems out of the box — no bridge required."
             />
           </Reveal>
           <Reveal reduced={reduced} delayMs={80}>
-            <Grid columns={{minWidth: 200, max: 3}} gap={3}>
-              {ECOSYSTEM.map(partner => (
-                <div key={partner.id} style={styles.ecoTile}>
-                  <div
-                    style={{...styles.ecoMonogram, background: partner.art}}
-                    aria-hidden="true">
-                    {partner.monogram}
-                  </div>
-                  <VStack gap={0}>
-                    <Text size="sm" weight="semibold">
-                      {partner.name}
-                    </Text>
-                    <Text type="supporting" color="secondary">
-                      {partner.note}
-                    </Text>
-                  </VStack>
+            {reduced ? (
+              // Static wrapped grid when motion is off.
+              <Grid columns={{minWidth: 200, max: 3}} gap={3}>
+                {ECOSYSTEM.map(partner => (
+                  <div key={partner.id}>{ecoTile(partner, false)}</div>
+                ))}
+              </Grid>
+            ) : (
+              // 48s marquee loop; pauses on hover (see PAGE_CSS).
+              <div className="hpl-marquee-wrap" style={styles.marqueeWrap}>
+                <div className="hpl-marquee-track" style={styles.marqueeTrack}>
+                  {[0, 1].map(copy => (
+                    <div
+                      key={copy}
+                      style={styles.marqueeGroup}
+                      aria-hidden={copy === 1 ? true : undefined}>
+                      {ECOSYSTEM.map(partner => (
+                        <div key={`${partner.id}-${copy}`}>
+                          {ecoTile(partner, true)}
+                        </div>
+                      ))}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </Grid>
+                <div
+                  aria-hidden="true"
+                  style={{
+                    ...styles.marqueeFade,
+                    left: 0,
+                    background:
+                      'linear-gradient(90deg, var(--color-background-muted), transparent)',
+                  }}
+                />
+                <div
+                  aria-hidden="true"
+                  style={{
+                    ...styles.marqueeFade,
+                    right: 0,
+                    background:
+                      'linear-gradient(270deg, var(--color-background-muted), transparent)',
+                  }}
+                />
+              </div>
+            )}
           </Reveal>
         </VStack>
       </div>
@@ -1888,13 +2825,12 @@ export default function HardwareProductLandingTemplate() {
   // ============= REVIEWS =============
 
   const reviewsSection = (
-    <section
-      id="reviews"
-      ref={registerSection('reviews')}>
+    <section id="reviews" ref={registerSection('reviews')}>
       <div style={{...columnStyle, ...bandPad}}>
-        <VStack gap={5}>
+        <VStack gap={6}>
           <Reveal reduced={reduced}>
             <SectionIntro
+              compact={isPhone}
               eyebrow="From the beta desks"
               title="212 beta units, opinionated owners"
             />
@@ -1905,23 +2841,33 @@ export default function HardwareProductLandingTemplate() {
                 key={review.id}
                 reduced={reduced}
                 delayMs={80 + index * 90}>
-                <Card padding={5} height="100%">
-                  <VStack gap={3}>
-                    <StarRow count={review.stars} />
-                    <p style={styles.quote}>“{review.quote}”</p>
-                    <VStack gap={0}>
-                      <Text size="sm" weight="semibold">
-                        {review.name}
-                      </Text>
-                      <Text type="supporting" color="secondary">
-                        {review.source}
-                      </Text>
+                {/* Middle card sits 28px low at wide widths — the grid
+                    deliberately breaks its own rhythm. */}
+                <div
+                  style={{
+                    height: '100%',
+                    transform:
+                      !isMid && index === 1 ? 'translateY(28px)' : undefined,
+                  }}>
+                  <div className="hpl-raise" style={styles.reviewCard}>
+                    <VStack gap={3}>
+                      <StarRow count={review.stars} />
+                      <p style={styles.quote}>“{review.quote}”</p>
+                      <VStack gap={0}>
+                        <Text size="sm" weight="semibold">
+                          {review.name}
+                        </Text>
+                        <Text type="supporting" color="secondary">
+                          {review.source}
+                        </Text>
+                      </VStack>
                     </VStack>
-                  </VStack>
-                </Card>
+                  </div>
+                </div>
               </Reveal>
             ))}
           </Grid>
+          {!isMid ? <div style={{height: 28}} aria-hidden="true" /> : null}
         </VStack>
       </div>
     </section>
@@ -1931,17 +2877,18 @@ export default function HardwareProductLandingTemplate() {
 
   const faqSection = (
     <section id="faq" ref={registerSection('faq')}>
-      <div style={{...columnStyle, ...bandPad}}>
-        <VStack gap={5}>
+      <div style={{...columnStyle, ...bandPad, paddingTop: 0}}>
+        <VStack gap={6}>
           <Reveal reduced={reduced}>
             <SectionIntro
+              compact={isPhone}
               eyebrow="FAQ"
               title="The questions we actually get"
               description="Including the battery footnote most sensor companies bury."
             />
           </Reveal>
           <Reveal reduced={reduced} delayMs={80}>
-            <Card padding={5}>
+            <div style={styles.faqCard}>
               <VStack gap={0}>
                 {FAQ.map((entry, index) => (
                   <VStack key={entry.id} gap={0}>
@@ -1964,7 +2911,7 @@ export default function HardwareProductLandingTemplate() {
                   </VStack>
                 ))}
               </VStack>
-            </Card>
+            </div>
           </Reveal>
         </VStack>
       </div>
@@ -2021,14 +2968,15 @@ export default function HardwareProductLandingTemplate() {
   return (
     <Layout height="fill">
       <LayoutContent padding={0}>
-        <div ref={wrapRef} style={{height: '100%'}}>
+        <div ref={wrapRef} className="tpl-hpl" style={{height: '100%'}}>
+          <style>{PAGE_CSS}</style>
           <div ref={pageRef} style={styles.page} onScroll={onPageScroll}>
             {navBar}
             {hero}
             {specsSection}
             {boxSection}
             {configuratorSection}
-            {timelineSection}
+            {storySection}
             {compatibilitySection}
             {reviewsSection}
             {faqSection}

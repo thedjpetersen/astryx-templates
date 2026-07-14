@@ -12,30 +12,55 @@
  *   where-money-goes budget that sums to 100% with an honest overhead
  *   slice, five milestones (3 completed, 2 upcoming), three transparency
  *   document cards, an EIN, and seven employers with gift-match policies)
- * @output Complete vertical-specific campaign landing page: sticky navbar
- *   (brand mark + 4 smooth-scrolling anchor links + Donate CTA, collapsing
- *   to a menu button + dropdown at compact widths), a tinted hero band
- *   with a schematic river SVG whose funded saplings pop in to match the
- *   campaign percentage, and a progress card whose bar fills and totals
- *   count up on first reveal. Centerpiece donation widget: One-time /
- *   Monthly SegmentedControl, amount chips + custom NumberInput that
- *   live-update an impact line, and a Donate button that fires an inline
- *   thank-you state (share-link copy row + validating receipt-email
- *   capture) and honestly bumps the hero progress totals. Below: impact
- *   stories Carousel, an interactive where-money-goes SVG donut with
- *   legend-row selection, a milestones timeline, a transparency band with
- *   report cards + copyable EIN mono row, and a corporate-match employer
- *   lookup with a static suggest list. Scroll-reveals, count-ups, and the
- *   sapling pop-in are IntersectionObserver-driven, fire once, and are
- *   fully gated by prefers-reduced-motion.
+ * @output Art-directed campaign landing page. A condensing navbar
+ *   (transparent over the hero, gaining a hairline + tinted blur surface
+ *   after 24px of scroll) sits over an aurora-lit hero: 62-78px display
+ *   headline with a gradient-ink phrase, a floating glass progress card
+ *   whose bar fills and totals roll up on first reveal, and a staged
+ *   "river theater" — the schematic river SVG in a perspective wrapper
+ *   that tilts toward the pointer while three satellite mini-cards
+ *   (donor toast, sapling metric, corporate-match chip) bob on
+ *   independent keyframes; the whole stage bleeds across the band
+ *   boundary into the donate section. Centerpiece donation widget:
+ *   One-time / Monthly SegmentedControl, amount chips + custom
+ *   NumberInput that live-update an impact line, and a sheen-sweep
+ *   Donate CTA that fires an inline thank-you state (share-link copy row
+ *   + validating receipt-email capture) and honestly bumps the hero
+ *   totals. Below: a scheme-locked dark impact-stories band (glass
+ *   quote cards in a Carousel, a looping campaign-fact marquee, and a
+ *   pointer-tracked spotlight), a dot-grid-textured where-money-goes
+ *   band with the interactive SVG donut + legend-row selection, a
+ *   pinned scroll-story milestones scene (sticky stage in a 260vh
+ *   container; scroll progress fills the phase rail and advances the
+ *   detail card with its oversized numeral — phases are also clickable),
+ *   an aurora-backed transparency band with hover-raising report cards +
+ *   copyable EIN mono row, and the corporate-match employer lookup.
  * @position Page template; emitted by `astryx template nonprofit-donation-landing`
  *
  * Frame: Layout height="fill", content-only — a landing page owns its own
  * chrome, so there is no LayoutHeader. LayoutContent (padding 0) hosts a
- * single scroll container; the navbar inside it is position:sticky top:0.
- * Full-bleed tinted bands alternate with plain bands; each band centers a
- * 1080px content column. The footer is a scheme-locked dark band. The
- * interaction-receipt Toast sits fixed bottom-right.
+ * single scroll container; the navbar inside it is position:sticky top:0
+ * and the hero band tucks under it with a negative margin so the
+ * transparent nav floats over the aurora field. Full-bleed bands center a
+ * 1080px content column with 112px vertical rhythm (64px compact). The
+ * footer is a scheme-locked dark band. The interaction-receipt Toast sits
+ * fixed bottom-right.
+ *
+ * Art direction system:
+ * - Atmosphere: aurora blobs (blurred radial gradients, 32-44s alternate
+ *   drift keyframes) behind the hero and transparency bands; an inline
+ *   feTurbulence grain overlay at 0.04 opacity on the hero and dark
+ *   bands; a dot-grid texture behind the budget donut band.
+ * - Depth tiers: SHADOW_RAISED for resting cards, SHADOW_FLOATING for
+ *   the hero stage/progress card/detail card, SHADOW_GLASS (inset
+ *   hairline + deep drop) for cards on the dark band; `.ndl-raise`
+ *   cards lift a tier and gain an accent border-glow on hover.
+ * - Signature dark section: the impact-stories band is colorScheme:'dark'
+ *   with vibrant accent glows, glass cards, a campaign-fact marquee
+ *   (52s loop, pauses on hover, static + wrapped under reduced motion),
+ *   and a --mx/--my pointer spotlight.
+ * - CTAs: custom sheen-sweep primary buttons (translating gradient
+ *   overlay, 1px hover lift, 0.98 pressed scale).
  *
  * Interaction contract:
  * - Nav anchors smooth-scroll the container to real section ids with a
@@ -52,37 +77,50 @@
  * - Donut legend rows are buttons: selecting one thickens its slice, dims
  *   the rest, and swaps the donut center readout; selecting it again
  *   returns to the 100% summary.
+ * - The milestones scroll scene advances with scroll progress AND via
+ *   the clickable phase buttons (which scroll the container to the
+ *   matching progress point). Reduced motion or stacked widths render
+ *   the same content as a static staggered timeline.
  * - The employer match input filters a static suggest list from 2+
  *   characters; picking a suggestion renders the employer's match policy
  *   card with the doubled-gift math spelled out.
  * - Transparency report cards and footer links that would leave the page
  *   fire a corner Toast so the wiring is provable; EIN has a copy flip.
  *
- * Motion policy: scroll-reveals (rise + fade 12px, fire once via
- * IntersectionObserver), count-ups (rAF, ease-out cubic), the progress
- * bar fill, and the staggered sapling pop-in are all disabled by
- * prefers-reduced-motion — reveals render visible, counters render final,
- * the bar renders at its resting width, and saplings render planted.
+ * Motion policy: transform/opacity only (plus the donut's stroke props
+ * and the progress bar width fill retained from the original). Scroll
+ * reveals rise 16px + scale 0.985 over 560ms decelerate and fire once
+ * via IntersectionObserver; count-ups run ~900ms rAF ease-out cubic;
+ * aurora drift, satellite bobbing, the marquee loop, hero parallax, the
+ * CTA sheen, and the pinned scene are ALL disabled under
+ * prefers-reduced-motion (reveals render visible, counters render final,
+ * the bar renders at rest, saplings render planted, the marquee renders
+ * as a static wrapped row, and the milestones render stacked).
  *
  * Color policy: token/light-dark hybrid. ONE quarantined campaign accent
- * literal (river teal, see ACCENT) with contrast math; donut slice tones
- * and SVG tints are explicit light-dark() pairs so they adapt to the app
- * scheme; story-card art gradients and the footer are scheme-locked with
- * colorScheme:'dark' so brand art reads identically in both themes.
+ * literal (river teal, see ACCENT) with contrast math; every new glow,
+ * aurora blob, gradient ink, and glass surface is derived via color-mix
+ * from that accent, the SUCCESS token, or the existing dark-band
+ * literals — no new color literals. Donut slice tones and SVG tints are
+ * explicit light-dark() pairs; story-card art gradients, the stories
+ * band, and the footer are scheme-locked with colorScheme:'dark'. Shadow
+ * tiers use neutral black alphas per the design contract.
  *
  * Responsive contract (measured with a local ResizeObserver — the demo's
  * inline stage is ~1045px wide, so viewport media queries only fire in
  * the separate 390px phone iframe):
- * - >920px: hero is split copy/progress-card, the donate band sits
- *   widget-beside-supporting-copy, and the breakdown is donut-beside-
- *   legend; milestones and transparency grids sit wide.
- * - <=920px: hero, donate band, and breakdown all stack in source order.
+ * - >1000px: 78px hero display type; >760px: 62px; compact tiers 46/38.
+ * - >920px: hero is split copy/progress-card with the parallax stage and
+ *   satellites, the donate band sits widget-beside-supporting-copy, the
+ *   breakdown is donut-beside-legend, and milestones run as the pinned
+ *   scroll scene.
+ * - <=920px: hero, donate band, and breakdown stack; satellites and
+ *   parallax turn off; milestones render as the static timeline.
  * - <=780px: nav anchor links collapse behind a 40px menu button whose
  *   dropdown lists the anchors and the Donate CTA.
- * - <=640px: headline steps down, band paddings tighten, amount chips
- *   wrap 2-up, the share/receipt rows stack, and Grid minWidths carry
- *   story/report cards to single column. Holds at 390px with no
- *   overflow-x.
+ * - <=640px: band paddings tighten to 64px, amount chips wrap 2-up, the
+ *   share/receipt rows stack, and Grid minWidths carry story/report
+ *   cards to single column. Holds at 390px with no overflow-x.
  */
 
 import {
@@ -90,6 +128,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
   type ReactNode,
   type RefObject,
 } from 'react';
@@ -115,7 +154,6 @@ import {
 } from '@astryxdesign/core/SegmentedControl';
 import {TextInput} from '@astryxdesign/core/TextInput';
 import {Toast} from '@astryxdesign/core/Toast';
-import {Token} from '@astryxdesign/core/Token';
 import {
   ArrowRightIcon,
   BirdIcon,
@@ -142,7 +180,8 @@ type Glyph = ComponentType<SVGProps<SVGSVGElement>>;
 
 // ============= PAINT CONSTANTS =============
 // ONE quarantined campaign accent literal (river teal), used for the
-// brand mark, river water, selected chips, and nav CTA tint.
+// brand mark, river water, selected chips, CTAs, and — via color-mix —
+// every aurora blob, glow, and gradient ink on the page.
 // Contrast math: light #0F766E on white = 5.5:1 (AA for text and UI);
 // dark #5EEAD4 on the ~#1B1B1F dark app background = 11.6:1 (AAA).
 // The rgba() variants below are alpha washes of the SAME two hexes.
@@ -153,16 +192,126 @@ const ACCENT_WASH_SOFT =
 const ACCENT_BORDER =
   'light-dark(rgba(15, 118, 110, 0.45), rgba(94, 234, 212, 0.45))';
 
-// Scheme-locked dark-footer text (sits on colorScheme:'dark' surfaces).
+// Scheme-locked dark-band paint (stories band + footer share the same
+// deep river-basin hex; text literals sit on colorScheme:'dark').
+const DARK_BAND = '#0B1F1D';
 const DARK_TEXT = '#FFFFFF';
 const DARK_TEXT_SOFT = 'rgba(226, 232, 240, 0.82)';
 const DARK_TEXT_FAINT = 'rgba(226, 232, 240, 0.62)';
 
+/** CTA ink: white on the teal in light scheme, basin-dark on mint in dark. */
+const CTA_INK = 'light-dark(#FFFFFF, #0B1F1D)';
+
 const SUCCESS = 'var(--color-success, light-dark(#1E8E3E, #6DD58C))';
 const ERROR = 'var(--color-error, light-dark(#B3261E, #F2B8B5))';
 
+// ---- depth tiers (contract-specified neutral black alphas) ----
+const SHADOW_RAISED =
+  '0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px -12px rgba(0, 0, 0, 0.18)';
+const SHADOW_FLOATING =
+  '0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px -12px rgba(0, 0, 0, 0.18), ' +
+  '0 24px 48px -24px rgba(0, 0, 0, 0.28)';
+const SHADOW_GLASS =
+  `inset 0 0 0 1px color-mix(in srgb, ${DARK_TEXT} 14%, transparent), ` +
+  '0 24px 48px -24px rgba(0, 0, 0, 0.5)';
+const GLOW_CTA =
+  '0 1px 2px rgba(0, 0, 0, 0.06), ' +
+  `0 12px 28px -10px color-mix(in srgb, ${ACCENT} 55%, transparent)`;
+
+// ---- aurora field (accent × success mixes only — no new literals) ----
+const AURORA_TEAL = `color-mix(in srgb, ${ACCENT} 52%, transparent)`;
+const AURORA_GREEN = `color-mix(in srgb, ${SUCCESS} 42%, transparent)`;
+const AURORA_BLEND = `color-mix(in srgb, color-mix(in srgb, ${ACCENT} 55%, ${SUCCESS}) 40%, transparent)`;
+
+/** Inline feTurbulence grain tile (data URI — no network assets). */
+const GRAIN_URL =
+  'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' ' +
+  "width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence " +
+  "type='fractalNoise' baseFrequency='0.82' numOctaves='2' " +
+  "stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' " +
+  'filter=\'url(%23g)\' opacity=\'0.55\'/%3E%3C/svg%3E")';
+
 /** Sticky-nav height; smooth-scroll allows for it. */
 const NAV_ALLOWANCE = 68;
+/** Resting navbar height; the hero band tucks under it by this much. */
+const NAV_HEIGHT = 60;
+
+// Scoped stylesheet: aurora drift, satellite bobbing, the marquee loop,
+// the CTA sheen, and hover raises need keyframes and pseudo-class
+// selectors that inline styles can't express. Everything is neutralized
+// in the prefers-reduced-motion block (and the marquee wraps static).
+const SCOPE = 'ndl-root';
+
+const TEMPLATE_CSS = `
+@keyframes ndl-aurora-a {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(60px, 34px, 0) scale(1.12); }
+  100% { transform: translate3d(-44px, -22px, 0) scale(0.96); }
+}
+@keyframes ndl-aurora-b {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-70px, 26px, 0) scale(1.08); }
+  100% { transform: translate3d(32px, -32px, 0) scale(1.02); }
+}
+@keyframes ndl-aurora-c {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(42px, -30px, 0) scale(1.15); }
+  100% { transform: translate3d(-30px, 22px, 0) scale(0.94); }
+}
+@keyframes ndl-bob {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+  100% { transform: translateY(0); }
+}
+@keyframes ndl-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes ndl-swap-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.${SCOPE} .ndl-aurora-a { animation: ndl-aurora-a 38s ease-in-out infinite alternate; }
+.${SCOPE} .ndl-aurora-b { animation: ndl-aurora-b 44s ease-in-out infinite alternate; }
+.${SCOPE} .ndl-aurora-c { animation: ndl-aurora-c 32s ease-in-out infinite alternate; }
+.${SCOPE} .ndl-bob { animation: ndl-bob 7s ease-in-out infinite; }
+.${SCOPE} .ndl-cta { transition: transform 0.18s ease, box-shadow 0.18s ease; }
+.${SCOPE} .ndl-cta:hover { transform: translateY(-1px); }
+.${SCOPE} .ndl-cta:active { transform: translateY(0) scale(0.98); }
+.${SCOPE} .ndl-cta-sheen { transform: translateX(-160%) skewX(-16deg); }
+.${SCOPE} .ndl-cta:hover .ndl-cta-sheen {
+  transform: translateX(220%) skewX(-16deg);
+  transition: transform 0.7s ease;
+}
+.${SCOPE} .ndl-raise { transition: transform 0.18s ease, box-shadow 0.18s ease; }
+.${SCOPE} .ndl-raise:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 0 1px ${ACCENT_BORDER}, ${SHADOW_FLOATING};
+}
+.${SCOPE} .ndl-navlink { transition: color 0.15s ease; }
+.${SCOPE} .ndl-navlink:hover { color: var(--color-text-primary); }
+.${SCOPE} .ndl-marquee-track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  animation: ndl-marquee 52s linear infinite;
+}
+.${SCOPE} .ndl-marquee:hover .ndl-marquee-track { animation-play-state: paused; }
+.${SCOPE} .ndl-swap { animation: ndl-swap-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .${SCOPE} .ndl-aurora-a, .${SCOPE} .ndl-aurora-b, .${SCOPE} .ndl-aurora-c,
+  .${SCOPE} .ndl-bob, .${SCOPE} .ndl-swap { animation: none; }
+  .${SCOPE} .ndl-cta, .${SCOPE} .ndl-raise, .${SCOPE} .ndl-navlink { transition: none; }
+  .${SCOPE} .ndl-cta:hover, .${SCOPE} .ndl-cta:active,
+  .${SCOPE} .ndl-raise:hover { transform: none; box-shadow: none; }
+  .${SCOPE} .ndl-cta:hover .ndl-cta-sheen {
+    transform: translateX(-160%) skewX(-16deg);
+    transition: none;
+  }
+  .${SCOPE} .ndl-marquee-track { animation: none; flex-wrap: wrap; width: auto; }
+  .${SCOPE} .ndl-marquee-dupe { display: none; }
+}
+`;
 
 // ============= STYLES =============
 
@@ -176,35 +325,100 @@ const styles: Record<string, CSSProperties> = {
     color: 'var(--color-text-primary)',
   },
   band: {
+    position: 'relative',
     width: '100%',
   },
   bandTinted: {
     backgroundColor: ACCENT_WASH_SOFT,
   },
-  bandMuted: {
-    backgroundColor: 'var(--color-background-muted)',
+  // Absolutely-positioned atmosphere layer per band; clips its own blobs
+  // so the page never gains horizontal overflow.
+  bandFx: {
+    position: 'absolute',
+    inset: 0,
+    overflow: 'hidden',
+    pointerEvents: 'none',
+  },
+  auroraBlob: {
+    position: 'absolute',
+    borderRadius: '50%',
+    filter: 'blur(90px)',
+  },
+  grain: {
+    position: 'absolute',
+    inset: 0,
+    backgroundImage: GRAIN_URL,
+    backgroundRepeat: 'repeat',
+    opacity: 0.04,
+    pointerEvents: 'none',
+  },
+  dotGrid: {
+    position: 'absolute',
+    inset: 0,
+    backgroundImage:
+      'radial-gradient(circle at 1px 1px, var(--color-border) 1px, transparent 1.6px)',
+    backgroundSize: '26px 26px',
+    opacity: 0.45,
+    pointerEvents: 'none',
   },
   column: {
+    position: 'relative',
+    zIndex: 1,
     width: '100%',
     maxWidth: 1080,
     marginInline: 'auto',
     boxSizing: 'border-box',
-    padding: 'var(--spacing-8) var(--spacing-6)',
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-6)',
   },
-  columnCompact: {
-    padding: 'var(--spacing-6) var(--spacing-4)',
-    gap: 'var(--spacing-5)',
+  // ---- type scale ----
+  eyebrow: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+    height: 24,
+    paddingInline: 10,
+    borderRadius: 999,
+    backgroundColor: ACCENT_WASH,
+    border: `1px solid ${ACCENT_BORDER}`,
+    color: ACCENT,
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+    whiteSpace: 'nowrap',
   },
-  // ---- sticky navbar ----
+  sectionTitle: {
+    fontWeight: 700,
+    lineHeight: 1.08,
+    letterSpacing: '-0.02em',
+    margin: 0,
+  },
+  sectionLede: {
+    fontSize: 16,
+    lineHeight: 1.6,
+    color: 'var(--color-text-secondary)',
+    maxWidth: '56ch',
+    margin: 0,
+  },
+  // ---- sticky navbar (transparent → condensed tinted surface) ----
   navBar: {
     position: 'sticky',
     top: 0,
     zIndex: 30,
-    backgroundColor: 'var(--color-background-body)',
+    backgroundColor: 'transparent',
+    borderBottom: '1px solid transparent',
+    transition:
+      'background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease',
+  },
+  navBarScrolled: {
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-body) 86%, transparent)',
+    backdropFilter: 'blur(14px) saturate(1.5)',
+    WebkitBackdropFilter: 'blur(14px) saturate(1.5)',
     borderBottom: '1px solid var(--color-border)',
+    boxShadow: SHADOW_RAISED,
   },
   navInner: {
     position: 'relative',
@@ -216,7 +430,6 @@ const styles: Record<string, CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     gap: 'var(--spacing-2)',
-    minHeight: 56,
   },
   brandTile: {
     width: 34,
@@ -266,8 +479,7 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 14,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-body)',
-    boxShadow:
-      'var(--shadow-high, 0 12px 32px light-dark(rgba(15, 23, 42, 0.18), rgba(0, 0, 0, 0.5)))',
+    boxShadow: SHADOW_FLOATING,
     padding: 'var(--spacing-3)',
     zIndex: 40,
   },
@@ -287,6 +499,37 @@ const styles: Record<string, CSSProperties> = {
     color: 'var(--color-text-primary)',
     textAlign: 'left',
   },
+  // ---- sheen-sweep CTA ----
+  cta: {
+    position: 'relative',
+    overflow: 'hidden',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    height: 48,
+    paddingInline: 22,
+    borderRadius: 12,
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: 15,
+    fontWeight: 700,
+    backgroundColor: ACCENT,
+    color: CTA_INK,
+    boxShadow: GLOW_CTA,
+    whiteSpace: 'nowrap',
+  },
+  ctaSm: {
+    height: 40,
+    paddingInline: 16,
+    fontSize: 14,
+  },
+  ctaSheen: {
+    position: 'absolute',
+    inset: 0,
+    pointerEvents: 'none',
+    backgroundImage: `linear-gradient(105deg, transparent 40%, color-mix(in srgb, ${DARK_TEXT} 35%, transparent) 50%, transparent 60%)`,
+  },
   // ---- hero ----
   heroRow: {
     display: 'flex',
@@ -299,53 +542,101 @@ const styles: Record<string, CSSProperties> = {
     gap: 'var(--spacing-5)',
   },
   heroText: {
-    flex: '1.2 1 0',
+    flex: '7 1 0',
     minWidth: 0,
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-4)',
   },
   heroHeadline: {
-    fontSize: 42,
     fontWeight: 700,
-    lineHeight: 1.12,
-    letterSpacing: '-0.02em',
+    lineHeight: 1.02,
+    letterSpacing: '-0.03em',
     margin: 0,
   },
-  heroHeadlineCompact: {
-    fontSize: 29,
+  heroInk: {
+    backgroundImage: `linear-gradient(94deg, ${ACCENT} 0%, color-mix(in srgb, ${ACCENT} 55%, ${SUCCESS}) 60%, ${SUCCESS} 115%)`,
+    WebkitBackgroundClip: 'text',
+    backgroundClip: 'text',
+    color: 'transparent',
+    WebkitTextFillColor: 'transparent',
   },
   heroSubcopy: {
-    fontSize: 17,
-    lineHeight: 1.55,
+    fontSize: 18,
+    lineHeight: 1.6,
     color: 'var(--color-text-secondary)',
-    maxWidth: 520,
+    maxWidth: '56ch',
     margin: 0,
+  },
+  // River theater: perspective wrapper + tilting pane + satellites.
+  heroStage: {
+    position: 'relative',
+    zIndex: 2,
+  },
+  heroPerspective: {
+    perspective: 1400,
+  },
+  riverPane: {
+    borderRadius: 18,
+    boxShadow: SHADOW_FLOATING,
   },
   riverFrame: {
     width: '100%',
     overflow: 'hidden',
-    borderRadius: 14,
+    borderRadius: 18,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
     lineHeight: 0,
   },
-  // ---- progress card ----
-  progressCard: {
-    flex: '1 1 0',
-    minWidth: 0,
-    boxSizing: 'border-box',
-    borderRadius: 16,
+  satellite: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+    padding: '10px 14px',
+    borderRadius: 14,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
-    boxShadow: 'var(--shadow-med)',
+    boxShadow: SHADOW_FLOATING,
+    whiteSpace: 'nowrap',
+  },
+  satelliteIcon: {
+    width: 30,
+    height: 30,
+    borderRadius: 9,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: ACCENT_WASH,
+    color: ACCENT,
+    flexShrink: 0,
+  },
+  satelliteTitle: {
+    fontSize: 13,
+    fontWeight: 700,
+    lineHeight: 1.25,
+  },
+  satelliteCaption: {
+    fontSize: 11.5,
+    color: 'var(--color-text-secondary)',
+    lineHeight: 1.25,
+  },
+  // ---- progress card (floating glass) ----
+  progressCard: {
+    flex: '5 1 0',
+    minWidth: 0,
+    boxSizing: 'border-box',
+    borderRadius: 20,
+    border: '1px solid var(--color-border)',
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-card) 88%, transparent)',
+    boxShadow: SHADOW_FLOATING,
     padding: 'var(--spacing-5)',
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-3)',
   },
   raisedStat: {
-    fontSize: 38,
+    fontSize: 40,
     fontWeight: 700,
     lineHeight: 1.05,
     letterSpacing: '-0.02em',
@@ -377,24 +668,24 @@ const styles: Record<string, CSSProperties> = {
     gap: 'var(--spacing-5)',
   },
   donateCard: {
-    flex: '1.1 1 0',
+    flex: '6 1 0',
     minWidth: 0,
     boxSizing: 'border-box',
-    borderRadius: 16,
+    borderRadius: 20,
     border: `1px solid ${ACCENT_BORDER}`,
     backgroundColor: 'var(--color-background-card)',
-    boxShadow: 'var(--shadow-med)',
+    boxShadow: SHADOW_FLOATING,
     padding: 'var(--spacing-5)',
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-4)',
   },
   donateAside: {
-    flex: '1 1 0',
+    flex: '5 1 0',
     minWidth: 0,
     display: 'flex',
     flexDirection: 'column',
-    gap: 'var(--spacing-3)',
+    gap: 'var(--spacing-4)',
   },
   amountGrid: {
     display: 'grid',
@@ -465,15 +756,59 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: ACCENT_WASH,
     color: ACCENT,
   },
-  // ---- impact stories ----
+  // ---- dark impact-stories band ----
+  darkBand: {
+    position: 'relative',
+    overflow: 'hidden',
+    colorScheme: 'dark',
+    backgroundColor: DARK_BAND,
+    color: DARK_TEXT,
+  },
+  darkGlow: {
+    position: 'absolute',
+    borderRadius: '50%',
+    filter: 'blur(90px)',
+    pointerEvents: 'none',
+  },
+  spotlight: {
+    position: 'absolute',
+    inset: 0,
+    pointerEvents: 'none',
+    background: `radial-gradient(620px circle at var(--mx, 65%) var(--my, 30%), color-mix(in srgb, ${ACCENT} 13%, transparent), transparent 70%)`,
+  },
+  marquee: {
+    overflow: 'hidden',
+    borderBlock: `1px solid color-mix(in srgb, ${DARK_TEXT} 12%, transparent)`,
+    paddingBlock: 'var(--spacing-3)',
+  },
+  marqueeItem: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 14,
+    marginRight: 40,
+    fontSize: 12,
+    fontWeight: 600,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+    color: DARK_TEXT_FAINT,
+    whiteSpace: 'nowrap',
+  },
+  marqueeDot: {
+    width: 4,
+    height: 4,
+    borderRadius: '50%',
+    backgroundColor: `color-mix(in srgb, ${ACCENT} 70%, transparent)`,
+    flexShrink: 0,
+  },
   storyCard: {
     width: 320,
     maxWidth: 'calc(100vw - 2 * var(--spacing-5))',
     flexShrink: 0,
     boxSizing: 'border-box',
-    borderRadius: 14,
-    border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-background-card)',
+    borderRadius: 16,
+    border: 'none',
+    backgroundColor: `color-mix(in srgb, ${DARK_TEXT} 6%, transparent)`,
+    boxShadow: SHADOW_GLASS,
     overflow: 'hidden',
     display: 'flex',
     flexDirection: 'column',
@@ -499,6 +834,16 @@ const styles: Record<string, CSSProperties> = {
     lineHeight: 1.5,
     fontWeight: 500,
     margin: 0,
+    color: DARK_TEXT,
+  },
+  storyName: {
+    fontSize: 13.5,
+    fontWeight: 600,
+    color: DARK_TEXT,
+  },
+  storyRole: {
+    fontSize: 12.5,
+    color: DARK_TEXT_FAINT,
   },
   // ---- where money goes ----
   breakdownRow: {
@@ -511,10 +856,15 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'stretch',
     gap: 'var(--spacing-5)',
   },
-  donutWrap: {
+  donutCard: {
     flex: '0 0 auto',
     display: 'flex',
     justifyContent: 'center',
+    padding: 'var(--spacing-5)',
+    borderRadius: 20,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_RAISED,
   },
   legendList: {
     flex: '1 1 0',
@@ -540,6 +890,7 @@ const styles: Record<string, CSSProperties> = {
   legendRowSelected: {
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_RAISED,
   },
   legendSwatch: {
     width: 12,
@@ -553,7 +904,101 @@ const styles: Record<string, CSSProperties> = {
     fontSize: 15,
     flexShrink: 0,
   },
-  // ---- milestones ----
+  // ---- milestones: pinned scroll story ----
+  pinStage: {
+    position: 'sticky',
+    top: NAV_ALLOWANCE,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-6)',
+  },
+  pinRow: {
+    display: 'flex',
+    gap: 'var(--spacing-8)',
+    alignItems: 'stretch',
+  },
+  stepRail: {
+    flex: '5 1 0',
+    minWidth: 0,
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-1)',
+  },
+  railTrack: {
+    position: 'absolute',
+    left: 25,
+    top: 24,
+    bottom: 24,
+    width: 2,
+    backgroundColor: 'var(--color-border)',
+    overflow: 'hidden',
+  },
+  railFill: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: ACCENT,
+    transformOrigin: 'top',
+  },
+  stepButton: {
+    position: 'relative',
+    zIndex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    gap: 'var(--spacing-3)',
+    padding: '10px 14px 10px 12px',
+    borderRadius: 12,
+    border: '1px solid transparent',
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+    textAlign: 'left',
+    boxSizing: 'border-box',
+  },
+  stepButtonActive: {
+    backgroundColor: 'var(--color-background-card)',
+    border: '1px solid var(--color-border)',
+    boxShadow: `0 0 0 1px ${ACCENT_BORDER}, ${SHADOW_RAISED}`,
+  },
+  detailCard: {
+    flex: '7 1 0',
+    minWidth: 0,
+    position: 'relative',
+    overflow: 'hidden',
+    borderRadius: 20,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_FLOATING,
+    padding: 'var(--spacing-6)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: 'var(--spacing-3)',
+    boxSizing: 'border-box',
+  },
+  detailNumeral: {
+    position: 'absolute',
+    top: 4,
+    right: 20,
+    fontSize: 112,
+    fontWeight: 700,
+    lineHeight: 1,
+    letterSpacing: '-0.04em',
+    fontVariantNumeric: 'tabular-nums',
+    color: `color-mix(in srgb, ${ACCENT} 15%, transparent)`,
+    pointerEvents: 'none',
+    userSelect: 'none',
+  },
+  pinHint: {
+    fontSize: 12,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+    fontWeight: 600,
+    color: 'var(--color-text-secondary)',
+  },
+  // ---- milestones: static fallback timeline ----
   milestoneRow: {
     display: 'flex',
     gap: 'var(--spacing-3)',
@@ -612,6 +1057,7 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 14,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_RAISED,
     cursor: 'pointer',
     textAlign: 'left',
   },
@@ -645,9 +1091,10 @@ const styles: Record<string, CSSProperties> = {
   // ---- corporate match ----
   matchCard: {
     boxSizing: 'border-box',
-    borderRadius: 16,
+    borderRadius: 20,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_RAISED,
     padding: 'var(--spacing-5)',
     display: 'flex',
     flexDirection: 'column',
@@ -689,7 +1136,8 @@ const styles: Record<string, CSSProperties> = {
   footer: {
     colorScheme: 'dark',
     color: DARK_TEXT,
-    backgroundColor: '#0B1F1D',
+    backgroundColor: DARK_BAND,
+    borderTop: `1px solid color-mix(in srgb, ${ACCENT} 30%, transparent)`,
   },
   footerInner: {
     width: '100%',
@@ -744,7 +1192,8 @@ const CAMPAIGN = {
 
 const HERO = {
   kicker: 'Summer 2026 campaign',
-  headline: 'Bring the Alder River back to life',
+  headlineStart: 'Bring the Alder River',
+  headlineInk: 'back to life',
   subcopy:
     'Clearwater Fund is restoring 2.4 miles of the Alder — replanting ' +
     'native banks, rebuilding salmon habitat, and reopening cold-water ' +
@@ -828,6 +1277,64 @@ const STORIES: readonly Story[] = [
     role: 'Fisheries biologist, watershed council',
     icon: FishIcon,
     art: 'linear-gradient(135deg, #0F766E 0%, #115E59 55%, #134E4A 100%)',
+  },
+];
+
+/** Campaign facts for the dark-band marquee — all drawn from fixtures. */
+const MARQUEE_STATS: readonly string[] = [
+  '2.4 river miles in restoration',
+  '4,200 saplings planted in 2026',
+  '912 donors and counting',
+  '74% sapling survival at 90 days',
+  '240 volunteers on planting days',
+  '40,000 nursery starts a year',
+  '95% goes to watershed programs',
+  '12 log-jam structures this August',
+];
+
+/** Hero satellite mini-cards (fixture-derived; decorative, aria-hidden). */
+interface Satellite {
+  id: string;
+  icon: Glyph;
+  title: string;
+  caption: string;
+  position: CSSProperties;
+  bobDuration: string;
+  bobDelay: string;
+  /** Parallax multiplier in px per unit pointer offset (sign = depth). */
+  parallax: number;
+}
+
+const SATELLITES: readonly Satellite[] = [
+  {
+    id: 'gift',
+    icon: HeartHandshakeIcon,
+    title: 'Ruth C. just gave $50',
+    caption: 'Streamside neighbor · mile 1.2',
+    position: {top: -26, left: -14},
+    bobDuration: '7s',
+    bobDelay: '-2s',
+    parallax: 9,
+  },
+  {
+    id: 'saplings',
+    icon: SproutIcon,
+    title: '4,200 saplings planted',
+    caption: '74% thriving at 90 days',
+    position: {top: '30%', right: -18},
+    bobDuration: '8.5s',
+    bobDelay: '-5s',
+    parallax: -7,
+  },
+  {
+    id: 'match',
+    icon: Building2Icon,
+    title: 'Bluepine matched 2:1',
+    caption: 'Corporate gift program',
+    position: {bottom: -24, left: '9%'},
+    bobDuration: '6.5s',
+    bobDelay: '-3.5s',
+    parallax: 6,
   },
 ];
 
@@ -1038,14 +1545,14 @@ function useRevealOnce(skip: boolean): {
 }
 
 /**
- * Count from 0 to target once activated (rAF, ease-out cubic).
+ * Count from 0 to target once activated (rAF, ~900ms decelerate cubic).
  * Reduced motion renders the final value immediately.
  */
 function useCountUp(
   target: number,
   isActive: boolean,
   isStatic: boolean,
-  durationMs = 1400,
+  durationMs = 900,
 ): number {
   const [value, setValue] = useState(0);
   const hasRunRef = useRef(false);
@@ -1075,7 +1582,11 @@ function useCountUp(
 
 // ============= SMALL PIECES =============
 
-/** Rise-and-fade scroll reveal; renders visible under reduced motion. */
+/**
+ * Rise-and-fade scroll reveal (16px + 0.985 scale, 560ms decelerate);
+ * renders visible under reduced motion. Stagger via delayMs (60-90ms
+ * between siblings).
+ */
 function Reveal({
   children,
   delayMs = 0,
@@ -1090,34 +1601,106 @@ function Reveal({
       ref={ref}
       style={{
         opacity: isRevealed ? 1 : 0,
-        transform: isRevealed ? 'none' : 'translateY(12px)',
+        transform: isRevealed ? 'none' : 'translateY(16px) scale(0.985)',
         transition: isStatic
           ? 'none'
-          : `opacity 600ms ease ${delayMs}ms, transform 600ms ease ${delayMs}ms`,
+          : `opacity 560ms cubic-bezier(0.16, 1, 0.3, 1) ${delayMs}ms, transform 560ms cubic-bezier(0.16, 1, 0.3, 1) ${delayMs}ms`,
       }}>
       {children}
     </div>
   );
 }
 
-/** Section intro: kicker Token + title + supporting copy. */
+/** Tracked uppercase eyebrow chip (11px, +0.08em). */
+function Eyebrow({label, isDark = false}: {label: string; isDark?: boolean}) {
+  return (
+    <span
+      style={{
+        ...styles.eyebrow,
+        ...(isDark
+          ? {
+              backgroundColor: `color-mix(in srgb, ${DARK_TEXT} 8%, transparent)`,
+              border: `1px solid color-mix(in srgb, ${DARK_TEXT} 18%, transparent)`,
+              color: '#5EEAD4',
+            }
+          : null),
+      }}>
+      {label}
+    </span>
+  );
+}
+
+/** Section intro: eyebrow chip + display heading + ~56ch lede. */
 function SectionIntro({
   kicker,
   title,
   description,
+  isCompact,
+  isDark = false,
+  titleSize,
 }: {
   kicker: string;
   title: string;
   description: string;
+  isCompact: boolean;
+  isDark?: boolean;
+  titleSize?: number;
 }) {
   return (
-    <VStack gap={2}>
-      <Token label={kicker} size="sm" color="green" />
-      <Heading level={2}>{title}</Heading>
-      <Text type="supporting" color="secondary">
+    <VStack gap={3}>
+      <div>
+        <Eyebrow label={kicker} isDark={isDark} />
+      </div>
+      <h2
+        style={{
+          ...styles.sectionTitle,
+          fontSize: titleSize ?? (isCompact ? 30 : 38),
+          ...(isDark ? {color: DARK_TEXT} : null),
+        }}>
+        {title}
+      </h2>
+      <p
+        style={{
+          ...styles.sectionLede,
+          ...(isDark ? {color: DARK_TEXT_SOFT} : null),
+        }}>
         {description}
-      </Text>
+      </p>
     </VStack>
+  );
+}
+
+/**
+ * Primary CTA with sheen sweep, 1px hover lift, and 0.98 pressed scale
+ * (all via the scoped stylesheet; reduced motion neutralizes them).
+ */
+function CtaButton({
+  label,
+  icon,
+  onClick,
+  size = 'md',
+  isWide = false,
+}: {
+  label: string;
+  icon?: ReactNode;
+  onClick: () => void;
+  size?: 'md' | 'sm';
+  isWide?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      className="ndl-cta"
+      style={{
+        ...styles.cta,
+        ...(size === 'sm' ? styles.ctaSm : null),
+        ...(isWide ? {width: '100%'} : null),
+      }}
+      onClick={onClick}>
+      <span className="ndl-cta-sheen" style={styles.ctaSheen} aria-hidden="true" />
+      {icon}
+      {label}
+    </button>
   );
 }
 
@@ -1320,9 +1903,13 @@ export default function NonprofitDonationLandingTemplate() {
   const isStacked = wrapWidth > 0 && wrapWidth <= 920;
   const isNavCollapsed = wrapWidth > 0 && wrapWidth <= 780;
   const isCompact = wrapWidth > 0 && wrapWidth <= 640;
+  /** Display-type tiers per measured width (never <56px at full width). */
+  const heroFontSize =
+    wrapWidth > 1000 ? 78 : wrapWidth > 760 ? 62 : wrapWidth > 460 ? 46 : 38;
 
   // ---- nav ----
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const navRef = useRef<HTMLElement | null>(null);
   const menuTriggerRef = useRef<HTMLButtonElement | null>(null);
   const pageRef = useRef<HTMLDivElement | null>(null);
@@ -1330,14 +1917,15 @@ export default function NonprofitDonationLandingTemplate() {
     {},
   );
 
-  // ---- hero reveal + count-ups ----
+  // ---- hero reveal + count-ups + pointer parallax ----
   const {ref: heroRevealRef, isRevealed: isHeroRevealed} =
     useRevealOnce(isStatic);
+  const [tilt, setTilt] = useState({x: 0, y: 0});
   /** Extra raised/donors from inline donations on this visit. */
   const [extraRaised, setExtraRaised] = useState(0);
   const [extraDonors, setExtraDonors] = useState(0);
   const raisedBase = useCountUp(CAMPAIGN.raised, isHeroRevealed, isStatic);
-  const donorsBase = useCountUp(CAMPAIGN.donors, isHeroRevealed, isStatic, 1100);
+  const donorsBase = useCountUp(CAMPAIGN.donors, isHeroRevealed, isStatic, 800);
   const raisedShown = raisedBase + extraRaised;
   const donorsShown = donorsBase + extraDonors;
   const raisedActual = CAMPAIGN.raised + extraRaised;
@@ -1346,6 +1934,15 @@ export default function NonprofitDonationLandingTemplate() {
     SAPLING_XS.length,
     Math.round(percent / 10),
   );
+
+  // ---- pinned milestones scene ----
+  const pinRef = useRef<HTMLDivElement | null>(null);
+  const [pinProgress, setPinProgress] = useState(0);
+  const activeMilestone = Math.min(
+    MILESTONES.length - 1,
+    Math.floor(pinProgress * MILESTONES.length),
+  );
+  const activeMilestoneData = MILESTONES[activeMilestone];
 
   // ---- donation widget ----
   const [cadence, setCadence] = useState<Cadence>('once');
@@ -1412,6 +2009,45 @@ export default function NonprofitDonationLandingTemplate() {
     [],
   );
 
+  // One rAF-throttled scroll listener drives the nav condensation and
+  // the pinned milestones scene's progress (rect math against the
+  // measured scroll container — the demo stage is not the viewport).
+  useEffect(() => {
+    const page = pageRef.current;
+    if (page == null) {
+      return undefined;
+    }
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      setIsScrolled(page.scrollTop > 24);
+      const pin = pinRef.current;
+      if (pin != null && !isStatic && !isStacked) {
+        const pageRect = page.getBoundingClientRect();
+        const pinRect = pin.getBoundingClientRect();
+        const span = pinRect.height - pageRect.height;
+        if (span > 0) {
+          setPinProgress(
+            Math.min(1, Math.max(0, (pageRect.top - pinRect.top) / span)),
+          );
+        }
+      }
+    };
+    const onScroll = () => {
+      if (frame === 0) {
+        frame = requestAnimationFrame(update);
+      }
+    };
+    page.addEventListener('scroll', onScroll, {passive: true});
+    update();
+    return () => {
+      page.removeEventListener('scroll', onScroll);
+      if (frame !== 0) {
+        cancelAnimationFrame(frame);
+      }
+    };
+  }, [isStatic, isStacked]);
+
   // Compact menu dismisses on Escape (refocusing its trigger) and on any
   // pointerdown outside the sticky navbar.
   useEffect(() => {
@@ -1459,6 +2095,56 @@ export default function NonprofitDonationLandingTemplate() {
 
   const registerSection = (id: SectionId) => (node: HTMLElement | null) => {
     sectionRefs.current[id] = node;
+  };
+
+  /** Button path into the scroll scene: jump to a phase's progress point. */
+  const jumpToMilestone = (index: number) => {
+    const page = pageRef.current;
+    const pin = pinRef.current;
+    if (page == null || pin == null) {
+      return;
+    }
+    const pageRect = page.getBoundingClientRect();
+    const pinRect = pin.getBoundingClientRect();
+    const span = pinRect.height - pageRect.height;
+    if (span <= 0) {
+      return;
+    }
+    const top =
+      page.scrollTop +
+      (pinRect.top - pageRect.top) +
+      span * ((index + 0.5) / MILESTONES.length);
+    page.scrollTo({top, behavior: isStatic ? 'auto' : 'smooth'});
+  };
+
+  /** Hero parallax: satellites drift ±6-10px toward the pointer. */
+  const onHeroPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (isStatic || isStacked) {
+      return;
+    }
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    const y = ((event.clientY - rect.top) / rect.height) * 2 - 1;
+    setTilt({
+      x: Math.max(-1, Math.min(1, x)),
+      y: Math.max(-1, Math.min(1, y)),
+    });
+  };
+  const resetTilt = () => setTilt({x: 0, y: 0});
+
+  // Dark-band spotlight: CSS vars only — no re-render per pointer move.
+  const darkRef = useRef<HTMLElement | null>(null);
+  const onDarkPointerMove = (event: ReactPointerEvent<HTMLElement>) => {
+    if (isStatic) {
+      return;
+    }
+    const band = darkRef.current;
+    if (band == null) {
+      return;
+    }
+    const rect = band.getBoundingClientRect();
+    band.style.setProperty('--mx', `${event.clientX - rect.left}px`);
+    band.style.setProperty('--my', `${event.clientY - rect.top}px`);
   };
 
   const submitDonation = () => {
@@ -1546,9 +2232,9 @@ export default function NonprofitDonationLandingTemplate() {
           </button>
         ))}
         <Divider />
-        <Button
+        <CtaButton
           label="Donate"
-          variant="primary"
+          isWide
           icon={<Icon icon={HeartHandshakeIcon} size="sm" color="inherit" />}
           onClick={() => jumpToSection('donate')}
         />
@@ -1557,8 +2243,20 @@ export default function NonprofitDonationLandingTemplate() {
   );
 
   const navbar = (
-    <nav ref={navRef} style={styles.navBar} aria-label="Primary">
-      <div style={styles.navInner}>
+    <nav
+      ref={navRef}
+      style={{
+        ...styles.navBar,
+        ...(isScrolled ? styles.navBarScrolled : null),
+      }}
+      aria-label="Primary">
+      <div
+        style={{
+          ...styles.navInner,
+          // Slight condensation after 24px scroll (instant, not animated —
+          // height is a layout property).
+          minHeight: isScrolled ? 50 : NAV_HEIGHT,
+        }}>
         {brandMark}
         <StackItem size="fill">
           {!isNavCollapsed && (
@@ -1567,6 +2265,7 @@ export default function NonprofitDonationLandingTemplate() {
                 <button
                   key={anchor.id}
                   type="button"
+                  className="ndl-navlink"
                   style={styles.navLink}
                   onClick={() => jumpToSection(anchor.id)}>
                   {anchor.label}
@@ -1575,10 +2274,9 @@ export default function NonprofitDonationLandingTemplate() {
             </HStack>
           )}
         </StackItem>
-        <Button
+        <CtaButton
           label="Donate"
-          variant="primary"
-          size={isNavCollapsed ? 'sm' : 'md'}
+          size="sm"
           icon={<Icon icon={HeartHandshakeIcon} size="sm" color="inherit" />}
           onClick={() => jumpToSection('donate')}
         />
@@ -1604,11 +2302,12 @@ export default function NonprofitDonationLandingTemplate() {
 
   // ============= SECTIONS =============
 
-  // ---- hero (tinted band): copy + progress card over the river art ----
+  // ---- hero (aurora band): display copy + floating progress card over
+  // the staged river theater ----
   const progressCard = (
     <div style={styles.progressCard}>
       <HStack gap={2} vAlign="center" wrap="wrap">
-        <Token label="Campaign progress" size="sm" color="green" />
+        <Eyebrow label="Campaign progress" />
         <Badge variant="info" label={`${CAMPAIGN.daysLeft} days left`} />
       </HStack>
       <div>
@@ -1629,7 +2328,9 @@ export default function NonprofitDonationLandingTemplate() {
             ...styles.progressFill,
             // Fills on first reveal; later donations transition wider.
             width: isHeroRevealed || isStatic ? `${percent}%` : '0%',
-            transition: isStatic ? 'none' : 'width 1200ms ease 200ms',
+            transition: isStatic
+              ? 'none'
+              : 'width 1000ms cubic-bezier(0.16, 1, 0.3, 1) 200ms',
           }}
         />
       </div>
@@ -1644,9 +2345,9 @@ export default function NonprofitDonationLandingTemplate() {
           · {fundedSaplings} of {SAPLING_XS.length} bank sections funded
         </Text>
       </HStack>
-      <Button
+      <CtaButton
         label="Give now"
-        variant="primary"
+        isWide
         icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
         onClick={() => jumpToSection('donate')}
       />
@@ -1655,7 +2356,7 @@ export default function NonprofitDonationLandingTemplate() {
 
   const hero = (
     <div ref={heroRevealRef}>
-      <VStack gap={5}>
+      <VStack gap={6}>
         <div
           style={{
             ...styles.heroRow,
@@ -1663,21 +2364,17 @@ export default function NonprofitDonationLandingTemplate() {
           }}>
           <div style={styles.heroText}>
             <HStack gap={2} vAlign="center" wrap="wrap">
-              <Token label={HERO.kicker} size="sm" color="green" />
+              <Eyebrow label={HERO.kicker} />
               <Badge variant="success" label="501(c)(3) nonprofit" />
             </HStack>
-            <h1
-              style={{
-                ...styles.heroHeadline,
-                ...(isCompact ? styles.heroHeadlineCompact : null),
-              }}>
-              {HERO.headline}
+            <h1 style={{...styles.heroHeadline, fontSize: heroFontSize}}>
+              {HERO.headlineStart}{' '}
+              <span style={styles.heroInk}>{HERO.headlineInk}</span>
             </h1>
             <p style={styles.heroSubcopy}>{HERO.subcopy}</p>
             <HStack gap={2} vAlign="center" wrap="wrap">
-              <Button
+              <CtaButton
                 label="Donate to the Alder"
-                variant="primary"
                 icon={
                   <Icon icon={HeartHandshakeIcon} size="sm" color="inherit" />
                 }
@@ -1692,11 +2389,69 @@ export default function NonprofitDonationLandingTemplate() {
           </div>
           {progressCard}
         </div>
-        <RiverIllustration
-          fundedCount={fundedSaplings}
-          isRevealed={isHeroRevealed}
-          isStatic={isStatic}
-        />
+        {/* River theater: perspective pane + bobbing satellites; the whole
+            stage crosses the band boundary into the donate section. */}
+        <div
+          style={{
+            ...styles.heroStage,
+            marginBottom: isStacked ? 0 : -76,
+          }}
+          onPointerMove={onHeroPointerMove}
+          onPointerLeave={resetTilt}>
+          <div style={styles.heroPerspective}>
+            <div
+              style={{
+                ...styles.riverPane,
+                transform:
+                  isStatic || isStacked
+                    ? 'none'
+                    : `rotateX(${4 - tilt.y * 2.5}deg) rotateY(${tilt.x * 3}deg)`,
+                transition: isStatic
+                  ? 'none'
+                  : 'transform 520ms cubic-bezier(0.22, 1, 0.36, 1)',
+              }}>
+              <RiverIllustration
+                fundedCount={fundedSaplings}
+                isRevealed={isHeroRevealed}
+                isStatic={isStatic}
+              />
+            </div>
+          </div>
+          {!isStacked &&
+            SATELLITES.map(satellite => (
+              <div
+                key={satellite.id}
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  zIndex: 3,
+                  ...satellite.position,
+                  transform: `translate(${tilt.x * satellite.parallax}px, ${tilt.y * Math.abs(satellite.parallax) * 0.7}px)`,
+                  transition: isStatic
+                    ? 'none'
+                    : 'transform 520ms cubic-bezier(0.22, 1, 0.36, 1)',
+                }}>
+                <div
+                  className="ndl-bob"
+                  style={{
+                    ...styles.satellite,
+                    animationDuration: satellite.bobDuration,
+                    animationDelay: satellite.bobDelay,
+                    opacity: isHeroRevealed || isStatic ? 1 : 0,
+                  }}>
+                  <div style={styles.satelliteIcon}>
+                    <Icon icon={satellite.icon} size="sm" color="inherit" />
+                  </div>
+                  <div>
+                    <div style={styles.satelliteTitle}>{satellite.title}</div>
+                    <div style={styles.satelliteCaption}>
+                      {satellite.caption}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+        </div>
       </VStack>
     </div>
   );
@@ -1903,9 +2658,9 @@ export default function NonprofitDonationLandingTemplate() {
               {amountError}
             </p>
           )}
-          <Button
+          <CtaButton
             label={donateLabel}
-            variant="primary"
+            isWide
             icon={
               <Icon icon={HeartHandshakeIcon} size="sm" color="inherit" />
             }
@@ -1934,6 +2689,8 @@ export default function NonprofitDonationLandingTemplate() {
           kicker="Your gift at work"
           title="Small gifts, measured in saplings"
           description="We publish field costs every season, so each amount maps to real work on the bank — not a vague thermometer."
+          isCompact={isCompact}
+          titleSize={isCompact ? 26 : 30}
         />
         <VStack gap={2}>
           {[
@@ -1961,14 +2718,41 @@ export default function NonprofitDonationLandingTemplate() {
     </div>
   );
 
-  // ---- impact stories (muted band, carousel) ----
+  // ---- impact stories (signature scheme-locked dark band) ----
   const storiesSection = (
-    <VStack gap={4}>
+    <VStack gap={5}>
       <SectionIntro
         kicker="Impact stories"
         title="Voices from the riverbank"
         description="Landowners, classrooms, and biologists on what one season of restoration changed."
+        isCompact={isCompact}
+        isDark
       />
+      {/* Campaign-fact marquee: 52s loop, pauses on hover; reduced motion
+          hides the duplicate copy and wraps the strip statically. */}
+      <div
+        className="ndl-marquee"
+        style={styles.marquee}
+        aria-label="Campaign facts">
+        <div className="ndl-marquee-track">
+          {MARQUEE_STATS.map(stat => (
+            <span key={stat} style={styles.marqueeItem}>
+              <span style={styles.marqueeDot} aria-hidden="true" />
+              {stat}
+            </span>
+          ))}
+          {MARQUEE_STATS.map(stat => (
+            <span
+              key={`dupe-${stat}`}
+              className="ndl-marquee-dupe"
+              style={styles.marqueeItem}
+              aria-hidden="true">
+              <span style={styles.marqueeDot} aria-hidden="true" />
+              {stat}
+            </span>
+          ))}
+        </div>
+      </div>
       <Carousel gap={3} hasSnap aria-label="Impact stories">
         {STORIES.map(story => (
           <div key={story.id} style={styles.storyCard}>
@@ -1983,12 +2767,8 @@ export default function NonprofitDonationLandingTemplate() {
                 <span />
               </StackItem>
               <VStack gap={0}>
-                <Text size="sm" weight="semibold">
-                  {story.name}
-                </Text>
-                <Text type="supporting" color="secondary">
-                  {story.role}
-                </Text>
+                <span style={styles.storyName}>{story.name}</span>
+                <span style={styles.storyRole}>{story.role}</span>
               </VStack>
             </div>
           </div>
@@ -1997,20 +2777,21 @@ export default function NonprofitDonationLandingTemplate() {
     </VStack>
   );
 
-  // ---- where money goes (plain band, interactive donut) ----
+  // ---- where money goes (dot-grid band, interactive donut) ----
   const breakdownSection = (
-    <VStack gap={4}>
+    <VStack gap={5}>
       <SectionIntro
         kicker="Where money goes"
         title="Every dollar, accounted for"
         description="FY25 audited allocation. Select a line to inspect its slice — including the honest overhead one."
+        isCompact={isCompact}
       />
       <div
         style={{
           ...styles.breakdownRow,
           ...(isStacked ? styles.breakdownRowStacked : null),
         }}>
-        <div style={styles.donutWrap}>
+        <div style={styles.donutCard}>
           <BudgetDonut selectedId={selectedSlice} />
         </div>
         <div style={styles.legendList} role="list" aria-label="Budget lines">
@@ -2054,87 +2835,206 @@ export default function NonprofitDonationLandingTemplate() {
     </VStack>
   );
 
-  // ---- milestones (tinted band, timeline) ----
-  const milestonesSection = (
-    <VStack gap={4}>
-      <SectionIntro
-        kicker="Milestones"
-        title="The season so far — and what's next"
-        description="Three phases complete, two funded by this campaign."
-      />
-      <div>
-        {MILESTONES.map((milestone, index) => (
-          <Reveal key={milestone.id} delayMs={index * 90}>
-            <div style={styles.milestoneRow}>
-              <div style={styles.milestoneRail}>
-                <div
-                  style={{
-                    ...styles.milestoneDot,
-                    ...(milestone.isDone
-                      ? styles.milestoneDotDone
-                      : styles.milestoneDotUpcoming),
-                  }}
-                  aria-hidden="true">
-                  <Icon
-                    icon={milestone.isDone ? CheckIcon : CalendarIcon}
-                    size="xsm"
-                    color="inherit"
-                  />
-                </div>
-                {index < MILESTONES.length - 1 && (
-                  <div style={styles.milestoneLine} aria-hidden="true" />
-                )}
-              </div>
-              <div style={styles.milestoneBody}>
-                <HStack gap={2} vAlign="center" wrap="wrap">
-                  <Text type="label">{milestone.title}</Text>
-                  <Badge
-                    variant={milestone.isDone ? 'success' : 'neutral'}
-                    label={
-                      milestone.isDone
-                        ? milestone.date
-                        : `Planned · ${milestone.date}`
-                    }
-                  />
-                </HStack>
-                <Text type="supporting" color="secondary">
-                  {milestone.detail}
-                </Text>
-              </div>
-            </div>
-          </Reveal>
-        ))}
-      </div>
-    </VStack>
+  // ---- layout rhythm: 112px band padding at wide, 64px compact ----
+  const columnStyle: CSSProperties = {
+    ...styles.column,
+    padding: isCompact
+      ? '64px var(--spacing-4)'
+      : isStacked
+        ? '80px var(--spacing-5)'
+        : '112px var(--spacing-6)',
+    gap: isCompact ? 'var(--spacing-5)' : 'var(--spacing-6)',
+  };
+  // Hero band tucks under the transparent navbar, so its column adds the
+  // nav height back on top.
+  const heroColumnStyle: CSSProperties = {
+    ...columnStyle,
+    paddingTop: NAV_HEIGHT + (isCompact ? 36 : 56),
+  };
+  // Donate band leaves clearance for the river stage bleeding into it.
+  const donateColumnStyle: CSSProperties = {
+    ...columnStyle,
+    ...(isStacked ? null : {paddingTop: 132}),
+  };
+
+  // ---- milestones: pinned scroll story + static fallback ----
+  const milestonesIntro = (
+    <SectionIntro
+      kicker="Milestones"
+      title="The season so far — and what's next"
+      description="Three phases complete, two funded by this campaign. Scroll to walk the timeline, or select a phase."
+      isCompact={isCompact}
+    />
   );
 
-  // ---- transparency + corporate match (plain band) ----
+  const staticMilestones = (
+    <div>
+      {MILESTONES.map((milestone, index) => (
+        <Reveal key={milestone.id} delayMs={index * 80}>
+          <div style={styles.milestoneRow}>
+            <div style={styles.milestoneRail}>
+              <div
+                style={{
+                  ...styles.milestoneDot,
+                  ...(milestone.isDone
+                    ? styles.milestoneDotDone
+                    : styles.milestoneDotUpcoming),
+                }}
+                aria-hidden="true">
+                <Icon
+                  icon={milestone.isDone ? CheckIcon : CalendarIcon}
+                  size="xsm"
+                  color="inherit"
+                />
+              </div>
+              {index < MILESTONES.length - 1 && (
+                <div style={styles.milestoneLine} aria-hidden="true" />
+              )}
+            </div>
+            <div style={styles.milestoneBody}>
+              <HStack gap={2} vAlign="center" wrap="wrap">
+                <Text type="label">{milestone.title}</Text>
+                <Badge
+                  variant={milestone.isDone ? 'success' : 'neutral'}
+                  label={
+                    milestone.isDone
+                      ? milestone.date
+                      : `Planned · ${milestone.date}`
+                  }
+                />
+              </HStack>
+              <Text type="supporting" color="secondary">
+                {milestone.detail}
+              </Text>
+            </div>
+          </div>
+        </Reveal>
+      ))}
+    </div>
+  );
+
+  // The scroll scene: a sticky stage inside a 260vh container. Scroll
+  // progress fills the phase rail (transform-only) and advances the
+  // detail card; phase buttons scroll to their progress point.
+  const pinnedMilestones = (
+    <div ref={pinRef} style={{height: '260vh'}}>
+      <div
+        style={{
+          ...columnStyle,
+          ...styles.pinStage,
+          paddingBlock: 'var(--spacing-8)',
+        }}>
+        {milestonesIntro}
+        <div style={styles.pinRow}>
+          <div style={styles.stepRail}>
+            <div style={styles.railTrack} aria-hidden="true">
+              <div
+                style={{
+                  ...styles.railFill,
+                  transform: `scaleY(${pinProgress})`,
+                }}
+              />
+            </div>
+            {MILESTONES.map((milestone, index) => {
+              const isActive = index === activeMilestone;
+              return (
+                <button
+                  key={milestone.id}
+                  type="button"
+                  aria-current={isActive ? 'step' : undefined}
+                  style={{
+                    ...styles.stepButton,
+                    ...(isActive ? styles.stepButtonActive : null),
+                  }}
+                  onClick={() => jumpToMilestone(index)}>
+                  <div
+                    style={{
+                      ...styles.milestoneDot,
+                      ...(milestone.isDone
+                        ? styles.milestoneDotDone
+                        : styles.milestoneDotUpcoming),
+                      ...(isActive
+                        ? {boxShadow: `0 0 0 2px ${ACCENT_BORDER}`}
+                        : null),
+                    }}
+                    aria-hidden="true">
+                    <Icon
+                      icon={milestone.isDone ? CheckIcon : CalendarIcon}
+                      size="xsm"
+                      color="inherit"
+                    />
+                  </div>
+                  <VStack gap={0}>
+                    <Text type="label">{milestone.title}</Text>
+                    <Text type="supporting" color="secondary">
+                      {milestone.date}
+                    </Text>
+                  </VStack>
+                </button>
+              );
+            })}
+          </div>
+          {activeMilestoneData != null && (
+            <div
+              key={activeMilestone}
+              className="ndl-swap"
+              style={styles.detailCard}>
+              <span style={styles.detailNumeral} aria-hidden="true">
+                {String(activeMilestone + 1).padStart(2, '0')}
+              </span>
+              <Badge
+                variant={activeMilestoneData.isDone ? 'success' : 'neutral'}
+                label={
+                  activeMilestoneData.isDone
+                    ? `Complete · ${activeMilestoneData.date}`
+                    : `Planned · ${activeMilestoneData.date}`
+                }
+              />
+              <h3 style={{...styles.sectionTitle, fontSize: 32}}>
+                {activeMilestoneData.title}
+              </h3>
+              <p style={styles.sectionLede}>{activeMilestoneData.detail}</p>
+              <span style={{...styles.pinHint, marginTop: 'auto'}}>
+                Phase {activeMilestone + 1} of {MILESTONES.length} · scroll to
+                advance
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
+  // ---- transparency + corporate match (aurora band) ----
   const transparencySection = (
     <VStack gap={5}>
       <SectionIntro
         kicker="Transparency"
         title="Read the paperwork"
         description="Reports, audited financials, and our federal filing — all public, all current."
+        isCompact={isCompact}
       />
       <Grid columns={{minWidth: 240, max: 3}} gap={3}>
-        {REPORTS.map(report => (
-          <button
-            key={report.id}
-            type="button"
-            style={styles.reportCard}
-            onClick={() => fireToast(`Transparency — ${report.title} opened.`)}>
-            <div style={styles.reportGlyph} aria-hidden="true">
-              <Icon icon={FileTextIcon} size="sm" color="inherit" />
-            </div>
-            <VStack gap={0}>
-              <Text size="sm" weight="semibold">
-                {report.title}
-              </Text>
-              <Text type="supporting" color="secondary">
-                {report.meta}
-              </Text>
-            </VStack>
-          </button>
+        {REPORTS.map((report, index) => (
+          <Reveal key={report.id} delayMs={index * 80}>
+            <button
+              type="button"
+              className="ndl-raise"
+              style={styles.reportCard}
+              onClick={() => fireToast(`Transparency — ${report.title} opened.`)}>
+              <div style={styles.reportGlyph} aria-hidden="true">
+                <Icon icon={FileTextIcon} size="sm" color="inherit" />
+              </div>
+              <VStack gap={0}>
+                <Text size="sm" weight="semibold">
+                  {report.title}
+                </Text>
+                <Text type="supporting" color="secondary">
+                  {report.meta}
+                </Text>
+              </VStack>
+            </button>
+          </Reveal>
         ))}
       </Grid>
       <div style={styles.einRow}>
@@ -2329,13 +3229,9 @@ export default function NonprofitDonationLandingTemplate() {
 
   // ============= FRAME =============
 
-  const columnStyle: CSSProperties = {
-    ...styles.column,
-    ...(isCompact ? styles.columnCompact : null),
-  };
-
   return (
-    <div ref={wrapRef} style={{height: '100%'}}>
+    <div ref={wrapRef} className={SCOPE} style={{height: '100%'}}>
+      <style>{TEMPLATE_CSS}</style>
       <Layout
         height="fill"
         content={
@@ -2345,49 +3241,166 @@ export default function NonprofitDonationLandingTemplate() {
             label="Clearwater Fund campaign page">
             <div ref={pageRef} style={styles.page}>
               {navbar}
-              {/* tinted hero band */}
-              <div style={{...styles.band, ...styles.bandTinted}}>
-                <div style={columnStyle}>{hero}</div>
+              {/* aurora hero band (tucks under the transparent navbar;
+                  its river stage bleeds into the donate band below) */}
+              <div
+                style={{
+                  ...styles.band,
+                  ...styles.bandTinted,
+                  zIndex: 2,
+                  marginTop: -NAV_HEIGHT,
+                }}>
+                <div style={styles.bandFx} aria-hidden="true">
+                  <div
+                    className={isStatic ? undefined : 'ndl-aurora-a'}
+                    style={{
+                      ...styles.auroraBlob,
+                      width: 520,
+                      height: 520,
+                      top: -180,
+                      left: -120,
+                      backgroundColor: AURORA_TEAL,
+                      opacity: 0.5,
+                    }}
+                  />
+                  <div
+                    className={isStatic ? undefined : 'ndl-aurora-b'}
+                    style={{
+                      ...styles.auroraBlob,
+                      width: 460,
+                      height: 460,
+                      top: -60,
+                      right: -160,
+                      backgroundColor: AURORA_GREEN,
+                      opacity: 0.4,
+                    }}
+                  />
+                  <div
+                    className={isStatic ? undefined : 'ndl-aurora-c'}
+                    style={{
+                      ...styles.auroraBlob,
+                      width: 420,
+                      height: 420,
+                      bottom: -200,
+                      left: '32%',
+                      backgroundColor: AURORA_BLEND,
+                      opacity: 0.45,
+                    }}
+                  />
+                  <div style={styles.grain} />
+                </div>
+                <div style={heroColumnStyle}>{hero}</div>
               </div>
               {/* plain donate band (centerpiece) */}
               <section
                 ref={registerSection('donate')}
                 aria-label="Donate"
                 style={styles.band}>
-                <div style={columnStyle}>
+                <div style={donateColumnStyle}>
                   <Reveal>{donateSection}</Reveal>
                 </div>
               </section>
-              {/* muted stories band */}
+              {/* signature dark stories band with pointer spotlight */}
               <section
-                ref={registerSection('impact')}
+                ref={node => {
+                  sectionRefs.current.impact = node;
+                  darkRef.current = node;
+                }}
                 aria-label="Impact stories"
-                style={{...styles.band, ...styles.bandMuted}}>
+                style={{...styles.band, ...styles.darkBand}}
+                onPointerMove={onDarkPointerMove}>
+                <div style={styles.bandFx} aria-hidden="true">
+                  <div
+                    className={isStatic ? undefined : 'ndl-aurora-b'}
+                    style={{
+                      ...styles.darkGlow,
+                      width: 560,
+                      height: 560,
+                      top: -220,
+                      left: -140,
+                      backgroundColor: AURORA_TEAL,
+                      opacity: 0.5,
+                    }}
+                  />
+                  <div
+                    className={isStatic ? undefined : 'ndl-aurora-c'}
+                    style={{
+                      ...styles.darkGlow,
+                      width: 480,
+                      height: 480,
+                      bottom: -220,
+                      right: -120,
+                      backgroundColor: AURORA_BLEND,
+                      opacity: 0.45,
+                    }}
+                  />
+                  <div style={styles.grain} />
+                  <div style={styles.spotlight} />
+                </div>
                 <div style={columnStyle}>
                   <Reveal>{storiesSection}</Reveal>
                 </div>
               </section>
-              {/* plain breakdown band */}
+              {/* dot-grid breakdown band */}
               <section
                 ref={registerSection('breakdown')}
                 aria-label="Where money goes"
                 style={styles.band}>
+                <div style={styles.bandFx} aria-hidden="true">
+                  <div style={styles.dotGrid} />
+                </div>
                 <div style={columnStyle}>
                   <Reveal>{breakdownSection}</Reveal>
                 </div>
               </section>
-              {/* tinted milestones band */}
+              {/* tinted milestones band: pinned scroll story with a
+                  static stacked fallback */}
               <section
                 ref={registerSection('milestones')}
                 aria-label="Milestones"
                 style={{...styles.band, ...styles.bandTinted}}>
-                <div style={columnStyle}>{milestonesSection}</div>
+                {isStatic || isStacked ? (
+                  <div style={columnStyle}>
+                    <VStack gap={5}>
+                      {milestonesIntro}
+                      {staticMilestones}
+                    </VStack>
+                  </div>
+                ) : (
+                  pinnedMilestones
+                )}
               </section>
-              {/* plain transparency band */}
+              {/* aurora transparency band */}
               <section
                 ref={registerSection('transparency')}
                 aria-label="Transparency"
                 style={styles.band}>
+                <div style={styles.bandFx} aria-hidden="true">
+                  <div
+                    className={isStatic ? undefined : 'ndl-aurora-a'}
+                    style={{
+                      ...styles.auroraBlob,
+                      width: 480,
+                      height: 480,
+                      top: -160,
+                      right: -180,
+                      backgroundColor: AURORA_GREEN,
+                      opacity: 0.35,
+                    }}
+                  />
+                  <div
+                    className={isStatic ? undefined : 'ndl-aurora-c'}
+                    style={{
+                      ...styles.auroraBlob,
+                      width: 440,
+                      height: 440,
+                      bottom: -200,
+                      left: -140,
+                      backgroundColor: AURORA_TEAL,
+                      opacity: 0.35,
+                    }}
+                  />
+                </div>
                 <div style={columnStyle}>
                   <Reveal>{transparencySection}</Reveal>
                 </div>

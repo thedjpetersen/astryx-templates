@@ -13,27 +13,40 @@
  *   declined states; a 1.5% cashback calculator seeded at $40k monthly
  *   spend; compliance small print naming an invented FDIC partner bank;
  *   and a four-column sitemap footer)
- * @output Full fintech marketing landing page: sticky navbar with four
- *   smooth-scrolling anchor links (scroll-spy highlighting, hamburger
- *   dropdown at compact widths), a split hero pairing copy + validating
- *   email capture with the SIGNATURE interactive card render — it tilts
+ * @output Full fintech marketing landing page, art-directed to a
+ *   Coinbase-adjacent bar: a sticky navbar that rides transparent over the
+ *   hero and condenses onto a tinted hairline surface after 24px of
+ *   scroll; an aurora-lit split hero (drifting color-mix blobs + SVG-grain
+ *   texture) pairing 72px gradient-ink display copy + validating email
+ *   capture with the SIGNATURE staged card theater — the charge card tilts
  *   toward the pointer (rotateX/rotateY, springs back on leave), flips on
- *   click to a controls back face, and its working Freeze switch stamps a
- *   FROZEN overlay onto the front — three alternating control-feature rows
- *   with schematic vignettes and scroll-reveals, a full-bleed fee
- *   comparison band whose $0 Keel cells are success-tinted, a real-time
- *   spend feed whose rows slide in staggered on first reveal, a
- *   monthly-spend Slider driving cashback count-ups, an honest compliance
- *   footnote band, and a dark CTA panel + footer each carrying an
- *   independent validating email form.
+ *   click to a controls back face, its working Freeze switch stamps a
+ *   FROZEN overlay, and it now floats over an accent glow with three
+ *   bobbing satellite mini-cards (receipt toast, limit meter, cashback
+ *   chip) that parallax toward the pointer; a PINNED SCROLL STORY for the
+ *   three card controls (sticky stage inside a ~250vh container — scroll
+ *   progress fills a numbered, clickable step rail and crossfades the
+ *   schematic vignettes; static stacked sequence under reduced motion and
+ *   at compact widths); an asymmetric 5/7 fee band with an oversized
+ *   gradient "$0" numeral, dot-grid texture, and success-tinted zero
+ *   cells; a real-time spend feed whose stat cards deliberately straddle
+ *   the boundary into the aurora-lit rewards band; a monthly-spend Slider
+ *   driving cashback count-ups; an honest compliance footnote band; and a
+ *   scheme-locked dark CTA panel with a pointer-tracked spotlight, glass
+ *   chips, and grain + footer, each carrying an independent validating
+ *   email form. Primary CTAs carry a sheen-sweep hover.
  * @position Page template; emitted by `astryx template fintech-card-landing`
  *
  * Frame: Layout height="fill", content-only — the landing page owns its
  * chrome, so there is no LayoutHeader. LayoutContent (padding 0) hosts a
- * single scroll container div that owns scroll-spy; the navbar inside it is
- * position:sticky top:0. Content sits in centered 1120px columns; the fee
- * band and compliance band paint full-bleed tinted strips around their own
- * inner columns so tinted and plain bands alternate down the page.
+ * single scroll container div that owns scroll-spy, nav condensation, and
+ * the pinned-story progress; the navbar inside it is position:sticky
+ * top:0. Content sits in centered 1120px columns with 96-128px section
+ * rhythm (56-72px compact); the fee band and compliance band paint
+ * full-bleed tinted strips around their own inner columns so tinted and
+ * plain bands alternate down the page. One inline <style> tag carries the
+ * fcl-prefixed keyframes (aurora drift, satellite bob) and the hover-only
+ * sheen/raise rules, all scoped under .fcl-root:not(.fcl-reduced).
  *
  * Interaction contract:
  * - Hero card: pointer movement tilts the card up to ±9° (rotateX/rotateY
@@ -41,15 +54,26 @@
  *   an overshoot curve. Clicking the card (or the explicit "Show card
  *   controls" button) flips it 180° to the back face. The back-face Freeze
  *   switch is live: freezing desaturates the front art and stamps a FROZEN
- *   chip. prefers-reduced-motion disables tilt and makes the flip instant.
- * - Scroll-reveals: IntersectionObserver, fire once, 12px rise + fade;
- *   spend-feed rows stagger 90ms apart. Reduced motion renders visible.
- * - Count-ups (stats band + calculator) animate on first view with rAF and
- *   re-animate toward new targets when the spend Slider moves; reduced
- *   motion renders final values instantly.
+ *   chip. Satellites bob on independent 6.5-8.5s keyframes (negative
+ *   delays) and parallax ±8px toward the pointer over the hero.
+ *   prefers-reduced-motion disables tilt, bob, and parallax and makes the
+ *   flip instant; satellites render only at split widths.
+ * - Pinned story: scroll progress (container scrollTop vs the story
+ *   wrapper's offsets) drives 3 discrete vignette states + a scaleY step
+ *   rail fill; the numbered steps are real buttons that scroll the
+ *   container to their segment. Reduced motion / stacked widths render
+ *   the three features as a static stacked sequence instead.
+ * - Scroll-reveals: IntersectionObserver, fire once, 16px rise + 0.985
+ *   scale settle over ~600ms decelerate; grouped children stagger 70-90ms.
+ *   Reduced motion renders visible.
+ * - Count-ups (stats band + calculator) animate ~900ms decelerate on first
+ *   view with rAF and re-animate toward new targets when the spend Slider
+ *   moves; reduced motion renders final values instantly.
  * - Nav anchors smooth-scroll the container under the sticky nav; onScroll
  *   spies the last section above the fold (aria-current). The nav CTA and
  *   hero fine print scroll to the Get started band.
+ * - Dark CTA panel tracks the pointer with CSS vars (--fcl-mx/--fcl-my)
+ *   feeding a radial spotlight overlay (skipped under reduced motion).
  * - All three email forms (hero, CTA band, footer) validate independently
  *   (empty + regex errors inline, role="alert") and flip to a confirmed
  *   state with a reset affordance. Footer sitemap links that would leave
@@ -103,7 +127,6 @@ import {Icon} from '@astryxdesign/core/Icon';
 import {Slider} from '@astryxdesign/core/Slider';
 import {Switch} from '@astryxdesign/core/Switch';
 import {TextInput} from '@astryxdesign/core/TextInput';
-import {Token} from '@astryxdesign/core/Token';
 import {
   AnchorIcon,
   ArrowRightIcon,
@@ -116,6 +139,7 @@ import {
   ShieldCheckIcon,
   SlidersHorizontalIcon,
   SnowflakeIcon,
+  TrendingUpIcon,
   WifiIcon,
   XIcon,
   ZapIcon,
@@ -156,9 +180,86 @@ const ERROR_ON_DARK = '#FECACA';
 
 const MONO = 'var(--font-family-mono, ui-monospace, monospace)';
 
+/**
+ * Depth tiers (neutral black shadows only — hue never rides a shadow).
+ * raised = default card lift; floating = adds a wide soft underlayer;
+ * glass cards additionally carry an inset hairline stroke.
+ */
+const SHADOW_RAISED =
+  '0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px -12px rgba(0, 0, 0, 0.18)';
+const SHADOW_FLOATING =
+  '0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px -12px rgba(0, 0, 0, 0.18), ' +
+  '0 24px 48px -24px rgba(0, 0, 0, 0.28)';
+
+/** Colorless SVG feTurbulence grain tile (data URI, no network asset). */
+const GRAIN =
+  'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' ' +
+  'width=\'160\' height=\'160\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence ' +
+  'type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' ' +
+  'stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'160\' ' +
+  'height=\'160\' filter=\'url(%23n)\'/%3E%3C/svg%3E")';
+
+/** Aurora blob inks — the accent mixed toward the success token. */
+const AURORA_A = `color-mix(in srgb, ${ACCENT} 55%, transparent)`;
+const AURORA_B = `color-mix(in srgb, color-mix(in srgb, ${ACCENT} 45%, ${SUCCESS}) 50%, transparent)`;
+
+/** Sheen sweep on primary CTAs (white-alpha, same family as CHIP_BG). */
+const SHEEN = 'rgba(255, 255, 255, 0.35)';
+
 /** Sticky-nav height allowance shared by smooth-scroll and scroll-spy. */
 const NAV_ALLOWANCE = 68;
 const SPY_OFFSET = 140;
+/** Pinned-story container = stage height × this factor (~250vh). */
+const STORY_LENGTH = 2.5;
+
+/**
+ * Injected once per page: fcl-prefixed keyframes (aurora drift, satellite
+ * bob) plus the hover-only sheen/raise rules. Every motion rule is scoped
+ * under .fcl-root:not(.fcl-reduced) or gated inline, so reduced motion
+ * renders everything static.
+ */
+const FCL_CSS = `
+@keyframes fcl-drift-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(48px, -36px, 0) scale(1.12); }
+}
+@keyframes fcl-drift-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.06); }
+  50% { transform: translate3d(-40px, 30px, 0) scale(0.94); }
+}
+@keyframes fcl-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+.fcl-shine {
+  position: relative;
+  display: inline-flex;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.fcl-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 40%, ${SHEEN} 50%, transparent 60%);
+  transform: translateX(-130%) skewX(-14deg);
+}
+.fcl-root:not(.fcl-reduced) .fcl-shine:hover { transform: translateY(-1px); }
+.fcl-root:not(.fcl-reduced) .fcl-shine:hover::after {
+  transform: translateX(130%) skewX(-14deg);
+  transition: transform 0.7s ease;
+}
+.fcl-root:not(.fcl-reduced) .fcl-shine:active { transform: scale(0.98); }
+.fcl-root:not(.fcl-reduced) .fcl-raise {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+}
+.fcl-root:not(.fcl-reduced) .fcl-raise:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 0 1px ${ACCENT_BORDER}, ${SHADOW_FLOATING};
+}
+`;
 
 // ============= STYLES =============
 
@@ -170,27 +271,38 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: 'var(--color-background-body)',
     color: 'var(--color-text-primary)',
   },
+  // 96-128px section rhythm at wide widths, 56-72px compact.
   column: {
     width: '100%',
     maxWidth: 1120,
     marginInline: 'auto',
-    padding: 'var(--spacing-6)',
+    padding: '96px var(--spacing-6)',
     boxSizing: 'border-box',
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-8)',
   },
   columnCompact: {
-    padding: 'var(--spacing-4)',
+    padding: '56px var(--spacing-4)',
     gap: 'var(--spacing-6)',
   },
-  // ---- sticky navbar ----
+  // ---- sticky navbar (transparent at top → tinted hairline surface) ----
   navBar: {
     position: 'sticky',
     top: 0,
     zIndex: 30,
-    backgroundColor: 'var(--color-background-body)',
+    backgroundColor: 'transparent',
+    borderBottom: '1px solid transparent',
+    transition: 'background-color 0.3s ease, border-color 0.3s ease',
+  },
+  navBarScrolled: {
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-body) 90%, transparent)',
     borderBottom: '1px solid var(--color-border)',
+  },
+  navInnerScrolled: {
+    minHeight: 46,
+    paddingBlock: 4,
   },
   navInner: {
     position: 'relative',
@@ -282,8 +394,52 @@ const styles: Record<string, CSSProperties> = {
     color: 'var(--color-text-primary)',
     textAlign: 'left',
   },
+  // ---- layered atmosphere (aurora blobs + grain, behind content) ----
+  atmosBand: {
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  atmosLayer: {
+    position: 'absolute',
+    inset: 0,
+    pointerEvents: 'none',
+  },
+  aurora: {
+    position: 'absolute',
+    borderRadius: '50%',
+    filter: 'blur(90px)',
+    pointerEvents: 'none',
+  },
+  grain: {
+    position: 'absolute',
+    inset: 0,
+    backgroundImage: GRAIN,
+    opacity: 0.04,
+    pointerEvents: 'none',
+  },
+  bandContent: {
+    position: 'relative',
+    zIndex: 1,
+  },
+  // ---- eyebrow chip (11px tracked uppercase, accent-tinted) ----
+  eyebrow: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+    padding: '4px 10px',
+    borderRadius: 999,
+    backgroundColor: ACCENT_SOFT,
+    border: `1px solid ${ACCENT_BORDER}`,
+    color: ACCENT,
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: '0.09em',
+    textTransform: 'uppercase',
+    whiteSpace: 'nowrap',
+  },
   // ---- hero ----
   heroRow: {
+    position: 'relative',
     display: 'flex',
     gap: 'var(--spacing-8)',
     alignItems: 'center',
@@ -302,22 +458,214 @@ const styles: Record<string, CSSProperties> = {
     flexDirection: 'column',
     gap: 'var(--spacing-4)',
   },
+  // Display size is tiered inline from the measured width (72 → 38px).
   heroHeadline: {
-    fontSize: 46,
     fontWeight: 700,
-    lineHeight: 1.08,
+    lineHeight: 1.04,
+    letterSpacing: '-0.03em',
+    margin: 0,
+  },
+  gradientInk: {
+    backgroundImage: `linear-gradient(94deg, ${ACCENT} 8%, color-mix(in srgb, ${ACCENT} 52%, ${SUCCESS}) 96%)`,
+    WebkitBackgroundClip: 'text',
+    backgroundClip: 'text',
+    color: 'transparent',
+    WebkitTextFillColor: 'transparent',
+  },
+  heroSubcopy: {
+    fontSize: 18,
+    lineHeight: 1.55,
+    color: 'var(--color-text-secondary)',
+    maxWidth: '56ch',
+    margin: 0,
+  },
+  // ---- section headings (32-44px tier) ----
+  sectionHeading: {
+    fontWeight: 700,
+    lineHeight: 1.12,
     letterSpacing: '-0.02em',
     margin: 0,
   },
-  heroHeadlineCompact: {
-    fontSize: 31,
+  // ---- hero satellites (floating mini-cards over the card theater) ----
+  // Wrapper carries the pointer-parallax transform; the inner card
+  // carries the bob keyframe so the two transforms never fight.
+  satWrap: {
+    position: 'absolute',
+    zIndex: 3,
+    pointerEvents: 'none',
   },
-  heroSubcopy: {
-    fontSize: 17,
-    lineHeight: 1.55,
+  satellite: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    padding: '10px 12px',
+    borderRadius: 12,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_FLOATING,
+    whiteSpace: 'nowrap',
+  },
+  satelliteDisc: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  satTitle: {
+    fontSize: 12,
+    fontWeight: 700,
+    lineHeight: 1.2,
+  },
+  satMeta: {
+    fontSize: 11,
     color: 'var(--color-text-secondary)',
-    maxWidth: 520,
+    lineHeight: 1.2,
+  },
+  cardGlow: {
+    position: 'absolute',
+    left: '10%',
+    right: '10%',
+    bottom: -34,
+    height: 70,
+    borderRadius: '50%',
+    backgroundImage: `radial-gradient(closest-side, ${AURORA_A}, transparent 72%)`,
+    filter: 'blur(28px)',
+    pointerEvents: 'none',
+  },
+  // ---- pinned scroll story (card controls) ----
+  storyStage: {
+    position: 'sticky',
+    top: NAV_ALLOWANCE,
+    display: 'flex',
+    alignItems: 'center',
+    boxSizing: 'border-box',
+  },
+  storyGrid: {
+    width: '100%',
+    display: 'flex',
+    gap: 'var(--spacing-8)',
+    alignItems: 'center',
+  },
+  storyRailCol: {
+    flex: '5 1 0',
+    minWidth: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-4)',
+  },
+  storyPanelCol: {
+    flex: '7 1 0',
+    minWidth: 0,
+    position: 'relative',
+    minHeight: 440,
+  },
+  storyPanel: {
+    position: 'absolute',
+    inset: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-4)',
+    justifyContent: 'center',
+  },
+  storySteps: {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-2)',
+    paddingLeft: 22,
+  },
+  storyTrack: {
+    position: 'absolute',
+    left: 6,
+    top: 10,
+    bottom: 10,
+    width: 2,
+    borderRadius: 1,
+    backgroundColor: 'var(--color-border)',
+    overflow: 'hidden',
+  },
+  storyFill: {
+    position: 'absolute',
+    inset: 0,
+    backgroundColor: ACCENT,
+    transformOrigin: 'top',
+  },
+  storyStep: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 4,
+    padding: 'var(--spacing-2) var(--spacing-3)',
+    borderRadius: 12,
+    border: '1px solid transparent',
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+    textAlign: 'left',
+    color: 'var(--color-text-primary)',
+    transition: 'opacity 0.3s ease, background-color 0.3s ease',
+  },
+  storyStepActive: {
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_RAISED,
+  },
+  storyStepNumber: {
+    fontFamily: MONO,
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: '0.08em',
+    color: 'var(--color-text-secondary)',
+  },
+  storyStepTitle: {
+    fontSize: 16,
+    fontWeight: 700,
+    lineHeight: 1.25,
+  },
+  storyStepCopy: {
+    fontSize: 13,
+    lineHeight: 1.5,
+    color: 'var(--color-text-secondary)',
     margin: 0,
+  },
+  // ---- oversized fee numeral ----
+  feeZeroNumeral: {
+    fontSize: 112,
+    fontWeight: 750,
+    lineHeight: 1,
+    letterSpacing: '-0.04em',
+    fontVariantNumeric: 'tabular-nums',
+  },
+  // ---- stat cards (straddle the feed → rewards boundary) ----
+  statCard: {
+    borderRadius: 14,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_RAISED,
+    padding: 'var(--spacing-4)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-1)',
+  },
+  // ---- dark-section furniture ----
+  spotlight: {
+    position: 'absolute',
+    inset: 0,
+    pointerEvents: 'none',
+    backgroundImage: `radial-gradient(340px circle at var(--fcl-mx, 50%) var(--fcl-my, 20%), color-mix(in srgb, ${ACCENT} 20%, transparent), transparent 70%)`,
+  },
+  glassChip: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+    padding: '6px 12px',
+    borderRadius: 999,
+    backgroundColor: CHIP_BG,
+    boxShadow: `inset 0 0 0 1px ${CHIP_BORDER}, ${SHADOW_RAISED}`,
+    fontSize: 13,
+    fontWeight: 600,
+    whiteSpace: 'nowrap',
   },
   emailRow: {
     display: 'flex',
@@ -360,6 +708,7 @@ const styles: Record<string, CSSProperties> = {
   },
   // ---- the signature card render ----
   cardStage: {
+    position: 'relative',
     flex: '1 1 0',
     minWidth: 0,
     display: 'flex',
@@ -490,7 +839,7 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 14,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
-    boxShadow: 'var(--shadow-med)',
+    boxShadow: SHADOW_RAISED,
     padding: 'var(--spacing-4)',
     display: 'flex',
     flexDirection: 'column',
@@ -577,12 +926,19 @@ const styles: Record<string, CSSProperties> = {
     borderTop: '1px solid var(--color-border)',
     borderBottom: '1px solid var(--color-border)',
   },
+  // Hairline dot-grid texture layer for the fee band.
+  dotGrid: {
+    backgroundImage:
+      'radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--color-text-primary) 8%, transparent) 1px, transparent 1.4px)',
+    backgroundSize: '22px 22px',
+  },
   // ---- fee comparison table ----
   feeScroller: {
     overflowX: 'auto',
     borderRadius: 14,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_FLOATING,
   },
   feeGrid: {
     minWidth: 560,
@@ -619,6 +975,7 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 14,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_RAISED,
     overflow: 'hidden',
   },
   feedRow: {
@@ -690,17 +1047,20 @@ const styles: Record<string, CSSProperties> = {
     maxWidth: 860,
   },
   // ---- final CTA + footer (scheme-locked dark surfaces) ----
+  // Signature scheme-locked dark section: vibrant glows + glass chrome.
   finalCta: {
     position: 'relative',
     overflow: 'hidden',
     colorScheme: 'dark',
     color: DARK_TEXT,
-    borderRadius: 16,
+    borderRadius: 20,
     backgroundImage: [
-      'radial-gradient(70% 90% at 50% 0%, rgba(45, 212, 191, 0.32), transparent 60%)',
+      'radial-gradient(70% 90% at 50% 0%, rgba(45, 212, 191, 0.36), transparent 60%)',
+      'radial-gradient(50% 70% at 12% 100%, rgba(94, 234, 212, 0.18), transparent 55%)',
       'linear-gradient(180deg, #071E1C 0%, #0E3A36 100%)',
     ].join(', '),
-    padding: 'var(--spacing-8) var(--spacing-6)',
+    boxShadow: `inset 0 0 0 1px ${CHIP_BORDER}, ${SHADOW_FLOATING}`,
+    padding: '72px var(--spacing-8)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -711,26 +1071,14 @@ const styles: Record<string, CSSProperties> = {
     padding: 'var(--spacing-6) var(--spacing-4)',
   },
   finalHeadline: {
-    fontSize: 32,
+    fontSize: 42,
     fontWeight: 700,
-    lineHeight: 1.2,
+    lineHeight: 1.1,
     letterSpacing: '-0.02em',
     margin: 0,
   },
   finalHeadlineCompact: {
-    fontSize: 24,
-  },
-  metricChip: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 6,
-    padding: '4px 12px',
-    borderRadius: 999,
-    backgroundColor: CHIP_BG,
-    border: `1px solid ${CHIP_BORDER}`,
-    fontSize: 13,
-    fontWeight: 600,
-    whiteSpace: 'nowrap',
+    fontSize: 26,
   },
   footer: {
     colorScheme: 'dark',
@@ -785,7 +1133,9 @@ const NAV_ANCHORS: readonly {id: SectionId; label: string}[] = [
 
 const HERO = {
   kicker: 'Corporate cards + spend management',
-  headline: 'The company card that closes the books itself',
+  /** Lead + gradient-ink phrase compose the display headline. */
+  headlineLead: 'The company card that',
+  headlineInk: 'closes the books itself',
   subcopy:
     'Issue a card in 38 seconds, set limits that enforce themselves, and ' +
     'let Keel match every receipt before your accountants have to ask. ' +
@@ -1087,11 +1437,16 @@ const EMPTY_EMAIL_FORM: EmailFormState = {
 };
 
 /**
- * Page-width measurement (demo-stage quirk: viewport media queries never
- * fire in the inline ~1045px stage, so breakpoints derive from this).
+ * Page measurement — the useElementWidth ResizeObserver pattern, extended
+ * with height for the pinned-story math (demo-stage quirk: viewport media
+ * queries never fire in the inline ~1045px stage, so breakpoints derive
+ * from this, and the story's "viewport" is the measured stage height).
  */
-function useElementWidth(ref: RefObject<HTMLDivElement | null>): number {
-  const [width, setWidth] = useState(0);
+function useElementSize(ref: RefObject<HTMLDivElement | null>): {
+  width: number;
+  height: number;
+} {
+  const [size, setSize] = useState({width: 0, height: 0});
   useEffect(() => {
     const element = ref.current;
     if (element == null) {
@@ -1100,13 +1455,13 @@ function useElementWidth(ref: RefObject<HTMLDivElement | null>): number {
     const observer = new ResizeObserver(entries => {
       const rect = entries[0]?.contentRect;
       if (rect != null) {
-        setWidth(rect.width);
+        setSize({width: rect.width, height: rect.height});
       }
     });
     observer.observe(element);
     return () => observer.disconnect();
   }, [ref]);
-  return width;
+  return size;
 }
 
 /** Motion gate: reveals render visible and counters render final when set. */
@@ -1125,7 +1480,11 @@ function usePrefersReducedMotion(): boolean {
 
 // ============= MOTION PIECES =============
 
-/** Scroll-reveal: fires once, 12px rise + fade; visible under reduced motion. */
+/**
+ * Scroll-reveal: fires once — 16px rise + 0.985 scale settle over ~600ms
+ * decelerate; grouped call sites stagger via `delay`. Visible under
+ * reduced motion.
+ */
 function Reveal({
   children,
   delay = 0,
@@ -1163,8 +1522,8 @@ function Reveal({
       ref={ref}
       style={{
         opacity: isShown ? 1 : 0,
-        transform: isShown ? 'none' : 'translateY(12px)',
-        transition: `opacity 0.55s ease ${delay}ms, transform 0.55s ease ${delay}ms`,
+        transform: isShown ? 'none' : 'translateY(16px) scale(0.985)',
+        transition: `opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1) ${delay}ms, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) ${delay}ms`,
       }}>
       {children}
     </div>
@@ -1225,7 +1584,7 @@ function CountUpNumber({
     }
     const from = displayRef.current;
     const startedAt = performance.now();
-    const duration = 700;
+    const duration = 900;
     let frame = 0;
     const tick = (now: number) => {
       const t = Math.min(1, (now - startedAt) / duration);
@@ -1276,20 +1635,40 @@ function CheckBullet({label}: {label: string}) {
   );
 }
 
+/** 11px tracked-uppercase accent eyebrow chip. */
+function Eyebrow({label}: {label: string}) {
+  return <span style={styles.eyebrow}>{label}</span>;
+}
+
 function SectionIntro({
   kicker,
   title,
   description,
+  isCompact,
+  align = 'center',
 }: {
   kicker: string;
   title: string;
   description: string;
+  isCompact: boolean;
+  align?: 'center' | 'start';
 }) {
   return (
-    <VStack gap={2} hAlign="center">
-      <Token label={kicker} size="sm" color="teal" />
-      <Heading level={2}>{title}</Heading>
-      <Text type="supporting" color="secondary" justify="center">
+    <VStack gap={3} hAlign={align}>
+      <Eyebrow label={kicker} />
+      <h2
+        style={{
+          ...styles.sectionHeading,
+          fontSize: isCompact ? 28 : 38,
+          textAlign: align === 'center' ? 'center' : 'left',
+        }}>
+        {title}
+      </h2>
+      <Text
+        type="supporting"
+        color="secondary"
+        justify={align === 'center' ? 'center' : undefined}
+        style={{maxWidth: '56ch'}}>
         {description}
       </Text>
     </VStack>
@@ -1301,6 +1680,7 @@ function ControlVignette({variant}: {variant: ControlFeature['vignette']}) {
   if (variant === 'freeze') {
     return (
       <div
+        className="fcl-raise"
         style={styles.vignette}
         role="img"
         aria-label="Schematic of the freeze control declining a charge on a frozen card">
@@ -1376,6 +1756,7 @@ function ControlVignette({variant}: {variant: ControlFeature['vignette']}) {
     ];
     return (
       <div
+        className="fcl-raise"
         style={styles.vignette}
         role="img"
         aria-label="Schematic of per-merchant limits with usage meters">
@@ -1412,6 +1793,7 @@ function ControlVignette({variant}: {variant: ControlFeature['vignette']}) {
   }
   return (
     <div
+      className="fcl-raise"
       style={styles.vignette}
       role="img"
       aria-label="Schematic of a receipt auto-matching to a transaction">
@@ -1461,17 +1843,26 @@ function ControlVignette({variant}: {variant: ControlFeature['vignette']}) {
 // ============= PAGE =============
 
 export default function FintechCardLandingTemplate() {
-  // ---- responsive: measured page width, not viewport ----
+  // ---- responsive: measured page size, not viewport ----
   const wrapRef = useRef<HTMLDivElement | null>(null);
-  const wrapWidth = useElementWidth(wrapRef);
+  const {width: wrapWidth, height: stageHeight} = useElementSize(wrapRef);
   const isNavCollapsed = wrapWidth > 0 && wrapWidth <= 860;
   const isStacked = wrapWidth > 0 && wrapWidth <= 780;
   const isPhone = wrapWidth > 0 && wrapWidth <= 560;
+  /** Display type tiers: 72px at the full stage, never <56 at wide. */
+  const heroDisplaySize =
+    wrapWidth > 980 ? 72 : wrapWidth > 780 ? 58 : wrapWidth > 560 ? 46 : 38;
 
   const isReduced = usePrefersReducedMotion();
 
+  const columnStyle = {
+    ...styles.column,
+    ...(isPhone ? styles.columnCompact : null),
+  };
+
   // ---- navbar ----
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const navRef = useRef<HTMLElement | null>(null);
   const menuTriggerRef = useRef<HTMLButtonElement | null>(null);
 
@@ -1480,8 +1871,16 @@ export default function FintechCardLandingTemplate() {
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
   const [activeSection, setActiveSection] = useState<SectionId | null>(null);
 
-  // ---- signature card ----
+  // ---- pinned scroll story (card controls) ----
+  const storyRef = useRef<HTMLElement | null>(null);
+  const [storyProgress, setStoryProgress] = useState(0);
+  const isStoryStatic = isReduced || isStacked;
+  const storyStep =
+    storyProgress >= 0.999 ? 2 : Math.min(2, Math.floor(storyProgress * 3));
+
+  // ---- signature card + satellite parallax ----
   const [tilt, setTilt] = useState({x: 0, y: 0});
+  const [parallax, setParallax] = useState({x: 0, y: 0});
   const [isPointerOver, setIsPointerOver] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
   const [isFrozen, setIsFrozen] = useState(false);
@@ -1545,6 +1944,7 @@ export default function FintechCardLandingTemplate() {
 
   const onPageScroll = (event: UIEvent<HTMLDivElement>) => {
     const container = event.currentTarget;
+    setIsScrolled(container.scrollTop > 24);
     let active: SectionId | null = null;
     for (const anchor of NAV_ANCHORS) {
       const section = sectionRefs.current[anchor.id];
@@ -1556,6 +1956,63 @@ export default function FintechCardLandingTemplate() {
       }
     }
     setActiveSection(active);
+    // Pinned-story progress: container scrollTop vs the story wrapper's
+    // sticky travel, quantized to 1/200 to keep re-renders cheap.
+    const story = storyRef.current;
+    if (story !== null && !isStoryStatic) {
+      const travel = Math.max(1, story.offsetHeight - container.clientHeight);
+      const raw =
+        (container.scrollTop - (story.offsetTop - NAV_ALLOWANCE)) / travel;
+      setStoryProgress(
+        Math.round(Math.min(1, Math.max(0, raw)) * 200) / 200,
+      );
+    }
+  };
+
+  /** Button path into the pinned story: scroll to the step's segment. */
+  const jumpToStoryStep = (step: number) => {
+    const container = pageRef.current;
+    const story = storyRef.current;
+    if (container === null || story === null) {
+      return;
+    }
+    const travel = Math.max(1, story.offsetHeight - container.clientHeight);
+    container.scrollTo({
+      top: story.offsetTop - NAV_ALLOWANCE + ((step + 0.5) / 3) * travel,
+      behavior: isReduced ? 'auto' : 'smooth',
+    });
+  };
+
+  // Satellite parallax: drift ±8px toward the pointer over the hero row.
+  // Off under reduced motion and at stacked (touch-ish) widths.
+  const onHeroPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (isReduced || isStacked) {
+      return;
+    }
+    const rect = event.currentTarget.getBoundingClientRect();
+    setParallax({
+      x: ((event.clientX - rect.left) / rect.width - 0.5) * 16,
+      y: ((event.clientY - rect.top) / rect.height - 0.5) * 16,
+    });
+  };
+
+  const onHeroPointerLeave = () => setParallax({x: 0, y: 0});
+
+  // Dark-panel spotlight: CSS vars only — no re-render per pointer move.
+  const onCtaPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (isReduced) {
+      return;
+    }
+    const panel = event.currentTarget;
+    const rect = panel.getBoundingClientRect();
+    panel.style.setProperty(
+      '--fcl-mx',
+      `${(event.clientX - rect.left).toFixed(0)}px`,
+    );
+    panel.style.setProperty(
+      '--fcl-my',
+      `${(event.clientY - rect.top).toFixed(0)}px`,
+    );
   };
 
   const submitEmailForm = (
@@ -1604,12 +2061,14 @@ export default function FintechCardLandingTemplate() {
   // ============= CHROME =============
 
   const navCta = (
-    <Button
-      label="Get Keel"
-      variant="primary"
-      size={isNavCollapsed ? 'sm' : 'md'}
-      onClick={() => jumpToSection('get-started')}
-    />
+    <span className="fcl-shine">
+      <Button
+        label="Get Keel"
+        variant="primary"
+        size={isNavCollapsed ? 'sm' : 'md'}
+        onClick={() => jumpToSection('get-started')}
+      />
+    </span>
   );
 
   const mobileMenu = (
@@ -1639,8 +2098,18 @@ export default function FintechCardLandingTemplate() {
   );
 
   const navbar = (
-    <nav ref={navRef} style={styles.navBar} aria-label="Primary">
-      <div style={styles.navInner}>
+    <nav
+      ref={navRef}
+      style={{
+        ...styles.navBar,
+        ...(isScrolled ? styles.navBarScrolled : null),
+      }}
+      aria-label="Primary">
+      <div
+        style={{
+          ...styles.navInner,
+          ...(isScrolled ? styles.navInnerScrolled : null),
+        }}>
         <BrandMark />
         <StackItem size="fill">
           {!isNavCollapsed && (
@@ -1738,12 +2207,14 @@ export default function FintechCardLandingTemplate() {
               }
             />
           </div>
-          <Button
-            label="Open an account"
-            variant="primary"
-            icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
-            onClick={() => submitEmailForm(heroForm, setHeroForm)}
-          />
+          <span className="fcl-shine">
+            <Button
+              label="Open an account"
+              variant="primary"
+              icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
+              onClick={() => submitEmailForm(heroForm, setHeroForm)}
+            />
+          </span>
         </div>
         {heroForm.error !== null && (
           <p style={styles.emailError} role="alert">
@@ -1888,6 +2359,121 @@ export default function FintechCardLandingTemplate() {
     </div>
   );
 
+  // Satellite theater: bobbing mini-cards that parallax toward the
+  // pointer. Rendered only at split widths; bob pauses under reduced
+  // motion (parallax handlers are already gated to no-ops).
+  const satSpring = 'transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)';
+
+  const satellites = isStacked ? null : (
+    <>
+      <div
+        style={{
+          ...styles.satWrap,
+          top: -14,
+          left: -22,
+          transform: `translate3d(${(parallax.x * 1).toFixed(1)}px, ${(
+            parallax.y * 1
+          ).toFixed(1)}px, 0)`,
+          transition: satSpring,
+        }}
+        aria-hidden="true">
+        <div
+          style={{
+            ...styles.satellite,
+            animation: isReduced
+              ? undefined
+              : 'fcl-bob 7s ease-in-out -2.2s infinite',
+          }}>
+          <div
+            style={{
+              ...styles.satelliteDisc,
+              backgroundColor: SUCCESS_SOFT,
+              color: SUCCESS,
+            }}>
+            <Icon icon={CheckIcon} size="xsm" color="inherit" />
+          </div>
+          <VStack gap={0}>
+            <span style={styles.satTitle}>Receipt matched</span>
+            <span style={styles.satMeta}>Lumen Cloud · $1,284.00</span>
+          </VStack>
+        </div>
+      </div>
+      <div
+        style={{
+          ...styles.satWrap,
+          top: '36%',
+          right: -18,
+          transform: `translate3d(${(parallax.x * -0.7).toFixed(1)}px, ${(
+            parallax.y * -0.7
+          ).toFixed(1)}px, 0)`,
+          transition: satSpring,
+        }}
+        aria-hidden="true">
+        <div
+          style={{
+            ...styles.satellite,
+            animation: isReduced
+              ? undefined
+              : 'fcl-bob 8.5s ease-in-out -4.1s infinite',
+          }}>
+          <div
+            style={{
+              ...styles.satelliteDisc,
+              backgroundColor: WARNING_SOFT,
+              color: WARNING,
+            }}>
+            <Icon icon={SlidersHorizontalIcon} size="xsm" color="inherit" />
+          </div>
+          <VStack gap={1}>
+            <span style={styles.satTitle}>AdSprint · 92% of limit</span>
+            <div style={{...styles.meterTrack, width: 96, flex: 'none'}}>
+              <div
+                style={{
+                  width: '92%',
+                  height: '100%',
+                  borderRadius: 3,
+                  backgroundColor: WARNING,
+                }}
+              />
+            </div>
+          </VStack>
+        </div>
+      </div>
+      <div
+        style={{
+          ...styles.satWrap,
+          bottom: 34,
+          left: -30,
+          transform: `translate3d(${(parallax.x * 0.55).toFixed(1)}px, ${(
+            parallax.y * 0.55
+          ).toFixed(1)}px, 0)`,
+          transition: satSpring,
+        }}
+        aria-hidden="true">
+        <div
+          style={{
+            ...styles.satellite,
+            animation: isReduced
+              ? undefined
+              : 'fcl-bob 6.5s ease-in-out -1.3s infinite',
+          }}>
+          <div
+            style={{
+              ...styles.satelliteDisc,
+              backgroundColor: ACCENT_SOFT,
+              color: ACCENT,
+            }}>
+            <Icon icon={TrendingUpIcon} size="xsm" color="inherit" />
+          </div>
+          <VStack gap={0}>
+            <span style={styles.satTitle}>+$600 cashback</span>
+            <span style={styles.satMeta}>on $40k monthly spend</span>
+          </VStack>
+        </div>
+      </div>
+    </>
+  );
+
   const heroCard = (
     <div style={styles.cardStage}>
       {/* Signature moment: pointer tilt + click-to-flip. The div carries
@@ -1901,6 +2487,7 @@ export default function FintechCardLandingTemplate() {
         onPointerMove={onCardPointerMove}
         onPointerLeave={onCardPointerLeave}
         onClick={() => setIsFlipped(previous => !previous)}>
+        <div style={styles.cardGlow} aria-hidden="true" />
         <div
           style={{
             ...styles.cardInner,
@@ -1911,6 +2498,7 @@ export default function FintechCardLandingTemplate() {
           {cardBack}
         </div>
       </div>
+      {satellites}
       <HStack gap={2} vAlign="center" wrap="wrap" hAlign="center">
         <Button
           label={isFlipped ? 'Show card front' : 'Show card controls'}
@@ -1929,18 +2517,21 @@ export default function FintechCardLandingTemplate() {
       style={{
         ...styles.heroRow,
         ...(isStacked ? styles.heroRowStacked : null),
-      }}>
+      }}
+      onPointerMove={onHeroPointerMove}
+      onPointerLeave={onHeroPointerLeave}>
       <div style={styles.heroText}>
         <HStack gap={2} vAlign="center" wrap="wrap">
-          <Token label={HERO.kicker} size="sm" color="teal" />
+          <Eyebrow label={HERO.kicker} />
           <Badge variant="success" label="1.5% back on everything" />
         </HStack>
         <h1
           style={{
             ...styles.heroHeadline,
-            ...(isPhone ? styles.heroHeadlineCompact : null),
+            fontSize: heroDisplaySize,
           }}>
-          {HERO.headline}
+          {HERO.headlineLead}{' '}
+          <span style={styles.gradientInk}>{HERO.headlineInk}</span>
         </h1>
         <p style={styles.heroSubcopy}>{HERO.subcopy}</p>
         {heroEmailForm}
@@ -1954,13 +2545,19 @@ export default function FintechCardLandingTemplate() {
 
   // ============= SECTIONS =============
 
-  const controlsSection = (
+  // Theater needs headroom for the sticky stage; short stages (or reduced
+  // motion / stacked widths) get the static stacked sequence instead.
+  const canTheater = !isStoryStatic && stageHeight >= 620;
+
+  /** Static fallback: intro + three alternating feature rows. */
+  const controlsStatic = (
     <VStack gap={isStacked ? 6 : 8}>
       <Reveal isReduced={isReduced}>
         <SectionIntro
           kicker="Card controls"
           title="Controls that act at the network, not on the statement"
           description="Freeze, limit, and match from the same pane your team already lives in — every rule enforces itself at authorization time."
+          isCompact={isPhone}
         />
       </Reveal>
       {CONTROL_FEATURES.map((feature, index) => (
@@ -1975,7 +2572,7 @@ export default function FintechCardLandingTemplate() {
               <div style={styles.featureGlyph} aria-hidden="true">
                 <Icon icon={feature.icon} size="md" color="inherit" />
               </div>
-              <Token label={feature.kicker} size="sm" color="teal" />
+              <Eyebrow label={feature.kicker} />
               <Heading level={3}>{feature.title}</Heading>
               <Text type="body" color="secondary">
                 {feature.copy}
@@ -1995,17 +2592,185 @@ export default function FintechCardLandingTemplate() {
     </VStack>
   );
 
+  /**
+   * Pinned scroll story: a sticky stage inside a ~250vh wrapper. Scroll
+   * progress fills the step rail (scaleY — transform only) and advances
+   * three discrete vignette states; the numbered steps double as buttons.
+   */
+  const controlsStory = (
+    <section
+      ref={node => {
+        registerSection('controls')(node);
+        storyRef.current = node;
+      }}
+      aria-label="Card controls"
+      style={{
+        height: Math.round(stageHeight * STORY_LENGTH),
+      }}>
+      <div
+        style={{
+          ...styles.storyStage,
+          height: stageHeight - NAV_ALLOWANCE,
+        }}>
+        <div
+          style={{
+            ...columnStyle,
+            paddingBlock: 0,
+          }}>
+          <div style={styles.storyGrid}>
+            <div style={styles.storyRailCol}>
+              <div>
+                <Eyebrow label="Card controls" />
+              </div>
+              <h2 style={{...styles.sectionHeading, fontSize: 32}}>
+                Controls that act at the network, not on the statement
+              </h2>
+              <Text
+                type="supporting"
+                color="secondary"
+                style={{maxWidth: '56ch'}}>
+                Freeze, limit, and match from the same pane your team
+                already lives in — every rule enforces itself at
+                authorization time.
+              </Text>
+              <div style={styles.storySteps}>
+                <div style={styles.storyTrack} aria-hidden="true">
+                  <div
+                    style={{
+                      ...styles.storyFill,
+                      transform: `scaleY(${storyProgress.toFixed(3)})`,
+                    }}
+                  />
+                </div>
+                {CONTROL_FEATURES.map((feature, index) => {
+                  const isActiveStep = storyStep === index;
+                  return (
+                    <button
+                      key={feature.id}
+                      type="button"
+                      aria-current={isActiveStep ? 'step' : undefined}
+                      style={{
+                        ...styles.storyStep,
+                        ...(isActiveStep ? styles.storyStepActive : null),
+                        opacity: isActiveStep ? 1 : 0.55,
+                      }}
+                      onClick={() => jumpToStoryStep(index)}>
+                      <span
+                        style={{
+                          ...styles.storyStepNumber,
+                          ...(isActiveStep ? {color: ACCENT} : null),
+                        }}>
+                        {`0${index + 1} · ${feature.kicker}`}
+                      </span>
+                      <span style={styles.storyStepTitle}>
+                        {feature.title}
+                      </span>
+                      {isActiveStep && (
+                        <span
+                          style={{...styles.storyStepCopy, display: 'block'}}>
+                          {feature.copy}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div style={styles.storyPanelCol}>
+              {CONTROL_FEATURES.map((feature, index) => {
+                const panelState =
+                  index === storyStep
+                    ? 'active'
+                    : index < storyStep
+                      ? 'past'
+                      : 'future';
+                return (
+                  <div
+                    key={feature.id}
+                    aria-hidden={panelState !== 'active'}
+                    style={{
+                      ...styles.storyPanel,
+                      opacity: panelState === 'active' ? 1 : 0,
+                      transform:
+                        panelState === 'active'
+                          ? 'none'
+                          : panelState === 'past'
+                            ? 'translateY(-18px) scale(0.985)'
+                            : 'translateY(18px) scale(0.985)',
+                      transition:
+                        'opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
+                      pointerEvents:
+                        panelState === 'active' ? 'auto' : 'none',
+                    }}>
+                    <ControlVignette variant={feature.vignette} />
+                    <VStack gap={2}>
+                      {feature.bullets.map(bullet => (
+                        <CheckBullet key={bullet} label={bullet} />
+                      ))}
+                    </VStack>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+
+  // Asymmetric 5/7 split: a sticky intro rail with an oversized gradient
+  // "$0" numeral beside the scrolling comparison table.
   const feesSection = (
-    <VStack gap={4}>
-      <Reveal isReduced={isReduced}>
-        <SectionIntro
-          kicker="Fees"
-          title="The fee schedule fits in one table"
-          description="Six line items, five of them zero. Compare against what a business bank actually charges."
-        />
-      </Reveal>
-      <Reveal isReduced={isReduced} delay={80}>
-        <div style={styles.feeScroller}>
+    <div
+      style={{
+        display: 'flex',
+        gap: 'var(--spacing-8)',
+        alignItems: 'flex-start',
+        flexDirection: isStacked ? 'column' : 'row',
+      }}>
+      <div
+        style={{
+          flex: '5 1 0',
+          minWidth: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--spacing-4)',
+          ...(isStacked
+            ? null
+            : {position: 'sticky' as const, top: NAV_ALLOWANCE + 24}),
+        }}>
+        <Reveal isReduced={isReduced}>
+          <SectionIntro
+            kicker="Fees"
+            title="The fee schedule fits in one table"
+            description="Six line items, five of them zero. Compare against what a business bank actually charges."
+            isCompact={isPhone}
+            align="start"
+          />
+        </Reveal>
+        <Reveal isReduced={isReduced} delay={70}>
+          <VStack gap={1}>
+            <span
+              style={{
+                ...styles.feeZeroNumeral,
+                ...styles.gradientInk,
+                fontSize: isPhone ? 72 : 112,
+              }}
+              aria-hidden="true">
+              $0
+            </span>
+            <Text type="supporting" color="secondary">
+              Monthly fee. Card issuance. ACH. Wires. Late fees.
+            </Text>
+          </VStack>
+        </Reveal>
+        <Reveal isReduced={isReduced} delay={140}>
+          <p style={styles.finePrint}>{FEE_FOOTNOTE}</p>
+        </Reveal>
+      </div>
+      <div style={{flex: '7 1 0', minWidth: 0, width: '100%'}}>
+        <Reveal isReduced={isReduced} delay={80}>
+          <div style={styles.feeScroller}>
           <div
             style={styles.feeGrid}
             role="table"
@@ -2075,11 +2840,9 @@ export default function FintechCardLandingTemplate() {
             })}
           </div>
         </div>
-      </Reveal>
-      <Text type="supporting" color="secondary">
-        {FEE_FOOTNOTE}
-      </Text>
-    </VStack>
+        </Reveal>
+      </div>
+    </div>
   );
 
   const feedSection = (
@@ -2089,6 +2852,7 @@ export default function FintechCardLandingTemplate() {
           kicker="Real-time feed"
           title="Spend shows up before the receipt hits the table"
           description="Every authorization streams into the feed with its cardholder, category, and match status — no waiting for the statement."
+          isCompact={isPhone}
         />
       </Reveal>
       <div style={styles.feedCard}>
@@ -2138,23 +2902,33 @@ export default function FintechCardLandingTemplate() {
           </Reveal>
         ))}
       </div>
-      <Grid columns={{minWidth: 200, max: 3}} gap={3}>
-        {STATS.map(stat => (
-          <Card key={stat.id} padding={4}>
-            <VStack gap={1}>
-              <CountUpNumber
-                value={stat.target}
-                format={stat.format}
-                isReduced={isReduced}
-                style={styles.statValue}
-              />
-              <Text type="supporting" color="secondary">
-                {stat.caption}
-              </Text>
-            </VStack>
-          </Card>
-        ))}
-      </Grid>
+      {/* These stat cards deliberately straddle the boundary into the
+          rewards band below: negative bottom margin + zIndex here, extra
+          top padding on the rewards column. */}
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 2,
+          marginBottom: isPhone ? -96 : -152,
+        }}>
+        <Grid columns={{minWidth: 200, max: 3}} gap={3}>
+          {STATS.map((stat, index) => (
+            <Reveal key={stat.id} isReduced={isReduced} delay={index * 80}>
+              <div className="fcl-raise" style={styles.statCard}>
+                <CountUpNumber
+                  value={stat.target}
+                  format={stat.format}
+                  isReduced={isReduced}
+                  style={styles.statValue}
+                />
+                <Text type="supporting" color="secondary">
+                  {stat.caption}
+                </Text>
+              </div>
+            </Reveal>
+          ))}
+        </Grid>
+      </div>
     </VStack>
   );
 
@@ -2165,6 +2939,7 @@ export default function FintechCardLandingTemplate() {
           kicker="Rewards"
           title="1.5% back. No categories, no caps, no points math."
           description="Charge card, paid in full monthly — so there is no interest to calculate, only cashback. Drag the slider to see yours."
+          isCompact={isPhone}
         />
       </Reveal>
       <Reveal isReduced={isReduced} delay={80}>
@@ -2305,12 +3080,14 @@ export default function FintechCardLandingTemplate() {
               onChange={value => setCtaForm({...ctaForm, value, error: null})}
             />
           </div>
-          <Button
-            label="Get started"
-            variant="primary"
-            icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
-            onClick={() => submitEmailForm(ctaForm, setCtaForm)}
-          />
+          <span className="fcl-shine">
+            <Button
+              label="Get started"
+              variant="primary"
+              icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
+              onClick={() => submitEmailForm(ctaForm, setCtaForm)}
+            />
+          </span>
         </div>
         {ctaForm.error !== null && (
           <p
@@ -2322,38 +3099,59 @@ export default function FintechCardLandingTemplate() {
       </VStack>
     );
 
+  // Signature dark panel: gradient glows, grain, a pointer-tracked
+  // spotlight (CSS vars, no re-render), and glass proof chips.
   const finalCta = (
     <div
       style={{
         ...styles.finalCta,
         ...(isPhone ? styles.finalCtaCompact : null),
-      }}>
-      <span style={styles.metricChip}>
-        <Icon icon={ZapIcon} size="xsm" color="inherit" />
-        Apply in 10 minutes · cards the same day
-      </span>
-      <h2
+      }}
+      onPointerMove={onCtaPointerMove}>
+      <div style={styles.grain} aria-hidden="true" />
+      {!isReduced && <div style={styles.spotlight} aria-hidden="true" />}
+      <div
         style={{
-          ...styles.finalHeadline,
-          ...(isPhone ? styles.finalHeadlineCompact : null),
+          position: 'relative',
+          zIndex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 'var(--spacing-4)',
+          width: '100%',
         }}>
-        Put the books on autopilot
-      </h2>
-      <Text
-        type="body"
-        color="inherit"
-        justify="center"
-        style={{color: DARK_TEXT_SOFT, maxWidth: 560}}>
-        Connect your ledger, issue your first card, and watch the first
-        receipt match itself. Month-end will feel suspiciously quiet.
-      </Text>
-      {ctaEmailForm}
-      <Text
-        type="supporting"
-        color="inherit"
-        style={{color: DARK_TEXT_FAINT}}>
-        {HERO.finePrint}
-      </Text>
+        <span style={styles.glassChip}>
+          <Icon icon={ZapIcon} size="xsm" color="inherit" />
+          Apply in 10 minutes · cards the same day
+        </span>
+        <h2
+          style={{
+            ...styles.finalHeadline,
+            ...(isPhone ? styles.finalHeadlineCompact : null),
+          }}>
+          Put the books on autopilot
+        </h2>
+        <Text
+          type="body"
+          color="inherit"
+          justify="center"
+          style={{color: DARK_TEXT_SOFT, maxWidth: 560}}>
+          Connect your ledger, issue your first card, and watch the first
+          receipt match itself. Month-end will feel suspiciously quiet.
+        </Text>
+        {ctaEmailForm}
+        <HStack gap={2} vAlign="center" wrap="wrap" hAlign="center">
+          <span style={styles.glassChip}>38s to issue a card</span>
+          <span style={styles.glassChip}>96% receipts auto-matched</span>
+          <span style={styles.glassChip}>$0 monthly fee</span>
+        </HStack>
+        <Text
+          type="supporting"
+          color="inherit"
+          style={{color: DARK_TEXT_FAINT}}>
+          {HERO.finePrint}
+        </Text>
+      </div>
     </div>
   );
 
@@ -2487,43 +3285,146 @@ export default function FintechCardLandingTemplate() {
 
   // ============= FRAME =============
 
-  const columnStyle = {
-    ...styles.column,
-    ...(isPhone ? styles.columnCompact : null),
-  };
-
   return (
-    <div ref={wrapRef} style={{height: '100%'}}>
+    <div
+      ref={wrapRef}
+      className={isReduced ? 'fcl-root fcl-reduced' : 'fcl-root'}
+      style={{height: '100%'}}>
+      <style>{FCL_CSS}</style>
       <Layout
         height="fill"
         content={
           <LayoutContent padding={0} role="main" label="Keel landing page">
             <div ref={pageRef} style={styles.page} onScroll={onPageScroll}>
               {navbar}
-              {/* plain band: hero */}
-              <div style={columnStyle}>{hero}</div>
-              {/* plain band: card controls */}
-              <section
-                ref={registerSection('controls')}
-                aria-label="Card controls">
-                <div style={columnStyle}>{controlsSection}</div>
-              </section>
-              {/* full-bleed tinted band: fees */}
+              {/* aurora-lit plain band: hero (blobs drift on 38-44s
+                  keyframes, static under reduced motion; grain on top) */}
+              <div style={styles.atmosBand}>
+                <div style={styles.atmosLayer} aria-hidden="true">
+                  <div
+                    style={{
+                      ...styles.aurora,
+                      width: 520,
+                      height: 520,
+                      top: -180,
+                      left: -140,
+                      opacity: 0.5,
+                      backgroundImage: `radial-gradient(closest-side, ${AURORA_A}, transparent 70%)`,
+                      animation: isReduced
+                        ? undefined
+                        : 'fcl-drift-a 38s ease-in-out infinite',
+                    }}
+                  />
+                  <div
+                    style={{
+                      ...styles.aurora,
+                      width: 420,
+                      height: 420,
+                      top: -60,
+                      right: -120,
+                      opacity: 0.45,
+                      backgroundImage: `radial-gradient(closest-side, ${AURORA_B}, transparent 70%)`,
+                      animation: isReduced
+                        ? undefined
+                        : 'fcl-drift-b 44s ease-in-out -12s infinite',
+                    }}
+                  />
+                  <div
+                    style={{
+                      ...styles.aurora,
+                      width: 360,
+                      height: 360,
+                      bottom: -140,
+                      left: '38%',
+                      opacity: 0.35,
+                      backgroundImage: `radial-gradient(closest-side, ${AURORA_B}, transparent 70%)`,
+                      animation: isReduced
+                        ? undefined
+                        : 'fcl-drift-a 42s ease-in-out -20s infinite',
+                    }}
+                  />
+                  <div style={styles.grain} />
+                </div>
+                <div
+                  style={{
+                    ...columnStyle,
+                    ...styles.bandContent,
+                    paddingTop: isPhone ? 24 : 48,
+                  }}>
+                  {hero}
+                </div>
+              </div>
+              {/* plain band: card controls — pinned scroll story at full
+                  stages, static stacked sequence when reduced/compact */}
+              {canTheater ? (
+                controlsStory
+              ) : (
+                <section
+                  ref={registerSection('controls')}
+                  aria-label="Card controls">
+                  <div style={columnStyle}>{controlsStatic}</div>
+                </section>
+              )}
+              {/* full-bleed tinted band: fees (dot-grid texture) */}
               <section ref={registerSection('fees')} aria-label="Fees">
-                <div style={styles.tintedBand}>
-                  <div style={columnStyle}>{feesSection}</div>
+                <div style={{...styles.tintedBand, ...styles.atmosBand}}>
+                  <div
+                    style={{...styles.atmosLayer, ...styles.dotGrid}}
+                    aria-hidden="true"
+                  />
+                  <div style={{...columnStyle, ...styles.bandContent}}>
+                    {feesSection}
+                  </div>
                 </div>
               </section>
-              {/* plain band: live spend feed + stats */}
+              {/* plain band: live spend feed + boundary-crossing stats */}
               <section
                 ref={registerSection('feed')}
                 aria-label="Real-time spend feed">
                 <div style={columnStyle}>{feedSection}</div>
               </section>
-              {/* full-bleed tinted band: rewards calculator */}
+              {/* aurora-lit tinted band: rewards calculator (extra top
+                  padding hosts the stat cards straddling the boundary) */}
               <section ref={registerSection('rewards')} aria-label="Rewards">
-                <div style={styles.tintedBand}>
-                  <div style={columnStyle}>{rewardsSection}</div>
+                <div style={{...styles.tintedBand, ...styles.atmosBand}}>
+                  <div style={styles.atmosLayer} aria-hidden="true">
+                    <div
+                      style={{
+                        ...styles.aurora,
+                        width: 460,
+                        height: 460,
+                        top: -120,
+                        right: -140,
+                        opacity: 0.4,
+                        backgroundImage: `radial-gradient(closest-side, ${AURORA_A}, transparent 70%)`,
+                        animation: isReduced
+                          ? undefined
+                          : 'fcl-drift-b 40s ease-in-out -6s infinite',
+                      }}
+                    />
+                    <div
+                      style={{
+                        ...styles.aurora,
+                        width: 380,
+                        height: 380,
+                        bottom: -160,
+                        left: -120,
+                        opacity: 0.35,
+                        backgroundImage: `radial-gradient(closest-side, ${AURORA_B}, transparent 70%)`,
+                        animation: isReduced
+                          ? undefined
+                          : 'fcl-drift-a 36s ease-in-out -18s infinite',
+                      }}
+                    />
+                  </div>
+                  <div
+                    style={{
+                      ...columnStyle,
+                      ...styles.bandContent,
+                      paddingTop: isPhone ? 128 : 192,
+                    }}>
+                    {rewardsSection}
+                  </div>
                 </div>
               </section>
               {/* compliance small print */}

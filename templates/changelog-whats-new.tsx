@@ -11,20 +11,28 @@
  *   tagged bullet items; one entry carries a schematic reconciliation
  *   screenshot, one carries a draggable before/after editor comparison,
  *   and one is a Breaking release with a warning callout and a diff-style
- *   migration snippet; the last four entries sit behind a Load-more)
- * @output Full public changelog page: sticky navbar (brand mark, three
- *   smooth-scrolling anchor links with scroll-spy, an Open-app CTA, and a
- *   hamburger dropdown at compact widths), an accent-tinted header band
- *   with title, count-up stats, a validating subscribe-by-email capture,
- *   an RSS-copy chip, and New/Improved/Fixed/Security ToggleButtons that
- *   live-filter the entry list (per-tag counts, a Showing-N summary, a
- *   Clear action, and an EmptyState when nothing matches), month-grouped
- *   entries with sticky month labels, per-entry version chips, tag Badges
- *   and bullet lists, two media blocks (schematic screenshot + a draggable
- *   before/after slider with button and keyboard fallbacks), a Breaking
- *   callout with a CodeBlock migration diff, a staggered Load-more reveal
- *   of four older releases, a tinted subscribe band, and a footer linking
- *   to docs and status. Every reveal, count-up, and slide is gated by
+ *   migration snippet; the last four entries sit behind a Load-more; plus
+ *   a three-step release-pipeline story with per-step schematic mocks)
+ * @output Art-directed public changelog page: a nav that starts transparent
+ *   over the hero and condenses to a tinted hairline bar after 24px of
+ *   scroll (brand mark, three smooth-scrolling anchor links with
+ *   scroll-spy, an Open-app CTA with a hover sheen, and a hamburger
+ *   dropdown at compact widths); a product-theater hero under a drifting
+ *   aurora field and grain texture — display headline with a gradient-ink
+ *   phrase, count-up stats, a validating subscribe capture, an RSS-copy
+ *   chip, and a perspective-staged "release console" mock orbited by three
+ *   bobbing satellite cards that parallax toward the pointer; a floating
+ *   filter toolbar (New/Improved/Fixed/Security ToggleButtons with per-tag
+ *   counts, Showing-N summary, Clear) that bleeds across the hero/entries
+ *   boundary and live-filters the month-grouped entries (sticky month
+ *   labels, version chips, tag Badges, two media blocks, the Breaking
+ *   callout with a CodeBlock migration diff, a staggered Load-more, and an
+ *   EmptyState fallback); a pinned scroll-story section where progress
+ *   through a tall band advances a three-state release-pipeline mock with
+ *   a clickable oversized-numeral step rail; a scheme-locked dark
+ *   subscribe band with glass cards, gradient glows, and a
+ *   pointer-tracked spotlight; and a footer linking to docs and status.
+ *   Every reveal, count-up, drift, bob, and slide is gated by
  *   prefers-reduced-motion; every CTA fires a receipt Toast.
  * @position Page template; emitted by `astryx template changelog-whats-new`
  *
@@ -32,10 +40,13 @@
  * own chrome, so there is no LayoutHeader. LayoutContent (padding 0) hosts
  * a measured wrapper (useElementWidth ResizeObserver — the inline demo
  * stage is ~1045px, so viewport media queries never fire there) around a
- * single scroll container; inside it the navbar is position:sticky top:0,
- * month labels are sticky just below it, and a centered 1080px column
- * carries the entries between full-bleed tinted header and subscribe
- * bands. The Toast sits fixed bottom-right.
+ * single scroll container; inside it the navbar is position:sticky top:0
+ * (transparent at rest, tinted after 24px), the hero band tucks under it
+ * with a negative margin, month labels are sticky just below it, and a
+ * centered 1120px column carries the entries. The pinned story is a
+ * sticky stage inside a tall container whose scroll progress is computed
+ * against the measured scroll-container height. The Toast sits fixed
+ * bottom-right.
  *
  * Interaction contract:
  * - Nav anchors (Latest / Breaking change / Subscribe) smooth-scroll the
@@ -55,33 +66,46 @@
  *   keys on the role="slider" handle (Home/End snap), and offers
  *   Before / Split / After buttons as a no-drag fallback. Reduced motion
  *   drops the settle transition, never the functionality.
+ * - The pipeline story pins its stage while scroll progress advances three
+ *   discrete mock states; the numbered steps are also buttons that jump
+ *   the scroll position. Under reduced motion (or where the container
+ *   cannot be measured) it renders as a static stacked sequence.
+ * - Hero satellites bob on independent negative-delay keyframes and
+ *   parallax ±8px toward the pointer; both are off under reduced motion
+ *   and at ≤720px widths.
  * - Load more appends four older releases; each rises in with a
  *   staggered delay (instant when reduced motion) and the button gives
  *   way to an end-of-archive note.
- * - Entry cards rise+fade 12px on first view via IntersectionObserver
- *   (rendered visible under reduced motion or where IO is unavailable);
- *   header stats count up on first view and snap under reduced motion.
+ * - Entry cards rise+fade on first view via IntersectionObserver with a
+ *   70ms sibling stagger (rendered visible under reduced motion or where
+ *   IO is unavailable); header stats roll up in ~900ms on first view and
+ *   snap under reduced motion.
  *
  * Color policy: token-pure with ONE quarantined accent literal (see
- * ACCENT below) whose soft washes are derived via color-mix so the hue
- * has a single source of truth. Status tints (warning callout, match
- * chips) use var(--color-*) tokens or explicit light-dark() pairs.
- * The brand tile paints white on the accent gradient — a deliberate
- * brand-art literal that reads identically in both themes.
+ * ACCENT below) whose washes, auroras, glows, and glass strokes are all
+ * derived via color-mix (with tokens or the white/black keywords) so the
+ * hue has a single source of truth. Status tints (warning callout, match
+ * chips) use var(--color-*) tokens or explicit light-dark() pairs. The
+ * brand tile and the scheme-locked dark band paint white-on-ink on
+ * purpose — deliberate brand art that reads identically in both themes.
  *
  * Responsive contract (element-width breakpoints, not viewport):
- * - >900px: entries are a 140px meta rail + body grid; header stats sit
- *   3-up; nav shows inline anchors + CTA.
+ * - >1000px: hero is a 7/5 copy + theater split with a 76px display
+ *   title; entries are a 140px meta rail + body grid; nav shows inline
+ *   anchors + CTA; the story stage is a 340px step rail beside the mock.
+ * - <=1000px: the theater drops below the hero copy; satellites tighten.
  * - <=900px: the entry rail folds into an inline meta row above each
  *   body; the media figures keep full width.
  * - <=720px: nav anchors collapse behind the hamburger dropdown; the
- *   filter row wraps; header stats wrap to two lines.
- * - <=560px: the page title steps down, both email forms stack the
+ *   filter toolbar wraps; parallax is disabled; the story rail stacks
+ *   above the mock viewport.
+ * - <=560px: the display title steps down, both email forms stack the
  *   button under the input, slider fallback buttons stretch full-width,
  *   and footer columns drop to a single column. Everything holds at
- *   390px in the phone artboard with no overflow-x.
- * - Tap targets: nav links, hamburger, and month rows are 40px+;
- *   nothing on the page requires hover.
+ *   390px in the phone artboard with no overflow-x (the scroll container
+ *   clips X).
+ * - Tap targets: nav links, hamburger, story steps, and month rows are
+ *   40px+; nothing on the page requires hover.
  */
 
 import {
@@ -117,9 +141,12 @@ import {
   CheckIcon,
   ChevronDownIcon,
   FilterXIcon,
+  GitMergeIcon,
   GripVerticalIcon,
   MailCheckIcon,
+  MegaphoneIcon,
   MenuIcon,
+  PenLineIcon,
   RssIcon,
   TriangleAlertIcon,
   XIcon,
@@ -130,22 +157,56 @@ import {
 /**
  * Quarantined accent literal — Ledgerline's "ledger green".
  * Contrast math: light #047857 on #FFFFFF ≈ 5.7:1 (AA for normal text
- * and UI); dark #34D399 on the ~#141A21 dark body ≈ 8.6:1. Every wash
- * and border below is color-mix-derived from this single literal so the
- * hue has exactly one source of truth; everything else on the page is
- * token-pure.
+ * and UI); dark #34D399 on the ~#141A21 dark body ≈ 8.6:1. Every wash,
+ * aurora, glow, and glass stroke below is color-mix-derived from this
+ * single literal (mixed with tokens or the white/black keywords) so the
+ * hue has exactly one source of truth; everything else is token-pure.
  */
 const ACCENT = 'light-dark(#047857, #34D399)';
 const ACCENT_WASH = `color-mix(in srgb, ${ACCENT} 7%, transparent)`;
 const ACCENT_SOFT = `color-mix(in srgb, ${ACCENT} 13%, transparent)`;
 const ACCENT_BORDER = `color-mix(in srgb, ${ACCENT} 32%, transparent)`;
 
+/** Aurora hues: the accent bent toward neighboring data/status tokens. */
+const AURORA_A = `color-mix(in srgb, ${ACCENT} 62%, var(--color-data-categorical-blue))`;
+const AURORA_B = `color-mix(in srgb, ${ACCENT} 55%, var(--color-success))`;
+const AURORA_C = `color-mix(in srgb, ${ACCENT} 70%, var(--color-data-categorical-teal))`;
+
+/** Scheme-locked ink for the signature dark band (identical both themes). */
+const INK = `color-mix(in srgb, ${ACCENT} 9%, black)`;
+const INK_GLASS = 'color-mix(in srgb, white 7%, transparent)';
+const INK_HAIRLINE = 'color-mix(in srgb, white 14%, transparent)';
+const INK_TEXT = 'color-mix(in srgb, white 96%, transparent)';
+const INK_TEXT_DIM = 'color-mix(in srgb, white 70%, transparent)';
+
+/** Depth tiers — used verbatim wherever a surface lifts off the page. */
+const SHADOW_RAISED =
+  '0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px -12px rgba(0, 0, 0, 0.18)';
+const SHADOW_FLOATING =
+  '0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px -12px rgba(0, 0, 0, 0.18), ' +
+  '0 24px 48px -24px rgba(0, 0, 0, 0.28)';
+const SHADOW_GLASS = `inset 0 0 0 1px ${INK_HAIRLINE}, 0 24px 48px -24px rgba(0, 0, 0, 0.55)`;
+
+/** Grain texture: inline SVG feTurbulence data-URI, painted at ~4%. */
+const GRAIN =
+  'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' ' +
+  'width=\'180\' height=\'180\'%3E%3Cfilter id=\'g\'%3E%3CfeTurbulence ' +
+  'type=\'fractalNoise\' baseFrequency=\'0.82\' numOctaves=\'2\' ' +
+  'stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'180\' ' +
+  'height=\'180\' filter=\'url(%23g)\' opacity=\'0.55\'/%3E%3C/svg%3E")';
+
 const MONO = 'var(--font-family-mono, ui-monospace, monospace)';
 
-/** Sticky-nav height; smooth-scroll, scroll-spy, and month labels allow for it. */
-const NAV_HEIGHT = 57;
-const NAV_ALLOWANCE = 72;
-const SPY_OFFSET = 140;
+/** Decelerate bezier shared by reveals, lifts, and the sticky nav. */
+const EASE_OUT = 'cubic-bezier(0.16, 1, 0.3, 1)';
+
+/** Condensed sticky-nav height; month labels + scroll math allow for it. */
+const NAV_HEIGHT = 61;
+const NAV_REST_HEIGHT = 77;
+const NAV_ALLOWANCE = 84;
+const SPY_OFFSET = 150;
+/** Offset at which the pinned story stage sticks under the nav. */
+const STORY_STICKY_TOP = NAV_HEIGHT + 16;
 
 // ============= STYLES =============
 
@@ -153,33 +214,44 @@ const styles: Record<string, CSSProperties> = {
   measure: {
     height: '100%',
   },
-  // Scroll container: owns scroll-spy and hosts the sticky navbar.
+  // Scroll container: owns scroll-spy, nav condensation, story progress.
   page: {
     position: 'relative',
     height: '100%',
     overflowY: 'auto',
+    overflowX: 'hidden',
     backgroundColor: 'var(--color-background-body)',
     color: 'var(--color-text-primary)',
   },
-  // ---- sticky navbar ----
+  // ---- sticky navbar (transparent at rest, tinted after 24px) ----
   navBar: {
     position: 'sticky',
     top: 0,
     zIndex: 30,
-    backgroundColor: 'var(--color-background-body)',
+    backgroundColor: 'transparent',
+    borderBottom: '1px solid transparent',
+    transition: `background-color 220ms ${EASE_OUT}, border-color 220ms ${EASE_OUT}`,
+  },
+  navBarScrolled: {
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-body) 92%, transparent)',
     borderBottom: '1px solid var(--color-border)',
   },
   navInner: {
     position: 'relative',
     width: '100%',
-    maxWidth: 1080,
+    maxWidth: 1120,
     marginInline: 'auto',
     boxSizing: 'border-box',
-    padding: 'var(--spacing-2) var(--spacing-4)',
+    padding: '10px var(--spacing-4)',
     display: 'flex',
     alignItems: 'center',
     gap: 'var(--spacing-2)',
     minHeight: 56,
+    transition: `padding 220ms ${EASE_OUT}`,
+  },
+  navInnerScrolled: {
+    padding: '2px var(--spacing-4)',
   },
   // Brand art: white monogram on the accent gradient — identical in both
   // themes on purpose (see Color policy in the header block).
@@ -192,6 +264,7 @@ const styles: Record<string, CSSProperties> = {
     justifyContent: 'center',
     borderRadius: 9,
     background: `linear-gradient(135deg, ${ACCENT}, color-mix(in srgb, ${ACCENT} 55%, black))`,
+    boxShadow: SHADOW_RAISED,
     color: 'white',
     fontSize: 16,
     fontWeight: 800,
@@ -254,8 +327,7 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 14,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-body)',
-    boxShadow:
-      'var(--shadow-high, 0 12px 32px light-dark(rgba(15, 23, 42, 0.18), rgba(0, 0, 0, 0.5)))',
+    boxShadow: SHADOW_FLOATING,
     padding: 'var(--spacing-3)',
     zIndex: 40,
     display: 'flex',
@@ -279,60 +351,109 @@ const styles: Record<string, CSSProperties> = {
     textAlign: 'left',
     fontFamily: 'inherit',
   },
-  // ---- header band (full-bleed accent tint) ----
-  headerBand: {
+  // ---- hero band (aurora field + grain + product theater) ----
+  heroBand: {
+    position: 'relative',
+    overflow: 'hidden',
+    marginTop: -NAV_REST_HEIGHT,
     borderBottom: '1px solid var(--color-border)',
-    backgroundImage: [
-      `radial-gradient(80% 130% at 90% -30%, ${ACCENT_SOFT}, transparent 60%)`,
-      `linear-gradient(180deg, ${ACCENT_WASH}, transparent 85%)`,
-    ].join(', '),
+    backgroundImage: `linear-gradient(180deg, ${ACCENT_WASH}, transparent 85%)`,
   },
-  headerInner: {
+  auroraBlob: {
+    position: 'absolute',
+    borderRadius: '50%',
+    filter: 'blur(90px)',
+    pointerEvents: 'none',
+  },
+  grainOverlay: {
+    position: 'absolute',
+    inset: 0,
+    backgroundImage: GRAIN,
+    opacity: 0.04,
+    pointerEvents: 'none',
+  },
+  heroInner: {
+    position: 'relative',
+    zIndex: 1,
     width: '100%',
-    maxWidth: 1080,
+    maxWidth: 1120,
     marginInline: 'auto',
     boxSizing: 'border-box',
-    padding: 'var(--spacing-8) var(--spacing-4) var(--spacing-6)',
+    padding: `${NAV_REST_HEIGHT + 56}px var(--spacing-5) 72px`,
     display: 'flex',
     flexDirection: 'column',
+    gap: 'var(--spacing-6)',
+  },
+  heroInnerCompact: {
+    padding: `${NAV_REST_HEIGHT + 28}px var(--spacing-4) 56px`,
+    gap: 'var(--spacing-5)',
+  },
+  heroGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'minmax(0, 7fr) minmax(0, 5fr)',
+    gap: 'var(--spacing-8)',
+    alignItems: 'center',
+  },
+  heroGridStacked: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-6)',
+    alignItems: 'stretch',
+  },
+  heroCopy: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
     gap: 'var(--spacing-4)',
+    minWidth: 0,
   },
-  headerInnerCompact: {
-    padding: 'var(--spacing-6) var(--spacing-4) var(--spacing-5)',
-  },
-  eyebrow: {
+  eyebrowChip: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 8,
+    height: 26,
+    paddingInline: 12,
+    borderRadius: 999,
     fontSize: 11,
     fontWeight: 700,
     letterSpacing: '0.08em',
     textTransform: 'uppercase',
     color: ACCENT,
+    backgroundColor: ACCENT_WASH,
+    border: `1px solid ${ACCENT_BORDER}`,
   },
+  // Display title: sized per measured tier in the component (76px at wide
+  // widths, never under 56px at full width).
   pageTitle: {
-    fontSize: 40,
-    fontWeight: 700,
-    lineHeight: 1.1,
-    letterSpacing: '-0.02em',
+    fontWeight: 730,
+    letterSpacing: '-0.03em',
+    lineHeight: 1.02,
     margin: 0,
   },
-  pageTitleCompact: {
-    fontSize: 28,
+  // Gradient ink for the key phrase — accent-derived, clipped to text.
+  titleInk: {
+    backgroundImage: `linear-gradient(98deg, ${ACCENT} 10%, ${AURORA_A} 55%, ${AURORA_C} 95%)`,
+    WebkitBackgroundClip: 'text',
+    backgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    color: 'transparent',
   },
   subcopy: {
-    fontSize: 16,
-    lineHeight: 1.55,
+    fontSize: 17,
+    lineHeight: 1.6,
     color: 'var(--color-text-secondary)',
-    maxWidth: 620,
+    maxWidth: '56ch',
     margin: 0,
   },
   statsRow: {
     display: 'flex',
     flexWrap: 'wrap',
-    gap: 'var(--spacing-2) var(--spacing-6)',
+    gap: 'var(--spacing-2) var(--spacing-7)',
   },
   statValue: {
-    fontSize: 26,
-    fontWeight: 700,
-    lineHeight: 1.15,
+    fontSize: 32,
+    fontWeight: 730,
+    lineHeight: 1.1,
     letterSpacing: '-0.02em',
     fontVariantNumeric: 'tabular-nums',
   },
@@ -344,7 +465,8 @@ const styles: Record<string, CSSProperties> = {
     display: 'flex',
     gap: 'var(--spacing-2)',
     alignItems: 'flex-start',
-    maxWidth: 480,
+    maxWidth: 520,
+    width: '100%',
   },
   subscribeRowStacked: {
     flexDirection: 'column',
@@ -360,6 +482,10 @@ const styles: Record<string, CSSProperties> = {
     margin: 0,
     color: 'var(--color-error, light-dark(#B3261E, #F2B8B5))',
   },
+  emailErrorDark: {
+    color:
+      'color-mix(in srgb, var(--color-error, light-dark(#B3261E, #F2B8B5)) 45%, white)',
+  },
   successDisc: {
     width: 44,
     height: 44,
@@ -371,7 +497,187 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: ACCENT_SOFT,
     color: ACCENT,
   },
-  filterRow: {
+  // ---- product theater ----
+  theater: {
+    position: 'relative',
+    minWidth: 0,
+  },
+  theaterPerspective: {
+    transform: 'perspective(1600px) rotateX(5deg) rotateY(-7deg)',
+    transition: `transform 420ms ${EASE_OUT}`,
+    willChange: 'transform',
+  },
+  consoleWindow: {
+    borderRadius: 16,
+    border: '1px solid var(--color-border)',
+    overflow: 'hidden',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_FLOATING,
+  },
+  consoleChrome: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 6,
+    padding: '10px 14px',
+    backgroundColor: 'var(--color-background-muted)',
+    borderBottom: '1px solid var(--color-border)',
+  },
+  consoleTabs: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 6,
+    padding: '12px 14px 0',
+    flexWrap: 'wrap',
+  },
+  consoleTab: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    height: 24,
+    paddingInline: 10,
+    borderRadius: 999,
+    fontSize: 11,
+    fontWeight: 700,
+    color: 'var(--color-text-secondary)',
+    border: '1px solid transparent',
+    whiteSpace: 'nowrap',
+  },
+  consoleTabActive: {
+    color: ACCENT,
+    backgroundColor: ACCENT_SOFT,
+    border: `1px solid ${ACCENT_BORDER}`,
+  },
+  consoleBody: {
+    padding: 14,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 10,
+  },
+  consoleRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+    padding: '8px 10px',
+    borderRadius: 10,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-body)',
+    minWidth: 0,
+  },
+  consoleVersion: {
+    fontFamily: MONO,
+    fontSize: 12,
+    fontWeight: 700,
+    color: ACCENT,
+    flexShrink: 0,
+  },
+  consoleRowTitle: {
+    fontSize: 12.5,
+    fontWeight: 600,
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    minWidth: 0,
+    flex: '1 1 auto',
+  },
+  consoleRowMeta: {
+    fontSize: 11,
+    color: 'var(--color-text-secondary)',
+    whiteSpace: 'nowrap',
+    flexShrink: 0,
+  },
+  consoleProgress: {
+    flex: '0 0 64px',
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: 'var(--color-background-muted)',
+    overflow: 'hidden',
+  },
+  consoleProgressFill: {
+    height: '100%',
+    borderRadius: 3,
+    backgroundColor: ACCENT,
+    opacity: 0.8,
+  },
+  consoleChart: {
+    display: 'flex',
+    alignItems: 'flex-end',
+    gap: 8,
+    height: 72,
+    padding: '4px 4px 0',
+  },
+  consoleBar: {
+    flex: '1 1 0',
+    borderRadius: '4px 4px 2px 2px',
+    backgroundColor: ACCENT_SOFT,
+    border: `1px solid ${ACCENT_BORDER}`,
+  },
+  consoleBarHot: {
+    backgroundColor: `color-mix(in srgb, ${ACCENT} 55%, transparent)`,
+  },
+  consoleChartCaption: {
+    fontSize: 10.5,
+    letterSpacing: '0.06em',
+    textTransform: 'uppercase',
+    fontWeight: 700,
+    color: 'var(--color-text-secondary)',
+  },
+  satellite: {
+    position: 'absolute',
+    zIndex: 2,
+    transition: `transform 420ms ${EASE_OUT}`,
+    willChange: 'transform',
+  },
+  satelliteCard: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+    padding: '10px 14px',
+    borderRadius: 12,
+    border: '1px solid var(--color-border)',
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-card) 88%, transparent)',
+    boxShadow: SHADOW_FLOATING,
+    whiteSpace: 'nowrap',
+  },
+  satelliteTitle: {
+    fontSize: 12.5,
+    fontWeight: 700,
+    lineHeight: 1.2,
+  },
+  satelliteMeta: {
+    fontSize: 11,
+    color: 'var(--color-text-secondary)',
+    lineHeight: 1.3,
+  },
+  satelliteSpark: {
+    display: 'flex',
+    alignItems: 'flex-end',
+    gap: 3,
+    height: 26,
+  },
+  satelliteSparkBar: {
+    width: 5,
+    borderRadius: 2,
+    backgroundColor: `color-mix(in srgb, ${ACCENT} 55%, transparent)`,
+  },
+  // ---- floating filter toolbar (crosses the hero/entries boundary) ----
+  // Rendered OUTSIDE the overflow-hidden hero band and pulled up over its
+  // border with a negative top margin so the card straddles the boundary.
+  filterBarWrap: {
+    position: 'relative',
+    zIndex: 6,
+    width: '100%',
+    maxWidth: 1120,
+    marginInline: 'auto',
+    boxSizing: 'border-box',
+    padding: '0 var(--spacing-5)',
+    marginTop: -36,
+  },
+  filterBar: {
+    borderRadius: 16,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_FLOATING,
+    padding: 'var(--spacing-3) var(--spacing-4)',
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
@@ -385,16 +691,25 @@ const styles: Record<string, CSSProperties> = {
     color: 'var(--color-text-secondary)',
     marginRight: 'var(--spacing-1)',
   },
+  filterSummary: {
+    fontSize: 13,
+    color: 'var(--color-text-secondary)',
+    marginLeft: 'auto',
+    whiteSpace: 'nowrap',
+  },
   // ---- entries column ----
   column: {
     width: '100%',
-    maxWidth: 1080,
+    maxWidth: 1120,
     marginInline: 'auto',
     boxSizing: 'border-box',
-    padding: 'var(--spacing-5) var(--spacing-4) var(--spacing-8)',
+    padding: '76px var(--spacing-5) 104px',
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-5)',
+  },
+  columnCompact: {
+    padding: '64px var(--spacing-4) 64px',
   },
   // Sticky month label: pins just under the sticky navbar while its
   // month's entries scroll past; opaque so entries slide underneath.
@@ -462,20 +777,21 @@ const styles: Record<string, CSSProperties> = {
     border: `1px solid ${ACCENT_BORDER}`,
     whiteSpace: 'nowrap',
   },
+  // Depth + hover lift live on the .cwn-card class so :hover can retier.
   entryBody: {
-    borderRadius: 14,
+    borderRadius: 16,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
-    padding: 'var(--spacing-4)',
+    padding: 'var(--spacing-5)',
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-3)',
     minWidth: 0,
   },
   entryTitle: {
-    fontSize: 19,
+    fontSize: 20,
     fontWeight: 700,
-    letterSpacing: '-0.01em',
+    letterSpacing: '-0.015em',
     lineHeight: 1.25,
     margin: 0,
   },
@@ -519,6 +835,7 @@ const styles: Record<string, CSSProperties> = {
     border: '1px solid var(--color-border)',
     overflow: 'hidden',
     backgroundColor: 'var(--color-background-body)',
+    boxShadow: SHADOW_RAISED,
   },
   mockChrome: {
     display: 'flex',
@@ -612,6 +929,7 @@ const styles: Record<string, CSSProperties> = {
     touchAction: 'none',
     userSelect: 'none',
     backgroundColor: 'var(--color-background-muted)',
+    boxShadow: SHADOW_RAISED,
   },
   sliderStageCompact: {
     height: 190,
@@ -696,7 +1014,7 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 8,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-body)',
-    boxShadow: 'var(--shadow-med, 0 6px 18px rgba(0, 0, 0, 0.16))',
+    boxShadow: SHADOW_RAISED,
     padding: 10,
     display: 'flex',
     flexDirection: 'column',
@@ -732,7 +1050,7 @@ const styles: Record<string, CSSProperties> = {
     justifyContent: 'center',
     backgroundColor: 'var(--color-background-body)',
     border: `1px solid ${ACCENT_BORDER}`,
-    boxShadow: 'var(--shadow-med, 0 4px 12px rgba(0, 0, 0, 0.18))',
+    boxShadow: SHADOW_RAISED,
     color: ACCENT,
   },
   sliderButtons: {
@@ -775,30 +1093,313 @@ const styles: Record<string, CSSProperties> = {
     gap: 'var(--spacing-2)',
     paddingBlock: 'var(--spacing-2)',
   },
-  // ---- subscribe band ----
-  subscribeBand: {
+  // ---- pinned pipeline story ----
+  storyBand: {
+    position: 'relative',
     borderTop: '1px solid var(--color-border)',
-    borderBottom: '1px solid var(--color-border)',
-    backgroundImage: [
-      `radial-gradient(70% 120% at 10% 120%, ${ACCENT_SOFT}, transparent 60%)`,
-      `linear-gradient(0deg, ${ACCENT_WASH}, transparent 90%)`,
-    ].join(', '),
+    backgroundImage:
+      'radial-gradient(color-mix(in srgb, var(--color-text-primary) 7%, transparent) 1px, transparent 1px)',
+    backgroundSize: '22px 22px',
   },
-  subscribeInner: {
+  storyStage: {
+    position: 'sticky',
+    top: STORY_STICKY_TOP,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+  },
+  storyInner: {
     width: '100%',
-    maxWidth: 1080,
+    maxWidth: 1120,
     marginInline: 'auto',
     boxSizing: 'border-box',
-    padding: 'var(--spacing-7) var(--spacing-4)',
+    padding: '0 var(--spacing-5)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-6)',
+  },
+  storyStaticInner: {
+    width: '100%',
+    maxWidth: 1120,
+    marginInline: 'auto',
+    boxSizing: 'border-box',
+    padding: '104px var(--spacing-5)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-6)',
+  },
+  storyHeading: {
+    fontSize: 38,
+    fontWeight: 720,
+    letterSpacing: '-0.025em',
+    lineHeight: 1.08,
+    margin: 0,
+  },
+  storyHeadingCompact: {
+    fontSize: 28,
+  },
+  storyGrid: {
+    display: 'grid',
+    gridTemplateColumns: '340px minmax(0, 1fr)',
+    gap: 'var(--spacing-8)',
+    alignItems: 'stretch',
+  },
+  storyGridStacked: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-5)',
+  },
+  storyRail: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-1)',
+  },
+  storyStep: {
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: 'var(--spacing-3)',
+    padding: '12px 12px 12px 0',
+    minHeight: 44,
+    border: 'none',
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+    textAlign: 'left',
+    fontFamily: 'inherit',
+    borderRadius: 12,
+  },
+  storyStepNum: {
+    width: 58,
+    flexShrink: 0,
+    fontSize: 40,
+    fontWeight: 750,
+    lineHeight: 1,
+    letterSpacing: '-0.03em',
+    fontVariantNumeric: 'tabular-nums',
+    color: 'color-mix(in srgb, var(--color-text-primary) 18%, transparent)',
+    transition: `color 240ms ${EASE_OUT}`,
+    textAlign: 'left',
+  },
+  storyStepNumActive: {
+    color: ACCENT,
+  },
+  storyStepTitle: {
+    fontSize: 17,
+    fontWeight: 700,
+    letterSpacing: '-0.01em',
+    lineHeight: 1.3,
+    color: 'var(--color-text-primary)',
+    margin: 0,
+  },
+  storyStepCopy: {
+    fontSize: 13.5,
+    lineHeight: 1.55,
+    color: 'var(--color-text-secondary)',
+    margin: '4px 0 0',
+    maxWidth: '38ch',
+  },
+  storyStepRowCompact: {
+    display: 'flex',
+    gap: 'var(--spacing-2)',
+    flexWrap: 'wrap',
+  },
+  storyStepCompact: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 8,
+    minHeight: 44,
+    paddingInline: 12,
+    borderRadius: 10,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    cursor: 'pointer',
+    fontFamily: 'inherit',
+    fontSize: 13,
+    fontWeight: 700,
+    color: 'var(--color-text-primary)',
+  },
+  storyStepCompactActive: {
+    borderColor: ACCENT_BORDER,
+    backgroundColor: ACCENT_SOFT,
+    color: ACCENT,
+  },
+  storyProgressTrack: {
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: 'var(--color-border)',
+    overflow: 'hidden',
+    marginTop: 'var(--spacing-3)',
+  },
+  storyProgressFill: {
+    height: '100%',
+    width: '100%',
+    borderRadius: 2,
+    backgroundColor: ACCENT,
+    transformOrigin: 'left',
+  },
+  storyViewport: {
+    position: 'relative',
+    minHeight: 320,
+  },
+  storyState: {
+    position: 'absolute',
+    inset: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    transition: `opacity 480ms ${EASE_OUT}, transform 480ms ${EASE_OUT}`,
+  },
+  pipeWindow: {
+    borderRadius: 14,
+    border: '1px solid var(--color-border)',
+    overflow: 'hidden',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_FLOATING,
+  },
+  pipeBody: {
+    padding: 14,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 8,
+  },
+  pipeRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+    padding: '7px 10px',
+    borderRadius: 9,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-body)',
+    minWidth: 0,
+  },
+  pipeHash: {
+    fontFamily: MONO,
+    fontSize: 11,
+    color: 'var(--color-text-secondary)',
+    flexShrink: 0,
+  },
+  pipeText: {
+    fontSize: 12.5,
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    minWidth: 0,
+    flex: '1 1 auto',
+  },
+  pipeTagChip: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    height: 20,
+    paddingInline: 8,
+    borderRadius: 999,
+    fontSize: 10,
+    fontWeight: 700,
+    letterSpacing: '0.05em',
+    textTransform: 'uppercase',
+    color: ACCENT,
+    backgroundColor: ACCENT_SOFT,
+    border: `1px solid ${ACCENT_BORDER}`,
+    flexShrink: 0,
+  },
+  // ---- scheme-locked dark subscribe band ----
+  darkBand: {
+    position: 'relative',
+    overflow: 'hidden',
+    backgroundColor: INK,
+    color: INK_TEXT,
+  },
+  darkGlow: {
+    position: 'absolute',
+    borderRadius: '50%',
+    filter: 'blur(90px)',
+    pointerEvents: 'none',
+  },
+  darkSpotlight: {
+    position: 'absolute',
+    inset: 0,
+    pointerEvents: 'none',
+    background:
+      'radial-gradient(360px circle at var(--mx, 72%) var(--my, 24%), color-mix(in srgb, white 7%, transparent), transparent 72%)',
+  },
+  darkInner: {
+    position: 'relative',
+    zIndex: 1,
+    width: '100%',
+    maxWidth: 1120,
+    marginInline: 'auto',
+    boxSizing: 'border-box',
+    padding: '112px var(--spacing-5)',
+    display: 'grid',
+    gridTemplateColumns: 'minmax(0, 6fr) minmax(0, 5fr)',
+    gap: 'var(--spacing-8)',
+    alignItems: 'center',
+  },
+  darkInnerStacked: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    padding: '64px var(--spacing-4)',
+    gap: 'var(--spacing-5)',
+  },
+  darkEyebrow: {
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+    color: `color-mix(in srgb, ${ACCENT} 80%, white)`,
+  },
+  darkTitle: {
+    fontSize: 40,
+    fontWeight: 730,
+    letterSpacing: '-0.025em',
+    lineHeight: 1.06,
+    margin: 0,
+    color: INK_TEXT,
+  },
+  darkTitleCompact: {
+    fontSize: 30,
+  },
+  darkCopy: {
+    fontSize: 15.5,
+    lineHeight: 1.6,
+    color: INK_TEXT_DIM,
+    margin: 0,
+    maxWidth: '48ch',
+  },
+  glassCard: {
+    borderRadius: 18,
+    backgroundColor: INK_GLASS,
+    boxShadow: SHADOW_GLASS,
+    padding: 'var(--spacing-5)',
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-3)',
   },
-  subscribeTitle: {
-    fontSize: 24,
-    fontWeight: 700,
-    letterSpacing: '-0.01em',
-    margin: 0,
+  glassMetaRow: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: 'var(--spacing-2) var(--spacing-4)',
+  },
+  glassMeta: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    fontSize: 12.5,
+    color: INK_TEXT_DIM,
+  },
+  darkResetButton: {
+    border: 'none',
+    backgroundColor: 'transparent',
+    color: INK_TEXT_DIM,
+    fontSize: 13,
+    fontWeight: 600,
+    cursor: 'pointer',
+    padding: '8px 4px',
+    fontFamily: 'inherit',
+    textDecoration: 'underline',
+    textUnderlineOffset: 3,
   },
   // ---- footer ----
   footer: {
@@ -806,10 +1407,10 @@ const styles: Record<string, CSSProperties> = {
   },
   footerInner: {
     width: '100%',
-    maxWidth: 1080,
+    maxWidth: 1120,
     marginInline: 'auto',
     boxSizing: 'border-box',
-    padding: 'var(--spacing-6) var(--spacing-4)',
+    padding: 'var(--spacing-7) var(--spacing-5)',
     display: 'flex',
     flexDirection: 'column',
     gap: 'var(--spacing-5)',
@@ -1353,6 +1954,84 @@ const MATCH_ROWS: readonly {
   {id: 'm5', left: 72, right: 0, chip: '—', grade: 'none'},
 ];
 
+/** Hero release-console fixtures. */
+const CONSOLE_ROWS: readonly {
+  id: string;
+  version: string;
+  title: string;
+  meta: string;
+  state: 'shipped' | 'review';
+  progress?: number;
+}[] = [
+  {
+    id: 'c1',
+    version: 'v2.15',
+    title: 'Draft — approval analytics',
+    meta: 'In review',
+    state: 'review',
+    progress: 64,
+  },
+  {
+    id: 'c2',
+    version: 'v2.14',
+    title: 'Reconciliation, redesigned',
+    meta: 'Shipped Jul 9',
+    state: 'shipped',
+  },
+  {
+    id: 'c3',
+    version: 'v2.13',
+    title: 'Approval chains and streaming exports',
+    meta: 'Shipped Jul 2',
+    state: 'shipped',
+  },
+];
+
+/** Updates-per-month bars for the hero console chart (Feb–Jul 2026). */
+const CONSOLE_BARS: readonly {id: string; height: number; hot?: boolean}[] = [
+  {id: 'feb', height: 34},
+  {id: 'mar', height: 48},
+  {id: 'apr', height: 42},
+  {id: 'may', height: 58},
+  {id: 'jun', height: 66},
+  {id: 'jul', height: 78, hot: true},
+];
+
+const SPARK_BARS: readonly number[] = [8, 12, 10, 16, 14, 20, 26];
+
+/** Pinned pipeline story: three states of the release train. */
+const STORY_STEPS: readonly {
+  id: string;
+  num: string;
+  title: string;
+  copy: string;
+}[] = [
+  {
+    id: 'merge',
+    num: '01',
+    title: 'Merge and tag',
+    copy:
+      'Every merged pull request boards the weekly release train, and the ' +
+      'train cuts a semver tag on Thursday morning.',
+  },
+  {
+    id: 'draft',
+    num: '02',
+    title: 'Draft the notes',
+    copy:
+      'The team turns the diff into human release notes — every line ' +
+      'tagged New, Improved, Fixed, or Security before review.',
+  },
+  {
+    id: 'publish',
+    num: '03',
+    title: 'Publish everywhere',
+    copy:
+      'The entry lands on this page, the RSS feed, and every subscriber ' +
+      'inbox at 9:00 London time. No release skips the log.',
+  },
+];
+
 const FOOTER_COLUMNS: readonly {
   heading: string;
   links: readonly string[];
@@ -1405,11 +2084,34 @@ function useElementWidth(ref: RefObject<HTMLDivElement | null>): number {
   return width;
 }
 
+/** Measured height of the scroll container — sizes the pinned story. */
+function useElementHeight(ref: RefObject<HTMLDivElement | null>): number {
+  const [height, setHeight] = useState(0);
+  useEffect(() => {
+    const element = ref.current;
+    if (element == null) {
+      return undefined;
+    }
+    const observer = new ResizeObserver(entries => {
+      const rect = entries[0]?.contentRect;
+      if (rect != null) {
+        setHeight(rect.height);
+      }
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref]);
+  return height;
+}
+
 /** Live prefers-reduced-motion flag; false where matchMedia is missing. */
 function usePrefersReducedMotion(): boolean {
   const [reduce, setReduce] = useState(false);
   useEffect(() => {
-    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+    if (
+      typeof window === 'undefined' ||
+      typeof window.matchMedia !== 'function'
+    ) {
       return undefined;
     }
     const query = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -1455,13 +2157,14 @@ function useInView(): [RefObject<HTMLDivElement | null>, boolean] {
 
 /**
  * Eases 0 → target with requestAnimationFrame once `isActive` flips true.
- * Reduced motion (and rAF-less environments) snap straight to the target.
+ * ~900ms decelerate landing. Reduced motion (and rAF-less environments)
+ * snap straight to the target.
  */
 function useCountUp(
   target: number,
   isActive: boolean,
   reduceMotion: boolean,
-  durationMs = 1400,
+  durationMs = 900,
 ): number {
   const [value, setValue] = useState(0);
   useEffect(() => {
@@ -1495,7 +2198,11 @@ function useCountUp(
 
 // ============= PIECES =============
 
-/** Rise+fade scroll reveal; renders visible under reduced motion. */
+/**
+ * Rise+fade+settle scroll reveal (translateY 16px + scale .985 → identity
+ * over 560ms decelerate); parents stagger children via delayMs. Renders
+ * visible under reduced motion.
+ */
 function Reveal({
   children,
   delayMs = 0,
@@ -1512,17 +2219,17 @@ function Reveal({
       ref={ref}
       style={{
         opacity: shown ? 1 : 0,
-        transform: shown ? 'none' : 'translateY(12px)',
+        transform: shown ? 'none' : 'translateY(16px) scale(0.985)',
         transition: reduceMotion
           ? 'none'
-          : `opacity 480ms ease ${delayMs}ms, transform 480ms ease ${delayMs}ms`,
+          : `opacity 560ms ${EASE_OUT} ${delayMs}ms, transform 560ms ${EASE_OUT} ${delayMs}ms`,
       }}>
       {children}
     </div>
   );
 }
 
-/** One count-up figure in the header stats row. */
+/** One count-up figure in the hero stats row. */
 function CountUpStat({
   stat,
   isActive,
@@ -1543,7 +2250,8 @@ function CountUpStat({
 
 /**
  * Validating email capture; success flips to a confirmed card with a
- * reset. The header and the bottom band each own an independent copy.
+ * reset. The hero and the dark band each own an independent copy; the
+ * dark band passes tone="dark" so its copy stays legible on ink.
  */
 function EmailCapture({
   inputLabel,
@@ -1552,6 +2260,7 @@ function EmailCapture({
   isStacked,
   onSubscribed,
   trailing,
+  tone = 'light',
 }: {
   inputLabel: string;
   buttonLabel: string;
@@ -1559,10 +2268,12 @@ function EmailCapture({
   isStacked: boolean;
   onSubscribed: (email: string) => void;
   trailing?: ReactNode;
+  tone?: 'light' | 'dark';
 }) {
   const [value, setValue] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState<string | null>(null);
+  const isDark = tone === 'dark';
 
   const submit = () => {
     const nextError = validateEmail(value);
@@ -1585,18 +2296,39 @@ function EmailCapture({
         </div>
         <StackItem size="fill">
           <VStack gap={0}>
-            <Text weight="semibold">You&rsquo;re on the list</Text>
-            <Text type="supporting" color="secondary">
+            <span
+              style={{
+                fontSize: 14,
+                fontWeight: 700,
+                color: isDark ? INK_TEXT : 'var(--color-text-primary)',
+              }}>
+              You&rsquo;re on the list
+            </span>
+            <span
+              style={{
+                fontSize: 13,
+                lineHeight: 1.5,
+                color: isDark ? INK_TEXT_DIM : 'var(--color-text-secondary)',
+              }}>
               {confirmedNote.replace('{email}', confirmed)}
-            </Text>
+            </span>
           </VStack>
         </StackItem>
-        <Button
-          label="Use a different email"
-          variant="ghost"
-          size="sm"
-          onClick={() => setConfirmed(null)}
-        />
+        {isDark ? (
+          <button
+            type="button"
+            style={styles.darkResetButton}
+            onClick={() => setConfirmed(null)}>
+            Use a different email
+          </button>
+        ) : (
+          <Button
+            label="Use a different email"
+            variant="ghost"
+            size="sm"
+            onClick={() => setConfirmed(null)}
+          />
+        )}
       </HStack>
     );
   }
@@ -1620,20 +2352,199 @@ function EmailCapture({
             }}
           />
         </div>
-        <Button
-          label={buttonLabel}
-          variant="primary"
-          icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
-          onClick={submit}
-        />
+        <span className="cwn-sheen">
+          <Button
+            label={buttonLabel}
+            variant="primary"
+            icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
+            onClick={submit}
+          />
+        </span>
         {trailing}
       </div>
       {error !== null && (
-        <p style={styles.emailError} role="alert">
+        <p
+          style={{
+            ...styles.emailError,
+            ...(isDark ? styles.emailErrorDark : null),
+          }}
+          role="alert">
           {error}
         </p>
       )}
     </VStack>
+  );
+}
+
+/**
+ * Product-theater hero art: a perspective-staged "release console" mock
+ * (window chrome, tab rail, release rows, updates-per-month bars) orbited
+ * by three satellite cards that bob on independent negative-delay
+ * keyframes and parallax toward the pointer. All CSS-drawn; no assets.
+ */
+function HeroTheater({
+  reduceMotion,
+  isPhone,
+  allowParallax,
+  parallaxX,
+  parallaxY,
+}: {
+  reduceMotion: boolean;
+  isPhone: boolean;
+  allowParallax: boolean;
+  parallaxX: number;
+  parallaxY: number;
+}) {
+  const shift = (factor: number) =>
+    allowParallax
+      ? `translate(${(parallaxX * 8 * factor).toFixed(1)}px, ${(
+          parallaxY * 7 * factor
+        ).toFixed(1)}px)`
+      : 'none';
+  const bob = (duration: number, delay: number) =>
+    reduceMotion ? undefined : `cwn-bob ${duration}s ease-in-out ${delay}s infinite`;
+
+  return (
+    <div style={styles.theater} aria-hidden="true">
+      <div
+        style={{
+          ...styles.theaterPerspective,
+          ...(reduceMotion || isPhone
+            ? {transform: 'none'}
+            : null),
+        }}>
+        <div
+          style={{
+            ...styles.consoleWindow,
+            transform: shift(-0.5),
+            transition: styles.satellite.transition,
+          }}>
+          <div style={styles.consoleChrome}>
+            <span style={styles.mockDot} />
+            <span style={styles.mockDot} />
+            <span style={styles.mockDot} />
+            <span style={styles.mockTitle}>
+              ledgerline.com/changelog — release console
+            </span>
+          </div>
+          <div style={styles.consoleTabs}>
+            <span style={{...styles.consoleTab, ...styles.consoleTabActive}}>
+              Releases
+            </span>
+            <span style={styles.consoleTab}>Drafts</span>
+            <span style={styles.consoleTab}>Feed</span>
+          </div>
+          <div style={styles.consoleBody}>
+            {CONSOLE_ROWS.map(row => (
+              <div key={row.id} style={styles.consoleRow}>
+                <StatusDot
+                  variant={row.state === 'shipped' ? 'success' : 'warning'}
+                  label={row.state === 'shipped' ? 'Shipped' : 'In review'}
+                />
+                <span style={styles.consoleVersion}>{row.version}</span>
+                <span style={styles.consoleRowTitle}>{row.title}</span>
+                {row.progress !== undefined ? (
+                  <span style={styles.consoleProgress}>
+                    <span
+                      style={{
+                        ...styles.consoleProgressFill,
+                        width: `${row.progress}%`,
+                        display: 'block',
+                      }}
+                    />
+                  </span>
+                ) : (
+                  <span style={styles.consoleRowMeta}>{row.meta}</span>
+                )}
+              </div>
+            ))}
+            <div style={styles.consoleChart}>
+              {CONSOLE_BARS.map(bar => (
+                <span
+                  key={bar.id}
+                  style={{
+                    ...styles.consoleBar,
+                    ...(bar.hot === true ? styles.consoleBarHot : null),
+                    height: `${bar.height}%`,
+                  }}
+                />
+              ))}
+            </div>
+            <span style={styles.consoleChartCaption}>
+              Updates shipped · Feb–Jul 2026
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Satellite: latest release receipt. */}
+      <div
+        style={{
+          ...styles.satellite,
+          top: isPhone ? -14 : -22,
+          right: isPhone ? 4 : -12,
+          transform: shift(1),
+        }}>
+        <div style={{animation: bob(7, -2)}}>
+          <div style={styles.satelliteCard}>
+            <StatusDot variant="success" label="Shipped" />
+            <div>
+              <div style={styles.satelliteTitle}>v2.14 shipped</div>
+              <div style={styles.satelliteMeta}>Thursday · Jul 9</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Satellite: cumulative updates metric with sparkline. */}
+      {!isPhone && (
+        <div
+          style={{
+            ...styles.satellite,
+            bottom: 34,
+            left: -14,
+            transform: shift(0.7),
+          }}>
+          <div style={{animation: bob(8.5, -4)}}>
+            <div style={styles.satelliteCard}>
+              <span style={styles.satelliteSpark}>
+                {SPARK_BARS.map((height, index) => (
+                  <span
+                    key={index}
+                    style={{...styles.satelliteSparkBar, height}}
+                  />
+                ))}
+              </span>
+              <div>
+                <div style={styles.satelliteTitle}>1,246 updates</div>
+                <div style={styles.satelliteMeta}>shipped since 2020</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Satellite: subscriber receipt toast. */}
+      <div
+        style={{
+          ...styles.satellite,
+          bottom: isPhone ? -16 : -24,
+          right: isPhone ? 12 : 36,
+          transform: shift(1.2),
+        }}>
+        <div style={{animation: bob(6.5, -1)}}>
+          <div style={styles.satelliteCard}>
+            <span style={{color: ACCENT, display: 'inline-flex'}}>
+              <Icon icon={MailCheckIcon} size="sm" color="inherit" />
+            </span>
+            <div>
+              <div style={styles.satelliteTitle}>Release notes sent</div>
+              <div style={styles.satelliteMeta}>Every Thursday · 9:00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -1780,17 +2691,23 @@ function BeforeAfterSlider({
           <div style={styles.paneRowSplit}>
             <div style={{...styles.paneBar, flex: '1 1 0'}} />
             <div style={{...styles.paneBar, width: 56}} />
-            <div style={{...styles.paneBar, ...styles.paneBarAccent, width: 44}} />
+            <div
+              style={{...styles.paneBar, ...styles.paneBarAccent, width: 44}}
+            />
           </div>
           <div style={styles.paneRowSplit}>
             <div style={{...styles.paneBar, flex: '1 1 0'}} />
             <div style={{...styles.paneBar, width: 56}} />
-            <div style={{...styles.paneBar, ...styles.paneBarAccent, width: 44}} />
+            <div
+              style={{...styles.paneBar, ...styles.paneBarAccent, width: 44}}
+            />
           </div>
           <div style={styles.paneRowSplit}>
             <div style={{...styles.paneBar, flex: '1 1 0'}} />
             <div style={{...styles.paneBar, width: 56}} />
-            <div style={{...styles.paneBar, ...styles.paneBarAccent, width: 44}} />
+            <div
+              style={{...styles.paneBar, ...styles.paneBarAccent, width: 44}}
+            />
           </div>
           <div
             style={{
@@ -1864,7 +2781,11 @@ function BeforeAfterSlider({
           aria-valuenow={Math.round(percent)}
           aria-valuetext={`${Math.round(percent)}% of the redesigned editor shown`}
           onKeyDown={onHandleKeyDown}
-          style={{...styles.sliderHandle, left: `${percent}%`, transition: settle}}>
+          style={{
+            ...styles.sliderHandle,
+            left: `${percent}%`,
+            transition: settle,
+          }}>
           <span style={styles.sliderGrip}>
             <Icon icon={GripVerticalIcon} size="sm" color="inherit" />
           </span>
@@ -1894,6 +2815,129 @@ function BeforeAfterSlider({
   );
 }
 
+/** One schematic mock per pipeline step (CSS-drawn; no assets). */
+function PipelineMock({step}: {step: number}) {
+  if (step === 0) {
+    return (
+      <div style={styles.pipeWindow} aria-hidden="true">
+        <div style={styles.mockChrome}>
+          <span style={styles.mockDot} />
+          <span style={styles.mockDot} />
+          <span style={styles.mockDot} />
+          <span style={styles.mockTitle}>release-train · thursday cut</span>
+        </div>
+        <div style={styles.pipeBody}>
+          {(
+            [
+              {hash: 'a41f20e', text: 'reconcile: bulk-accept above 95%'},
+              {hash: '9c07b31', text: 'imports: stream OFX parse queue'},
+              {hash: 'f5d2c88', text: 'transfers: month-boundary fix'},
+            ] as const
+          ).map(commit => (
+            <div key={commit.hash} style={styles.pipeRow}>
+              <span style={{color: ACCENT, display: 'inline-flex'}}>
+                <Icon icon={GitMergeIcon} size="sm" color="inherit" />
+              </span>
+              <span style={styles.pipeHash}>{commit.hash}</span>
+              <span style={styles.pipeText}>{commit.text}</span>
+              <span style={{color: ACCENT, display: 'inline-flex'}}>
+                <Icon icon={CheckIcon} size="sm" color="inherit" />
+              </span>
+            </div>
+          ))}
+          <div style={{...styles.pipeRow, borderStyle: 'dashed'}}>
+            <span style={styles.pipeTagChip}>tag</span>
+            <span style={{...styles.pipeText, fontFamily: MONO, fontWeight: 700}}>
+              v2.14
+            </span>
+            <span style={styles.pipeHash}>cut Jul 9 · 07:40</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (step === 1) {
+    return (
+      <div style={styles.pipeWindow} aria-hidden="true">
+        <div style={styles.mockChrome}>
+          <span style={styles.mockDot} />
+          <span style={styles.mockDot} />
+          <span style={styles.mockDot} />
+          <span style={styles.mockTitle}>notes/v2.14.md — draft</span>
+        </div>
+        <div style={styles.pipeBody}>
+          <div style={styles.pipeRow}>
+            <span style={{color: ACCENT, display: 'inline-flex'}}>
+              <Icon icon={PenLineIcon} size="sm" color="inherit" />
+            </span>
+            <span style={{...styles.pipeText, fontWeight: 700}}>
+              Reconciliation, redesigned
+            </span>
+            <span style={styles.pipeHash}>draft · 2 reviewers</span>
+          </div>
+          {(
+            [
+              {tag: 'New', text: 'Reconciliation workspace with confidence scores'},
+              {tag: 'New', text: 'Bulk-accept every match above 95%'},
+              {tag: 'Improved', text: 'Statement imports parse ~40% faster'},
+              {tag: 'Fixed', text: 'Month-boundary transfers counted once'},
+            ] as const
+          ).map(item => (
+            <div key={item.text} style={styles.pipeRow}>
+              <span style={styles.pipeTagChip}>{item.tag}</span>
+              <span style={styles.pipeText}>{item.text}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div style={styles.pipeWindow} aria-hidden="true">
+      <div style={styles.mockChrome}>
+        <span style={styles.mockDot} />
+        <span style={styles.mockDot} />
+        <span style={styles.mockDot} />
+        <span style={styles.mockTitle}>publish · v2.14 → everywhere</span>
+      </div>
+      <div style={styles.pipeBody}>
+        <div style={styles.pipeRow}>
+          <span style={{color: ACCENT, display: 'inline-flex'}}>
+            <Icon icon={MegaphoneIcon} size="sm" color="inherit" />
+          </span>
+          <span style={{...styles.pipeText, fontWeight: 700}}>
+            v2.14 — Reconciliation, redesigned
+          </span>
+          <span style={styles.pipeTagChip}>live</span>
+        </div>
+        {(
+          [
+            {icon: RssIcon, text: 'changelog.xml refreshed', meta: '09:00:02'},
+            {
+              icon: MailCheckIcon,
+              text: '18,402 subscriber emails queued',
+              meta: '09:00:05',
+            },
+            {
+              icon: CheckIcon,
+              text: 'ledgerline.com/changelog updated',
+              meta: '09:00:01',
+            },
+          ] as const
+        ).map(row => (
+          <div key={row.text} style={styles.pipeRow}>
+            <span style={{color: ACCENT, display: 'inline-flex'}}>
+              <Icon icon={row.icon} size="sm" color="inherit" />
+            </span>
+            <span style={styles.pipeText}>{row.text}</span>
+            <span style={styles.pipeHash}>{row.meta}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ============= PAGE =============
 
 interface VisibleEntry {
@@ -1909,18 +2953,23 @@ interface MonthGroup {
 export default function ChangelogWhatsNewTemplate() {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const wrapWidth = useElementWidth(wrapRef);
+  const isTheaterStacked = wrapWidth > 0 && wrapWidth <= 1000;
   const isMid = wrapWidth > 0 && wrapWidth <= 900;
   const isCompactNav = wrapWidth > 0 && wrapWidth <= 720;
   const isPhone = wrapWidth > 0 && wrapWidth <= 560;
   const reduceMotion = usePrefersReducedMotion();
 
   const pageRef = useRef<HTMLDivElement | null>(null);
+  const pageHeight = useElementHeight(pageRef);
   const navRef = useRef<HTMLElement | null>(null);
+  const storyTallRef = useRef<HTMLDivElement | null>(null);
+  const darkBandRef = useRef<HTMLElement | null>(null);
   const sectionRefs = useRef<Partial<Record<SectionId, HTMLElement | null>>>(
     {},
   );
 
   const [activeSection, setActiveSection] = useState<SectionId | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeTags, setActiveTags] = useState<ReadonlySet<TagId>>(
     () => new Set(),
@@ -1930,8 +2979,26 @@ export default function ChangelogWhatsNewTemplate() {
   const [toast, setToast] = useState<{key: number; message: string} | null>(
     null,
   );
+  const [parallax, setParallax] = useState({x: 0, y: 0});
+  const [storyProgress, setStoryProgress] = useState(0);
 
   const [statsRef, statsInView] = useInView();
+
+  // Display-type tier from the measured container (never <56px at wide).
+  const titleSize =
+    wrapWidth > 1000 ? 76 : wrapWidth > 720 ? 58 : wrapWidth > 560 ? 46 : 36;
+
+  // Pinned story geometry, sized against the measured scroll container.
+  const storyStageHeight =
+    pageHeight > 0
+      ? Math.max(380, Math.min(620, pageHeight - STORY_STICKY_TOP - 24))
+      : 480;
+  const storyTallHeight = Math.round(storyStageHeight * 2.8);
+  const storyStep = storyProgress < 1 / 3 ? 0 : storyProgress < 2 / 3 ? 1 : 2;
+  /** Static stacked sequence when motion is reduced or nothing measured. */
+  const isStoryStatic = reduceMotion || pageHeight === 0;
+
+  const allowParallax = !reduceMotion && !isCompactNav;
 
   // Reset the transient "Copied" label on the RSS chip.
   useEffect(() => {
@@ -1978,6 +3045,9 @@ export default function ChangelogWhatsNewTemplate() {
 
   const registerSection = (id: SectionId) => (node: HTMLElement | null) => {
     sectionRefs.current[id] = node;
+    if (id === 'subscribe') {
+      darkBandRef.current = node;
+    }
   };
 
   /** Smooth-scroll the container to a section, under the sticky nav. */
@@ -2000,12 +3070,38 @@ export default function ChangelogWhatsNewTemplate() {
     });
   };
 
-  /** Scroll-spy: the last anchored section above the fold line wins. */
+  /** Step buttons on the story rail also drive the scroll position. */
+  const jumpToStoryStep = (index: number) => {
+    const container = pageRef.current;
+    const tall = storyTallRef.current;
+    if (container == null || tall == null) {
+      return;
+    }
+    const offsetTop =
+      tall.getBoundingClientRect().top -
+      container.getBoundingClientRect().top +
+      container.scrollTop;
+    const span = tall.offsetHeight - storyStageHeight;
+    const targets = [0.06, 0.5, 0.94] as const;
+    container.scrollTo({
+      top: offsetTop - STORY_STICKY_TOP + span * (targets[index] ?? 0.5),
+      behavior: reduceMotion ? 'auto' : 'smooth',
+    });
+  };
+
+  /**
+   * One scroll handler drives nav condensation, the scroll-spy, and the
+   * pinned-story progress (quantized so unchanged frames bail out).
+   */
   const onPageScroll = () => {
     const container = pageRef.current;
     if (container == null) {
       return;
     }
+    const scrolledNow = container.scrollTop > 24;
+    setIsScrolled(previous =>
+      previous === scrolledNow ? previous : scrolledNow,
+    );
     const containerTop = container.getBoundingClientRect().top;
     let active: SectionId | null = null;
     for (const anchor of NAV_ANCHORS) {
@@ -2018,6 +3114,67 @@ export default function ChangelogWhatsNewTemplate() {
       }
     }
     setActiveSection(active);
+    const tall = storyTallRef.current;
+    if (tall != null && !isStoryStatic) {
+      const rect = tall.getBoundingClientRect();
+      const span = rect.height - storyStageHeight;
+      if (span > 0) {
+        const raw = (containerTop + STORY_STICKY_TOP - rect.top) / span;
+        const quantized =
+          Math.round(Math.min(1, Math.max(0, raw)) * 100) / 100;
+        setStoryProgress(previous =>
+          Math.abs(previous - quantized) < 0.01 ? previous : quantized,
+        );
+      }
+    }
+  };
+
+  /** Hero parallax: quantized pointer position so most moves bail out. */
+  const onHeroPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (!allowParallax) {
+      return;
+    }
+    const rect = event.currentTarget.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) {
+      return;
+    }
+    const x =
+      Math.round(
+        Math.max(
+          -1,
+          Math.min(1, ((event.clientX - rect.left) / rect.width) * 2 - 1),
+        ) * 10,
+      ) / 10;
+    const y =
+      Math.round(
+        Math.max(
+          -1,
+          Math.min(1, ((event.clientY - rect.top) / rect.height) * 2 - 1),
+        ) * 10,
+      ) / 10;
+    setParallax(previous =>
+      previous.x === x && previous.y === y ? previous : {x, y},
+    );
+  };
+
+  const onHeroPointerLeave = () => {
+    setParallax(previous =>
+      previous.x === 0 && previous.y === 0 ? previous : {x: 0, y: 0},
+    );
+  };
+
+  /** Dark-band spotlight: CSS vars set directly, no re-render needed. */
+  const onDarkPointerMove = (event: ReactPointerEvent<HTMLElement>) => {
+    if (reduceMotion) {
+      return;
+    }
+    const band = darkBandRef.current;
+    if (band == null) {
+      return;
+    }
+    const rect = band.getBoundingClientRect();
+    band.style.setProperty('--mx', `${Math.round(event.clientX - rect.left)}px`);
+    band.style.setProperty('--my', `${Math.round(event.clientY - rect.top)}px`);
   };
 
   const toggleTag = (tag: TagId, pressed: boolean) => {
@@ -2100,8 +3257,18 @@ export default function ChangelogWhatsNewTemplate() {
     ));
 
   const navbar = (
-    <nav ref={navRef} style={styles.navBar} aria-label="Changelog navigation">
-      <div style={styles.navInner}>
+    <nav
+      ref={navRef}
+      style={{
+        ...styles.navBar,
+        ...(isScrolled ? styles.navBarScrolled : null),
+      }}
+      aria-label="Changelog navigation">
+      <div
+        style={{
+          ...styles.navInner,
+          ...(isScrolled ? styles.navInnerScrolled : null),
+        }}>
         <span style={styles.brandTile} aria-hidden="true">
           L
         </span>
@@ -2113,11 +3280,13 @@ export default function ChangelogWhatsNewTemplate() {
         {!isCompactNav && (
           <HStack gap={1} vAlign="center">
             {anchorButtons(false)}
-            <Button
-              label="Open Ledgerline"
-              variant="primary"
-              onClick={() => fireToast('Navbar — Open Ledgerline clicked.')}
-            />
+            <span className="cwn-sheen">
+              <Button
+                label="Open Ledgerline"
+                variant="primary"
+                onClick={() => fireToast('Navbar — Open Ledgerline clicked.')}
+              />
+            </span>
           </HStack>
         )}
         {isCompactNav && (
@@ -2127,11 +3296,18 @@ export default function ChangelogWhatsNewTemplate() {
             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMenuOpen}
             onClick={() => setIsMenuOpen(previous => !previous)}>
-            <Icon icon={isMenuOpen ? XIcon : MenuIcon} size="md" color="inherit" />
+            <Icon
+              icon={isMenuOpen ? XIcon : MenuIcon}
+              size="md"
+              color="inherit"
+            />
           </button>
         )}
         {isCompactNav && isMenuOpen && (
-          <div style={styles.menuPanel} role="menu" aria-label="Changelog sections">
+          <div
+            style={styles.menuPanel}
+            role="menu"
+            aria-label="Changelog sections">
             {anchorButtons(true)}
             <div style={{display: 'grid'}}>
               <Button
@@ -2149,7 +3325,7 @@ export default function ChangelogWhatsNewTemplate() {
     </nav>
   );
 
-  // ============= HEADER BAND =============
+  // ============= HERO =============
 
   const rssChip = (
     <Button
@@ -2166,8 +3342,11 @@ export default function ChangelogWhatsNewTemplate() {
     />
   );
 
-  const filterRow = (
-    <div style={styles.filterRow} role="group" aria-label="Filter updates by tag">
+  const filterBar = (
+    <div
+      style={styles.filterBar}
+      role="group"
+      aria-label="Filter updates by tag">
       <span style={styles.filterLabel}>Filter</span>
       {TAGS.map(tag => (
         <ToggleButton
@@ -2187,60 +3366,140 @@ export default function ChangelogWhatsNewTemplate() {
           onClick={() => setActiveTags(new Set())}
         />
       )}
+      {isFiltering && visibleEntries.length > 0 && !isPhone && (
+        <span style={styles.filterSummary}>
+          Showing {matchedItemCount}{' '}
+          {matchedItemCount === 1 ? 'update' : 'updates'} across{' '}
+          {visibleEntries.length}{' '}
+          {visibleEntries.length === 1 ? 'release' : 'releases'}
+        </span>
+      )}
     </div>
   );
 
-  const headerBand = (
-    <header style={styles.headerBand}>
+  const heroBand = (
+    <header
+      style={styles.heroBand}
+      onPointerMove={onHeroPointerMove}
+      onPointerLeave={onHeroPointerLeave}>
+      {/* Aurora field: accent-derived blobs drifting on long keyframes. */}
       <div
         style={{
-          ...styles.headerInner,
-          ...(isPhone ? styles.headerInnerCompact : null),
+          ...styles.auroraBlob,
+          width: 520,
+          height: 520,
+          top: -180,
+          left: '-8%',
+          backgroundColor: `color-mix(in srgb, ${AURORA_A} 45%, transparent)`,
+          opacity: 0.5,
+          animation: reduceMotion
+            ? undefined
+            : 'cwn-drift-a 38s ease-in-out infinite alternate',
+        }}
+      />
+      <div
+        style={{
+          ...styles.auroraBlob,
+          width: 460,
+          height: 460,
+          top: -60,
+          right: '-12%',
+          backgroundColor: `color-mix(in srgb, ${AURORA_C} 42%, transparent)`,
+          opacity: 0.45,
+          animation: reduceMotion
+            ? undefined
+            : 'cwn-drift-b 44s ease-in-out infinite alternate',
+        }}
+      />
+      <div
+        style={{
+          ...styles.auroraBlob,
+          width: 560,
+          height: 560,
+          bottom: -240,
+          left: '28%',
+          backgroundColor: `color-mix(in srgb, ${AURORA_B} 38%, transparent)`,
+          opacity: 0.4,
+          animation: reduceMotion
+            ? undefined
+            : 'cwn-drift-a 52s ease-in-out infinite alternate-reverse',
+        }}
+      />
+      <div style={styles.grainOverlay} />
+      <div
+        style={{
+          ...styles.heroInner,
+          ...(isPhone ? styles.heroInnerCompact : null),
         }}>
-        <span style={styles.eyebrow}>Ledgerline · Product updates</span>
-        <h1
-          style={{
-            ...styles.pageTitle,
-            ...(isPhone ? styles.pageTitleCompact : null),
-          }}>
-          What&rsquo;s new in Ledgerline
-        </h1>
-        <p style={styles.subcopy}>
-          Every release, straight from the team that shipped it — new
-          features, quality-of-life fixes, and the occasional breaking change
-          with a migration path. Published every Thursday.
-        </p>
-        <div ref={statsRef} style={styles.statsRow}>
-          {HEADER_STATS.map(stat => (
-            <CountUpStat
-              key={stat.id}
-              stat={stat}
-              isActive={statsInView}
-              reduceMotion={reduceMotion}
+        <div
+          style={
+            isTheaterStacked ? styles.heroGridStacked : styles.heroGrid
+          }>
+          <div style={styles.heroCopy}>
+            <span style={styles.eyebrowChip}>
+              Ledgerline · Product updates
+            </span>
+            <h1
+              style={{
+                ...styles.pageTitle,
+                fontSize: titleSize,
+                ...(isPhone ? {lineHeight: 1.08} : null),
+              }}>
+              What&rsquo;s new in{' '}
+              <span style={styles.titleInk}>Ledgerline</span>
+            </h1>
+            <p style={styles.subcopy}>
+              Every release, straight from the team that shipped it — new
+              features, quality-of-life fixes, and the occasional breaking
+              change with a migration path. Published every Thursday.
+            </p>
+            <div ref={statsRef} style={styles.statsRow}>
+              {HEADER_STATS.map(stat => (
+                <CountUpStat
+                  key={stat.id}
+                  stat={stat}
+                  isActive={statsInView}
+                  reduceMotion={reduceMotion}
+                />
+              ))}
+            </div>
+            <EmailCapture
+              inputLabel="Email for release notes"
+              buttonLabel="Subscribe"
+              confirmedNote="Release notes will land at {email} every Thursday."
+              isStacked={isPhone}
+              onSubscribed={email =>
+                fireToast(`Header subscribe — signed up ${email}.`)
+              }
+              trailing={rssChip}
             />
-          ))}
+          </div>
+          <div
+            style={
+              isTheaterStacked
+                ? {padding: isPhone ? '20px 4px 28px' : '24px 28px 32px'}
+                : undefined
+            }>
+            <HeroTheater
+              reduceMotion={reduceMotion}
+              isPhone={isPhone}
+              allowParallax={allowParallax}
+              parallaxX={parallax.x}
+              parallaxY={parallax.y}
+            />
+          </div>
         </div>
-        <EmailCapture
-          inputLabel="Email for release notes"
-          buttonLabel="Subscribe"
-          confirmedNote="Release notes will land at {email} every Thursday."
-          isStacked={isPhone}
-          onSubscribed={email =>
-            fireToast(`Header subscribe — signed up ${email}.`)
-          }
-          trailing={rssChip}
-        />
-        {filterRow}
       </div>
     </header>
   );
 
   // ============= ENTRIES =============
 
-  const renderEntry = (candidate: VisibleEntry) => {
+  const renderEntry = (candidate: VisibleEntry, indexInGroup: number) => {
     const {entry, items} = candidate;
     const olderIndex = olderIds.indexOf(entry.id);
-    const delayMs = showOlder && olderIndex >= 0 ? olderIndex * 90 : 0;
+    const delayMs =
+      showOlder && olderIndex >= 0 ? olderIndex * 90 : indexInGroup * 70;
 
     const rail = (
       <div
@@ -2263,7 +3522,7 @@ export default function ChangelogWhatsNewTemplate() {
     );
 
     const body = (
-      <div style={styles.entryBody}>
+      <div className="cwn-card" style={styles.entryBody}>
         <h3 style={styles.entryTitle}>{entry.title}</h3>
         <ul style={styles.itemList}>
           {items.map(item => (
@@ -2320,7 +3579,9 @@ export default function ChangelogWhatsNewTemplate() {
     return (
       <Reveal key={entry.id} delayMs={delayMs} reduceMotion={reduceMotion}>
         <article
-          ref={entry.isBreaking === true ? registerSection('breaking') : undefined}
+          ref={
+            entry.isBreaking === true ? registerSection('breaking') : undefined
+          }
           aria-label={`${entry.version} — ${entry.title}`}
           style={isMid ? styles.entryStacked : styles.entryGrid}>
           {rail}
@@ -2333,9 +3594,12 @@ export default function ChangelogWhatsNewTemplate() {
   const entriesColumn = (
     <div
       ref={registerSection('latest')}
-      style={styles.column}
+      style={{
+        ...styles.column,
+        ...(isCompactNav ? styles.columnCompact : null),
+      }}
       aria-label="Release entries">
-      {isFiltering && visibleEntries.length > 0 && (
+      {isFiltering && visibleEntries.length > 0 && isPhone && (
         <Text type="supporting" color="secondary">
           Showing {matchedItemCount}{' '}
           {matchedItemCount === 1 ? 'update' : 'updates'} across{' '}
@@ -2344,7 +3608,10 @@ export default function ChangelogWhatsNewTemplate() {
         </Text>
       )}
       {groups.map(group => (
-        <section key={group.month} style={styles.monthGroup} aria-label={group.month}>
+        <section
+          key={group.month}
+          style={styles.monthGroup}
+          aria-label={group.month}>
           <div style={styles.monthHeader}>
             <span style={styles.monthLabel}>{group.month}</span>
             <span style={styles.monthRule} aria-hidden="true" />
@@ -2390,28 +3657,246 @@ export default function ChangelogWhatsNewTemplate() {
     </div>
   );
 
-  // ============= SUBSCRIBE BAND + FOOTER =============
+  // ============= PINNED STORY =============
 
-  const subscribeBand = (
+  const storyStepContent = (index: number, isActive: boolean) => {
+    const step = STORY_STEPS[index];
+    return (
+      <>
+        <span
+          style={{
+            ...styles.storyStepNum,
+            ...(isActive ? styles.storyStepNumActive : null),
+          }}
+          aria-hidden="true">
+          {step.num}
+        </span>
+        <span style={{minWidth: 0}}>
+          <span style={{...styles.storyStepTitle, display: 'block'}}>
+            {step.title}
+          </span>
+          <span style={{...styles.storyStepCopy, display: 'block'}}>
+            {step.copy}
+          </span>
+        </span>
+      </>
+    );
+  };
+
+  const storyRailStep = (index: number, isActive: boolean) => (
+    <button
+      key={STORY_STEPS[index].id}
+      type="button"
+      style={styles.storyStep}
+      aria-current={isActive ? 'true' : undefined}
+      onClick={() => jumpToStoryStep(index)}>
+      {storyStepContent(index, isActive)}
+    </button>
+  );
+
+  const storyHeading = (
+    <div>
+      <span style={styles.eyebrowChip}>Behind the log</span>
+      <h2
+        style={{
+          ...styles.storyHeading,
+          ...(isPhone ? styles.storyHeadingCompact : null),
+          marginTop: 14,
+        }}>
+        How a release reaches this page
+      </h2>
+    </div>
+  );
+
+  const storySection = isStoryStatic ? (
+    // Reduced motion (or unmeasurable container): static stacked scene.
+    <section style={styles.storyBand} aria-label="How a release ships">
+      <div style={styles.storyStaticInner}>
+        {storyHeading}
+        {STORY_STEPS.map((step, index) => (
+          <div
+            key={step.id}
+            style={isCompactNav ? styles.storyGridStacked : styles.storyGrid}>
+            <div style={{...styles.storyStep, cursor: 'default'}}>
+              {storyStepContent(index, true)}
+            </div>
+            <PipelineMock step={index} />
+          </div>
+        ))}
+      </div>
+    </section>
+  ) : (
+    <section
+      ref={storyTallRef}
+      style={{...styles.storyBand, height: storyTallHeight}}
+      aria-label="How a release ships">
+      <div style={{...styles.storyStage, height: storyStageHeight}}>
+        <div style={styles.storyInner}>
+          {storyHeading}
+          <div
+            style={isCompactNav ? styles.storyGridStacked : styles.storyGrid}>
+            <div style={styles.storyRail}>
+              {isCompactNav ? (
+                // Condensed pill rail: all three steps stay clickable.
+                <div style={styles.storyStepRowCompact}>
+                  {STORY_STEPS.map((step, index) => (
+                    <button
+                      key={step.id}
+                      type="button"
+                      style={{
+                        ...styles.storyStepCompact,
+                        ...(index === storyStep
+                          ? styles.storyStepCompactActive
+                          : null),
+                      }}
+                      aria-current={index === storyStep ? 'true' : undefined}
+                      onClick={() => jumpToStoryStep(index)}>
+                      <span aria-hidden="true">{step.num}</span>
+                      {step.title}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                STORY_STEPS.map((step, index) =>
+                  storyRailStep(index, index === storyStep),
+                )
+              )}
+              <div
+                style={styles.storyProgressTrack}
+                role="progressbar"
+                aria-label="Release pipeline progress"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={Math.round(storyProgress * 100)}>
+                <div
+                  style={{
+                    ...styles.storyProgressFill,
+                    transform: `scaleX(${storyProgress.toFixed(2)})`,
+                  }}
+                />
+              </div>
+            </div>
+            <div
+              style={{
+                ...styles.storyViewport,
+                minHeight: isCompactNav ? 260 : 320,
+              }}>
+              {STORY_STEPS.map((step, index) => (
+                <div
+                  key={step.id}
+                  style={{
+                    ...styles.storyState,
+                    opacity: index === storyStep ? 1 : 0,
+                    transform:
+                      index === storyStep
+                        ? 'none'
+                        : index < storyStep
+                          ? 'translateY(-18px) scale(0.985)'
+                          : 'translateY(18px) scale(0.985)',
+                    pointerEvents: index === storyStep ? 'auto' : 'none',
+                  }}>
+                  <PipelineMock step={index} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+
+  // ============= DARK SUBSCRIBE BAND + FOOTER =============
+
+  const darkBand = (
     <section
       ref={registerSection('subscribe')}
-      style={styles.subscribeBand}
+      style={styles.darkBand}
+      onPointerMove={onDarkPointerMove}
       aria-label="Subscribe to release notes">
-      <div style={styles.subscribeInner}>
-        <h2 style={styles.subscribeTitle}>Never miss a release</h2>
-        <Text color="secondary">
-          One email per release, every Thursday. No product marketing, no
-          digest padding — just the notes on this page.
-        </Text>
-        <EmailCapture
-          inputLabel="Email for release notes"
-          buttonLabel="Subscribe"
-          confirmedNote="Confirmation sent to {email} — see you Thursday."
-          isStacked={isPhone}
-          onSubscribed={email =>
-            fireToast(`Footer subscribe — signed up ${email}.`)
-          }
-        />
+      {/* Vibrant glows: the aurora system, restated on ink. */}
+      <div
+        style={{
+          ...styles.darkGlow,
+          width: 560,
+          height: 560,
+          top: -220,
+          right: '-6%',
+          backgroundColor: `color-mix(in srgb, ${ACCENT} 34%, transparent)`,
+          opacity: 0.55,
+          animation: reduceMotion
+            ? undefined
+            : 'cwn-drift-b 40s ease-in-out infinite alternate',
+        }}
+      />
+      <div
+        style={{
+          ...styles.darkGlow,
+          width: 480,
+          height: 480,
+          bottom: -220,
+          left: '-8%',
+          backgroundColor: `color-mix(in srgb, ${AURORA_A} 30%, transparent)`,
+          opacity: 0.5,
+          animation: reduceMotion
+            ? undefined
+            : 'cwn-drift-a 48s ease-in-out infinite alternate-reverse',
+        }}
+      />
+      {!reduceMotion && <div style={styles.darkSpotlight} />}
+      <div style={styles.grainOverlay} />
+      <div
+        style={{
+          ...(isMid ? styles.darkInnerStacked : styles.darkInner),
+          position: 'relative',
+          zIndex: 1,
+        }}>
+        <div>
+          <span style={styles.darkEyebrow}>Subscribe</span>
+          <h2
+            style={{
+              ...styles.darkTitle,
+              ...(isPhone ? styles.darkTitleCompact : null),
+              marginTop: 12,
+            }}>
+            Never miss a release
+          </h2>
+          <p style={{...styles.darkCopy, marginTop: 16}}>
+            One email per release, every Thursday. No product marketing, no
+            digest padding — just the notes on this page.
+          </p>
+        </div>
+        <div style={styles.glassCard}>
+          <EmailCapture
+            inputLabel="Email for release notes"
+            buttonLabel="Subscribe"
+            confirmedNote="Confirmation sent to {email} — see you Thursday."
+            isStacked={isPhone || !isMid}
+            tone="dark"
+            onSubscribed={email =>
+              fireToast(`Footer subscribe — signed up ${email}.`)
+            }
+          />
+          <div style={styles.glassMetaRow}>
+            {(
+              [
+                'One email per release',
+                '18,402 subscribers',
+                'Unsubscribe anytime',
+              ] as const
+            ).map(item => (
+              <span key={item} style={styles.glassMeta}>
+                <span
+                  style={{
+                    color: `color-mix(in srgb, ${ACCENT} 85%, white)`,
+                    display: 'inline-flex',
+                  }}>
+                  <Icon icon={CheckIcon} size="sm" color="inherit" />
+                </span>
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -2461,6 +3946,24 @@ export default function ChangelogWhatsNewTemplate() {
 
   return (
     <>
+      {/* Keyframes + hover tiers (transform/opacity only; hover motion is
+          wrapped in a no-preference media query so reduced motion stays
+          static, and box-shadow retiers apply everywhere). */}
+      <style>{`
+@keyframes cwn-drift-a { from { transform: translate3d(-4%, -6%, 0) scale(1); } to { transform: translate3d(7%, 9%, 0) scale(1.16); } }
+@keyframes cwn-drift-b { from { transform: translate3d(5%, 4%, 0) scale(1.08); } to { transform: translate3d(-8%, -6%, 0) scale(0.94); } }
+@keyframes cwn-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+.cwn-card { box-shadow: ${SHADOW_RAISED}; transition: transform 240ms ${EASE_OUT}, box-shadow 240ms ${EASE_OUT}; }
+.cwn-card:hover { box-shadow: 0 0 0 1px ${ACCENT_BORDER}, ${SHADOW_FLOATING}; }
+.cwn-sheen { position: relative; display: inline-flex; border-radius: 10px; overflow: hidden; isolation: isolate; transition: transform 180ms ${EASE_OUT}; }
+.cwn-sheen::after { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(115deg, transparent 32%, color-mix(in srgb, white 34%, transparent) 50%, transparent 68%); transform: translateX(-160%); }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .cwn-card:hover { transform: translateY(-3px); }
+  .cwn-sheen:hover { transform: translateY(-1px); }
+  .cwn-sheen:active { transform: scale(0.98); }
+  .cwn-sheen:hover::after { transform: translateX(160%); transition: transform 700ms ${EASE_OUT}; }
+}
+`}</style>
       <Layout
         height="fill"
         content={
@@ -2471,9 +3974,12 @@ export default function ChangelogWhatsNewTemplate() {
             <div ref={wrapRef} style={styles.measure}>
               <div ref={pageRef} style={styles.page} onScroll={onPageScroll}>
                 {navbar}
-                {headerBand}
+                {heroBand}
+                {/* Floating toolbar deliberately crosses the band edge. */}
+                <div style={styles.filterBarWrap}>{filterBar}</div>
                 {entriesColumn}
-                {subscribeBand}
+                {storySection}
+                {darkBand}
                 {footer}
               </div>
             </div>

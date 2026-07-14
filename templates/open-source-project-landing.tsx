@@ -11,29 +11,40 @@
  *   highlight bullets, 24 contributor monograms plus totals, three sponsor
  *   tiers of monogram tiles, a 13-point star-history series, eight "used by"
  *   wordmarks, three community link cards, and footer link labels)
- * @output Complete open-source project landing page: a sticky navbar with a
- *   brand mark, four smooth-scrolling anchor links with scroll-spy (collapsing
- *   to a menu button + dropdown at compact widths), and a working
- *   Star-on-GitHub toggle that increments the live star count; a centered hero
- *   with the package wordmark, one-line pitch, an install card whose
- *   npm/pnpm/yarn/bun TabList swaps the CodeBlock command (copy button with
- *   inline "Copied" feedback), and count-up star/fork stat chips; a
- *   before/after 30-second example band; a four-release semver timeline;
- *   a 24-tile contributor monogram wall with a count-up caption; a
- *   three-tier sponsors band; a star-history SVG sparkline that draws on
- *   first reveal beside count-up growth chips; a "used by" wordmark strip;
- *   Docs / Discord / GitHub link cards; and a scheme-locked footer with the
- *   MIT license note. Scroll-reveal rise+fade sections fire once via
- *   IntersectionObserver.
+ * @output Awwwards-bar open-source project landing page. A sticky navbar
+ *   rides transparent over the aurora-lit hero, then gains a tinted
+ *   color-mix surface, hairline, and shorter bar after 24px of scroll; its
+ *   four anchor links smooth-scroll with scroll-spy and collapse behind a
+ *   menu button at compact widths, and a working Star toggle increments
+ *   every star count on the page. The hero stages a product theater: a
+ *   gradient-ink display headline over an install "terminal" panel set in
+ *   subtle perspective, orbited by three bobbing satellite mini-cards
+ *   (star-delta chip, release toast, contributor avatar cluster) that
+ *   parallax toward the pointer; the panel's npm/pnpm/yarn/bun TabList swaps
+ *   the CodeBlock command (copy button with aria-live "Copied" feedback) and
+ *   the whole composition bleeds across the boundary into the dot-grid
+ *   example band. Sections: a recessed-before / floating-after 30-second
+ *   example pair; a PINNED SCROLL STORY for the four releases (sticky stage
+ *   in a ~260vh wrapper — scroll fills the numbered step rail and crossfades
+ *   oversized-numeral release panels; steps are clickable; reduced motion or
+ *   compact widths render the static stacked timeline); an asymmetric 5/7
+ *   contributors split with count-up totals beside a staggered monogram
+ *   wall; a three-tier sponsors band; a scheme-locked DARK star-history
+ *   band with vibrant aurora glows, grain, a pointer-tracked spotlight,
+ *   a glass sparkline card that draws on reveal, glass count-up growth
+ *   chips, and a used-by marquee loop (pause on hover, static under reduced
+ *   motion); hover-raising Docs / Discord / GitHub cards; and the
+ *   scheme-locked MIT footer.
  * @position Page template; emitted by `astryx template open-source-project-landing`
  *
  * Frame: Layout height="fill", content-only — a landing page owns its own
  * chrome, so there is no LayoutHeader. LayoutContent (padding 0) hosts a
- * single scroll container div that owns scroll-spy and is measured by a
- * ResizeObserver; the navbar is position:sticky top:0 inside it. Sections
- * alternate full-bleed tinted bands with plain bands; each band centers a
- * 1120px column. The compact nav dropdown drops absolutely from the sticky
- * navbar.
+ * single scroll container div that owns scroll-spy, the nav surface state,
+ * and the pinned-story progress; the navbar is position:sticky top:0 inside
+ * it. The page element is measured by a ResizeObserver (width for
+ * breakpoints, height for the pinned-story stage). A <style> tag injects
+ * ospl-prefixed keyframes (aurora drift, satellite bob, marquee) plus the
+ * hover-only sheen/raise rules, all scoped under .ospl-root:not(.ospl-reduced).
  *
  * Interaction contract:
  * - Nav anchor links smooth-scroll the container to real section ids with a
@@ -44,55 +55,72 @@
  * - The Star button (nav + hero) toggles a starred state: the label flips to
  *   "Starred" and every star count on the page increments by one. No dead
  *   buttons in the hero: "Get started" scrolls to the example section.
- * - The install card's package-manager TabList swaps the CodeBlock command;
+ * - The install panel's package-manager TabList swaps the CodeBlock command;
  *   the CodeBlock copy button fires an aria-live "Copied ..." confirmation
  *   that clears after 2 seconds.
+ * - Pinned-story steps double as buttons: clicking one scrolls the container
+ *   to that step's segment of the sticky travel (or is a pure highlight in
+ *   the static fallback).
  * - Community link cards and sponsor/footer links would leave the page, so
  *   they are intentionally inert (no-op onClick per template conventions).
  *
  * Motion contract (all gated by prefers-reduced-motion via matchMedia):
- * - Sections reveal once via IntersectionObserver — 12px rise + fade, with
- *   small per-item stagger delays on timeline rows and contributor tiles.
- * - Star/fork chips, the contributor total, and the 90-day star delta count
- *   up on first view (requestAnimationFrame, eased, deterministic targets).
- * - The star-history polyline draws on when revealed (pathLength dashoffset
- *   transition); its area fill fades in.
+ * - Aurora blobs drift on 34-44s transform keyframes; satellites bob on
+ *   6.5-8.5s keyframes with negative delays and parallax ±8px toward the
+ *   pointer over the hero (spring transition; off under reduced motion and
+ *   at stacked widths).
+ * - Sections reveal once via IntersectionObserver — 16px rise + 0.985 scale
+ *   settle over ~600ms decelerate bezier, with 60-90ms child staggers on
+ *   timeline rows, contributor tiles, and community cards.
+ * - Star/fork chips, the contributor totals, and the 90-day star delta count
+ *   up over ~900ms with decelerate easing on first view.
+ * - The star-history polyline draws on when revealed (pathLength
+ *   dashoffset transition); its area fill fades in.
+ * - The used-by strip is a 48s marquee loop that pauses on hover.
+ * - Primary CTAs carry a sheen-sweep hover (translating gradient overlay),
+ *   1px lift, and a 0.98 pressed scale; cards raise a shadow tier and gain
+ *   an accent border-glow on hover.
  * - Reduced motion: reveals render visible, counters render final values,
- *   and the sparkline renders fully drawn. No entrance motion anywhere.
+ *   the sparkline renders fully drawn, the marquee renders as a static
+ *   wrapped strip, the story renders as a static stacked timeline, and the
+ *   auroras hold still. No entrance motion anywhere.
  *
  * Container policy (landing-page archetype): page chrome is frame-first;
- * marketing sections are painted bands and bordered Cards inside the
+ * marketing sections are painted bands and bordered surfaces inside the
  * document column. All art is CSS/SVG — monogram gradient tiles, a mosaic
- * brand glyph, and a fixed-point sparkline. No network assets, no real
- * logos, no clocks, no randomness.
+ * brand glyph, aurora fields, an feTurbulence grain tile, and a fixed-point
+ * sparkline. No network assets, no real logos, no clocks, no randomness.
  *
  * Color policy: token-pure except two sanctioned classes:
  * 1. ONE quarantined accent literal (tessera teal) declared once as a
- *    light-dark() pair with contrast math (see ACCENT below); its rgba
- *    tints derive from the same two hex values.
- * 2. Scheme-locked brand art: contributor/sponsor monogram gradients and
- *    the footer band carry literal colors under colorScheme:'dark' so they
- *    read identically in both app themes (same policy as
- *    saas-landing-page.tsx brand tiles).
+ *    light-dark() pair with contrast math (see ACCENT below); every tint,
+ *    glow, aurora, and gradient ink derives from it via color-mix with
+ *    tokens.
+ * 2. Scheme-locked brand art: contributor/sponsor monogram gradients, the
+ *    dark star-history band, and the footer carry literal colors under
+ *    colorScheme:'dark' so they read identically in both app themes (same
+ *    policy as saas-landing-page.tsx brand tiles).
  *
  * Responsive contract (measured with a ResizeObserver on the page element —
  * the inline demo stage is ~1045px wide, so viewport media queries are not
  * used):
- * - Column: max-width 1120px, centered; tinted bands and footer bleed edge
- *   to edge.
+ * - Column: max-width 1120px, centered; tinted/dark bands bleed edge to
+ *   edge. Section rhythm: 104px block padding at wide, 72px stacked, 56px
+ *   phone.
  * - >880px: navbar shows 4 inline anchor links + Star button.
  * - <=880px: anchors collapse behind a 40px menu button + dropdown panel
  *   (Escape / outside tap / selection closes); Star button stays visible.
- * - >740px: before/after example sits 2-up; release timeline text and
- *   bullets share a row; community cards sit 3-up (Grid minWidth).
- * - <=740px: the example pair, timeline rows, and sponsor tier rows stack;
- *   community cards drop 3 -> 2 -> 1 via Grid minWidth.
- * - <=540px: wordmark and headline sizes step down, hero stat chips wrap,
- *   band paddings tighten, sponsor tiles shrink, and the used-by strip
- *   wraps to two rows. Action rows are wrap-enabled so the page holds at
+ * - >740px: the example pair sits 2-up, the release story pins, the
+ *   contributors split 5/7, and community cards sit 3-up (Grid minWidth).
+ * - <=740px: the example pair, contributor split, and sponsor rows stack;
+ *   the release story renders as the static stacked timeline; satellite
+ *   parallax turns off.
+ * - <=540px: the display headline and oversized numerals step down, hero
+ *   satellites hide, stat chips wrap, band paddings tighten, and the
+ *   used-by strip wraps. Action rows are wrap-enabled so the page holds at
  *   390px in the phone artboard with no overflow-x.
- * - Tap targets: nav links, the menu button, and footer links are >=40px
- *   controls; nothing on the page requires hover.
+ * - Tap targets: nav links, the menu button, story steps, and footer links
+ *   are >=40px controls; nothing on the page requires hover.
  */
 
 import {
@@ -100,6 +128,8 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
+  type ReactNode,
   type RefObject,
   type UIEvent,
 } from 'react';
@@ -111,16 +141,14 @@ import {
   StackItem,
   VStack,
 } from '@astryxdesign/core/Layout';
-import {Heading, Text} from '@astryxdesign/core/Text';
+import {Text} from '@astryxdesign/core/Text';
 import {Badge} from '@astryxdesign/core/Badge';
 import {Button} from '@astryxdesign/core/Button';
-import {Card} from '@astryxdesign/core/Card';
 import {ClickableCard} from '@astryxdesign/core/ClickableCard';
 import {CodeBlock} from '@astryxdesign/core/CodeBlock';
 import {Grid} from '@astryxdesign/core/Grid';
 import {Icon} from '@astryxdesign/core/Icon';
 import {Tab, TabList} from '@astryxdesign/core/TabList';
-import {Token} from '@astryxdesign/core/Token';
 import {
   ArrowRightIcon,
   BookOpenIcon,
@@ -130,9 +158,11 @@ import {
   HeartIcon,
   MenuIcon,
   MessagesSquareIcon,
-  ScaleIcon,
   PackageIcon,
+  ScaleIcon,
   StarIcon,
+  TerminalIcon,
+  UsersIcon,
   XIcon,
 } from 'lucide-react';
 import type {ComponentType, SVGProps} from 'react';
@@ -145,30 +175,157 @@ type Glyph = ComponentType<SVGProps<SVGSVGElement>>;
  * Quarantined accent literal (the ONE sanctioned accent for this page):
  * tessera teal. Contrast math: light #0F766E on #FFFFFF = 5.5:1 (AA for
  * normal text, AAA for the >=18px uses here); dark #2DD4BF on a ~#101828
- * dark body = 9.9:1 (AAA). The two tints below are rgba forms of the SAME
- * two hex values, used only as backgrounds under accent-colored content.
+ * dark body = 9.9:1 (AAA). Every tint, glow, aurora, and gradient ink on
+ * the page derives from this single pair via color-mix with tokens.
  */
 const ACCENT = 'light-dark(#0F766E, #2DD4BF)';
-const ACCENT_TINT =
-  'light-dark(rgba(15, 118, 110, 0.10), rgba(45, 212, 191, 0.14))';
-const ACCENT_TINT_STRONG =
-  'light-dark(rgba(15, 118, 110, 0.22), rgba(45, 212, 191, 0.30))';
+const ACCENT_SOFT = `color-mix(in srgb, ${ACCENT} 11%, transparent)`;
+const ACCENT_BORDER = `color-mix(in srgb, ${ACCENT} 34%, transparent)`;
+const ACCENT_GLOW = `color-mix(in srgb, ${ACCENT} 22%, transparent)`;
 
-// Scheme-locked footer surface (see Color policy).
-const FOOTER_BG = '#0B1220';
-const FOOTER_TEXT = '#FFFFFF';
-const FOOTER_TEXT_SOFT = 'rgba(226, 232, 240, 0.78)';
-const FOOTER_TEXT_FAINT = 'rgba(226, 232, 240, 0.58)';
-const FOOTER_BORDER = 'rgba(255, 255, 255, 0.16)';
+// Status tokens (with house light-dark fallbacks) — only ever mixed with
+// the accent, never used as standalone new hues.
+const SUCCESS = 'var(--color-success, light-dark(#1E8E3E, #6DD58C))';
+const INFO_BLUE = 'var(--color-icon-blue, light-dark(#0B57D0, #A8C7FA))';
 
-/** Sticky-nav height; smooth-scroll and scroll-spy both allow for it. */
+/** Aurora blob inks — the accent mixed toward the success / info tokens. */
+const AURORA_A = `color-mix(in srgb, ${ACCENT} 55%, transparent)`;
+const AURORA_B = `color-mix(in srgb, color-mix(in srgb, ${ACCENT} 45%, ${SUCCESS}) 52%, transparent)`;
+const AURORA_C = `color-mix(in srgb, color-mix(in srgb, ${ACCENT} 40%, ${INFO_BLUE}) 48%, transparent)`;
+
+/** Gradient ink for the hero key phrase and oversized numerals. */
+const INK_GRADIENT = `linear-gradient(94deg, ${ACCENT} 6%, color-mix(in srgb, ${ACCENT} 55%, ${INFO_BLUE}) 55%, color-mix(in srgb, ${ACCENT} 50%, ${SUCCESS}) 98%)`;
+
+// Scheme-locked dark surfaces (star-history band + footer, see Color
+// policy). White-alpha chips are glass furniture on those surfaces only.
+const DARK_BG = '#0B1220';
+const DARK_TEXT = '#FFFFFF';
+const DARK_TEXT_SOFT = 'rgba(226, 232, 240, 0.8)';
+const DARK_TEXT_FAINT = 'rgba(226, 232, 240, 0.58)';
+const GLASS_BG = 'rgba(255, 255, 255, 0.08)';
+const GLASS_BORDER = 'rgba(255, 255, 255, 0.18)';
+
+/** Sheen sweep on primary CTAs (white-alpha, glass family). */
+const SHEEN = 'rgba(255, 255, 255, 0.35)';
+
+/**
+ * Depth tiers (neutral black shadows only — hue never rides a shadow;
+ * accent glow arrives as a separate 0-spread ring on hover).
+ * raised = default card lift; floating = adds a wide soft underlayer;
+ * glass adds an inset hairline stroke on dark surfaces.
+ */
+const SHADOW_RAISED =
+  '0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px -12px rgba(0, 0, 0, 0.18)';
+const SHADOW_FLOATING =
+  '0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px -12px rgba(0, 0, 0, 0.18), ' +
+  '0 24px 48px -24px rgba(0, 0, 0, 0.28)';
+const SHADOW_GLASS = `inset 0 0 0 1px ${GLASS_BORDER}, ${SHADOW_FLOATING}`;
+
+/** Colorless SVG feTurbulence grain tile (data URI, no network asset). */
+const GRAIN =
+  'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' ' +
+  'width=\'160\' height=\'160\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence ' +
+  'type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' ' +
+  'stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'160\' ' +
+  'height=\'160\' filter=\'url(%23n)\'/%3E%3C/svg%3E")';
+
+const MONO = 'var(--font-family-mono, ui-monospace, monospace)';
+
+/** Sticky-nav height allowance shared by smooth-scroll and scroll-spy. */
 const NAV_ALLOWANCE = 64;
 const SPY_OFFSET = 140;
+/** Pinned-story wrapper = stage height × this factor (~260vh). */
+const STORY_LENGTH = 2.6;
+/** How far the hero theater bleeds into the example band. */
+const THEATER_OVERLAP = 56;
+
+/**
+ * Injected once per page: ospl-prefixed keyframes (aurora drift, satellite
+ * bob, marquee) plus the hover-only sheen/raise rules. Every motion rule is
+ * scoped under .ospl-root:not(.ospl-reduced) or gated inline, so reduced
+ * motion renders everything static.
+ */
+const OSPL_CSS = `
+@keyframes ospl-drift-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(52px, -34px, 0) scale(1.12); }
+}
+@keyframes ospl-drift-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.05); }
+  50% { transform: translate3d(-44px, 30px, 0) scale(0.93); }
+}
+@keyframes ospl-drift-c {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(0.96); }
+  50% { transform: translate3d(30px, 40px, 0) scale(1.08); }
+}
+@keyframes ospl-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+@keyframes ospl-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.ospl-root:not(.ospl-reduced) .ospl-aurora-a {
+  animation: ospl-drift-a 38s ease-in-out infinite;
+}
+.ospl-root:not(.ospl-reduced) .ospl-aurora-b {
+  animation: ospl-drift-b 44s ease-in-out -12s infinite;
+}
+.ospl-root:not(.ospl-reduced) .ospl-aurora-c {
+  animation: ospl-drift-c 34s ease-in-out -22s infinite;
+}
+.ospl-root:not(.ospl-reduced) .ospl-bob {
+  animation: ospl-bob 7.5s ease-in-out infinite;
+}
+.ospl-root:not(.ospl-reduced) .ospl-marquee-track {
+  animation: ospl-marquee 48s linear infinite;
+}
+.ospl-root:not(.ospl-reduced) .ospl-marquee:hover .ospl-marquee-track {
+  animation-play-state: paused;
+}
+.ospl-shine {
+  position: relative;
+  display: inline-flex;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.ospl-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 40%, ${SHEEN} 50%, transparent 60%);
+  transform: translateX(-130%) skewX(-14deg);
+}
+.ospl-root:not(.ospl-reduced) .ospl-shine {
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ospl-root:not(.ospl-reduced) .ospl-shine:hover { transform: translateY(-1px); }
+.ospl-root:not(.ospl-reduced) .ospl-shine:hover::after {
+  transform: translateX(130%) skewX(-14deg);
+  transition: transform 0.7s ease;
+}
+.ospl-root:not(.ospl-reduced) .ospl-shine:active { transform: scale(0.98); }
+.ospl-root:not(.ospl-reduced) .ospl-raise {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+}
+.ospl-root:not(.ospl-reduced) .ospl-raise:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 0 1px ${ACCENT_BORDER}, ${SHADOW_FLOATING};
+}
+@media (prefers-reduced-motion: reduce) {
+  .ospl-root .ospl-aurora-a, .ospl-root .ospl-aurora-b,
+  .ospl-root .ospl-aurora-c, .ospl-root .ospl-bob,
+  .ospl-root .ospl-marquee-track { animation: none; }
+  .ospl-root .ospl-shine, .ospl-root .ospl-raise { transition: none; }
+}
+`;
 
 // ============= STYLES =============
 
 const styles: Record<string, CSSProperties> = {
-  // Scroll container: owns scroll-spy, sticky nav, and width measurement.
+  // Scroll container: owns scroll-spy, sticky nav, and story progress.
   page: {
     position: 'relative',
     height: '100%',
@@ -186,23 +343,73 @@ const styles: Record<string, CSSProperties> = {
   columnPhone: {
     paddingInline: 'var(--spacing-4)',
   },
+  // 104px section rhythm at wide widths; 72/56px compact tiers.
   band: {
-    paddingBlock: 'var(--spacing-10, 64px)',
+    paddingBlock: 104,
+  },
+  bandStacked: {
+    paddingBlock: 72,
   },
   bandPhone: {
-    paddingBlock: 'var(--spacing-8)',
+    paddingBlock: 56,
   },
   bandTinted: {
     backgroundColor: 'var(--color-background-muted)',
     borderTop: '1px solid var(--color-border)',
     borderBottom: '1px solid var(--color-border)',
   },
-  // ---- sticky navbar ----
+  // ---- layered atmosphere ----
+  atmosBand: {
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  atmosLayer: {
+    position: 'absolute',
+    inset: 0,
+    pointerEvents: 'none',
+  },
+  aurora: {
+    position: 'absolute',
+    borderRadius: '50%',
+    filter: 'blur(90px)',
+    pointerEvents: 'none',
+  },
+  grain: {
+    position: 'absolute',
+    inset: 0,
+    backgroundImage: GRAIN,
+    opacity: 0.04,
+    pointerEvents: 'none',
+  },
+  dotGrid: {
+    position: 'absolute',
+    inset: 0,
+    backgroundImage:
+      'radial-gradient(circle, var(--color-border) 1px, transparent 1.4px)',
+    backgroundSize: '22px 22px',
+    opacity: 0.5,
+    maskImage:
+      'linear-gradient(180deg, transparent 0%, black 18%, black 82%, transparent 100%)',
+    WebkitMaskImage:
+      'linear-gradient(180deg, transparent 0%, black 18%, black 82%, transparent 100%)',
+    pointerEvents: 'none',
+  },
+  bandContent: {
+    position: 'relative',
+    zIndex: 1,
+  },
+  // ---- sticky navbar (transparent at top → tinted hairline surface) ----
   navBar: {
     position: 'sticky',
     top: 0,
     zIndex: 30,
-    backgroundColor: 'var(--color-background-body)',
+    backgroundColor: 'transparent',
+    borderBottom: '1px solid transparent',
+    transition: 'background-color 0.3s ease, border-color 0.3s ease',
+  },
+  navBarScrolled: {
+    backgroundColor:
+      'color-mix(in srgb, var(--color-background-body) 92%, transparent)',
     borderBottom: '1px solid var(--color-border)',
   },
   navInner: {
@@ -215,7 +422,12 @@ const styles: Record<string, CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     gap: 'var(--spacing-2)',
-    minHeight: 56,
+    minHeight: 58,
+    transition: 'min-height 0.3s ease',
+  },
+  navInnerScrolled: {
+    minHeight: 48,
+    paddingBlock: 4,
   },
   navLink: {
     display: 'inline-flex',
@@ -233,7 +445,7 @@ const styles: Record<string, CSSProperties> = {
   },
   navLinkActive: {
     color: ACCENT,
-    backgroundColor: ACCENT_TINT,
+    backgroundColor: ACCENT_SOFT,
   },
   menuButton: {
     width: 40,
@@ -288,7 +500,7 @@ const styles: Record<string, CSSProperties> = {
     padding: 3,
     boxSizing: 'border-box',
     borderRadius: 8,
-    backgroundColor: ACCENT_TINT,
+    backgroundColor: ACCENT_SOFT,
   },
   mosaicTile: {
     borderRadius: 3,
@@ -296,53 +508,193 @@ const styles: Record<string, CSSProperties> = {
   },
   mosaicTileGhost: {
     borderRadius: 3,
-    backgroundColor: ACCENT_TINT_STRONG,
+    backgroundColor: `color-mix(in srgb, ${ACCENT} 28%, transparent)`,
   },
   wordmark: {
-    fontFamily: 'var(--font-family-mono, ui-monospace, monospace)',
+    fontFamily: MONO,
     fontWeight: 700,
     letterSpacing: '-0.01em',
+  },
+  // ---- eyebrow (11px tracked uppercase, accent-tinted chip) ----
+  eyebrow: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+    padding: '4px 10px',
+    borderRadius: 999,
+    backgroundColor: ACCENT_SOFT,
+    border: `1px solid ${ACCENT_BORDER}`,
+    color: ACCENT,
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: '0.09em',
+    textTransform: 'uppercase',
+    whiteSpace: 'nowrap',
+  },
+  eyebrowOnDark: {
+    backgroundColor: GLASS_BG,
+    border: `1px solid ${GLASS_BORDER}`,
+    color: DARK_TEXT,
   },
   // ---- hero ----
-  heroWordmark: {
-    fontFamily: 'var(--font-family-mono, ui-monospace, monospace)',
-    fontSize: 64,
-    fontWeight: 700,
-    lineHeight: 1.05,
+  heroDisplay: {
+    fontWeight: 720,
+    lineHeight: 1.03,
     letterSpacing: '-0.03em',
     margin: 0,
+    textAlign: 'center',
+    maxWidth: 880,
   },
-  heroWordmarkPhone: {
-    fontSize: 42,
+  gradientInk: {
+    backgroundImage: INK_GRADIENT,
+    WebkitBackgroundClip: 'text',
+    backgroundClip: 'text',
+    color: 'transparent',
+    WebkitTextFillColor: 'transparent',
   },
-  heroPitch: {
-    fontSize: 24,
-    fontWeight: 600,
-    lineHeight: 1.3,
-    letterSpacing: '-0.01em',
+  heroSubcopy: {
+    fontSize: 17,
+    lineHeight: 1.6,
+    color: 'var(--color-text-secondary)',
+    maxWidth: '56ch',
     margin: 0,
     textAlign: 'center',
   },
-  heroPitchPhone: {
-    fontSize: 19,
+  // ---- section headings (32-44px tier, tracked tight) ----
+  sectionHeading: {
+    fontWeight: 700,
+    lineHeight: 1.1,
+    letterSpacing: '-0.02em',
+    margin: 0,
   },
-  heroSubcopy: {
+  sectionHead: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 'var(--spacing-3)',
+    textAlign: 'center',
+    marginBottom: 'var(--spacing-8)',
+  },
+  sectionCopy: {
     fontSize: 16,
     lineHeight: 1.55,
     color: 'var(--color-text-secondary)',
-    maxWidth: 560,
+    maxWidth: '56ch',
     margin: 0,
-    textAlign: 'center',
+  },
+  // ---- hero product theater ----
+  theaterWrap: {
+    position: 'relative',
+    width: '100%',
+    maxWidth: 660,
+    marginInline: 'auto',
+    perspective: 1400,
+  },
+  theaterPanel: {
+    position: 'relative',
+    borderRadius: 18,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_FLOATING,
+    overflow: 'hidden',
+    transform: 'rotateX(2.5deg)',
+    transformOrigin: 'center bottom',
+  },
+  theaterToolbar: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    padding: '10px 14px',
+    borderBottom: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-muted)',
+  },
+  toolbarDot: {
+    width: 10,
+    height: 10,
+    borderRadius: '50%',
+    backgroundColor: 'var(--color-border)',
+    flexShrink: 0,
+  },
+  toolbarTitle: {
+    fontFamily: MONO,
+    fontSize: 12,
+    color: 'var(--color-text-secondary)',
+    letterSpacing: '0.02em',
+  },
+  theaterBody: {
+    padding: 'var(--spacing-4)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-2)',
+  },
+  theaterGlow: {
+    position: 'absolute',
+    left: '8%',
+    right: '8%',
+    bottom: -38,
+    height: 80,
+    borderRadius: '50%',
+    backgroundImage: `radial-gradient(closest-side, ${AURORA_A}, transparent 72%)`,
+    filter: 'blur(30px)',
+    pointerEvents: 'none',
+  },
+  copyLive: {
+    minHeight: 20,
+    fontSize: 13,
+    color: ACCENT,
+    display: 'flex',
+    alignItems: 'center',
+    gap: 6,
+  },
+  // Satellites: wrapper carries the pointer-parallax transform; the inner
+  // card carries the bob keyframe so the two transforms never fight.
+  satWrap: {
+    position: 'absolute',
+    zIndex: 3,
+    pointerEvents: 'none',
+  },
+  satellite: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+    padding: '10px 14px',
+    borderRadius: 14,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_FLOATING,
+    whiteSpace: 'nowrap',
+  },
+  satDisc: {
+    width: 30,
+    height: 30,
+    borderRadius: 9,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    backgroundColor: ACCENT_SOFT,
+    color: ACCENT,
+  },
+  satTitle: {
+    fontSize: 12.5,
+    fontWeight: 700,
+    lineHeight: 1.25,
+  },
+  satMeta: {
+    fontSize: 11,
+    color: 'var(--color-text-secondary)',
+    lineHeight: 1.25,
   },
   statChip: {
     display: 'inline-flex',
     alignItems: 'center',
     gap: 8,
-    height: 36,
+    height: 38,
     paddingInline: 14,
     borderRadius: 999,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_RAISED,
     whiteSpace: 'nowrap',
   },
   statChipValue: {
@@ -354,32 +706,12 @@ const styles: Record<string, CSSProperties> = {
     fontSize: 13,
     color: 'var(--color-text-secondary)',
   },
-  installCard: {
-    width: '100%',
-    maxWidth: 620,
-  },
-  copyLive: {
-    minHeight: 20,
-    fontSize: 13,
-    color: ACCENT,
-    display: 'flex',
-    alignItems: 'center',
-    gap: 6,
-  },
-  // ---- section intros ----
-  sectionHead: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: 'var(--spacing-2)',
-    textAlign: 'center',
-    marginBottom: 'var(--spacing-6)',
-  },
   // ---- before / after example ----
   examplePair: {
     display: 'flex',
-    gap: 'var(--spacing-4)',
+    gap: 'var(--spacing-5)',
     alignItems: 'stretch',
+    position: 'relative',
   },
   examplePairStacked: {
     flexDirection: 'column',
@@ -391,11 +723,138 @@ const styles: Record<string, CSSProperties> = {
     flexDirection: 'column',
     gap: 'var(--spacing-2)',
   },
-  // ---- release timeline ----
-  timeline: {
+  exampleBefore: {
+    opacity: 0.88,
+  },
+  exampleAfterFrame: {
+    borderRadius: 16,
+    padding: 'var(--spacing-3)',
+    border: `1px solid ${ACCENT_BORDER}`,
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: `0 0 0 4px ${ACCENT_SOFT}, ${SHADOW_FLOATING}`,
     display: 'flex',
     flexDirection: 'column',
+    gap: 'var(--spacing-2)',
   },
+  exampleArrow: {
+    alignSelf: 'center',
+    width: 40,
+    height: 40,
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    backgroundColor: ACCENT,
+    color: 'var(--color-background-body)',
+    boxShadow: SHADOW_RAISED,
+  },
+  // ---- pinned release story ----
+  storyStage: {
+    position: 'sticky',
+    top: NAV_ALLOWANCE,
+    display: 'flex',
+    alignItems: 'center',
+    boxSizing: 'border-box',
+  },
+  storyGrid: {
+    width: '100%',
+    display: 'flex',
+    gap: 'var(--spacing-8)',
+    alignItems: 'center',
+  },
+  storyRailCol: {
+    flex: '5 1 0',
+    minWidth: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-4)',
+  },
+  storyPanelCol: {
+    flex: '7 1 0',
+    minWidth: 0,
+    position: 'relative',
+    minHeight: 420,
+  },
+  storyPanel: {
+    position: 'absolute',
+    inset: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  storyPanelCard: {
+    borderRadius: 18,
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_FLOATING,
+    padding: 'var(--spacing-6)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-3)',
+  },
+  storyVersionNumeral: {
+    fontFamily: MONO,
+    fontSize: 52,
+    fontWeight: 750,
+    lineHeight: 1,
+    letterSpacing: '-0.03em',
+  },
+  storySteps: {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-2)',
+    paddingLeft: 22,
+  },
+  storyTrack: {
+    position: 'absolute',
+    left: 6,
+    top: 10,
+    bottom: 10,
+    width: 2,
+    borderRadius: 1,
+    backgroundColor: 'var(--color-border)',
+    overflow: 'hidden',
+  },
+  storyFill: {
+    position: 'absolute',
+    inset: 0,
+    backgroundColor: ACCENT,
+    transformOrigin: 'top',
+  },
+  storyStep: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 4,
+    padding: 'var(--spacing-2) var(--spacing-3)',
+    borderRadius: 12,
+    border: '1px solid transparent',
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+    textAlign: 'left',
+    color: 'var(--color-text-primary)',
+    minHeight: 44,
+    transition: 'opacity 0.3s ease, background-color 0.3s ease',
+  },
+  storyStepActive: {
+    border: '1px solid var(--color-border)',
+    backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_RAISED,
+  },
+  storyStepNumber: {
+    fontFamily: MONO,
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: '0.08em',
+    color: 'var(--color-text-secondary)',
+  },
+  storyStepTitle: {
+    fontSize: 16,
+    fontWeight: 700,
+    lineHeight: 1.25,
+  },
+  // ---- static timeline fallback ----
   timelineRow: {
     display: 'flex',
     gap: 'var(--spacing-4)',
@@ -415,7 +874,7 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: '50%',
     backgroundColor: ACCENT,
     border: '3px solid var(--color-background-body)',
-    boxShadow: '0 0 0 1px var(--color-border)',
+    boxShadow: `0 0 0 1px var(--color-border), 0 0 12px ${ACCENT_GLOW}`,
     flexShrink: 0,
     marginTop: 6,
   },
@@ -433,7 +892,7 @@ const styles: Record<string, CSSProperties> = {
     gap: 'var(--spacing-2)',
   },
   timelineVersion: {
-    fontFamily: 'var(--font-family-mono, ui-monospace, monospace)',
+    fontFamily: MONO,
     fontSize: 17,
     fontWeight: 700,
   },
@@ -442,14 +901,45 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'flex-start',
     gap: 8,
   },
-  // ---- contributors ----
+  // ---- contributors (asymmetric 5/7 split) ----
+  contribSplit: {
+    display: 'flex',
+    gap: 'var(--spacing-8)',
+    alignItems: 'center',
+  },
+  contribSplitStacked: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    gap: 'var(--spacing-6)',
+  },
+  contribIntro: {
+    flex: '5 1 0',
+    minWidth: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--spacing-3)',
+    alignItems: 'flex-start',
+  },
+  contribWallCol: {
+    flex: '7 1 0',
+    minWidth: 0,
+  },
   contributorWall: {
     display: 'flex',
     flexWrap: 'wrap',
     gap: 'var(--spacing-2)',
     justifyContent: 'center',
-    maxWidth: 760,
-    marginInline: 'auto',
+  },
+  contribStatValue: {
+    fontSize: 40,
+    fontWeight: 750,
+    lineHeight: 1,
+    letterSpacing: '-0.02em',
+    fontVariantNumeric: 'tabular-nums',
+  },
+  contribStatLabel: {
+    fontSize: 13,
+    color: 'var(--color-text-secondary)',
   },
   // Scheme-locked brand art (see Color policy): gradient monograms are
   // identical in both app themes; white text reads on every gradient.
@@ -484,6 +974,7 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 14,
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-background-card)',
+    boxShadow: SHADOW_RAISED,
   },
   // Scheme-locked brand art (see Color policy).
   sponsorTile: {
@@ -496,27 +987,67 @@ const styles: Record<string, CSSProperties> = {
     fontWeight: 700,
     flexShrink: 0,
   },
-  // ---- star history ----
-  sparkFrame: {
-    width: '100%',
-    display: 'block',
+  tierLabel: {
+    textTransform: 'uppercase',
+    letterSpacing: '0.09em',
+    fontSize: 11,
+    fontWeight: 700,
+    color: 'var(--color-text-secondary)',
   },
-  growthChip: {
+  // ---- dark star-history band (scheme-locked, see Color policy) ----
+  darkBand: {
+    position: 'relative',
+    overflow: 'hidden',
+    colorScheme: 'dark',
+    backgroundColor: DARK_BG,
+    color: DARK_TEXT,
+  },
+  spotlight: {
+    position: 'absolute',
+    inset: 0,
+    pointerEvents: 'none',
+    backgroundImage: `radial-gradient(360px circle at var(--ospl-mx, 50%) var(--ospl-my, 22%), color-mix(in srgb, ${ACCENT} 18%, transparent), transparent 70%)`,
+  },
+  glassCard: {
+    borderRadius: 18,
+    backgroundColor: GLASS_BG,
+    boxShadow: SHADOW_GLASS,
+    padding: 'var(--spacing-5)',
+  },
+  glassChip: {
     display: 'inline-flex',
     alignItems: 'center',
     gap: 8,
-    height: 32,
-    paddingInline: 12,
+    height: 34,
+    paddingInline: 14,
     borderRadius: 999,
-    backgroundColor: ACCENT_TINT,
-    color: ACCENT,
+    backgroundColor: GLASS_BG,
+    boxShadow: `inset 0 0 0 1px ${GLASS_BORDER}`,
+    color: DARK_TEXT,
     fontSize: 13,
     fontWeight: 700,
     fontVariantNumeric: 'tabular-nums',
     whiteSpace: 'nowrap',
   },
-  // ---- used-by strip ----
-  usedByStrip: {
+  sparkFrame: {
+    width: '100%',
+    display: 'block',
+  },
+  // ---- used-by marquee ----
+  marquee: {
+    overflow: 'hidden',
+    maskImage:
+      'linear-gradient(90deg, transparent 0%, black 12%, black 88%, transparent 100%)',
+    WebkitMaskImage:
+      'linear-gradient(90deg, transparent 0%, black 12%, black 88%, transparent 100%)',
+  },
+  marqueeTrack: {
+    display: 'flex',
+    gap: 'var(--spacing-3)',
+    width: 'max-content',
+    paddingBlock: 2,
+  },
+  marqueeStatic: {
     display: 'flex',
     flexWrap: 'wrap',
     gap: 'var(--spacing-3)',
@@ -530,14 +1061,19 @@ const styles: Record<string, CSSProperties> = {
     height: 42,
     paddingInline: 16,
     borderRadius: 10,
-    border: '1px solid var(--color-border)',
-    backgroundColor: 'var(--color-background-card)',
-    color: 'var(--color-text-secondary)',
+    backgroundColor: GLASS_BG,
+    boxShadow: `inset 0 0 0 1px ${GLASS_BORDER}`,
+    color: DARK_TEXT_SOFT,
     fontSize: 14,
     fontWeight: 700,
     letterSpacing: '0.05em',
+    whiteSpace: 'nowrap',
   },
   // ---- community cards ----
+  communityCard: {
+    borderRadius: 16,
+    boxShadow: SHADOW_RAISED,
+  },
   communityGlyph: {
     width: 40,
     height: 40,
@@ -545,15 +1081,16 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,
-    backgroundColor: ACCENT_TINT,
+    backgroundColor: ACCENT_SOFT,
     color: ACCENT,
     flexShrink: 0,
   },
   // ---- footer (scheme-locked, see Color policy) ----
   footer: {
     colorScheme: 'dark',
-    color: FOOTER_TEXT,
-    backgroundColor: FOOTER_BG,
+    color: DARK_TEXT,
+    backgroundColor: DARK_BG,
+    borderTop: `1px solid ${GLASS_BORDER}`,
   },
   footerInner: {
     width: '100%',
@@ -577,12 +1114,12 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: 'transparent',
     cursor: 'pointer',
     fontSize: 14,
-    color: FOOTER_TEXT_FAINT,
+    color: DARK_TEXT_FAINT,
     textAlign: 'left',
   },
   footerRule: {
     height: 1,
-    backgroundColor: FOOTER_BORDER,
+    backgroundColor: GLASS_BORDER,
     border: 'none',
     margin: 0,
   },
@@ -894,12 +1431,16 @@ const FOOTER_LINKS: readonly string[] = [
 // ============= HOOKS =============
 
 /**
- * ResizeObserver width of the page element — the inline demo stage is
+ * ResizeObserver size of the page element — the inline demo stage is
  * ~1045px wide inside a 1440px window, so viewport media queries never
- * fire there; element width is the source of truth for breakpoints.
+ * fire there; element width is the source of truth for breakpoints and
+ * element height sizes the pinned-story stage.
  */
-function useElementWidth(ref: RefObject<HTMLDivElement | null>): number {
-  const [width, setWidth] = useState(0);
+function useElementSize(ref: RefObject<HTMLDivElement | null>): {
+  width: number;
+  height: number;
+} {
+  const [size, setSize] = useState({width: 0, height: 0});
   useEffect(() => {
     const element = ref.current;
     if (element == null) {
@@ -908,13 +1449,13 @@ function useElementWidth(ref: RefObject<HTMLDivElement | null>): number {
     const observer = new ResizeObserver(entries => {
       const rect = entries[0]?.contentRect;
       if (rect != null) {
-        setWidth(rect.width);
+        setSize({width: rect.width, height: rect.height});
       }
     });
     observer.observe(element);
     return () => observer.disconnect();
   }, [ref]);
-  return width;
+  return size;
 }
 
 /** prefers-reduced-motion, resolved before first paint via lazy init. */
@@ -936,51 +1477,9 @@ function usePrefersReducedMotion(): boolean {
 }
 
 /**
- * Fire-once scroll reveal. Reduced motion mounts already revealed so
- * content renders visible with no entrance motion.
- */
-function useRevealOnce(
-  isReduced: boolean,
-): [RefObject<HTMLDivElement | null>, boolean] {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [isRevealed, setIsRevealed] = useState(isReduced);
-  useEffect(() => {
-    if (isReduced) {
-      setIsRevealed(true);
-      return undefined;
-    }
-    const element = ref.current;
-    if (element == null) {
-      return undefined;
-    }
-    const observer = new IntersectionObserver(
-      entries => {
-        if (entries.some(entry => entry.isIntersecting)) {
-          setIsRevealed(true);
-          observer.disconnect();
-        }
-      },
-      {threshold: 0.15},
-    );
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [isReduced]);
-  return [ref, isRevealed];
-}
-
-/** Rise+fade entrance; delayMs staggers items inside a revealed section. */
-function revealStyle(isRevealed: boolean, delayMs = 0): CSSProperties {
-  return {
-    opacity: isRevealed ? 1 : 0,
-    transform: isRevealed ? 'none' : 'translateY(12px)',
-    transition: `opacity 0.55s ease ${delayMs}ms, transform 0.55s ease ${delayMs}ms`,
-  };
-}
-
-/**
- * Eased count-up toward a fixed target on first activation. Reduced
- * motion (or an inactive trigger) renders the final/initial value with
- * no animation frames.
+ * Eased count-up toward a fixed target on first activation: ~900ms with
+ * decelerate (cubic-out) easing. Reduced motion (or an inactive trigger)
+ * renders the final/initial value with no animation frames.
  */
 function useCountUp(
   target: number,
@@ -998,7 +1497,7 @@ function useCountUp(
     }
     let frame = 0;
     const start = performance.now();
-    const durationMs = 1100;
+    const durationMs = 900;
     const tick = (now: number) => {
       const progress = Math.min(1, (now - start) / durationMs);
       const eased = 1 - (1 - progress) ** 3;
@@ -1017,10 +1516,65 @@ function formatCount(value: number): string {
   return value.toLocaleString('en-US');
 }
 
+// ============= MOTION PIECES =============
+
+/**
+ * Fire-once scroll reveal: 16px rise + 0.985 scale settle over ~600ms
+ * decelerate bezier; grouped call sites stagger children via `delay`
+ * (60-90ms steps). Reduced motion mounts already revealed.
+ */
+function Reveal({
+  children,
+  delay = 0,
+  isReduced,
+  style,
+}: {
+  children: ReactNode;
+  delay?: number;
+  isReduced: boolean;
+  style?: CSSProperties;
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [isShown, setIsShown] = useState(isReduced);
+  useEffect(() => {
+    if (isReduced) {
+      setIsShown(true);
+      return undefined;
+    }
+    const element = ref.current;
+    if (element == null) {
+      return undefined;
+    }
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries.some(entry => entry.isIntersecting)) {
+          setIsShown(true);
+          observer.disconnect();
+        }
+      },
+      {threshold: 0.15},
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [isReduced]);
+  return (
+    <div
+      ref={ref}
+      style={{
+        ...style,
+        opacity: isShown ? 1 : 0,
+        transform: isShown ? 'none' : 'translateY(16px) scale(0.985)',
+        transition: `opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1) ${delay}ms, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) ${delay}ms`,
+      }}>
+      {children}
+    </div>
+  );
+}
+
 // ============= SMALL PIECES =============
 
 /** tessera brand mark: 2x2 mosaic glyph + mono wordmark. */
-function BrandMark() {
+function BrandMark({textColor}: {textColor?: string}) {
   return (
     <HStack gap={2} vAlign="center">
       <div style={styles.mosaic} aria-hidden="true">
@@ -1029,28 +1583,56 @@ function BrandMark() {
         <span style={styles.mosaicTileGhost} />
         <span style={styles.mosaicTile} />
       </div>
-      <span style={{...styles.wordmark, fontSize: 17}}>{BRAND.name}</span>
+      <span
+        style={{
+          ...styles.wordmark,
+          fontSize: 17,
+          ...(textColor == null ? null : {color: textColor}),
+        }}>
+        {BRAND.name}
+      </span>
     </HStack>
   );
 }
 
-/** Centered section intro: kicker Token + title + supporting copy. */
+/** 11px tracked-uppercase eyebrow chip (accent-tinted or glass-on-dark). */
+function Eyebrow({label, isOnDark = false}: {label: string; isOnDark?: boolean}) {
+  return (
+    <span
+      style={{
+        ...styles.eyebrow,
+        ...(isOnDark ? styles.eyebrowOnDark : null),
+      }}>
+      {label}
+    </span>
+  );
+}
+
+/** Centered section intro: eyebrow chip + 32-44px heading + 56ch copy. */
 function SectionHead({
   kicker,
   title,
   copy,
+  headingSize,
+  isOnDark = false,
 }: {
   kicker: string;
   title: string;
   copy: string;
+  headingSize: number;
+  isOnDark?: boolean;
 }) {
   return (
     <div style={styles.sectionHead}>
-      <Token label={kicker} size="sm" color="teal" />
-      <Heading level={2}>{title}</Heading>
-      <Text type="supporting" color="secondary" justify="center">
+      <Eyebrow label={kicker} isOnDark={isOnDark} />
+      <h2 style={{...styles.sectionHeading, fontSize: headingSize}}>{title}</h2>
+      <p
+        style={{
+          ...styles.sectionCopy,
+          ...(isOnDark ? {color: DARK_TEXT_SOFT} : null),
+        }}>
         {copy}
-      </Text>
+      </p>
     </div>
   );
 }
@@ -1087,10 +1669,66 @@ function Monogram({
   );
 }
 
+/** Floating hero satellite mini-card (bobbing + parallax wrapper). */
+function Satellite({
+  position,
+  parallaxX,
+  parallaxY,
+  bobDelaySec,
+  isReduced,
+  icon,
+  title,
+  meta,
+  children,
+}: {
+  position: CSSProperties;
+  parallaxX: number;
+  parallaxY: number;
+  bobDelaySec: number;
+  isReduced: boolean;
+  icon?: Glyph;
+  title: string;
+  meta: string;
+  children?: ReactNode;
+}) {
+  return (
+    <div
+      style={{
+        ...styles.satWrap,
+        ...position,
+        transform: `translate(${parallaxX.toFixed(1)}px, ${parallaxY.toFixed(1)}px)`,
+        transition: isReduced
+          ? undefined
+          : 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
+      }}
+      aria-hidden="true">
+      <div
+        className="ospl-bob"
+        style={{
+          ...styles.satellite,
+          animationDelay: `${bobDelaySec}s`,
+          animationDuration: `${(7.5 + bobDelaySec / 4).toFixed(2)}s`,
+        }}>
+        {icon == null ? null : (
+          <span style={styles.satDisc}>
+            <Icon icon={icon} size="sm" color="inherit" />
+          </span>
+        )}
+        {children}
+        <span>
+          <span style={{...styles.satTitle, display: 'block'}}>{title}</span>
+          <span style={{...styles.satMeta, display: 'block'}}>{meta}</span>
+        </span>
+      </div>
+    </div>
+  );
+}
+
 /**
- * Star-history sparkline: fixed 13-point series drawn as an SVG polyline
- * with pathLength=1; the dashoffset transition draws it on when the
- * section reveals (reduced motion renders it fully drawn immediately).
+ * Star-history sparkline (drawn inside the scheme-locked dark band):
+ * fixed 13-point series as an SVG polyline with pathLength=1; the
+ * dashoffset transition draws it on when the section reveals (reduced
+ * motion renders it fully drawn immediately).
  */
 function StarSparkline({
   isRevealed,
@@ -1133,7 +1771,7 @@ function StarSparkline({
               x2={right}
               y1={y}
               y2={y}
-              style={{stroke: 'var(--color-border)'}}
+              style={{stroke: GLASS_BORDER}}
               strokeDasharray="3 5"
               strokeWidth={1}
             />
@@ -1141,7 +1779,7 @@ function StarSparkline({
               x={right + 8}
               y={y + 4}
               style={{
-                fill: 'var(--color-text-secondary)',
+                fill: DARK_TEXT_FAINT,
                 fontSize: 11,
                 fontVariantNumeric: 'tabular-nums',
               }}>
@@ -1153,7 +1791,7 @@ function StarSparkline({
       <polygon
         points={area}
         style={{
-          fill: ACCENT_TINT,
+          fill: `color-mix(in srgb, ${ACCENT} 16%, transparent)`,
           opacity: isDrawn ? 1 : 0,
           transition: isReduced ? undefined : 'opacity 0.9s ease 0.9s',
         }}
@@ -1204,7 +1842,7 @@ function StarSparkline({
             x={x}
             y={height - 8}
             textAnchor={index === 0 ? 'start' : 'middle'}
-            style={{fill: 'var(--color-text-secondary)', fontSize: 11}}>
+            style={{fill: DARK_TEXT_FAINT, fontSize: 11}}>
             {year}
           </text>
         );
@@ -1213,77 +1851,164 @@ function StarSparkline({
   );
 }
 
+/**
+ * Fire-once section trigger for count-ups and child staggers. Reduced
+ * motion mounts already revealed.
+ */
+function useRevealOnce(
+  isReduced: boolean,
+): [RefObject<HTMLDivElement | null>, boolean] {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [isRevealed, setIsRevealed] = useState(isReduced);
+  useEffect(() => {
+    if (isReduced) {
+      setIsRevealed(true);
+      return undefined;
+    }
+    const element = ref.current;
+    if (element == null) {
+      return undefined;
+    }
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries.some(entry => entry.isIntersecting)) {
+          setIsRevealed(true);
+          observer.disconnect();
+        }
+      },
+      {threshold: 0.15},
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [isReduced]);
+  return [ref, isRevealed];
+}
+
+/** Child stagger inside an already-triggered section (70ms steps). */
+function staggerStyle(isRevealed: boolean, delayMs: number): CSSProperties {
+  return {
+    opacity: isRevealed ? 1 : 0,
+    transform: isRevealed ? 'none' : 'translateY(14px) scale(0.985)',
+    transition: `opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1) ${delayMs}ms, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) ${delayMs}ms`,
+  };
+}
+
 // ============= SECTIONS =============
 
 function ExampleSection({
   isReduced,
   isStacked,
+  headingSize,
 }: {
   isReduced: boolean;
   isStacked: boolean;
+  headingSize: number;
 }) {
-  const [ref, isRevealed] = useRevealOnce(isReduced);
   return (
-    <div ref={ref} style={revealStyle(isRevealed)}>
-      <SectionHead
-        kicker="30-second example"
-        title="Delete the ceremony"
-        copy="The same cart store, before and after. tessera replaces the context + reducer + provider stack with one tile you can read from anywhere."
-      />
-      <div
-        style={{
-          ...styles.examplePair,
-          ...(isStacked ? styles.examplePairStacked : null),
-        }}>
-        <div style={styles.examplePane}>
-          <HStack gap={2} vAlign="center">
-            <Token label="Before" size="sm" color="gray" />
-            <Text type="supporting" color="secondary">
-              Context + reducer + provider — 31 lines
-            </Text>
-          </HStack>
-          <CodeBlock
-            code={BEFORE_CODE}
-            language="tsx"
-            title="store.tsx"
-            size="sm"
-            width="100%"
-            maxHeight={340}
-          />
+    <div>
+      <Reveal isReduced={isReduced}>
+        <SectionHead
+          kicker="30-second example"
+          title="Delete the ceremony"
+          copy="The same cart store, before and after. tessera replaces the context + reducer + provider stack with one tile you can read from anywhere."
+          headingSize={headingSize}
+        />
+      </Reveal>
+      <Reveal isReduced={isReduced} delay={90}>
+        <div
+          style={{
+            ...styles.examplePair,
+            ...(isStacked ? styles.examplePairStacked : null),
+          }}>
+          <div style={{...styles.examplePane, ...styles.exampleBefore}}>
+            <HStack gap={2} vAlign="center">
+              <Badge variant="neutral" label="Before" />
+              <Text type="supporting" color="secondary">
+                Context + reducer + provider — 31 lines
+              </Text>
+            </HStack>
+            <CodeBlock
+              code={BEFORE_CODE}
+              language="tsx"
+              title="store.tsx"
+              size="sm"
+              width="100%"
+              maxHeight={340}
+            />
+          </div>
+          <div style={styles.exampleArrow} aria-hidden="true">
+            <span
+              style={{
+                display: 'inline-flex',
+                transform: isStacked ? 'rotate(90deg)' : 'none',
+              }}>
+              <Icon icon={ArrowRightIcon} size="sm" color="inherit" />
+            </span>
+          </div>
+          <div style={styles.examplePane}>
+            <div style={styles.exampleAfterFrame}>
+              <HStack gap={2} vAlign="center">
+                <Badge variant="teal" label="After" />
+                <Text type="supporting" color="secondary">
+                  One tile — 14 lines, no provider
+                </Text>
+              </HStack>
+              <CodeBlock
+                code={AFTER_CODE}
+                language="tsx"
+                title="store.ts"
+                size="sm"
+                width="100%"
+                maxHeight={340}
+              />
+            </div>
+          </div>
         </div>
-        <div style={styles.examplePane}>
-          <HStack gap={2} vAlign="center">
-            <Token label="After" size="sm" color="teal" />
-            <Text type="supporting" color="secondary">
-              One tile — 14 lines, no provider
-            </Text>
-          </HStack>
-          <CodeBlock
-            code={AFTER_CODE}
-            language="tsx"
-            title="store.ts"
-            size="sm"
-            width="100%"
-            maxHeight={340}
-          />
-        </div>
-      </div>
+      </Reveal>
     </div>
   );
 }
 
-function ReleasesSection({isReduced}: {isReduced: boolean}) {
+/** Shared release panel body (pinned story + static fallback). */
+function ReleaseBullets({bullets}: {bullets: readonly string[]}) {
+  return (
+    <VStack gap={1}>
+      {bullets.map(bullet => (
+        <div key={bullet} style={styles.timelineBullet}>
+          <span
+            style={{color: ACCENT, display: 'inline-flex', marginTop: 3}}
+            aria-hidden="true">
+            <Icon icon={CheckIcon} size="xsm" color="inherit" />
+          </span>
+          <Text size="sm" color="secondary">
+            {bullet}
+          </Text>
+        </div>
+      ))}
+    </VStack>
+  );
+}
+
+/** Static stacked timeline — the reduced-motion / compact release story. */
+function ReleasesStatic({
+  isReduced,
+  headingSize,
+}: {
+  isReduced: boolean;
+  headingSize: number;
+}) {
   const [ref, isRevealed] = useRevealOnce(isReduced);
   return (
     <div ref={ref}>
-      <div style={revealStyle(isRevealed)}>
+      <Reveal isReduced={isReduced}>
         <SectionHead
           kicker="Releases"
           title="Steady, semver-honest releases"
           copy="A release roughly every six weeks. Breaking changes only in majors, always with a codemod and a migration guide."
+          headingSize={headingSize}
         />
-      </div>
-      <div style={styles.timeline}>
+      </Reveal>
+      <div style={{display: 'flex', flexDirection: 'column'}}>
         {RELEASES.map((release, index) => {
           const badge = SEMVER_BADGE[release.level];
           const isLast = index === RELEASES.length - 1;
@@ -1292,7 +2017,7 @@ function ReleasesSection({isReduced}: {isReduced: boolean}) {
               key={release.version}
               style={{
                 ...styles.timelineRow,
-                ...revealStyle(isRevealed, index * 120),
+                ...staggerStyle(isRevealed, index * 80),
                 ...(isLast ? {paddingBottom: 0} : null),
               }}>
               <div style={styles.timelineRail} aria-hidden="true">
@@ -1310,20 +2035,7 @@ function ReleasesSection({isReduced}: {isReduced: boolean}) {
                     {release.title}
                   </Text>
                 </HStack>
-                <VStack gap={1}>
-                  {release.bullets.map(bullet => (
-                    <div key={bullet} style={styles.timelineBullet}>
-                      <span
-                        style={{color: ACCENT, display: 'inline-flex', marginTop: 3}}
-                        aria-hidden="true">
-                        <Icon icon={CheckIcon} size="xsm" color="inherit" />
-                      </span>
-                      <Text size="sm" color="secondary">
-                        {bullet}
-                      </Text>
-                    </div>
-                  ))}
-                </VStack>
+                <ReleaseBullets bullets={release.bullets} />
               </div>
             </div>
           );
@@ -1333,105 +2045,161 @@ function ReleasesSection({isReduced}: {isReduced: boolean}) {
   );
 }
 
-function ContributorsSection({isReduced}: {isReduced: boolean}) {
+function ContributorsSection({
+  isReduced,
+  isStacked,
+  headingSize,
+}: {
+  isReduced: boolean;
+  isStacked: boolean;
+  headingSize: number;
+}) {
   const [ref, isRevealed] = useRevealOnce(isReduced);
   const contributorCount = useCountUp(
     STATS.contributors,
     isRevealed,
     isReduced,
   );
+  const countryCount = useCountUp(STATS.countries, isRevealed, isReduced);
   return (
-    <div ref={ref} style={revealStyle(isRevealed)}>
-      <SectionHead
-        kicker="Contributors"
-        title="Built by 293 people"
-        copy="Maintained in the open since 2021. 18 first-time contributors landed changes in the last release alone."
-      />
-      <div style={styles.contributorWall}>
-        {CONTRIBUTORS.map((contributor, index) => (
-          <div
-            key={contributor.name}
-            style={revealStyle(isRevealed, 200 + index * 35)}>
-            <Monogram
-              initials={contributor.initials}
-              name={contributor.name}
-              size={48}
-              gradientIndex={index}
-            />
-          </div>
-        ))}
+    <div
+      ref={ref}
+      style={{
+        ...styles.contribSplit,
+        ...(isStacked ? styles.contribSplitStacked : null),
+      }}>
+      <div style={{...styles.contribIntro, ...staggerStyle(isRevealed, 0)}}>
+        <Eyebrow label="Contributors" />
+        <h2 style={{...styles.sectionHeading, fontSize: headingSize}}>
+          Built by{' '}
+          <span style={styles.gradientInk}>293 people</span>
+        </h2>
+        <p style={styles.sectionCopy}>
+          Maintained in the open since 2021. 18 first-time contributors
+          landed changes in the last release alone.
+        </p>
+        <HStack gap={6} vAlign="start" wrap="wrap">
+          <VStack gap={1}>
+            <span style={styles.contribStatValue}>
+              {formatCount(contributorCount)}
+            </span>
+            <span style={styles.contribStatLabel}>contributors</span>
+          </VStack>
+          <VStack gap={1}>
+            <span style={styles.contribStatValue}>
+              {formatCount(countryCount)}
+            </span>
+            <span style={styles.contribStatLabel}>countries</span>
+          </VStack>
+        </HStack>
+        <Button
+          label="Read the contributing guide"
+          variant="secondary"
+          icon={<Icon icon={UsersIcon} size="sm" color="inherit" />}
+          onClick={() => {}}
+        />
       </div>
-      <div style={{marginTop: 'var(--spacing-4)', textAlign: 'center'}}>
-        <Text type="supporting" color="secondary">
-          {`24 of ${formatCount(contributorCount)} contributors across ${STATS.countries} countries`}
-        </Text>
+      <div style={styles.contribWallCol}>
+        <div style={styles.contributorWall}>
+          {CONTRIBUTORS.map((contributor, index) => (
+            <div
+              key={contributor.name}
+              style={staggerStyle(isRevealed, 120 + index * 30)}>
+              <Monogram
+                initials={contributor.initials}
+                name={contributor.name}
+                size={48}
+                gradientIndex={index}
+              />
+            </div>
+          ))}
+        </div>
+        <div
+          style={{
+            marginTop: 'var(--spacing-4)',
+            textAlign: 'center',
+            ...staggerStyle(isRevealed, 120 + CONTRIBUTORS.length * 30),
+          }}>
+          <Text type="supporting" color="secondary">
+            {`24 of ${formatCount(STATS.contributors)} contributors across ${STATS.countries} countries`}
+          </Text>
+        </div>
       </div>
     </div>
   );
 }
 
-function SponsorsSection({isReduced}: {isReduced: boolean}) {
-  const [ref, isRevealed] = useRevealOnce(isReduced);
+function SponsorsSection({
+  isReduced,
+  headingSize,
+}: {
+  isReduced: boolean;
+  headingSize: number;
+}) {
   return (
-    <div ref={ref} style={revealStyle(isRevealed)}>
-      <SectionHead
-        kicker="Sponsors"
-        title="Funded by the people who use it"
-        copy="$4,850/mo currently funds two dedicated maintainer days a week — triage, reviews, and docs."
-      />
+    <div>
+      <Reveal isReduced={isReduced}>
+        <SectionHead
+          kicker="Sponsors"
+          title="Funded by the people who use it"
+          copy="$4,850/mo currently funds two dedicated maintainer days a week — triage, reviews, and docs."
+          headingSize={headingSize}
+        />
+      </Reveal>
       <VStack gap={6}>
         {SPONSOR_TIERS.map((tier, tierIndex) => (
-          <div key={tier.id} style={styles.sponsorTier}>
-            <Text
-              size="sm"
-              weight="semibold"
-              color="secondary"
-              style={{textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: 11}}>
-              {tier.heading}
-            </Text>
-            <div style={styles.sponsorRow}>
-              {tier.sponsors.map((sponsor, index) =>
-                tier.id === 'community' ? (
-                  <Monogram
-                    key={sponsor.name}
-                    initials={sponsor.initials}
-                    name={sponsor.name}
-                    size={tier.tileSize}
-                    gradientIndex={index + tierIndex}
-                  />
-                ) : (
-                  <div key={sponsor.name} style={styles.sponsorCard}>
+          <Reveal key={tier.id} isReduced={isReduced} delay={tierIndex * 90}>
+            <div style={styles.sponsorTier}>
+              <span style={styles.tierLabel}>{tier.heading}</span>
+              <div style={styles.sponsorRow}>
+                {tier.sponsors.map((sponsor, index) =>
+                  tier.id === 'community' ? (
                     <Monogram
+                      key={sponsor.name}
                       initials={sponsor.initials}
                       name={sponsor.name}
                       size={tier.tileSize}
                       gradientIndex={index + tierIndex}
-                      isRound={false}
                     />
-                    <VStack gap={0}>
-                      <Text size="sm" weight="semibold">
-                        {sponsor.name}
-                      </Text>
-                      {sponsor.note == null ? null : (
-                        <Text type="supporting" color="secondary">
-                          {sponsor.note}
+                  ) : (
+                    <div
+                      key={sponsor.name}
+                      className="ospl-raise"
+                      style={styles.sponsorCard}>
+                      <Monogram
+                        initials={sponsor.initials}
+                        name={sponsor.name}
+                        size={tier.tileSize}
+                        gradientIndex={index + tierIndex}
+                        isRound={false}
+                      />
+                      <VStack gap={0}>
+                        <Text size="sm" weight="semibold">
+                          {sponsor.name}
                         </Text>
-                      )}
-                    </VStack>
-                  </div>
-                ),
-              )}
+                        {sponsor.note == null ? null : (
+                          <Text type="supporting" color="secondary">
+                            {sponsor.note}
+                          </Text>
+                        )}
+                      </VStack>
+                    </div>
+                  ),
+                )}
+              </div>
             </div>
-          </div>
+          </Reveal>
         ))}
       </VStack>
       <HStack gap={2} hAlign="center" style={{marginTop: 'var(--spacing-6)'}}>
-        <Button
-          label="Become a sponsor"
-          variant="secondary"
-          icon={<Icon icon={HeartIcon} size="sm" color="inherit" />}
-          onClick={() => {}}
-        />
+        <span className="ospl-shine">
+          <Button
+            label="Become a sponsor"
+            variant="secondary"
+            icon={<Icon icon={HeartIcon} size="sm" color="inherit" />}
+            onClick={() => {}}
+          />
+        </span>
       </HStack>
     </div>
   );
@@ -1440,98 +2208,144 @@ function SponsorsSection({isReduced}: {isReduced: boolean}) {
 function GrowthSection({
   isReduced,
   isStarred,
+  headingSize,
 }: {
   isReduced: boolean;
   isStarred: boolean;
+  headingSize: number;
 }) {
   const [ref, isRevealed] = useRevealOnce(isReduced);
   const delta = useCountUp(STATS.starsDelta90d, isRevealed, isReduced);
   return (
-    <div ref={ref} style={revealStyle(isRevealed)}>
-      <SectionHead
-        kicker="Star history"
-        title="Five years of steady adoption"
-        copy="No launch spikes, no growth hacks — just releases that keep their promises."
-      />
-      <Card padding={4} width="100%">
-        <StarSparkline isRevealed={isRevealed} isReduced={isReduced} />
-      </Card>
+    <div ref={ref}>
+      <Reveal isReduced={isReduced}>
+        <SectionHead
+          kicker="Star history"
+          title="Five years of steady adoption"
+          copy="No launch spikes, no growth hacks — just releases that keep their promises."
+          headingSize={headingSize}
+          isOnDark
+        />
+      </Reveal>
+      <Reveal isReduced={isReduced} delay={90}>
+        <div style={styles.glassCard}>
+          <StarSparkline isRevealed={isRevealed} isReduced={isReduced} />
+        </div>
+      </Reveal>
       <HStack
         gap={2}
         hAlign="center"
         wrap="wrap"
-        style={{marginTop: 'var(--spacing-4)'}}>
-        <span style={styles.growthChip}>
-          <Icon icon={StarIcon} size="xsm" color="inherit" />
+        style={{marginTop: 'var(--spacing-4)', ...staggerStyle(isRevealed, 180)}}>
+        <span style={styles.glassChip}>
+          <span style={{color: ACCENT, display: 'inline-flex'}} aria-hidden="true">
+            <Icon icon={StarIcon} size="xsm" color="inherit" />
+          </span>
           {`+${formatCount(delta)} stars in the last 90 days`}
         </span>
-        <span style={styles.growthChip}>
+        <span style={styles.glassChip}>
           {`${formatCount(STATS.stars + (isStarred ? 1 : 0))} total`}
         </span>
-        <span style={styles.growthChip}>#2 on OSS Radar · state management</span>
+        <span style={styles.glassChip}>#2 on OSS Radar · state management</span>
       </HStack>
       <div style={{marginTop: 'var(--spacing-8)'}}>
         <div style={{textAlign: 'center', marginBottom: 'var(--spacing-4)'}}>
-          <Text
-            size="sm"
-            weight="semibold"
-            color="secondary"
-            style={{textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: 11}}>
+          <span style={{...styles.tierLabel, color: DARK_TEXT_FAINT}}>
             In production at
-          </Text>
+          </span>
         </div>
-        <div style={styles.usedByStrip}>
-          {USED_BY.map(name => (
-            <span key={name} style={styles.usedByTile}>
-              {name}
-            </span>
-          ))}
-        </div>
+        {isReduced ? (
+          <div style={styles.marqueeStatic}>
+            {USED_BY.map(name => (
+              <span key={name} style={styles.usedByTile}>
+                {name}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <div className="ospl-marquee" style={styles.marquee}>
+            <div className="ospl-marquee-track" style={styles.marqueeTrack}>
+              {[0, 1].map(copy => (
+                <div
+                  key={copy}
+                  aria-hidden={copy === 1}
+                  style={{
+                    display: 'flex',
+                    gap: 'var(--spacing-3)',
+                    paddingRight: 'var(--spacing-3)',
+                  }}>
+                  {USED_BY.map(name => (
+                    <span key={name} style={styles.usedByTile}>
+                      {name}
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-function CommunitySection({isReduced}: {isReduced: boolean}) {
-  const [ref, isRevealed] = useRevealOnce(isReduced);
+function CommunitySection({
+  isReduced,
+  headingSize,
+}: {
+  isReduced: boolean;
+  headingSize: number;
+}) {
   return (
-    <div ref={ref} style={revealStyle(isRevealed)}>
-      <SectionHead
-        kicker="Community"
-        title="Stuck? Someone is around"
-        copy="Docs first, Discord for the weird cases, GitHub for everything else."
-      />
+    <div>
+      <Reveal isReduced={isReduced}>
+        <SectionHead
+          kicker="Community"
+          title="Stuck? Someone is around"
+          copy="Docs first, Discord for the weird cases, GitHub for everything else."
+          headingSize={headingSize}
+        />
+      </Reveal>
       <Grid columns={{minWidth: 250}} gap={3}>
         {COMMUNITY_CARDS.map((card, index) => (
-          <div key={card.id} style={revealStyle(isRevealed, index * 120)}>
-            <ClickableCard label={card.title} onClick={() => {}}>
-              <HStack gap={3} vAlign="start">
-                <div style={styles.communityGlyph} aria-hidden="true">
-                  <Icon icon={card.icon} size="sm" color="inherit" />
-                </div>
-                <StackItem size="fill">
-                  <VStack gap={1}>
-                    <HStack gap={1} vAlign="center">
-                      <Text size="base" weight="semibold">
-                        {card.title}
+          <Reveal key={card.id} isReduced={isReduced} delay={index * 90}>
+            <div className="ospl-raise" style={styles.communityCard}>
+              <ClickableCard label={card.title} onClick={() => {}}>
+                <HStack gap={3} vAlign="start">
+                  <div style={styles.communityGlyph} aria-hidden="true">
+                    <Icon icon={card.icon} size="sm" color="inherit" />
+                  </div>
+                  <StackItem size="fill">
+                    <VStack gap={1}>
+                      <HStack gap={1} vAlign="center">
+                        <Text size="base" weight="semibold">
+                          {card.title}
+                        </Text>
+                        <span
+                          style={{
+                            color: 'var(--color-text-secondary)',
+                            display: 'inline-flex',
+                          }}
+                          aria-hidden="true">
+                          <Icon
+                            icon={ArrowRightIcon}
+                            size="xsm"
+                            color="inherit"
+                          />
+                        </span>
+                      </HStack>
+                      <Text size="sm" color="secondary">
+                        {card.copy}
                       </Text>
-                      <span
-                        style={{color: 'var(--color-text-secondary)', display: 'inline-flex'}}
-                        aria-hidden="true">
-                        <Icon icon={ArrowRightIcon} size="xsm" color="inherit" />
-                      </span>
-                    </HStack>
-                    <Text size="sm" color="secondary">
-                      {card.copy}
-                    </Text>
-                    <Text type="supporting" color="secondary">
-                      {card.meta}
-                    </Text>
-                  </VStack>
-                </StackItem>
-              </HStack>
-            </ClickableCard>
-          </div>
+                      <Text type="supporting" color="secondary">
+                        {card.meta}
+                      </Text>
+                    </VStack>
+                  </StackItem>
+                </HStack>
+              </ClickableCard>
+            </div>
+          </Reveal>
         ))}
       </Grid>
     </div>
@@ -1541,18 +2355,25 @@ function CommunitySection({isReduced}: {isReduced: boolean}) {
 // ============= PAGE =============
 
 export default function OpenSourceProjectLandingTemplate() {
-  // ---- layout measurement (demo-stage-safe breakpoints) ----
-  const pageRef = useRef<HTMLDivElement | null>(null);
-  const pageWidth = useElementWidth(pageRef);
+  // ---- layout measurement (demo-stage-safe breakpoints + stage height) ----
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  const {width: pageWidth, height: stageHeight} = useElementSize(wrapRef);
   const isNavCompact = pageWidth > 0 && pageWidth <= 880;
   const isStacked = pageWidth > 0 && pageWidth <= 740;
   const isPhone = pageWidth > 0 && pageWidth <= 540;
 
   const isReduced = usePrefersReducedMotion();
 
+  // Typographic tiers: 80px display at wide, never under 56 above 740px.
+  const displaySize =
+    pageWidth > 1000 ? 80 : pageWidth > 740 ? 64 : pageWidth > 540 ? 50 : 38;
+  const headingSize = isPhone ? 28 : isStacked ? 32 : 40;
+
   // ---- nav ----
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<SectionId | null>(null);
+  const pageRef = useRef<HTMLDivElement | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
   const menuTriggerRef = useRef<HTMLButtonElement | null>(null);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
@@ -1562,11 +2383,21 @@ export default function OpenSourceProjectLandingTemplate() {
   const [copiedCommand, setCopiedCommand] = useState<string | null>(null);
   const copiedTimeoutRef = useRef<number | null>(null);
   const [isStarred, setIsStarred] = useState(false);
+  const [parallax, setParallax] = useState({x: 0, y: 0});
 
   // ---- hero count-ups (hero is in view on mount = first view) ----
   const heroStars = useCountUp(STATS.stars, true, isReduced);
   const heroForks = useCountUp(STATS.forks, true, isReduced);
   const displayedStars = heroStars + (isStarred ? 1 : 0);
+
+  // ---- pinned release story ----
+  const storyRef = useRef<HTMLElement | null>(null);
+  const [storyProgress, setStoryProgress] = useState(0);
+  const canStory = !isReduced && !isStacked && stageHeight >= 560;
+  const storyStep =
+    storyProgress >= 0.999
+      ? RELEASES.length - 1
+      : Math.min(RELEASES.length - 1, Math.floor(storyProgress * RELEASES.length));
 
   // Menu dismisses on Escape (refocusing the trigger) and on pointerdown
   // outside the sticky navbar; listeners only run while it is open.
@@ -1622,9 +2453,27 @@ export default function OpenSourceProjectLandingTemplate() {
     });
   };
 
-  /** Scroll-spy: the last nav anchor above the fold line wins. */
+  /** Button path into the pinned story: scroll to the step's segment. */
+  const jumpToStoryStep = (step: number) => {
+    const container = pageRef.current;
+    const story = storyRef.current;
+    if (container === null || story === null || !canStory) {
+      return;
+    }
+    const travel = Math.max(1, story.offsetHeight - container.clientHeight);
+    container.scrollTo({
+      top:
+        story.offsetTop -
+        NAV_ALLOWANCE +
+        ((step + 0.5) / RELEASES.length) * travel,
+      behavior: isReduced ? 'auto' : 'smooth',
+    });
+  };
+
+  /** Scroll-spy + nav surface + pinned-story progress (quantized 1/200). */
   const onPageScroll = (event: UIEvent<HTMLDivElement>) => {
     const container = event.currentTarget;
+    setIsScrolled(container.scrollTop > 24);
     let active: SectionId | null = null;
     for (const anchor of NAV_ANCHORS) {
       const section = sectionRefs.current[anchor.id];
@@ -1636,10 +2485,49 @@ export default function OpenSourceProjectLandingTemplate() {
       }
     }
     setActiveSection(active);
+    const story = storyRef.current;
+    if (story !== null && canStory) {
+      const travel = Math.max(1, story.offsetHeight - container.clientHeight);
+      const raw =
+        (container.scrollTop - (story.offsetTop - NAV_ALLOWANCE)) / travel;
+      setStoryProgress(Math.round(Math.min(1, Math.max(0, raw)) * 200) / 200);
+    }
   };
 
   const registerSection = (id: SectionId) => (node: HTMLElement | null) => {
     sectionRefs.current[id] = node;
+  };
+
+  // Satellite parallax: drift ±8px toward the pointer over the hero.
+  // Off under reduced motion and at stacked (touch-ish) widths.
+  const onHeroPointerMove = (event: ReactPointerEvent<HTMLElement>) => {
+    if (isReduced || isStacked) {
+      return;
+    }
+    const rect = event.currentTarget.getBoundingClientRect();
+    setParallax({
+      x: ((event.clientX - rect.left) / rect.width - 0.5) * 16,
+      y: ((event.clientY - rect.top) / rect.height - 0.5) * 16,
+    });
+  };
+
+  const onHeroPointerLeave = () => setParallax({x: 0, y: 0});
+
+  // Dark-band spotlight: CSS vars only — no re-render per pointer move.
+  const onDarkPointerMove = (event: ReactPointerEvent<HTMLElement>) => {
+    if (isReduced) {
+      return;
+    }
+    const band = event.currentTarget;
+    const rect = band.getBoundingClientRect();
+    band.style.setProperty(
+      '--ospl-mx',
+      `${(event.clientX - rect.left).toFixed(0)}px`,
+    );
+    band.style.setProperty(
+      '--ospl-my',
+      `${(event.clientY - rect.top).toFixed(0)}px`,
+    );
   };
 
   const onCopyInstall = () => {
@@ -1668,13 +2556,25 @@ export default function OpenSourceProjectLandingTemplate() {
   };
   const bandStyle: CSSProperties = {
     ...styles.band,
+    ...(isStacked ? styles.bandStacked : null),
     ...(isPhone ? styles.bandPhone : null),
   };
+  const theaterOverlap = isPhone ? 32 : THEATER_OVERLAP;
 
-  // ---- navbar ----
+  // ---- navbar (transparent at top → tinted hairline surface) ----
   const navbar = (
-    <nav ref={navRef} style={styles.navBar} aria-label="Main">
-      <div style={styles.navInner}>
+    <nav
+      ref={navRef}
+      style={{
+        ...styles.navBar,
+        ...(isScrolled ? styles.navBarScrolled : null),
+      }}
+      aria-label="Main">
+      <div
+        style={{
+          ...styles.navInner,
+          ...(isScrolled ? styles.navInnerScrolled : null),
+        }}>
         <BrandMark />
         <StackItem size="fill">
           {isNavCompact ? null : (
@@ -1699,13 +2599,15 @@ export default function OpenSourceProjectLandingTemplate() {
             </HStack>
           )}
         </StackItem>
-        <Button
-          label={starLabel}
-          variant={isStarred ? 'secondary' : 'primary'}
-          size="sm"
-          icon={<Icon icon={StarIcon} size="sm" color="inherit" />}
-          onClick={() => setIsStarred(previous => !previous)}
-        />
+        <span className="ospl-shine">
+          <Button
+            label={starLabel}
+            variant={isStarred ? 'secondary' : 'primary'}
+            size="sm"
+            icon={<Icon icon={StarIcon} size="sm" color="inherit" />}
+            onClick={() => setIsStarred(previous => !previous)}
+          />
+        </span>
         {isNavCompact ? (
           <button
             ref={menuTriggerRef}
@@ -1715,7 +2617,11 @@ export default function OpenSourceProjectLandingTemplate() {
             aria-haspopup="menu"
             style={styles.menuButton}
             onClick={() => setIsMenuOpen(previous => !previous)}>
-            <Icon icon={isMenuOpen ? XIcon : MenuIcon} size="sm" color="inherit" />
+            <Icon
+              icon={isMenuOpen ? XIcon : MenuIcon}
+              size="sm"
+              color="inherit"
+            />
           </button>
         ) : null}
         {isNavCompact && isMenuOpen ? (
@@ -1738,114 +2644,354 @@ export default function OpenSourceProjectLandingTemplate() {
     </nav>
   );
 
-  // ---- hero ----
+  // ---- hero: aurora field + display type + install theater ----
+  const satellites =
+    isPhone ? null : (
+      <>
+        <Satellite
+          position={{top: -20, left: isStacked ? 4 : -30}}
+          parallaxX={parallax.x}
+          parallaxY={parallax.y}
+          bobDelaySec={-1.5}
+          isReduced={isReduced}
+          icon={StarIcon}
+          title="+1,204 stars"
+          meta="last 90 days"
+        />
+        <Satellite
+          position={{top: '36%', right: isStacked ? 4 : -42}}
+          parallaxX={parallax.x * -0.75}
+          parallaxY={parallax.y * -0.75}
+          bobDelaySec={-4}
+          isReduced={isReduced}
+          icon={PackageIcon}
+          title="v4.0.0 · Tiles v2"
+          meta="released June 18"
+        />
+        <Satellite
+          position={{bottom: -24, left: isStacked ? 10 : -16}}
+          parallaxX={parallax.x * 0.6}
+          parallaxY={parallax.y * 0.6}
+          bobDelaySec={-6.5}
+          isReduced={isReduced}
+          title="293 contributors"
+          meta="41 countries">
+          <span style={{display: 'inline-flex'}}>
+            {CONTRIBUTORS.slice(0, 3).map((contributor, index) => (
+              <span
+                key={contributor.name}
+                style={{
+                  display: 'inline-flex',
+                  marginLeft: index === 0 ? 0 : -8,
+                  borderRadius: '50%',
+                  border: '2px solid var(--color-background-card)',
+                }}>
+                <Monogram
+                  initials={contributor.initials}
+                  name={contributor.name}
+                  size={26}
+                  gradientIndex={index}
+                />
+              </span>
+            ))}
+          </span>
+        </Satellite>
+      </>
+    );
+
   const hero = (
-    <header style={{...columnStyle, ...bandStyle}}>
-      <VStack gap={5} hAlign="center">
-        <HStack gap={2} vAlign="center" wrap="wrap" hAlign="center">
-          <Badge variant="teal" label="Open source" />
-          <Badge variant="neutral" label="v4.0.0" />
-          <Badge
-            variant="neutral"
-            icon={<Icon icon={ScaleIcon} size="xsm" color="inherit" />}
-            label="MIT"
-          />
-        </HStack>
-        <h1
+    <header
+      style={{
+        ...styles.atmosBand,
+        zIndex: 2,
+        marginBottom: -theaterOverlap,
+      }}
+      onPointerMove={onHeroPointerMove}
+      onPointerLeave={onHeroPointerLeave}>
+      {/* Aurora field: drifting color-mix blobs + grain, behind content. */}
+      <div style={styles.atmosLayer} aria-hidden="true">
+        <div
+          className="ospl-aurora-a"
           style={{
-            ...styles.heroWordmark,
-            ...(isPhone ? styles.heroWordmarkPhone : null),
-          }}>
-          {BRAND.name}
-        </h1>
-        <p
+            ...styles.aurora,
+            width: 540,
+            height: 540,
+            top: -180,
+            left: '-6%',
+            opacity: 0.5,
+            backgroundImage: `radial-gradient(closest-side, ${AURORA_A}, transparent 70%)`,
+          }}
+        />
+        <div
+          className="ospl-aurora-b"
           style={{
-            ...styles.heroPitch,
-            ...(isPhone ? styles.heroPitchPhone : null),
-          }}>
-          {BRAND.pitch}
-        </p>
-        <p style={styles.heroSubcopy}>{BRAND.subcopy}</p>
-        <HStack gap={2} vAlign="center" wrap="wrap" hAlign="center">
-          <Button
-            label="Get started"
-            variant="primary"
-            icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
-            onClick={() => jumpToSection('example')}
-          />
-          <Button
-            label={isStarred ? 'Starred on GitHub' : 'Star on GitHub'}
-            variant="secondary"
-            icon={<Icon icon={StarIcon} size="sm" color="inherit" />}
-            onClick={() => setIsStarred(previous => !previous)}
-          />
-        </HStack>
-        <Card padding={3} style={styles.installCard}>
-          <VStack gap={2}>
-            <TabList
-              value={packageManager}
-              onChange={value => setPackageManager(value as PackageManager)}
-              size="sm"
-              aria-label="Package manager">
-              {INSTALL_COMMANDS.map(entry => (
-                <Tab key={entry.id} value={entry.id} label={entry.id} />
-              ))}
-            </TabList>
-            <CodeBlock
-              code={activeCommand}
-              language="bash"
-              size="sm"
-              width="100%"
-              hasCopyButton
-              onCopy={onCopyInstall}
+            ...styles.aurora,
+            width: 460,
+            height: 460,
+            top: -80,
+            right: '-8%',
+            opacity: 0.45,
+            backgroundImage: `radial-gradient(closest-side, ${AURORA_C}, transparent 70%)`,
+          }}
+        />
+        <div
+          className="ospl-aurora-c"
+          style={{
+            ...styles.aurora,
+            width: 380,
+            height: 380,
+            bottom: -120,
+            left: '30%',
+            opacity: 0.38,
+            backgroundImage: `radial-gradient(closest-side, ${AURORA_B}, transparent 70%)`,
+          }}
+        />
+        <div style={styles.grain} />
+      </div>
+      <div style={{...columnStyle, ...bandStyle, ...styles.bandContent}}>
+        <VStack gap={5} hAlign="center">
+          <HStack gap={2} vAlign="center" wrap="wrap" hAlign="center">
+            <Eyebrow label="tessera · Open source" />
+            <Badge variant="neutral" label="v4.0.0" />
+            <Badge
+              variant="neutral"
+              icon={<Icon icon={ScaleIcon} size="xsm" color="inherit" />}
+              label="MIT"
             />
-            <div aria-live="polite" style={styles.copyLive}>
-              {copiedCommand === null ? null : (
-                <>
-                  <Icon icon={CheckIcon} size="xsm" color="inherit" />
-                  {`Copied "${copiedCommand}" to your clipboard`}
-                </>
-              )}
+          </HStack>
+          <h1 style={{...styles.heroDisplay, fontSize: displaySize}}>
+            State that{' '}
+            <span style={styles.gradientInk}>composes like tiles.</span>
+          </h1>
+          <p style={styles.heroSubcopy}>{BRAND.subcopy}</p>
+          <HStack gap={2} vAlign="center" wrap="wrap" hAlign="center">
+            <span className="ospl-shine">
+              <Button
+                label="Get started"
+                variant="primary"
+                icon={<Icon icon={ArrowRightIcon} size="sm" color="inherit" />}
+                onClick={() => jumpToSection('example')}
+              />
+            </span>
+            <Button
+              label={isStarred ? 'Starred on GitHub' : 'Star on GitHub'}
+              variant="secondary"
+              icon={<Icon icon={StarIcon} size="sm" color="inherit" />}
+              onClick={() => setIsStarred(previous => !previous)}
+            />
+          </HStack>
+          <HStack gap={2} vAlign="center" wrap="wrap" hAlign="center">
+            <span style={styles.statChip}>
+              <span
+                style={{color: ACCENT, display: 'inline-flex'}}
+                aria-hidden="true">
+                <Icon icon={StarIcon} size="xsm" color="inherit" />
+              </span>
+              <span style={styles.statChipValue}>
+                {formatCount(displayedStars)}
+              </span>
+              <span style={styles.statChipLabel}>stars</span>
+            </span>
+            <span style={styles.statChip}>
+              <span
+                style={{color: ACCENT, display: 'inline-flex'}}
+                aria-hidden="true">
+                <Icon icon={GitForkIcon} size="xsm" color="inherit" />
+              </span>
+              <span style={styles.statChipValue}>
+                {formatCount(heroForks)}
+              </span>
+              <span style={styles.statChipLabel}>forks</span>
+            </span>
+            <span style={styles.statChip}>
+              <span
+                style={{color: ACCENT, display: 'inline-flex'}}
+                aria-hidden="true">
+                <Icon icon={ScaleIcon} size="xsm" color="inherit" />
+              </span>
+              <span style={styles.statChipValue}>{STATS.license}</span>
+              <span style={styles.statChipLabel}>license</span>
+            </span>
+            <span style={styles.statChip}>
+              <span
+                style={{color: ACCENT, display: 'inline-flex'}}
+                aria-hidden="true">
+                <Icon icon={PackageIcon} size="xsm" color="inherit" />
+              </span>
+              <span style={styles.statChipValue}>{STATS.bundle}</span>
+              <span style={styles.statChipLabel}>min+gzip</span>
+            </span>
+          </HStack>
+          {/* Product theater: install terminal in perspective, satellites
+              bobbing over it; the panel bleeds into the example band. */}
+          <div style={{...styles.theaterWrap, marginTop: 'var(--spacing-4)'}}>
+            <div style={styles.theaterGlow} aria-hidden="true" />
+            {satellites}
+            <div style={styles.theaterPanel}>
+              <div style={styles.theaterToolbar} aria-hidden="true">
+                <span style={styles.toolbarDot} />
+                <span style={styles.toolbarDot} />
+                <span style={styles.toolbarDot} />
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    color: 'var(--color-text-secondary)',
+                    marginLeft: 4,
+                  }}>
+                  <Icon icon={TerminalIcon} size="xsm" color="inherit" />
+                </span>
+                <span style={styles.toolbarTitle}>~ add tessera</span>
+              </div>
+              <div style={styles.theaterBody}>
+                <TabList
+                  value={packageManager}
+                  onChange={value =>
+                    setPackageManager(value as PackageManager)
+                  }
+                  size="sm"
+                  aria-label="Package manager">
+                  {INSTALL_COMMANDS.map(entry => (
+                    <Tab key={entry.id} value={entry.id} label={entry.id} />
+                  ))}
+                </TabList>
+                <CodeBlock
+                  code={activeCommand}
+                  language="bash"
+                  size="sm"
+                  width="100%"
+                  hasCopyButton
+                  onCopy={onCopyInstall}
+                />
+                <div aria-live="polite" style={styles.copyLive}>
+                  {copiedCommand === null ? null : (
+                    <>
+                      <Icon icon={CheckIcon} size="xsm" color="inherit" />
+                      {`Copied "${copiedCommand}" to your clipboard`}
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
-          </VStack>
-        </Card>
-        <HStack gap={2} vAlign="center" wrap="wrap" hAlign="center">
-          <span style={styles.statChip}>
-            <span style={{color: ACCENT, display: 'inline-flex'}} aria-hidden="true">
-              <Icon icon={StarIcon} size="xsm" color="inherit" />
-            </span>
-            <span style={styles.statChipValue}>
-              {formatCount(displayedStars)}
-            </span>
-            <span style={styles.statChipLabel}>stars</span>
-          </span>
-          <span style={styles.statChip}>
-            <span style={{color: ACCENT, display: 'inline-flex'}} aria-hidden="true">
-              <Icon icon={GitForkIcon} size="xsm" color="inherit" />
-            </span>
-            <span style={styles.statChipValue}>{formatCount(heroForks)}</span>
-            <span style={styles.statChipLabel}>forks</span>
-          </span>
-          <span style={styles.statChip}>
-            <span style={{color: ACCENT, display: 'inline-flex'}} aria-hidden="true">
-              <Icon icon={ScaleIcon} size="xsm" color="inherit" />
-            </span>
-            <span style={styles.statChipValue}>{STATS.license}</span>
-            <span style={styles.statChipLabel}>license</span>
-          </span>
-          <span style={styles.statChip}>
-            <span style={{color: ACCENT, display: 'inline-flex'}} aria-hidden="true">
-              <Icon icon={PackageIcon} size="xsm" color="inherit" />
-            </span>
-            <span style={styles.statChipValue}>{STATS.bundle}</span>
-            <span style={styles.statChipLabel}>min+gzip</span>
-          </span>
-        </HStack>
-      </VStack>
+          </div>
+        </VStack>
+      </div>
     </header>
   );
 
-  // ---- footer ----
+  // ---- pinned release story (sticky stage inside a ~260vh wrapper) ----
+  const releasesStory = (
+    <div
+      style={{
+        ...styles.storyStage,
+        height: Math.max(1, stageHeight - NAV_ALLOWANCE),
+      }}>
+      <div style={{...columnStyle, width: '100%'}}>
+        <div style={styles.storyGrid}>
+          <div style={styles.storyRailCol}>
+            <div>
+              <Eyebrow label="Releases" />
+            </div>
+            <h2 style={{...styles.sectionHeading, fontSize: 32}}>
+              Steady, semver-honest releases
+            </h2>
+            <p style={styles.sectionCopy}>
+              A release roughly every six weeks. Breaking changes only in
+              majors, always with a codemod and a migration guide.
+            </p>
+            <div style={styles.storySteps}>
+              <div style={styles.storyTrack} aria-hidden="true">
+                <div
+                  style={{
+                    ...styles.storyFill,
+                    transform: `scaleY(${storyProgress.toFixed(3)})`,
+                  }}
+                />
+              </div>
+              {RELEASES.map((release, index) => {
+                const isActiveStep = storyStep === index;
+                return (
+                  <button
+                    key={release.version}
+                    type="button"
+                    aria-current={isActiveStep ? 'step' : undefined}
+                    style={{
+                      ...styles.storyStep,
+                      ...(isActiveStep ? styles.storyStepActive : null),
+                      opacity: isActiveStep ? 1 : 0.55,
+                    }}
+                    onClick={() => jumpToStoryStep(index)}>
+                    <span
+                      style={{
+                        ...styles.storyStepNumber,
+                        ...(isActiveStep ? {color: ACCENT} : null),
+                      }}>
+                      {`0${index + 1} · ${SEMVER_BADGE[release.level].label}`}
+                    </span>
+                    <span style={styles.storyStepTitle}>
+                      {`${release.version} — ${release.title}`}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <div style={styles.storyPanelCol}>
+            {RELEASES.map((release, index) => {
+              const panelState =
+                index === storyStep
+                  ? 'active'
+                  : index < storyStep
+                    ? 'past'
+                    : 'future';
+              const badge = SEMVER_BADGE[release.level];
+              return (
+                <div
+                  key={release.version}
+                  aria-hidden={panelState !== 'active'}
+                  style={{
+                    ...styles.storyPanel,
+                    opacity: panelState === 'active' ? 1 : 0,
+                    transform:
+                      panelState === 'active'
+                        ? 'none'
+                        : panelState === 'past'
+                          ? 'translateY(-18px) scale(0.985)'
+                          : 'translateY(18px) scale(0.985)',
+                    transition:
+                      'opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
+                    pointerEvents: panelState === 'active' ? 'auto' : 'none',
+                  }}>
+                  <div style={styles.storyPanelCard}>
+                    <HStack gap={3} vAlign="center" wrap="wrap">
+                      <span
+                        style={{
+                          ...styles.storyVersionNumeral,
+                          ...styles.gradientInk,
+                        }}>
+                        {release.version}
+                      </span>
+                      <VStack gap={1}>
+                        <Badge variant={badge.variant} label={badge.label} />
+                        <Text type="supporting" color="secondary">
+                          {release.date}
+                        </Text>
+                      </VStack>
+                    </HStack>
+                    <span style={{fontSize: 22, fontWeight: 700}}>
+                      {release.title}
+                    </span>
+                    <ReleaseBullets bullets={release.bullets} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ---- footer (scheme-locked, see Color policy) ----
   const footer = (
     <footer style={styles.footer}>
       <div
@@ -1855,17 +3001,7 @@ export default function OpenSourceProjectLandingTemplate() {
         }}>
         <HStack gap={3} vAlign="center" wrap="wrap">
           <StackItem size="fill">
-            <HStack gap={2} vAlign="center">
-              <div style={styles.mosaic} aria-hidden="true">
-                <span style={styles.mosaicTile} />
-                <span style={styles.mosaicTileGhost} />
-                <span style={styles.mosaicTileGhost} />
-                <span style={styles.mosaicTile} />
-              </div>
-              <span style={{...styles.wordmark, fontSize: 17, color: FOOTER_TEXT}}>
-                {BRAND.name}
-              </span>
-            </HStack>
+            <BrandMark textColor={DARK_TEXT} />
           </StackItem>
           <Badge variant="neutral" label="v4.0.0 · MIT" />
         </HStack>
@@ -1882,11 +3018,11 @@ export default function OpenSourceProjectLandingTemplate() {
         </HStack>
         <hr style={styles.footerRule} />
         <VStack gap={1}>
-          <span style={{fontSize: 13, color: FOOTER_TEXT_SOFT}}>
+          <span style={{fontSize: 13, color: DARK_TEXT_SOFT}}>
             tessera is MIT licensed — free forever, for any use, with no
             relicensing surprises.
           </span>
-          <span style={{fontSize: 13, color: FOOTER_TEXT_FAINT}}>
+          <span style={{fontSize: 13, color: DARK_TEXT_FAINT}}>
             © 2021–2026 the tessera contributors · built in the open by 293
             people across 41 countries
           </span>
@@ -1896,60 +3032,170 @@ export default function OpenSourceProjectLandingTemplate() {
   );
 
   return (
-    <Layout height="fill">
-      <LayoutContent padding={0}>
-        <div ref={pageRef} style={styles.page} onScroll={onPageScroll}>
-          {navbar}
+    <div
+      ref={wrapRef}
+      className={isReduced ? 'ospl-root ospl-reduced' : 'ospl-root'}
+      style={{height: '100%'}}>
+      <style>{OSPL_CSS}</style>
+      <Layout height="fill">
+        <LayoutContent padding={0}>
+          <div ref={pageRef} style={styles.page} onScroll={onPageScroll}>
+            {navbar}
 
-          {hero}
+            {hero}
 
-          <section
-            id="example"
-            ref={registerSection('example')}
-            style={styles.bandTinted}>
-            <div style={{...columnStyle, ...bandStyle}}>
-              <ExampleSection isReduced={isReduced} isStacked={isStacked} />
-            </div>
-          </section>
+            {/* Tinted example band: dot-grid texture; the hero theater
+                bleeds across this boundary (see theaterOverlap). */}
+            <section
+              id="example"
+              ref={registerSection('example')}
+              style={{...styles.bandTinted, ...styles.atmosBand}}>
+              <div style={styles.dotGrid} aria-hidden="true" />
+              <div
+                style={{
+                  ...columnStyle,
+                  ...bandStyle,
+                  ...styles.bandContent,
+                  paddingTop:
+                    (bandStyle.paddingBlock as number) + theaterOverlap,
+                }}>
+                <ExampleSection
+                  isReduced={isReduced}
+                  isStacked={isStacked}
+                  headingSize={headingSize}
+                />
+              </div>
+            </section>
 
-          <section id="releases" ref={registerSection('releases')}>
-            <div
-              style={{
-                ...columnStyle,
-                ...bandStyle,
-                maxWidth: 860,
+            {/* Release story: pinned sticky scene at wide widths; static
+                stacked timeline under reduced motion / compact widths. */}
+            <section
+              id="releases"
+              ref={node => {
+                registerSection('releases')(node);
+                storyRef.current = node;
               }}>
-              <ReleasesSection isReduced={isReduced} />
-            </div>
-          </section>
+              {canStory ? (
+                <div style={{height: Math.round(stageHeight * STORY_LENGTH)}}>
+                  {releasesStory}
+                </div>
+              ) : (
+                <div style={{...columnStyle, ...bandStyle, maxWidth: 860}}>
+                  <ReleasesStatic
+                    isReduced={isReduced}
+                    headingSize={headingSize}
+                  />
+                </div>
+              )}
+            </section>
 
-          <section style={styles.bandTinted}>
-            <div style={{...columnStyle, ...bandStyle}}>
-              <ContributorsSection isReduced={isReduced} />
-            </div>
-          </section>
+            {/* Aurora-lit tinted band: contributors 5/7 split. */}
+            <section style={{...styles.bandTinted, ...styles.atmosBand}}>
+              <div style={styles.atmosLayer} aria-hidden="true">
+                <div
+                  className="ospl-aurora-b"
+                  style={{
+                    ...styles.aurora,
+                    width: 440,
+                    height: 440,
+                    top: -140,
+                    right: '-10%',
+                    opacity: 0.4,
+                    backgroundImage: `radial-gradient(closest-side, ${AURORA_B}, transparent 70%)`,
+                  }}
+                />
+                <div
+                  className="ospl-aurora-c"
+                  style={{
+                    ...styles.aurora,
+                    width: 360,
+                    height: 360,
+                    bottom: -120,
+                    left: '-6%',
+                    opacity: 0.35,
+                    backgroundImage: `radial-gradient(closest-side, ${AURORA_C}, transparent 70%)`,
+                  }}
+                />
+              </div>
+              <div style={{...columnStyle, ...bandStyle, ...styles.bandContent}}>
+                <ContributorsSection
+                  isReduced={isReduced}
+                  isStacked={isStacked}
+                  headingSize={headingSize}
+                />
+              </div>
+            </section>
 
-          <section id="sponsors" ref={registerSection('sponsors')}>
-            <div style={{...columnStyle, ...bandStyle}}>
-              <SponsorsSection isReduced={isReduced} />
-            </div>
-          </section>
+            <section id="sponsors" ref={registerSection('sponsors')}>
+              <div style={{...columnStyle, ...bandStyle}}>
+                <SponsorsSection
+                  isReduced={isReduced}
+                  headingSize={headingSize}
+                />
+              </div>
+            </section>
 
-          <section style={styles.bandTinted}>
-            <div style={{...columnStyle, ...bandStyle, maxWidth: 920}}>
-              <GrowthSection isReduced={isReduced} isStarred={isStarred} />
-            </div>
-          </section>
+            {/* Signature scheme-locked dark band: gradient glows, grain,
+                pointer spotlight, glass sparkline, used-by marquee. */}
+            <section style={styles.darkBand} onPointerMove={onDarkPointerMove}>
+              <div style={styles.atmosLayer} aria-hidden="true">
+                <div
+                  className="ospl-aurora-a"
+                  style={{
+                    ...styles.aurora,
+                    width: 520,
+                    height: 520,
+                    top: -160,
+                    left: '-4%',
+                    opacity: 0.55,
+                    backgroundImage: `radial-gradient(closest-side, ${AURORA_A}, transparent 70%)`,
+                  }}
+                />
+                <div
+                  className="ospl-aurora-c"
+                  style={{
+                    ...styles.aurora,
+                    width: 440,
+                    height: 440,
+                    bottom: -140,
+                    right: '-6%',
+                    opacity: 0.5,
+                    backgroundImage: `radial-gradient(closest-side, ${AURORA_C}, transparent 70%)`,
+                  }}
+                />
+                <div style={styles.grain} />
+              </div>
+              {isReduced ? null : (
+                <div style={styles.spotlight} aria-hidden="true" />
+              )}
+              <div
+                style={{
+                  ...columnStyle,
+                  ...bandStyle,
+                  ...styles.bandContent,
+                  maxWidth: 920,
+                }}>
+                <GrowthSection
+                  isReduced={isReduced}
+                  isStarred={isStarred}
+                  headingSize={headingSize}
+                />
+              </div>
+            </section>
 
-          <section id="community" ref={registerSection('community')}>
-            <div style={{...columnStyle, ...bandStyle}}>
-              <CommunitySection isReduced={isReduced} />
-            </div>
-          </section>
+            <section id="community" ref={registerSection('community')}>
+              <div style={{...columnStyle, ...bandStyle}}>
+                <CommunitySection
+                  isReduced={isReduced}
+                  headingSize={headingSize}
+                />
+              </div>
+            </section>
 
-          {footer}
-        </div>
-      </LayoutContent>
-    </Layout>
+            {footer}
+          </div>
+        </LayoutContent>
+      </Layout>
+    </div>
   );
 }

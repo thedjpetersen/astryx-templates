@@ -3771,6 +3771,13 @@ export const templates: TemplateEntry[] = [
     'Scroll-snap app-card deck with parallax, swipe-up dismiss physics, dock zoom-open, and Undo close restore.',
   ),
   entry(
+    'mobile-collapsing-profile-header',
+    'Collapsing Profile Header',
+    'page',
+    'Mobile',
+    'Scroll-driven creator profile: parallax cover, avatar shrinking into the navBar, pinned stats, docking tabs.',
+  ),
+  entry(
     'devtool-terminal-landing',
     'Dev Tool Landing',
     'page',
