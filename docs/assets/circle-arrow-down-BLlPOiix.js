@@ -1,0 +1,1 @@
+import{A as e}from"./index-DDmS-Cgf.js";var t=e(`circle-arrow-down`,[[`circle`,{cx:`12`,cy:`12`,r:`10`,key:`1mglay`}],[`path`,{d:`M12 8v8`,key:`napkw2`}],[`path`,{d:`m8 12 4 4 4-4`,key:`k98ssh`}]]);export{t};

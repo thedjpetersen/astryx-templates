@@ -1,0 +1,14 @@
+// Copyright (c) Meta Platforms, Inc. and affiliates.
+
+import type {AstryxPageTemplate} from '@astryxdesign/cli/template';
+
+const template = {
+  type: 'page',
+  name: 'Skylark — Gesture Coach',
+  description:
+    "MOBILE (390px shell) interactive gesture-tutorial overlay for the Skylark inbox, frozen at Sun, Jul 13: a mock mail list (52px navBar with a working Refresh button, 44px section header with a Compact/Comfortable density toggle, inset-grouped listCard of 72px sender/subject rows with hue-gradient monogram tiles) sits beneath a coach layer that teaches 4 gestures in steps. Each step pairs an animated DEMO GHOST — a 44px translucent finger dot replaying the gesture path on a CSS-keyframe loop (swipe arc across the row, growing long-press ring, pull-down rubber-band, twin dots pinching; transform/opacity only) — with a pulsing halo on the target and a bottom step card naming the gesture ('Swipe left to archive' → Crestline Deals, 'Long-press to pin' → Field & Fern with a 450ms SVG dashoffset ring, 'Pull down to refresh' with a 64px armed threshold inserting one fixed message, 'Pinch to compact' via two-pointer distance-ratio tracking). Performing the gesture with the real pointer handlers fires the row's ACTUAL effect + a success pop + a horizontal card-turn to the next step; a 4-dot progress row fills, 'Skip gesture' (44px) advances honestly and marks the step skipped, and every gesture ALSO commits through a visible ≥44×44 button path (per-row ellipsis menu Archive/Pin, navBar Refresh, header density toggle — all landing in the same state updates, so the buttons complete their steps too). Finishing lifts the coach into a completion card with an SVG check draw-on, a derived 'N of 4 gestures — N skipped' summary, and a Practice-again full reset; all four gestures stay live in the inbox afterward. One polite toast dock announces every outcome. Reduced motion (matchMedia-driven): ghost loops are removed and replaced by static SVG diagram arrows with a 3-phase 'Show me' step-through button, halos render static, and pops/turns/slide-outs become instant state changes. At desktop container widths (>560px) it renders the standard centered 430px phone column on a muted backdrop. Choose over swipe-triage-stack when the surface TEACHES gestures over a host screen rather than being a card-stack triage tool; choose over the frozen mobile-list-input/overlay galleries when the swipe/press/pull patterns must chain into a scripted step-by-step curriculum with progress, skips, and a completion summary; choose over mobile-pull-refresh-inbox when pull-to-refresh is one lesson among four rather than the centerpiece physics; choose over any desktop template when the brief calls for a phone-first 390px shell with 44×44 touch targets and pointer-driven gesture physics.",
+  category: 'Mobile',
+  componentsUsed: ['Icon'],
+} satisfies AstryxPageTemplate;
+
+export default template;

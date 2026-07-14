@@ -1,0 +1,1 @@
+function e(...e){return t=>{let n=[];for(let r of e)if(typeof r==`function`){let e=r(t);typeof e==`function`&&n.push(e)}else r!=null&&(r.current=t);if(n.length>0)return()=>{for(let e of n)e()}}}export{e as t};

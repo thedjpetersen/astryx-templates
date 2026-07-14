@@ -1,0 +1,14 @@
+// Copyright (c) Meta Platforms, Inc. and affiliates.
+
+import type {AstryxPageTemplate} from '@astryxdesign/cli/template';
+
+const template = {
+  type: 'page',
+  name: 'Chat Micro-Motion',
+  description:
+    "MOBILE (390px shell) motion-first DM thread — Ripple Messages with Nova Reyes, frozen on Fri Jul 4: a 52px navBar (back chevron, avatar + 'Active now' success dot, call button) over 14 fixture messages in two sticky-pinned day sections (6 under 'Thu, Jul 3' + 8 under 'Today', one hue-gradient photo tile, three pre-seeded reaction chips), closed by a sticky composer dock (3 quick-reply chips + 44px field + 44×44 send) hosting the single polite toast dock. The centerpiece is message micro-interaction choreography, all transform/opacity keyframes under one `cmm-` <style> constant: a typing indicator (three staggered bounce dots in a ghost pill, staged at t+1.2s) that after 2.2s MORPHS into the arriving bubble via an overshoot spring from the pill's bottom-left origin with the content fading in 180ms behind; send choreography where the draft flies as a pill along a slight arc (55% waypoint keyframe) into a reserved invisible slot, the real bubble pops in on animationend (idempotent 900ms backstop), and a Delivered → Read receipt transitions with a tiny avatar slide; double-tap on any incoming bubble popping an emoji heart (scale 0→1.3→1) with a deterministic 6-particle micro-burst (fixed dx/dy/rotation/delay const array, token colors, removed from the DOM after) while the ❤️ chip counts up through the ONE toggleReaction law; a 450ms long-press reaction bar (5 emoji, 40ms staggered rise, ESC/scrim dismiss) whose always-visible 44×44 smile-plus chip beside every bubble is the mandatory button path; and an Unsend flow on your last bubble's ⋯ menu that implodes the bubble (scale+fade) and ghosts in a dashed 'Message unsent' placeholder. A 2-message canned reply script re-runs the typing→morph cycle after each send; times come from a fixed pool, never a clock. Reduced motion (matchMedia effect + CSS backstop): typing dots become a static 'Nova is typing…' label, flight/morph/pop/implode become instant state changes, heart burst and chip pops are removed entirely. At container widths >560px it renders as a centered 430px phone column on the muted backdrop. Choose over ai-chat-* templates when the brief wants a phone-first consumer DM with gesture micro-motion rather than an AI transcript; over swipe-triage-stack when the gestures decorate messages (react/unsend/receipts) instead of triaging cards; over mobile-p2p-payment-flow when the choreography is conversational bubbles, not money keypads; over story-progress-viewer when motion lives inside a scrolling thread rather than a segmented full-screen player.",
+  category: 'Mobile',
+  componentsUsed: ['Icon'],
+} satisfies AstryxPageTemplate;
+
+export default template;
