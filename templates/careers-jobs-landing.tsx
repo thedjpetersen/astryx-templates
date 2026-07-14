@@ -57,12 +57,14 @@
  *   must look like a URL when present) with inline TextInput status
  *   errors; success swaps the form for a confirmation card that persists
  *   per role for the session.
- * - Pinned scroll story: the process section is a tall (stage × 2.6)
- *   container with a sticky stage; scroll progress (container scrollTop
- *   against the measured stage height) fills the step rail and advances
- *   4 discrete states; step buttons scroll the container to the matching
- *   progress. Reduced motion or stacked widths render the four steps as
- *   a static sequence (step buttons still highlight).
+ * - Pinned scroll story: the process section is a fixed 1612px pin
+ *   container (620px sticky stage + 992px of travel — px, never vh: the
+ *   inline demo resolves vh against the window, not the ~920px stage);
+ *   scroll progress (container scrollTop against the fixed travel) fills
+ *   the step rail and advances 4 discrete states; step buttons scroll the
+ *   container to the matching progress. Reduced motion or stacked widths
+ *   render the four steps as a static sequence (step buttons still
+ *   highlight).
  * - The quote carousel auto-advances every 5.2s, pauses while hovered,
  *   and is fully driveable via prev/next buttons and dots. The dark band
  *   tracks the pointer with a radial spotlight (CSS vars, no re-render).
@@ -201,6 +203,13 @@ const GRAIN_URI =
 /** Sticky-nav height; smooth-scroll and scroll-spy both allow for it. */
 const NAV_ALLOWANCE = 72;
 const SPY_OFFSET = 140;
+// Pinned-story sizing is fixed px, never vh/dvh or a window-derived
+// measurement: the inline demo renders this page in the top window, so
+// vh resolves against the window instead of the ~920px stage and a
+// vh/measured pin container would balloon the scroll height. Stage
+// 620px + travel 992px (1.6 × stage) keeps the 2.6× pin ratio at 1612px.
+const STORY_STAGE_HEIGHT = 620;
+const STORY_TRAVEL = 992;
 
 // Scoped stylesheet: aurora drift, satellite bob, CTA sheen/lift/press,
 // and card hover-raise need keyframes + pseudo-class selectors that
@@ -419,7 +428,9 @@ const styles: Record<string, CSSProperties> = {
     boxShadow: SHADOW_FLOATING,
     padding: 'var(--spacing-3)',
     zIndex: 40,
-    maxHeight: 'calc(100vh - 120px)',
+    // px, not 100vh: the inline demo resolves vh against the window,
+    // not the ~920px stage, so a vh cap would overshoot the stage.
+    maxHeight: 480,
     overflowY: 'auto',
   },
   mobileMenuLink: {
@@ -1801,8 +1812,9 @@ function useElementWidth(ref: RefObject<HTMLDivElement | null>): number {
   return width;
 }
 
-/** Measure the scroll container's height — the pinned story sizes its
- * travel from the real stage, not viewport units. */
+/** Measure the scroll container's height — used only to gate the pinned
+ * story (short embeds fall back to the static sequence); the pin sizing
+ * itself is fixed px, not viewport units or this measurement. */
 function useElementHeight(ref: RefObject<HTMLDivElement | null>): number {
   const [height, setHeight] = useState(0);
   useEffect(() => {
@@ -2044,8 +2056,8 @@ export default function CareersJobsLandingTemplate() {
   const [storyProgress, setStoryProgress] = useState(0);
   const [staticStep, setStaticStep] = useState(0);
   const isStoryPinned = !isReduced && !isStacked && pageHeight > 480;
-  const stageHeight = Math.max(0, pageHeight - NAV_ALLOWANCE);
-  const storyTravel = Math.round(stageHeight * 1.6);
+  const stageHeight = STORY_STAGE_HEIGHT;
+  const storyTravel = STORY_TRAVEL;
   const activeStep = isStoryPinned
     ? Math.min(
         PROCESS_STEPS.length - 1,

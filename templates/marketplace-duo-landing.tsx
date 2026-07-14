@@ -31,7 +31,8 @@
  *   tilted vignette mock with three bobbing satellite mini-cards that
  *   parallax toward the pointer. Each audience path pins one scroll story —
  *   renter how-it-works (3 states) or owner payout/protection (4 states) —
- *   inside a ~240vh container whose progress advances a staged product mock
+ *   inside a px-sized container (sticky stage + ~1.45x travel, measured from
+ *   the scrollport, never vh) whose progress advances a staged product mock
  *   and fills a clickable numbered step rail. Renter reviews run as a
  *   pausable marquee loop; the shared stats panel floats across the section
  *   boundary into the tinted cities band.
@@ -396,7 +397,9 @@ const styles: Record<string, CSSProperties> = {
     boxShadow: SHADOW_FLOATING,
     padding: 'var(--spacing-3)',
     zIndex: 40,
-    maxHeight: 'calc(100vh - 120px)',
+    // px, not vh: vh resolves against the window when the demo renders this
+    // page inline in a smaller stage, so a vh cap could overshoot the stage.
+    maxHeight: 420,
     overflowY: 'auto',
   },
   navMenuLink: {

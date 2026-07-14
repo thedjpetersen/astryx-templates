@@ -49,9 +49,10 @@
  *
  * Frame: Layout height="fill", content-only — a landing page owns its own
  * chrome, so there is no LayoutHeader. LayoutContent (padding 0) hosts a
- * measured wrapper (useElementWidth + useElementHeight drive every
- * breakpoint and the sticky-story math, because the inline demo stage
- * never fires viewport media queries) around a single scroll container;
+ * measured wrapper (useElementWidth drives every breakpoint, because the
+ * inline demo stage never fires viewport media queries; the pinned story
+ * uses fixed px heights — never vh, which would resolve against the
+ * window rather than the stage) around a single scroll container;
  * inside it the navbar is position:sticky top:0 and the page is a stack
  * of full-bleed bands, each carrying its own centered 1120px column.
  *
@@ -369,7 +370,9 @@ const styles: Record<string, CSSProperties> = {
     boxShadow: SHADOW_FLOATING,
     padding: 'var(--spacing-3)',
     zIndex: 40,
-    maxHeight: 'calc(100vh - 120px)',
+    // px cap, not vh: in the inline demo stage vh resolves against the
+    // window, not the stage. Menu content is ~300px, so 420 never clips.
+    maxHeight: 420,
     overflowY: 'auto',
   },
   mobileMenuLink: {
@@ -1613,26 +1616,6 @@ function useElementWidth(ref: RefObject<HTMLDivElement | null>): number {
   return width;
 }
 
-/** Measured height of the scroll stage; drives the sticky-story math. */
-function useElementHeight(ref: RefObject<HTMLDivElement | null>): number {
-  const [height, setHeight] = useState(0);
-  useEffect(() => {
-    const element = ref.current;
-    if (element == null) {
-      return undefined;
-    }
-    const observer = new ResizeObserver(entries => {
-      const rect = entries[0]?.contentRect;
-      if (rect != null) {
-        setHeight(rect.height);
-      }
-    });
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [ref]);
-  return height;
-}
-
 /** prefers-reduced-motion gate: reveals render visible, counters final. */
 function usePrefersReducedMotion(): boolean {
   const [isReduced, setIsReduced] = useState(false);
@@ -1919,7 +1902,6 @@ export default function CourseCohortLandingTemplate() {
   // ---- responsive (ResizeObserver; see Responsive contract) ----
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const wrapWidth = useElementWidth(wrapRef);
-  const viewHeight = useElementHeight(wrapRef);
   const isNavCollapsed = wrapWidth > 0 && wrapWidth <= 820;
   const isStacked = wrapWidth > 0 && wrapWidth <= 760;
   const isPhone = wrapWidth > 0 && wrapWidth <= 560;
@@ -2968,6 +2950,15 @@ export default function CourseCohortLandingTemplate() {
 
   const mockHeight = isPhone ? 300 : isStacked ? 320 : 380;
 
+  // Pinned-story geometry in fixed px — never vh: the inline demo stage
+  // renders in the top window, so vh resolves against the WINDOW, not the
+  // ~920px stage, which would mint thousands of px of near-empty scroll.
+  // Stage heights are sized to the tallest content per tier (stacked adds
+  // the mock below the rail); the pin container adds 1,000px of travel,
+  // which the progress math consumes in thirds across the three states.
+  const storyStageHeight = isStacked ? 720 : isWide ? 600 : 640;
+  const storyPinHeight = storyStageHeight + 1000;
+
   // Reduced motion: the story renders as a static stacked sequence.
   const storyStatic = (
     <section
@@ -3014,12 +3005,12 @@ export default function CourseCohortLandingTemplate() {
       aria-label="A week inside the cohort"
       style={{
         ...styles.storyBand,
-        height: viewHeight > 0 ? viewHeight * 2.6 : '260vh',
+        height: storyPinHeight,
       }}>
       <div
         style={{
           ...styles.storyStage,
-          height: viewHeight > 0 ? viewHeight : '100vh',
+          height: storyStageHeight,
         }}
         onPointerMove={onStoryPointerMove}>
         <div ref={spotRef} style={styles.storySpot} aria-hidden="true" />

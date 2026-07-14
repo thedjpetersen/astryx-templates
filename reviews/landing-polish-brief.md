@@ -66,10 +66,13 @@ chat autoplay, tilt card, exploded SVG), KEEP it and stage it —
 depth, glow, satellites — rather than replacing it.
 
 **5. One pinned scroll story.** At least one section becomes a
-scroll-driven scene: a `position: sticky` stage inside a ~220-280vh
-container; scroll progress (computed from the container's
-boundingClientRect against the measured viewport) drives 3 discrete
-states or a continuous transform — product mock states advancing,
+scroll-driven scene: a `position: sticky` stage inside a tall
+container — SIZED IN PX, NEVER vh/dvh (the demo renders pages inline
+in the top window, so vh resolves against the full browser viewport
+and produces massive empty scroll; use a ~1500-1700px container and a
+~520-640px sticky stage, or derive from the measured stage height);
+scroll progress (computed from the container's boundingClientRect)
+drives 3 discrete states or a continuous transform — product mock states advancing,
 an SVG path drawing (stroke-dashoffset bound to progress), or a
 numbered step rail filling. Steps must also be clickable (button
 path). Under reduced motion: render as a static stacked sequence.

@@ -25,8 +25,8 @@
  *   rows x 2 verdict columns with footnote jump buttons and a category
  *   filter row that scroll-jumps and highlights row groups, sticky first
  *   column when narrow); an asymmetric why-switch band with count-up stat
- *   cards over a dot grid; a pinned scroll-story migration scene (sticky
- *   stage inside a ~2.6-viewport container whose scroll progress advances
+ *   cards over a dot grid; a pinned scroll-story migration scene (600px
+ *   sticky stage inside a 1560px container whose scroll progress advances
  *   four clickable steps and a scripted terminal, with the copyable CLI
  *   command inline); a scheme-locked dark testimonial band with a glass
  *   quote card and pointer-tracked spotlight; an honest "when Gridware
@@ -102,7 +102,8 @@
  *
  * Responsive contract (useElementSize ResizeObserver on the page wrap —
  * the inline demo stage is ~1045px wide, so viewport media queries never
- * fire there; measured height sizes the pinned story stage):
+ * fire there; the pinned story stage uses fixed px, never vh, because
+ * inline vh resolves against the window, not the stage):
  * - Column: max-width 1120px, centered; every band paints full-bleed.
  *   Section rhythm: 104px block padding at wide, 64px at phone.
  * - >900px: navbar shows all five anchor links + CTA inline; hero
@@ -242,6 +243,13 @@ const SPY_OFFSET = 140;
 /** Extra allowance when jumping to a table row group so the sticky
  * table header row does not cover the group label. */
 const TABLE_HEADER_ALLOWANCE = 56;
+/** Pinned migration story sizing. Fixed px on purpose: the demo renders
+ * this page inline in the top browser window, so vh/dvh (and the wrap's
+ * measured height, which resolves against the document there) would
+ * balloon the pin travel. 600px stage + 1560px container = 960px of
+ * scroll travel (~240px per step). */
+const PIN_STAGE_HEIGHT = 600;
+const PIN_CONTAINER_HEIGHT = 1560;
 
 // Scoped CSS: ambient loops (auroras, satellite bobs, marquee), reveal
 // choreography, card lifts, and CTA sheens — all gated by
@@ -499,7 +507,9 @@ const styles: Record<string, CSSProperties> = {
     boxShadow: SHADOW_FLOATING,
     padding: 'var(--spacing-3)',
     zIndex: 40,
-    maxHeight: 'calc(100vh - 120px)',
+    // px, not vh: inline in the demo's top window 100vh resolves against
+    // the window, not the ~920px stage, so a vh cap could overflow it.
+    maxHeight: 480,
     overflowY: 'auto',
   },
   navMenuLink: {
@@ -1678,7 +1688,7 @@ const FOOTER_LINK_GROUPS: readonly {
 /**
  * Measure the page's own size (ResizeObserver) — the inline demo stage
  * is ~1045px wide, so viewport media queries never fire there. Width
- * drives the breakpoint tiers; height sizes the pinned story stage.
+ * drives the breakpoint tiers.
  */
 function useElementSize(ref: RefObject<HTMLDivElement | null>): {
   width: number;
@@ -2133,7 +2143,7 @@ export default function ProductComparisonLandingTemplate() {
 
   // ---- element-size responsive contract ----
   const wrapRef = useRef<HTMLDivElement | null>(null);
-  const {width: wrapWidth, height: stageHeight} = useElementSize(wrapRef);
+  const {width: wrapWidth} = useElementSize(wrapRef);
   const isNavCollapsed = wrapWidth > 0 && wrapWidth <= 900;
   const isStacked = wrapWidth > 0 && wrapWidth <= 780;
   const isTableCompact = wrapWidth > 0 && wrapWidth <= 720;
@@ -2166,7 +2176,7 @@ export default function ProductComparisonLandingTemplate() {
   // ---- pinned migration scroll story ----
   const pinRef = useRef<HTMLElement | null>(null);
   const [storyProgress, setStoryProgress] = useState(0);
-  const isPinned = !isMotionReduced && !isStacked && stageHeight > 520;
+  const isPinned = !isMotionReduced && !isStacked;
   const activeStep = Math.min(
     MIGRATION_STEPS.length - 1,
     Math.floor(storyProgress * MIGRATION_STEPS.length),
@@ -2253,7 +2263,7 @@ export default function ProductComparisonLandingTemplate() {
       setActiveSection(active);
       const pin = pinRef.current;
       if (pin != null && isPinned) {
-        const range = pin.offsetHeight - stageHeight;
+        const range = pin.offsetHeight - PIN_STAGE_HEIGHT;
         if (range > 0) {
           const raw = (page.scrollTop - pin.offsetTop) / range;
           setStoryProgress(Math.min(1, Math.max(0, raw)));
@@ -2273,7 +2283,7 @@ export default function ProductComparisonLandingTemplate() {
         cancelAnimationFrame(frame);
       }
     };
-  }, [isPinned, stageHeight]);
+  }, [isPinned]);
 
   // Nav menu dismisses on Escape (refocusing the trigger) and on any
   // pointerdown outside the sticky navbar.
@@ -2363,7 +2373,7 @@ export default function ProductComparisonLandingTemplate() {
     if (page == null || pin == null || !isPinned) {
       return;
     }
-    const range = pin.offsetHeight - stageHeight;
+    const range = pin.offsetHeight - PIN_STAGE_HEIGHT;
     if (range <= 0) {
       return;
     }
@@ -2900,9 +2910,9 @@ export default function ProductComparisonLandingTemplate() {
 
   const activeStepData = MIGRATION_STEPS[activeStep];
 
-  // Pinned scroll story: a sticky stage inside a ~2.6-viewport container.
-  // Scroll progress fills the step rail and advances the scripted
-  // terminal; steps are also clickable buttons.
+  // Pinned scroll story: a 600px sticky stage inside a fixed 1560px
+  // container (960px of travel). Scroll progress fills the step rail and
+  // advances the scripted terminal; steps are also clickable buttons.
   const migrationPinned = (
     <section
       ref={node => {
@@ -2910,8 +2920,8 @@ export default function ProductComparisonLandingTemplate() {
         sectionRefs.current.migration = node;
       }}
       aria-label="Migration path"
-      style={{height: Math.round(stageHeight * 2.6)}}>
-      <div style={{...styles.pinStage, height: stageHeight}}>
+      style={{height: PIN_CONTAINER_HEIGHT}}>
+      <div style={{...styles.pinStage, height: PIN_STAGE_HEIGHT}}>
         <div style={styles.dotGrid} aria-hidden="true" />
         <div style={styles.pinColumn}>
           {migrationHeader}

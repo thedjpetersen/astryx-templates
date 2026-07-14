@@ -68,8 +68,10 @@
  * - SDK tiles reveal their install command on hover and pin it on
  *   click/tap (aria-pressed); tiles have fixed min-heights so nothing
  *   jumps. Hover raises a shadow tier with an accent border-glow.
- * - The docs scroll story pins a sticky stage inside a ~240vh container;
- *   scroll progress (container rect vs the measured stage viewport)
+ * - The docs scroll story pins a sticky stage inside a fixed 1600px
+ *   container (px, never vh — the demo renders inline in the window, so
+ *   viewport units would not track the stage); scroll progress
+ *   (container rect vs the fixed-height sticky stage)
  *   selects one of three panes and fills the step rail (scaleY transform,
  *   set imperatively — no per-frame re-render). Steps are real buttons
  *   that scroll to their band. Reduced motion / stacked widths render a
@@ -1621,26 +1623,6 @@ function useElementWidth(ref: RefObject<HTMLDivElement | null>): number {
   return width;
 }
 
-/** Measures the scroll stage's height — sizes the pinned docs story. */
-function useElementHeight(ref: RefObject<HTMLDivElement | null>): number {
-  const [height, setHeight] = useState(0);
-  useEffect(() => {
-    const element = ref.current;
-    if (element == null) {
-      return undefined;
-    }
-    const observer = new ResizeObserver(entries => {
-      const rect = entries[0]?.contentRect;
-      if (rect != null) {
-        setHeight(rect.height);
-      }
-    });
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [ref]);
-  return height;
-}
-
 function usePrefersReducedMotion(): boolean {
   const [isReduced, setIsReduced] = useState(false);
   useEffect(() => {
@@ -1898,7 +1880,6 @@ export default function ApiPlatformLandingTemplate() {
 
   // ---- nav + scroll chrome ----
   const pageRef = useRef<HTMLDivElement | null>(null);
-  const stageHeight = useElementHeight(pageRef);
   const navRef = useRef<HTMLElement | null>(null);
   const menuTriggerRef = useRef<HTMLButtonElement | null>(null);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
@@ -2929,13 +2910,14 @@ export default function ApiPlatformLandingTemplate() {
 
   // ============= DOCS (pinned scroll story) =============
 
-  const storyHeight = stageHeight > 0 ? Math.round(stageHeight * 2.4) : 2200;
-  const stageInnerHeight =
-    stageHeight > 0 ? Math.max(420, stageHeight - STORY_STICKY_TOP - 16) : 620;
-  const paneHeight =
-    stageHeight > 0
-      ? Math.max(320, Math.min(500, stageHeight - 260))
-      : 440;
+  // Fixed px sizing — the demo renders this page inline in the top
+  // window, so viewport-relative (vh/dvh) or window-derived measurements
+  // would balloon the pin container far past the ~920px stage. A 600px
+  // sticky stage inside a 1600px pin container leaves 1000px of scroll
+  // travel across the three docs states.
+  const stageInnerHeight = 600;
+  const storyHeight = 1600;
+  const paneHeight = 440;
 
   const docsHeader = (
     <VStack gap={2}>

@@ -62,7 +62,9 @@
  *   off under reduced motion).
  * - Reader/open-rate numbers count up once (~900ms decelerate) when the
  *   proof row first enters the viewport.
- * - Pinned scroll story: the sample-issue section is a ~250vh container
+ * - Pinned scroll story: the sample-issue section is a fixed 1600px
+ *   container (px, not vh — the inline demo stage means vh resolves
+ *   against the window)
  *   whose sticky stage holds a numbered four-step anatomy rail (The
  *   hook / The deep dive / The code tip / Five worth your click) beside
  *   the framed, internally scrollable reader. Container scroll progress
@@ -2632,7 +2634,11 @@ export default function NewsletterCreatorLandingTemplate() {
       aria-label="Sample issue"
       style={{
         position: 'relative',
-        height: storyPinned ? '250vh' : 'auto',
+        // Fixed px travel (never vh: the demo renders this page inline in
+        // the top window, so vh resolves against the window, not the
+        // ~920px stage — 250vh created thousands of px of empty scroll).
+        // ~2.2x the sticky stage's intrinsic height (~730px).
+        height: storyPinned ? 1600 : 'auto',
       }}>
       <div style={storyPinned ? {position: 'sticky', top: 0} : undefined}>
         <div

@@ -26,9 +26,9 @@
  *   that parallax toward the pointer. Sections: asymmetric-header
  *   capability grid with hover-lift cards, a dot-grid integration band
  *   whose tiles run as a marquee loop with count-up stats, a PINNED
- *   SECURITY SCROLL STORY (sticky stage in a 250vh container; scroll or
- *   click advances four numbered practices, each swapping a CSS console
- *   panel), a prompt-examples carousel whose demo card overlaps into the
+ *   SECURITY SCROLL STORY (sticky stage in a fixed 1600px container;
+ *   scroll or click advances four numbered practices, each swapping a
+ *   CSS console panel), a prompt-examples carousel whose demo card overlaps into the
  *   dark CTA band, a scheme-locked dark CTA band with aurora glows,
  *   pointer-tracked spotlight, and glass tier cards (Try free / Book
  *   demo, both validating email forms), and a footer.
@@ -52,7 +52,9 @@
  *   transition); disabled under reduced motion and at stacked widths,
  *   where the satellites are hidden entirely.
  * - Security story: at wide widths without reduced motion, the section
- *   is a 250vh container with a sticky stage; scroll progress fills the
+ *   is a fixed 1600px container (px, not vh — the demo renders inline so
+ *   vh resolves against the window, not the stage) with a sticky stage;
+ *   scroll progress fills the
  *   step rail and swaps the console panel across the four practices;
  *   each step is also a button that scrolls the container to its band.
  *   Reduced motion or stacked widths render the four practices as a
@@ -187,6 +189,16 @@ const ERROR_ON_DARK = '#FECACA';
 
 /** Sticky-nav height; smooth-scroll allows for it. */
 const NAV_ALLOWANCE = 76;
+
+/**
+ * Pinned security-story container height, in px — never vh. The demo
+ * renders this page inline in the top browser window, so vh resolves
+ * against the WINDOW rather than the ~920px stage and a vh-sized pin
+ * container would add thousands of px of near-empty scroll. ~2.2x the
+ * sticky stage's rendered height (~700-750px of header + split +
+ * compliance row) gives the four steps a comfortable scrub distance.
+ */
+const STORY_PIN_HEIGHT = 1600;
 
 const MONO = 'var(--font-family-mono, ui-monospace, monospace)';
 
@@ -3078,7 +3090,7 @@ export default function AiAssistantLandingTemplate() {
       aria-label="Security"
       style={{
         ...styles.storyOuter,
-        ...(isStoryPinned ? {height: '250vh'} : null),
+        ...(isStoryPinned ? {height: STORY_PIN_HEIGHT} : null),
       }}>
       {isStoryPinned ? storyPinnedContent : storyStaticContent}
     </section>

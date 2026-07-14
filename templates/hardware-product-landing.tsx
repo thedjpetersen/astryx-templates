@@ -59,8 +59,9 @@
  *   translates the four SVG layers apart on a springy cubic-bezier with
  *   staggered delays and fades in labels + hairline leader lines;
  *   reduced motion snaps.
- * - The shipping story pins a sticky stage inside a ~240vh container;
- *   scroll progress (container rect vs the measured scrollport) fills
+ * - The shipping story pins a 640px sticky stage inside a fixed 1600px
+ *   container (px, never vh — see STORY_PIN_HEIGHT); scroll progress
+ *   (container rect over the 960px of pinned travel) fills
  *   the step rail (scaleY) and crossfades three panels. Steps are also
  *   buttons that scroll to their band. Reduced motion or compact widths
  *   render a static stacked sequence.
@@ -182,6 +183,17 @@ const ACCENT_LINE =
 /** Sticky-nav height; smooth-scroll and scroll-spy both allow for it. */
 const NAV_ALLOWANCE = 68;
 const SPY_OFFSET = 132;
+
+/**
+ * Pinned scroll-story geometry in px. The demo renders this page inline
+ * in the top browser window, so vh/dvh (and any "viewport" measurement
+ * of the scroll container) resolve against the window rather than the
+ * ~920px stage — a 240vh-style pin container turns into thousands of px
+ * of near-empty scroll. Fixed px keep the pinned travel honest:
+ * progress divides by (PIN − STAGE) = 960px of travel, ~320px per step.
+ */
+const STORY_STAGE_HEIGHT = 640;
+const STORY_PIN_HEIGHT = 1600;
 
 /** Springy overshoot for the exploded-view layers. */
 const SPRING = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
@@ -1381,7 +1393,7 @@ function useElementWidth(ref: RefObject<HTMLDivElement | null>): number {
   return width;
 }
 
-/** Measured scrollport height — the scroll-story math needs real px. */
+/** Measured scrollport height — gates the pinned story's static fallback. */
 function useElementHeight(ref: RefObject<HTMLDivElement | null>): number {
   const [height, setHeight] = useState(0);
   useEffect(() => {
@@ -1770,7 +1782,9 @@ export default function HardwareProductLandingTemplate() {
   const storyTallRef = useRef<HTMLDivElement | null>(null);
   const stageRef = useRef<HTMLDivElement | null>(null);
   const [storyProgress, setStoryProgress] = useState(0);
-  const storyStatic = reduced || isCompact || viewportH < 480;
+  // Static fallback also fires when the scrollport cannot show the
+  // whole fixed-px pinned stage.
+  const storyStatic = reduced || isCompact || viewportH < STORY_STAGE_HEIGHT;
   const activeStep = Math.min(
     TIMELINE_STEPS.length - 1,
     Math.floor(storyProgress * TIMELINE_STEPS.length),
@@ -1850,13 +1864,13 @@ export default function HardwareProductLandingTemplate() {
   const jumpToStoryStep = (index: number) => {
     const container = pageRef.current;
     const tall = storyTallRef.current;
-    if (container === null || tall === null || viewportH === 0) {
+    if (container === null || tall === null) {
       return;
     }
     const tallRect = tall.getBoundingClientRect();
     const containerRect = container.getBoundingClientRect();
     const tallTop = tallRect.top - containerRect.top + container.scrollTop;
-    const total = tallRect.height - viewportH;
+    const total = tallRect.height - STORY_STAGE_HEIGHT;
     container.scrollTo({
       top: tallTop + ((index + 0.5) / TIMELINE_STEPS.length) * total,
       behavior: reduced ? 'auto' : 'smooth',
@@ -1866,7 +1880,7 @@ export default function HardwareProductLandingTemplate() {
   /**
    * One scroll pass: spy the last nav anchor above the fold, flip the
    * nav surface past 24px, and drive the story stage from the tall
-   * container's rect against the measured scrollport.
+   * container's rect across its fixed px of pinned travel.
    */
   const onPageScroll = (event: UIEvent<HTMLDivElement>) => {
     const container = event.currentTarget;
@@ -1884,10 +1898,12 @@ export default function HardwareProductLandingTemplate() {
     setActiveSection(active);
     if (!storyStatic) {
       const tall = storyTallRef.current;
-      if (tall !== null && viewportH > 0) {
+      if (tall !== null) {
         const tallRect = tall.getBoundingClientRect();
         const containerRect = container.getBoundingClientRect();
-        const total = tallRect.height - viewportH;
+        // Sticky travel: the stage pins from tall-top hitting the
+        // scrollport top until tall-bottom meets the stage bottom.
+        const total = tallRect.height - STORY_STAGE_HEIGHT;
         if (total > 0) {
           const raw = (containerRect.top - tallRect.top) / total;
           const clamped = Math.min(1, Math.max(0, raw));
@@ -2460,19 +2476,30 @@ export default function HardwareProductLandingTemplate() {
       id="configure"
       ref={registerSection('configure')}
       style={{...styles.bandAccent, zIndex: 2}}>
+      {/* Clip layer: the section itself cannot be overflow:hidden (the
+          float card overhangs into the dark band), so the aurora gets
+          its own inset clipping wrapper. */}
       <div
         aria-hidden="true"
         style={{
-          ...styles.aurora,
-          width: 420,
-          height: 300,
-          top: 30,
-          right: '-6%',
-          opacity: 0.4,
-          background: `radial-gradient(closest-side, color-mix(in srgb, ${ACCENT} 50%, transparent), transparent 72%)`,
-          animation: reduced ? undefined : 'hpl-drift-b 40s ease-in-out infinite',
-        }}
-      />
+          position: 'absolute',
+          inset: 0,
+          overflow: 'hidden',
+          pointerEvents: 'none',
+        }}>
+        <div
+          style={{
+            ...styles.aurora,
+            width: 420,
+            height: 300,
+            top: 30,
+            right: '-6%',
+            opacity: 0.4,
+            background: `radial-gradient(closest-side, color-mix(in srgb, ${ACCENT} 50%, transparent), transparent 72%)`,
+            animation: reduced ? undefined : 'hpl-drift-b 40s ease-in-out infinite',
+          }}
+        />
+      </div>
       <div
         style={{
           ...columnStyle,
@@ -2654,13 +2681,13 @@ export default function HardwareProductLandingTemplate() {
     </section>
   ) : (
     <section style={styles.storySection}>
-      <div ref={storyTallRef} style={{height: Math.round(viewportH * 2.4)}}>
+      <div ref={storyTallRef} style={{height: STORY_PIN_HEIGHT}}>
         <div
           ref={stageRef}
           onPointerMove={onStagePointerMove}
           style={{
             ...styles.storyStage,
-            height: viewportH,
+            height: STORY_STAGE_HEIGHT,
             ...(overlap ? {paddingTop: 132} : undefined),
           }}>
           {storyGlows}

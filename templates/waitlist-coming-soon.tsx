@@ -26,8 +26,10 @@
  *   refills a progress bar toward the next 100-place bracket, rolling the
  *   bracket over honestly. Below: an asymmetric 7/5 teaser band (one large
  *   revealed feature card with a composed canvas mock, two frosted cards
- *   stacked beside it), a pinned scroll-story roadmap (sticky stage inside a
- *   ~235vh container; scroll progress advances three clickable phases, fills
+ *   stacked beside it), a pinned scroll-story roadmap (a fixed 580px sticky
+ *   stage inside a fixed 1400px container — px, never vh, because the inline
+ *   demo resolves vh against the window, not the stage; scroll progress
+ *   advances three clickable phases, fills
  *   the step rail, and draws an SVG fold path), a scheme-locked dark follow
  *   band with glass social cards and a pointer-tracked spotlight, and a
  *   minimal footer. The archetype is still restraint — the same five bands,
@@ -194,6 +196,18 @@ const GRAIN_URI =
 
 /** Sticky-nav height allowance for smooth-scroll targets. */
 const NAV_ALLOWANCE = 68;
+
+/**
+ * Pinned roadmap sizing — fixed px, NEVER vh/dvh: the inline demo renders
+ * this page in the top browser window, so vh resolves against the WINDOW,
+ * not the ~920px stage, which would inflate the pin container into
+ * thousands of px of near-empty scroll on this deliberately short page.
+ * The sticky stage is 580px tall and the container 1400px, so the pinned
+ * story travels 820px (PIN_TRAVEL) while the stage stays put.
+ */
+const PIN_STAGE_HEIGHT = 580;
+const PIN_CONTAINER_HEIGHT = 1400;
+const PIN_TRAVEL = PIN_CONTAINER_HEIGHT - PIN_STAGE_HEIGHT;
 
 // Scoped CSS: ambient loops (wordmark drift, aurora, satellite bobs,
 // milestone pulse), reveal choreography, card lifts, and CTA sheens — all
@@ -1232,7 +1246,8 @@ function useReducedMotion(): boolean {
 
 /**
  * Measured page size (ResizeObserver) — see Responsive contract. Width
- * drives the breakpoint tiers; height sizes the pinned roadmap stage.
+ * drives the breakpoint tiers; height only gates whether the pinned
+ * roadmap runs (the stage itself is a fixed px height).
  */
 function useElementSize(ref: RefObject<HTMLDivElement | null>): {
   width: number;
@@ -1551,7 +1566,7 @@ function MilestoneCopy({milestone}: {milestone: Milestone}) {
 export default function WaitlistComingSoonTemplate() {
   // ---- measured responsive breakpoints (see Responsive contract) ----
   const wrapRef = useRef<HTMLDivElement | null>(null);
-  const {width: pageWidth, height: stageHeight} = useElementSize(wrapRef);
+  const {width: pageWidth, height: measuredHeight} = useElementSize(wrapRef);
   const isMid = pageWidth > 0 && pageWidth <= 920;
   const isNavCompact = pageWidth > 0 && pageWidth <= 760;
   const isPhone = pageWidth > 0 && pageWidth <= 560;
@@ -1603,7 +1618,7 @@ export default function WaitlistComingSoonTemplate() {
   // ---- pinned roadmap scroll story ----
   const pinRef = useRef<HTMLElement | null>(null);
   const [storyProgress, setStoryProgress] = useState(0);
-  const isPinned = !isMid && !isMotionReduced && stageHeight > 320;
+  const isPinned = !isMid && !isMotionReduced && measuredHeight > 320;
   const activePhase = Math.min(2, Math.floor(storyProgress * 3));
 
   // One rAF-throttled scroll listener drives the condensing navbar and the
@@ -1619,11 +1634,8 @@ export default function WaitlistComingSoonTemplate() {
       setIsNavScrolled(page.scrollTop > 24);
       const pin = pinRef.current;
       if (pin != null && isPinned) {
-        const range = pin.offsetHeight - stageHeight;
-        if (range > 0) {
-          const raw = (page.scrollTop - pin.offsetTop) / range;
-          setStoryProgress(Math.min(1, Math.max(0, raw)));
-        }
+        const raw = (page.scrollTop - pin.offsetTop) / PIN_TRAVEL;
+        setStoryProgress(Math.min(1, Math.max(0, raw)));
       }
     };
     const onScroll = () => {
@@ -1639,7 +1651,7 @@ export default function WaitlistComingSoonTemplate() {
         cancelAnimationFrame(frame);
       }
     };
-  }, [isPinned, stageHeight]);
+  }, [isPinned]);
 
   // ---- email capture → position card ----
   const [email, setEmail] = useState('');
@@ -1728,8 +1740,7 @@ export default function WaitlistComingSoonTemplate() {
     if (page == null || pin == null || !isPinned) {
       return;
     }
-    const range = pin.offsetHeight - stageHeight;
-    const target = pin.offsetTop + ((index + 0.5) / 3) * range;
+    const target = pin.offsetTop + ((index + 0.5) / 3) * PIN_TRAVEL;
     page.scrollTo({top: target, behavior: 'smooth'});
   };
 
@@ -2252,9 +2263,10 @@ export default function WaitlistComingSoonTemplate() {
     </div>
   );
 
-  // Pinned scroll story: a sticky stage inside a ~2.35-viewport container.
-  // Scroll progress advances the active phase, fills the step rail, and
-  // draws the fold path; phases are also clickable buttons.
+  // Pinned scroll story: a fixed 580px sticky stage inside a fixed 1400px
+  // container (px, never vh — see PIN_STAGE_HEIGHT). Scroll progress
+  // advances the active phase, fills the step rail, and draws the fold
+  // path; phases are also clickable buttons.
   const activeMilestone = MILESTONES[activePhase];
   const roadmapPinned = (
     <section
@@ -2264,8 +2276,8 @@ export default function WaitlistComingSoonTemplate() {
         sectionRefs.current.roadmap = node;
       }}
       aria-label="Launch roadmap"
-      style={{height: Math.round(stageHeight * 2.35)}}>
-      <div style={{...styles.pinStage, height: stageHeight}}>
+      style={{height: PIN_CONTAINER_HEIGHT}}>
+      <div style={{...styles.pinStage, height: PIN_STAGE_HEIGHT}}>
         <div style={styles.dotGrid} aria-hidden="true" />
         <div style={{...columnStyle, position: 'relative'}}>
           <div style={styles.storyGrid}>

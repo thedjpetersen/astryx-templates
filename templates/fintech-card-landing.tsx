@@ -24,7 +24,8 @@
  *   FROZEN overlay, and it now floats over an accent glow with three
  *   bobbing satellite mini-cards (receipt toast, limit meter, cashback
  *   chip) that parallax toward the pointer; a PINNED SCROLL STORY for the
- *   three card controls (sticky stage inside a ~250vh container — scroll
+ *   three card controls (fixed-px sticky stage inside a 1600px container
+ *   — px, never vh: the demo renders inline in the top window — scroll
  *   progress fills a numbered, clickable step rail and crossfades the
  *   schematic vignettes; static stacked sequence under reduced motion and
  *   at compact widths); an asymmetric 5/7 fee band with an oversized
@@ -209,8 +210,14 @@ const SHEEN = 'rgba(255, 255, 255, 0.35)';
 /** Sticky-nav height allowance shared by smooth-scroll and scroll-spy. */
 const NAV_ALLOWANCE = 68;
 const SPY_OFFSET = 140;
-/** Pinned-story container = stage height × this factor (~250vh). */
-const STORY_LENGTH = 2.5;
+/**
+ * Pinned scroll story: fixed px heights. The demo renders this page inline
+ * in the top browser window, so vh units resolve against the WINDOW, not
+ * the ~920px stage — px keeps the scroll travel honest. The sticky stage
+ * is STORY_STAGE_HEIGHT tall; the wrapper adds ~2 stages of pin travel.
+ */
+const STORY_STAGE_HEIGHT = 560;
+const STORY_PIN_HEIGHT = 1600;
 
 /**
  * Injected once per page: fcl-prefixed keyframes (aurora drift, satellite
@@ -375,7 +382,7 @@ const styles: Record<string, CSSProperties> = {
       'var(--shadow-high, 0 12px 32px light-dark(rgba(15, 23, 42, 0.18), rgba(0, 0, 0, 0.5)))',
     padding: 'var(--spacing-3)',
     zIndex: 40,
-    maxHeight: 'calc(100vh - 120px)',
+    maxHeight: 560,
     overflowY: 'auto',
   },
   mobileMenuLink: {
@@ -1438,9 +1445,9 @@ const EMPTY_EMAIL_FORM: EmailFormState = {
 
 /**
  * Page measurement — the useElementWidth ResizeObserver pattern, extended
- * with height for the pinned-story math (demo-stage quirk: viewport media
- * queries never fire in the inline ~1045px stage, so breakpoints derive
- * from this, and the story's "viewport" is the measured stage height).
+ * with height for the theater-headroom gate (demo-stage quirk: viewport
+ * media queries never fire in the inline ~1045px stage, so breakpoints
+ * derive from this; the pinned story itself uses fixed px heights).
  */
 function useElementSize(ref: RefObject<HTMLDivElement | null>): {
   width: number;
@@ -1957,10 +1964,11 @@ export default function FintechCardLandingTemplate() {
     }
     setActiveSection(active);
     // Pinned-story progress: container scrollTop vs the story wrapper's
-    // sticky travel, quantized to 1/200 to keep re-renders cheap.
+    // sticky travel (wrapper height minus the fixed sticky-stage height),
+    // quantized to 1/200 to keep re-renders cheap.
     const story = storyRef.current;
     if (story !== null && !isStoryStatic) {
-      const travel = Math.max(1, story.offsetHeight - container.clientHeight);
+      const travel = Math.max(1, story.offsetHeight - STORY_STAGE_HEIGHT);
       const raw =
         (container.scrollTop - (story.offsetTop - NAV_ALLOWANCE)) / travel;
       setStoryProgress(
@@ -1976,7 +1984,7 @@ export default function FintechCardLandingTemplate() {
     if (container === null || story === null) {
       return;
     }
-    const travel = Math.max(1, story.offsetHeight - container.clientHeight);
+    const travel = Math.max(1, story.offsetHeight - STORY_STAGE_HEIGHT);
     container.scrollTo({
       top: story.offsetTop - NAV_ALLOWANCE + ((step + 0.5) / 3) * travel,
       behavior: isReduced ? 'auto' : 'smooth',
@@ -2547,7 +2555,8 @@ export default function FintechCardLandingTemplate() {
 
   // Theater needs headroom for the sticky stage; short stages (or reduced
   // motion / stacked widths) get the static stacked sequence instead.
-  const canTheater = !isStoryStatic && stageHeight >= 620;
+  const canTheater =
+    !isStoryStatic && stageHeight >= STORY_STAGE_HEIGHT + NAV_ALLOWANCE;
 
   /** Static fallback: intro + three alternating feature rows. */
   const controlsStatic = (
@@ -2593,7 +2602,8 @@ export default function FintechCardLandingTemplate() {
   );
 
   /**
-   * Pinned scroll story: a sticky stage inside a ~250vh wrapper. Scroll
+   * Pinned scroll story: a fixed-px sticky stage inside a fixed-px
+   * wrapper (px, not vh — vh resolves against the window here). Scroll
    * progress fills the step rail (scaleY — transform only) and advances
    * three discrete vignette states; the numbered steps double as buttons.
    */
@@ -2605,12 +2615,12 @@ export default function FintechCardLandingTemplate() {
       }}
       aria-label="Card controls"
       style={{
-        height: Math.round(stageHeight * STORY_LENGTH),
+        height: STORY_PIN_HEIGHT,
       }}>
       <div
         style={{
           ...styles.storyStage,
-          height: stageHeight - NAV_ALLOWANCE,
+          height: STORY_STAGE_HEIGHT,
         }}>
         <div
           style={{

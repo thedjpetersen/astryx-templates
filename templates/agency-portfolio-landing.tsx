@@ -29,7 +29,7 @@
  *   studio proof strip whose stat cards straddle the boundary into the
  *   capabilities band; a dot-grid capabilities band with a sticky
  *   oversized-numeral intro rail; a pinned scroll story for the
- *   four-step process (sticky stage in a ~260vh container — scroll
+ *   four-step process (600px sticky stage in a ~1560px container — scroll
  *   progress fills a clickable step rail and crossfades week-strip
  *   panels; static stacked sequence under reduced motion or compact
  *   widths); a scheme-locked dark press band with terracotta glows,
@@ -52,7 +52,8 @@
  * The whole page is wrapped in a measured div (ResizeObserver width +
  * height) because the inline demo stage is ~1045px wide and viewport
  * media queries only fire in the separate 390px phone iframe; the
- * measured height also sizes the pinned-story container.
+ * measured height only gates the pinned story on/off (its container
+ * and stage are fixed px — see STORY_STAGE_HEIGHT).
  *
  * Interaction contract:
  * - Nav anchors and both hero CTAs smooth-scroll the container to real
@@ -72,7 +73,7 @@
  *   border-glow; click expands the inline case panel below the grid
  *   (challenge / approach / results rows + a metric trio that counts up
  *   on open); clicking the open card or the panel's X collapses it.
- * - Pinned process story: scroll progress across the ~260vh container
+ * - Pinned process story: scroll progress across the ~1560px container
  *   fills the step rail (scaleY — transform only) and advances four
  *   discrete week-strip panels; the numbered steps double as buttons
  *   that scroll to their segment. Reduced motion or stacked widths get
@@ -220,8 +221,15 @@ const GLASS_BORDER = 'rgba(255, 255, 255, 0.16)';
 /** Sticky-nav height; smooth-scroll and scroll-spy both allow for it. */
 const NAV_ALLOWANCE = 68;
 const SPY_OFFSET = 140;
-/** Pinned-story container = stage height × this factor (~260vh). */
-const STORY_LENGTH = 2.6;
+/**
+ * Pinned-story sizing in px — never vh, and never the measured wrapper
+ * height: the inline demo renders this page in the top window, so
+ * vh/100%-height chains resolve against the WINDOW, not the ~920px
+ * stage, ballooning the pin container into thousands of px of empty
+ * scroll. A fixed 600px sticky stage × 2.6 gives ~1560px of travel.
+ */
+const STORY_STAGE_HEIGHT = 600;
+const STORY_CONTAINER_HEIGHT = Math.round(STORY_STAGE_HEIGHT * 2.6);
 const TOTAL_WEEKS = 14;
 
 const SCOPE = 'fac-root';
@@ -458,7 +466,7 @@ const styles: Record<string, CSSProperties> = {
       'var(--shadow-high, 0 12px 32px light-dark(rgba(15, 23, 42, 0.18), rgba(0, 0, 0, 0.5)))',
     padding: 'var(--spacing-3)',
     zIndex: 40,
-    maxHeight: 'calc(100vh - 120px)',
+    maxHeight: 480,
     overflowY: 'auto',
   },
   menuLink: {
@@ -1620,7 +1628,7 @@ const AVAILABILITY = {
 /**
  * Measures the page's own size — the inline demo stage is ~1045px wide,
  * so viewport media queries never fire there; a ResizeObserver does.
- * Height sizes the pinned-story container.
+ * Height only gates the pinned story on/off (sizing is fixed px).
  */
 function useElementSize(ref: RefObject<HTMLDivElement | null>): {
   width: number;
@@ -2938,8 +2946,9 @@ export default function AgencyPortfolioLandingTemplate() {
   );
 
   /**
-   * Pinned scroll story: a sticky stage inside a ~260vh container.
-   * Scroll progress fills the step rail (scaleY — transform only) and
+   * Pinned scroll story: a fixed 600px sticky stage inside a fixed
+   * ~1560px container (px, not vh — see STORY_STAGE_HEIGHT). Scroll
+   * progress fills the step rail (scaleY — transform only) and
    * advances four discrete panels; the steps double as buttons.
    */
   const processStory = (
@@ -2950,11 +2959,11 @@ export default function AgencyPortfolioLandingTemplate() {
         storyRef.current = node;
       }}
       aria-label="Process"
-      style={{height: Math.round(stageHeight * STORY_LENGTH)}}>
+      style={{height: STORY_CONTAINER_HEIGHT}}>
       <div
         style={{
           ...styles.storyStage,
-          height: stageHeight - NAV_ALLOWANCE,
+          height: STORY_STAGE_HEIGHT,
         }}>
         <div style={{...columnStyle, paddingBlock: 0}}>
           <div style={styles.storyGrid}>

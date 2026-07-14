@@ -58,7 +58,9 @@
  *   reduced motion and at stacked (touch) widths.
  * - Fast-fact numbers count up (~900ms, decelerate) the first time the
  *   band is 30% visible; reduced motion renders the final figures.
- * - The founding story pins: a sticky stage inside a ~250vh wrapper;
+ * - The founding story pins: a sticky ~620px stage inside a fixed
+ *   ~1560px wrapper (px, not vh — the inline demo scrolls the top
+ *   window, so viewport units would balloon the travel);
  *   scroll progress (container rect vs wrapper rect) advances five
  *   milestone states and fills the rail line (transform: scaleY only).
  *   Milestones are also clickable buttons that scroll the container to
@@ -189,6 +191,18 @@ const MONO = 'var(--font-family-mono, ui-monospace, monospace)';
 /** Sticky-nav height; smooth-scroll and the spy both allow for it. */
 const NAV_ALLOWANCE = 64;
 const SPY_OFFSET = 120;
+
+/**
+ * Pinned founding-story sizing — fixed px on purpose. The demo renders
+ * this page inline in the top browser window, so vh/window-derived
+ * heights resolve against the WINDOW, not the ~920px stage, and a
+ * ~250vh pin wrapper produced thousands of px of near-empty scroll.
+ * The stage is a fixed ~620px card theater and the pin wrapper is
+ * ~2.5× that, so the five milestone windows advance across a short,
+ * fully-authored travel.
+ */
+const STORY_STAGE_HEIGHT = 620;
+const STORY_PIN_HEIGHT = 1560;
 
 /** Decelerate bezier shared by reveals, hovers, and the story card. */
 const DECEL = 'cubic-bezier(0.22, 1, 0.36, 1)';
@@ -2027,7 +2041,14 @@ export default function PressMediaKitTemplate() {
   // ---- pinned founding story ----
   const storyWrapRef = useRef<HTMLDivElement | null>(null);
   const [storyProgress, setStoryProgress] = useState(0);
-  const isStoryPinned = !reducedMotion && pageHeight > 420;
+  // Pin only when the measured container leaves real scroll travel
+  // inside the fixed-px wrapper (range = wrapper − container must stay
+  // positive for the progress math); otherwise fall back to the static
+  // stacked timeline.
+  const isStoryPinned =
+    !reducedMotion &&
+    pageHeight > 420 &&
+    pageHeight < STORY_PIN_HEIGHT - 160;
   const activeMilestone = Math.min(
     MILESTONES.length - 1,
     Math.floor(storyProgress * MILESTONES.length),
@@ -3301,9 +3322,14 @@ export default function PressMediaKitTemplate() {
       ref={registerSection('story')}
       aria-label="Founding story">
       {isStoryPinned ? (
-        // Pinned scroll story: sticky stage inside a ~250vh wrapper.
-        <div ref={storyWrapRef} style={{height: pageHeight * 2.5}}>
-          <div style={{...styles.storyStage, height: pageHeight}}>
+        // Pinned scroll story: sticky stage inside a fixed-px wrapper
+        // (never vh / window-derived — see STORY_PIN_HEIGHT).
+        <div ref={storyWrapRef} style={{height: STORY_PIN_HEIGHT}}>
+          <div
+            style={{
+              ...styles.storyStage,
+              height: Math.min(STORY_STAGE_HEIGHT, pageHeight),
+            }}>
             <div style={{...columnStyle, gap: 'var(--spacing-5)'}}>
               {storyIntro}
               <div

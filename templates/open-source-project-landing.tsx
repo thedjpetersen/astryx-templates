@@ -24,8 +24,10 @@
  *   the CodeBlock command (copy button with aria-live "Copied" feedback) and
  *   the whole composition bleeds across the boundary into the dot-grid
  *   example band. Sections: a recessed-before / floating-after 30-second
- *   example pair; a PINNED SCROLL STORY for the four releases (sticky stage
- *   in a ~260vh wrapper — scroll fills the numbered step rail and crossfades
+ *   example pair; a PINNED SCROLL STORY for the four releases (600px sticky
+ *   stage in a fixed 1600px wrapper — px, never vh, because the inline demo
+ *   resolves vh against the window, not the stage; scroll fills the
+ *   numbered step rail and crossfades
  *   oversized-numeral release panels; steps are clickable; reduced motion or
  *   compact widths render the static stacked timeline); an asymmetric 5/7
  *   contributors split with count-up totals beside a staggered monogram
@@ -234,8 +236,16 @@ const MONO = 'var(--font-family-mono, ui-monospace, monospace)';
 /** Sticky-nav height allowance shared by smooth-scroll and scroll-spy. */
 const NAV_ALLOWANCE = 64;
 const SPY_OFFSET = 140;
-/** Pinned-story wrapper = stage height × this factor (~260vh). */
-const STORY_LENGTH = 2.6;
+/**
+ * Pinned-story sizes are fixed px, never vh/dvh and never derived from the
+ * wrapper's measured height: the inline demo renders this page in the top
+ * browser window, so vh resolves against the WINDOW (not the ~920px stage)
+ * and the wrapper's height:100% can collapse to content height — either
+ * way a multiplied pin container balloons into thousands of px of
+ * near-empty scroll. 600px stage + 1600px wrapper ≈ 1000px of travel.
+ */
+const STORY_STAGE_HEIGHT = 600;
+const STORY_WRAPPER_HEIGHT = 1600;
 /** How far the hero theater bleeds into the example band. */
 const THEATER_OVERLAP = 56;
 
@@ -2878,12 +2888,13 @@ export default function OpenSourceProjectLandingTemplate() {
     </header>
   );
 
-  // ---- pinned release story (sticky stage inside a ~260vh wrapper) ----
+  // ---- pinned release story (fixed-px sticky stage inside a fixed-px
+  // wrapper — see STORY_STAGE_HEIGHT / STORY_WRAPPER_HEIGHT) ----
   const releasesStory = (
     <div
       style={{
         ...styles.storyStage,
-        height: Math.max(1, stageHeight - NAV_ALLOWANCE),
+        height: STORY_STAGE_HEIGHT,
       }}>
       <div style={{...columnStyle, width: '100%'}}>
         <div style={styles.storyGrid}>
@@ -3076,7 +3087,7 @@ export default function OpenSourceProjectLandingTemplate() {
                 storyRef.current = node;
               }}>
               {canStory ? (
-                <div style={{height: Math.round(stageHeight * STORY_LENGTH)}}>
+                <div style={{height: STORY_WRAPPER_HEIGHT}}>
                   {releasesStory}
                 </div>
               ) : (

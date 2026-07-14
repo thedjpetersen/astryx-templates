@@ -30,7 +30,7 @@
  *   quote cards in a Carousel, a looping campaign-fact marquee, and a
  *   pointer-tracked spotlight), a dot-grid-textured where-money-goes
  *   band with the interactive SVG donut + legend-row selection, a
- *   pinned scroll-story milestones scene (sticky stage in a 260vh
+ *   pinned scroll-story milestones scene (sticky stage in a 1600px
  *   container; scroll progress fills the phase rail and advances the
  *   detail card with its oversized numeral — phases are also clickable),
  *   an aurora-backed transparency band with hover-raising report cards +
@@ -2913,11 +2913,16 @@ export default function NonprofitDonationLandingTemplate() {
     </div>
   );
 
-  // The scroll scene: a sticky stage inside a 260vh container. Scroll
+  // The scroll scene: a sticky stage inside a fixed 1600px container
+  // (px, not vh — the demo renders this page inline in the top window,
+  // so vh resolves against the window rather than the ~920px stage and
+  // would create thousands of px of near-empty scroll). ~2.2x the
+  // content-sized sticky stage; progress math is rect-based, so it
+  // adapts to whatever the measured scroll-container height is. Scroll
   // progress fills the phase rail (transform-only) and advances the
   // detail card; phase buttons scroll to their progress point.
   const pinnedMilestones = (
-    <div ref={pinRef} style={{height: '260vh'}}>
+    <div ref={pinRef} style={{height: 1600}}>
       <div
         style={{
           ...columnStyle,
