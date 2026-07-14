@@ -3896,4 +3896,18 @@ export const templates: TemplateEntry[] = [
     'Marketing',
     'Nonprofit campaign page: count-up progress hero, live-impact donation widget, budget donut, employer match.',
   ),
+  entry(
+    'course-cohort-landing',
+    'Cohort Course Landing',
+    'page',
+    'Marketing',
+    'Cohort course landing with seats meter, curriculum accordion, payment-plan pricing, and apply capture.',
+  ),
+  entry(
+    'fintech-card-landing',
+    'Fintech Card Landing',
+    'page',
+    'Marketing',
+    'Team spend-card landing with tilt-and-flip card hero, $0 fee table, live spend feed, cashback calculator.',
+  ),
 ];
