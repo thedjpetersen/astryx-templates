@@ -225,6 +225,211 @@ button:focus-visible,
   box-shadow: 0 4px 14px var(--color-shadow);
 }
 
+.floating-tools {
+  position: fixed;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.floating-tools .scheme-toggle {
+  box-shadow: 0 4px 14px var(--color-shadow);
+}
+
+.site-action,
+.command-trigger {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-background-card);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  padding: 6px 14px;
+  font-weight: var(--font-weight-medium, 500);
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-action:hover,
+.command-trigger:hover {
+  background: var(--color-accent-muted);
+}
+
+.site-action kbd,
+.command-trigger kbd {
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-background-body);
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-code);
+  font-size: 10px;
+  padding: 3px 5px;
+}
+
+.site-action-compact {
+  padding-inline: 12px;
+}
+
+.command-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  align-items: start;
+  justify-items: center;
+  overflow: auto;
+  padding: max(10dvh, 32px) 16px 32px;
+  background: color-mix(in oklab, var(--color-text-primary) 34%, transparent);
+}
+
+.command-dialog {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  width: min(640px, calc(100vw - 32px));
+  max-height: min(640px, calc(100dvh - 64px));
+  overflow: hidden;
+  border: 1px solid var(--color-border-emphasized, var(--color-border));
+  border-radius: var(--radius-container, 16px);
+  background: var(--color-background-card);
+  color: var(--color-text-primary);
+  box-shadow: 0 18px 60px var(--color-shadow);
+}
+
+.command-search {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--color-border);
+  padding: 10px 12px 10px 16px;
+}
+
+.command-search > span {
+  color: var(--color-text-secondary);
+  font-size: 20px;
+}
+
+.command-search input {
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: 16px;
+  padding: 8px 0;
+}
+
+.command-search input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.command-search input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.command-search button {
+  min-height: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-background-body);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 4px 8px;
+}
+
+.command-results {
+  min-height: 96px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 8px;
+}
+
+.command-result {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  border: 0;
+  border-radius: var(--radius-element, 12px);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 10px;
+  text-align: left;
+}
+
+.command-result.is-active {
+  background: var(--color-accent-muted);
+}
+
+.command-result-icon {
+  color: var(--color-text-secondary);
+  font-size: 18px;
+  text-align: center;
+}
+
+.command-result-copy {
+  min-width: 0;
+}
+
+.command-result-copy strong,
+.command-result-copy small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.command-result-copy strong {
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold, 600);
+}
+
+.command-result-copy small,
+.command-result-meta {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.command-result-copy small {
+  margin-top: 3px;
+}
+
+.command-result-meta {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.command-empty {
+  margin: 0;
+  padding: 28px 16px;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.command-footer {
+  display: flex;
+  gap: 16px;
+  border-top: 1px solid var(--color-border);
+  padding: 9px 14px;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+}
+
 /* Mobile-only compact scheme cycler (rendered by SchemeToggle); the 860px
    block swaps it in for the three-label pill. */
 .scheme-cycle {
@@ -536,21 +741,59 @@ button:focus-visible,
   z-index: 110;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 0;
+  width: 44px;
   min-height: 44px;
+  overflow: hidden;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-full, 999px);
-  background: var(--color-background-card);
+  background: color-mix(
+    in oklab,
+    var(--color-background-card) 76%,
+    transparent
+  );
   color: var(--color-text-primary);
   cursor: pointer;
-  padding: 10px 18px;
+  padding: 0;
   font-weight: var(--font-weight-medium, 500);
   white-space: nowrap;
-  box-shadow: 0 4px 14px var(--color-shadow);
+  box-shadow: 0 3px 12px var(--color-shadow);
+  opacity: 0.45;
+  transition:
+    width 150ms ease,
+    opacity 150ms ease,
+    background-color 150ms ease;
 }
 
-.fullscreen-exit:hover {
+.fullscreen-exit:hover,
+.fullscreen-exit:focus-visible {
+  width: 166px;
   background: var(--color-accent-muted);
+  opacity: 1;
+}
+
+.fullscreen-exit-icon {
+  flex: 0 0 42px;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.fullscreen-exit-label {
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    max-width 150ms ease,
+    opacity 150ms ease;
+}
+
+.fullscreen-exit:hover .fullscreen-exit-label,
+.fullscreen-exit:focus-visible .fullscreen-exit-label {
+  max-width: 116px;
+  padding-right: 16px;
+  opacity: 1;
 }
 
 .preview-wrap {
@@ -661,6 +904,75 @@ iframe.template-stage-mobile {
 }
 
 @media (max-width: 860px) {
+  .floating-tools {
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    gap: 6px;
+  }
+
+  .floating-tools .site-action span:last-child,
+  .floating-tools .command-trigger > span:nth-child(2),
+  .floating-tools .command-trigger kbd {
+    display: none;
+  }
+
+  .floating-tools .site-action,
+  .floating-tools .command-trigger {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+  }
+
+  .command-backdrop {
+    padding: max(7dvh, 20px) 10px 20px;
+  }
+
+  .command-dialog {
+    width: calc(100vw - 20px);
+    max-height: calc(100dvh - 40px);
+  }
+
+  .command-result {
+    grid-template-columns: 24px minmax(0, 1fr);
+  }
+
+  .command-result-meta {
+    display: none;
+  }
+
+  .command-footer {
+    display: none;
+  }
+
+  .fullscreen-exit,
+  .fullscreen-exit:hover,
+  .fullscreen-exit:focus-visible {
+    right: 10px;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    width: 40px;
+    min-height: 40px;
+    border-color: color-mix(in oklab, var(--color-border) 60%, transparent);
+    background: color-mix(
+      in oklab,
+      var(--color-background-card) 58%,
+      transparent
+    );
+    box-shadow: 0 2px 8px var(--color-shadow);
+    opacity: 0.5;
+  }
+
+  .fullscreen-exit:active {
+    opacity: 1;
+  }
+
+  .fullscreen-exit-icon {
+    flex-basis: 38px;
+  }
+
+  .fullscreen-exit-label {
+    display: none;
+  }
+
   /* Unlock document scrolling: the whole page scrolls so the toolbar chrome
      scrolls away instead of pinning 300-550px above the template. */
   .demo-shell {

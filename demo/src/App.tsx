@@ -4,6 +4,7 @@ import {BrowseView} from './BrowseView';
 import {categorySlug, displayCategory, filterTemplates} from './catalog';
 import type {KindFilter} from './catalog';
 import {LandingPage} from './LandingPage';
+import {CommandMenu, FeedbackLink} from './SiteControls';
 import {templates} from './templateRegistry';
 import type {TemplateEntry} from './templateRegistry';
 
@@ -540,7 +541,16 @@ export function DemoApp() {
           recentIds={recentIds}
           kind={kind}
         />
-        <SchemeToggle value={scheme} onChange={setScheme} floating />
+        <div className="floating-tools">
+          <FeedbackLink />
+          <CommandMenu
+            templates={templates}
+            recentIds={recentIds}
+            scheme={scheme}
+            onSchemeChange={setScheme}
+          />
+          <SchemeToggle value={scheme} onChange={setScheme} />
+        </div>
       </>
     );
   }
@@ -558,7 +568,16 @@ export function DemoApp() {
           searchInputRef={searchRef}
           onPrefetch={prefetch}
         />
-        <SchemeToggle value={scheme} onChange={setScheme} floating />
+        <div className="floating-tools">
+          <FeedbackLink />
+          <CommandMenu
+            templates={templates}
+            recentIds={recentIds}
+            scheme={scheme}
+            onSchemeChange={setScheme}
+          />
+          <SchemeToggle value={scheme} onChange={setScheme} />
+        </div>
       </>
     );
   }
@@ -827,6 +846,15 @@ export function DemoApp() {
               </svg>
               Full screen
             </button>
+            <FeedbackLink compact />
+            <CommandMenu
+              templates={templates}
+              recentIds={recentIds}
+              scheme={scheme}
+              onSchemeChange={setScheme}
+              onBeforeOpen={() => setIsNavOpen(false)}
+              disabled={isFullscreen}
+            />
             <SchemeToggle value={scheme} onChange={setScheme} />
           </div>
         </header>
@@ -889,8 +917,10 @@ export function DemoApp() {
           type="button"
           ref={fullscreenExitRef}
           className="fullscreen-exit"
+          aria-label="Exit full screen"
           onClick={() => setIsFullscreen(false)}>
-          ✕ Exit full screen
+          <span className="fullscreen-exit-icon" aria-hidden="true">×</span>
+          <span className="fullscreen-exit-label">Exit full screen</span>
         </button>
       </div>
     ) : null}
