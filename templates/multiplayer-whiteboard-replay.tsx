@@ -1268,7 +1268,7 @@ function PresenceStack({
                   ? `color-mix(in srgb, ${collaborator.color} 25%, transparent)`
                   : 'transparent',
               }}>
-              <Avatar name={collaborator.name} size="small" />
+              <Avatar name={collaborator.name} size="md" />
             </span>
           </button>
         );

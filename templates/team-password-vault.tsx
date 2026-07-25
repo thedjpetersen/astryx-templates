@@ -1372,7 +1372,7 @@ function SharedWith({item}: {item: VaultItem}) {
           </Text>
         </StackItem>
         <AvatarGroup
-          size="xsmall"
+          size="sm"
           aria-label={`Shared with ${item.sharedWith.length} people`}>
           {visible.map(person => (
             <Avatar key={person} name={person} />
@@ -1390,7 +1390,7 @@ function SharedWith({item}: {item: VaultItem}) {
             key={person}
             label={person}
             description={PEOPLE[person]?.role ?? 'Keyline HQ'}
-            startContent={<Avatar name={person} size="small" />}
+            startContent={<Avatar name={person} size="md" />}
             endContent={
               <Text type="supporting" color="secondary">
                 Can use

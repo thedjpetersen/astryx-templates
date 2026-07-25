@@ -826,7 +826,7 @@ function CardsPanel() {
 function PersonRow({person}: {person: Person}) {
   return (
     <HStack gap={2} vAlign="center" style={styles.listRowPad}>
-      <Avatar name={person.name} size="xsmall" />
+      <Avatar name={person.name} size="sm" />
       <StackItem size="fill" style={styles.rowText}>
         <VStack gap={0}>
           <Text size="sm" maxLines={1}>
@@ -951,7 +951,7 @@ function ThreadNode({
 
   return (
     <HStack gap={2} vAlign="start">
-      <Avatar name={comment.author} size="xsmall" />
+      <Avatar name={comment.author} size="sm" />
       <StackItem size="fill" style={styles.rowText}>
         <VStack gap={1}>
           <HStack gap={2} vAlign="center">
@@ -1025,7 +1025,7 @@ function MediaObjectsPanel() {
           note="Avatar beside text, centered.">
           <Card padding={4}>
             <HStack gap={3} vAlign="center">
-              <Avatar name="Amara Osei" size="small" />
+              <Avatar name="Amara Osei" size="md" />
               <StackItem size="fill" style={styles.rowText}>
                 <VStack gap={0}>
                   <Text type="label" size="sm">
@@ -1105,7 +1105,7 @@ function MediaObjectsPanel() {
 function ActivityLine({row}: {row: ActivityRow}) {
   return (
     <HStack gap={2} vAlign="center">
-      <Avatar name={row.actor} size="xsmall" />
+      <Avatar name={row.actor} size="sm" />
       <StackItem size="fill" style={styles.rowText}>
         <Text size="sm" maxLines={1}>
           {row.actor} {row.action}

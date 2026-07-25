@@ -764,7 +764,7 @@ export default function AiChatCompactionInspectorTemplate() {
 
                 <ChatMessage
                   sender="assistant"
-                  avatar={<Avatar name={ASSISTANT_NAME} size="small" />}>
+                  avatar={<Avatar name={ASSISTANT_NAME} size="md" />}>
                   <ChatMessageBubble name={ASSISTANT_NAME}>
                     Picked up from the checkpoint: shard 7 backfill resumed at
                     row 4.2M of 9.8M. I&apos;m verifying row counts against
@@ -796,7 +796,7 @@ export default function AiChatCompactionInspectorTemplate() {
 
                 <ChatMessage
                   sender="assistant"
-                  avatar={<Avatar name={ASSISTANT_NAME} size="small" />}>
+                  avatar={<Avatar name={ASSISTANT_NAME} size="md" />}>
                   <ChatMessageBubble name={ASSISTANT_NAME}>
                     Shards 8 and 9 verified clean. Shard 10 had 214 rows with
                     conflicting order_status values — I quarantined them in
@@ -836,7 +836,7 @@ export default function AiChatCompactionInspectorTemplate() {
 
                 <ChatMessage
                   sender="assistant"
-                  avatar={<Avatar name={ASSISTANT_NAME} size="small" />}>
+                  avatar={<Avatar name={ASSISTANT_NAME} size="md" />}>
                   <ChatMessageBubble name={ASSISTANT_NAME}>
                     Checksums match on shards 1-10, including the quarantined
                     rows. Full sweep report is 96 turns of tool output — the
@@ -858,7 +858,7 @@ export default function AiChatCompactionInspectorTemplate() {
 
                 <ChatMessage
                   sender="assistant"
-                  avatar={<Avatar name={ASSISTANT_NAME} size="small" />}>
+                  avatar={<Avatar name={ASSISTANT_NAME} size="md" />}>
                   <ChatMessageBubble name={ASSISTANT_NAME}>
                     That compaction hit the summarizer timeout, so the
                     manifest is unchanged. You can retry from the marker

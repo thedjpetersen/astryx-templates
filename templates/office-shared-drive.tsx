@@ -751,7 +751,7 @@ function SharedCell({file}: {file: FileRow}) {
   const visible = file.sharedWith.slice(0, 3);
   const overflow = file.sharedWith.length - visible.length;
   return (
-    <AvatarGroup size="xsmall" aria-label={`Shared with ${file.sharedWith.length} people`}>
+    <AvatarGroup size="sm" aria-label={`Shared with ${file.sharedWith.length} people`}>
       {visible.map(person => (
         <Avatar key={person} name={person} />
       ))}
@@ -807,7 +807,7 @@ function buildColumns(isCompact: boolean): TableColumn<FileRow>[] {
       sortable: true,
       renderCell: (file: FileRow) => (
         <HStack gap={2} vAlign="center">
-          <Avatar name={file.owner} size="xsmall" />
+          <Avatar name={file.owner} size="sm" />
           <Text type="body" maxLines={1}>
             {displayOwner(file.owner)}
           </Text>
@@ -863,7 +863,7 @@ function buildColumns(isCompact: boolean): TableColumn<FileRow>[] {
 function PersonRow({person, access}: {person: string; access: string}) {
   return (
     <HStack gap={2} vAlign="center" style={styles.shareRow}>
-      <Avatar name={person} size="small" />
+      <Avatar name={person} size="md" />
       <StackItem size="fill" style={{minWidth: 0}}>
         <VStack gap={0}>
           <Text type="body" maxLines={1}>
@@ -1469,7 +1469,7 @@ export default function OfficeSharedDriveTemplate() {
       {scopeDrive?.members !== undefined && (
         <HStack gap={2} vAlign="center">
           <AvatarGroup
-            size="xsmall"
+            size="sm"
             aria-label={`${scopeDrive.label} members`}>
             <Avatar name="Priya Raman" />
             <Avatar name="Sofia Ortiz" />

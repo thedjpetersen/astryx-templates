@@ -1075,7 +1075,7 @@ function NoticeInboxRow({
               </Text>
               {notice.owner !== undefined ? (
                 <HStack gap={1} vAlign="center">
-                  <Avatar name={notice.owner} size="xsmall" />
+                  <Avatar name={notice.owner} size="sm" />
                   <Text type="supporting" color="secondary">
                     {notice.owner} · {notice.ownerRole}
                   </Text>

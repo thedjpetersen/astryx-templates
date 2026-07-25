@@ -514,7 +514,7 @@ export default function NotebookReportTemplate() {
               />
             </HStack>
             <HStack gap={2} vAlign="center" wrap="wrap">
-              <Avatar name={REPORT.author} size="xsmall" />
+              <Avatar name={REPORT.author} size="sm" />
               <Text type="supporting" color="secondary">
                 {REPORT.author} · {REPORT.team}
               </Text>

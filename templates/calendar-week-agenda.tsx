@@ -1363,7 +1363,7 @@ function EventDetail({
             </HStack>
             {event.attendees.map(attendee => (
               <HStack key={attendee} gap={2} vAlign="center">
-                <Avatar name={attendee} size="xsmall" />
+                <Avatar name={attendee} size="sm" />
                 <Text type="body">{attendee}</Text>
               </HStack>
             ))}

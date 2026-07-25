@@ -3,6 +3,8 @@ import type {ComponentType, LazyExoticComponent} from 'react';
 
 export type TemplateKind = 'page' | 'block';
 
+type TemplateModule = {default: ComponentType};
+
 export interface TemplateEntry {
   id: string;
   name: string;
@@ -15,9 +17,19 @@ export interface TemplateEntry {
   requires?: string;
 }
 
-// Vite statically analyzes these template-literal dynamic import paths
-// (dynamic-import-vars): every templates/*.tsx match becomes its own lazy
-// chunk, and the ?raw variant becomes a lazily fetched source module.
+// Build the lazy import tables once. Keeping template-literal dynamic imports
+// inside entry() made Vite emit both full lookup tables inside that function;
+// entry() then rebuilt the 500+ key objects for every catalog item at startup.
+// import.meta.glob preserves one chunk per template while paying the lookup
+// table allocation cost only once.
+const templateModules = import.meta.glob<TemplateModule>(
+  '../../templates/*.tsx',
+);
+const templateSources = import.meta.glob<string>(
+  '../../templates/*.tsx',
+  {query: '?raw', import: 'default'},
+);
+
 const entry = (
   id: string,
   name: string,
@@ -25,20 +37,27 @@ const entry = (
   category: string,
   description: string,
   requires?: string,
-): TemplateEntry => ({
-  id,
-  name,
-  kind,
-  category,
-  description,
-  component: lazy(() => import(`../../templates/${id}.tsx`)),
-  loadSource: () =>
-    import(`../../templates/${id}.tsx?raw`).then(
-      (m: {default: string}) => m.default,
-    ),
-  preload: () => import(`../../templates/${id}.tsx`),
-  requires,
-});
+): TemplateEntry => {
+  const path = `../../templates/${id}.tsx`;
+  const loadTemplate = templateModules[path];
+  const loadSource = templateSources[path];
+
+  if (!loadTemplate || !loadSource) {
+    throw new Error(`Missing template module for "${id}"`);
+  }
+
+  return {
+    id,
+    name,
+    kind,
+    category,
+    description,
+    component: lazy(loadTemplate),
+    loadSource,
+    preload: loadTemplate,
+    requires,
+  };
+};
 
 export const templates: TemplateEntry[] = [
   entry(

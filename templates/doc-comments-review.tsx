@@ -1024,7 +1024,7 @@ function ThreadCard({
         onClick={() => onActivate(thread.id)}>
         <VStack gap={2}>
           <HStack gap={2} vAlign="center">
-            <Avatar name={rootAuthor.name} size="xsmall" />
+            <Avatar name={rootAuthor.name} size="sm" />
             {/* Two fixed lines (name + role / timestamp) so every card's
                 header matches — long roles otherwise wrap only some cards. */}
             <StackItem size="fill" style={{minWidth: 0}}>
@@ -1066,7 +1066,7 @@ function ThreadCard({
               {replies.map(reply => (
                 <VStack key={reply.id} gap={1}>
                   <HStack gap={2} vAlign="center">
-                    <Avatar name={PEOPLE[reply.author].name} size="xsmall" />
+                    <Avatar name={PEOPLE[reply.author].name} size="sm" />
                     <Text type="supporting" weight="bold">
                       {PEOPLE[reply.author].name}
                     </Text>
@@ -1164,7 +1164,7 @@ function SuggestionCard({
         onClick={() => onActivate(suggestion.id)}>
         <VStack gap={2}>
           <HStack gap={2} vAlign="center">
-            <Avatar name={author.name} size="xsmall" />
+            <Avatar name={author.name} size="sm" />
             {/* Same two-line header rhythm as ThreadCard. */}
             <StackItem size="fill" style={{minWidth: 0}}>
               <VStack gap={0}>
@@ -1680,7 +1680,7 @@ export default function DocCommentsReviewTemplate() {
   const reviewerStack = (
     <Tooltip
       content={REVIEWERS.map(personId => PEOPLE[personId].name).join(', ')}>
-      <AvatarGroup size="xsmall" aria-label="Reviewers">
+      <AvatarGroup size="sm" aria-label="Reviewers">
         {REVIEWERS.slice(0, 3).map(personId => (
           <Avatar key={personId} name={PEOPLE[personId].name} />
         ))}

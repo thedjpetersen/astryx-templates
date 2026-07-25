@@ -618,7 +618,7 @@ function OrgNodeTile({
             {employee.isOpenReq ? (
               <Icon icon={UserPlusIcon} size="sm" color="secondary" />
             ) : (
-              <Avatar name={employee.name} size="xsmall" />
+              <Avatar name={employee.name} size="sm" />
             )}
             <StackItem size="fill">
               <Text type="label" maxLines={1}>

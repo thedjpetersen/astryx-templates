@@ -1122,7 +1122,7 @@ export default function AiWorkspaceSettingsModalTemplate() {
                 size="sm"
                 onClick={() => setIsSettingsOpen(true)}
               />
-              <Avatar name="Riley Nakamura" size="small" />
+              <Avatar name="Riley Nakamura" size="md" />
             </HStack>
           </LayoutHeader>
         }
@@ -1149,7 +1149,7 @@ export default function AiWorkspaceSettingsModalTemplate() {
                 </ChatMessage>
                 <ChatMessage
                   sender="assistant"
-                  avatar={<Avatar name={ASSISTANT_NAME} size="small" />}>
+                  avatar={<Avatar name={ASSISTANT_NAME} size="md" />}>
                   <ChatMessageBubble name={ASSISTANT_NAME}>
                     You&apos;re on the &ldquo;All&rdquo; push level, so every
                     progress note pings this browser. Open Settings →

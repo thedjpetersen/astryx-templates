@@ -1348,7 +1348,7 @@ export default function AiChatSessionSidebarTemplate() {
                           </ChatMessage>
                           <ChatMessage
                             sender="assistant"
-                            avatar={<Avatar name={ASSISTANT_NAME} size="small" />}>
+                            avatar={<Avatar name={ASSISTANT_NAME} size="md" />}>
                             <ChatMessageBubble name={ASSISTANT_NAME}>
                               Day-14 activation is 34.2% in the drip arm vs
                               29.8% in the holdout — a +4.4pt lift, and email
@@ -1367,7 +1367,7 @@ export default function AiChatSessionSidebarTemplate() {
                           </ChatMessage>
                           <ChatMessage
                             sender="assistant"
-                            avatar={<Avatar name={ASSISTANT_NAME} size="small" />}>
+                            avatar={<Avatar name={ASSISTANT_NAME} size="md" />}>
                             <HStack gap={2} vAlign="center">
                               <Spinner
                                 size="sm"
@@ -1391,7 +1391,7 @@ export default function AiChatSessionSidebarTemplate() {
                           </ChatSystemMessage>
                           <ChatMessage
                             sender="assistant"
-                            avatar={<Avatar name={ASSISTANT_NAME} size="small" />}>
+                            avatar={<Avatar name={ASSISTANT_NAME} size="md" />}>
                             <ChatMessageBubble name={ASSISTANT_NAME}>
                               Resuming “{selectedSession?.title ?? 'this session'}
                               ”. The full transcript is loaded — ask a follow-up

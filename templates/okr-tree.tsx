@@ -786,7 +786,7 @@ function ObjectiveRow({
         <VStack gap={1}>
           <HStack gap={2} vAlign="center">
             {chevron}
-            <Avatar name={objective.owner} size="xsmall" />
+            <Avatar name={objective.owner} size="sm" />
             <StackItem size="fill">
               <Text type="label" maxLines={1}>
                 {objective.title}
@@ -828,7 +828,7 @@ function ObjectiveRow({
         </StackItem>
         <div style={styles.colOwner}>
           <HStack gap={2} vAlign="center">
-            <Avatar name={objective.owner} size="xsmall" />
+            <Avatar name={objective.owner} size="sm" />
             <Text type="supporting" maxLines={1}>
               {objective.owner}
             </Text>
@@ -872,7 +872,7 @@ function KeyResultRow({
     <VStack gap={1}>
       <HStack gap={2} vAlign="center">
         <span style={styles.krIndentCompact} />
-        <Avatar name={keyResult.owner} size="xsmall" />
+        <Avatar name={keyResult.owner} size="sm" />
         <StackItem size="fill">
           <VStack gap={0}>
             <Text type="body" maxLines={1}>
@@ -915,7 +915,7 @@ function KeyResultRow({
       </StackItem>
       <div style={styles.colOwner}>
         <HStack gap={2} vAlign="center">
-          <Avatar name={keyResult.owner} size="xsmall" />
+          <Avatar name={keyResult.owner} size="sm" />
           <Text type="supporting" maxLines={1}>
             {keyResult.owner}
           </Text>
@@ -1004,7 +1004,7 @@ function CheckInHistory({
       </HStack>
 
       <HStack gap={2} vAlign="center">
-        <Avatar name={keyResult.owner} size="xsmall" />
+        <Avatar name={keyResult.owner} size="sm" />
         <Text type="supporting" maxLines={1}>
           {keyResult.owner}
         </Text>

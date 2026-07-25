@@ -657,7 +657,7 @@ export default function ScheduledSendOutboxTemplate() {
         onMouseLeave={() =>
           setHoveredRowId(prev => (prev === row.id ? null : prev))
         }
-        startContent={<Avatar name={row.recipientName} size="small" />}
+        startContent={<Avatar name={row.recipientName} size="md" />}
         label={
           <Text type="body" weight="semibold" maxLines={1}>
             To: {row.to}
@@ -766,7 +766,7 @@ export default function ScheduledSendOutboxTemplate() {
         onMouseLeave={() =>
           setHoveredRowId(prev => (prev === thread.id ? null : prev))
         }
-        startContent={<Avatar name={thread.sender} size="small" />}
+        startContent={<Avatar name={thread.sender} size="md" />}
         label={
           <Text type="body" weight="semibold" maxLines={1}>
             {thread.sender}

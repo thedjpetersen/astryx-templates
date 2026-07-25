@@ -1116,7 +1116,7 @@ function HireKitBlock({kit, onPrintLabel}: {kit: HireKit; onPrintLabel: (name: s
   return (
     <div style={styles.hireBlock}>
       <HStack gap={2} vAlign="center">
-        <Avatar name={kit.name} size="small" />
+        <Avatar name={kit.name} size="md" />
         <StackItem size="fill" style={{minWidth: 0}}>
           <VStack gap={0}>
             <Text type="label" maxLines={1}>

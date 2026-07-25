@@ -1099,7 +1099,7 @@ function AnnouncementsFeed({
                   <StackItem size="fill">
                     <VStack gap={2}>
                       <HStack gap={2} vAlign="center">
-                        <Avatar name={post.author} size="small" />
+                        <Avatar name={post.author} size="md" />
                         <StackItem size="fill">
                           <VStack gap={0}>
                             <Text type="label" size="sm">
@@ -1245,16 +1245,16 @@ function OrgSection() {
         title="Your org"
         trailing={
           <AvatarGroup
-            size="xsmall"
+            size="sm"
             aria-label={`Team of ${DIRECT_REPORTS.length + 1}`}>
             {[VIEWER.name, ...DIRECT_REPORTS.map(p => p.name)].map(name => (
-              <Avatar key={name} name={name} size="xsmall" />
+              <Avatar key={name} name={name} size="sm" />
             ))}
           </AvatarGroup>
         }
       />
       <div style={styles.managerRow}>
-        <Avatar name={VIEWER.managerName} size="small" />
+        <Avatar name={VIEWER.managerName} size="md" />
         <StackItem size="fill">
           <VStack gap={0}>
             <Text type="label" size="sm">
@@ -1272,7 +1272,7 @@ function OrgSection() {
       <VStack gap={1}>
         {DIRECT_REPORTS.map(person => (
           <div key={person.name} style={styles.orgRow}>
-            <Avatar name={person.name} size="small" />
+            <Avatar name={person.name} size="md" />
             <StackItem size="fill">
               <VStack gap={0}>
                 <Text type="label" size="sm">
@@ -1380,7 +1380,7 @@ export default function WorkforceEmployeeHomeTemplate() {
   const header = (
     <LayoutHeader>
       <div style={styles.headerRow}>
-        <Avatar name={VIEWER.name} size="medium" />
+        <Avatar name={VIEWER.name} size="lg" />
         <StackItem size="fill">
           <VStack gap={0}>
             <Heading level={1}>Good morning, Marcus</Heading>

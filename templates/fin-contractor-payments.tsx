@@ -834,7 +834,7 @@ function ContractorRow({
       }}>
       {/* Contractor: avatar, name + flag chip, role */}
       <HStack gap={2} vAlign="center" style={{minWidth: 0}}>
-        <Avatar name={contractor.name} size="small" />
+        <Avatar name={contractor.name} size="md" />
         <StackItem size="fill" style={{minWidth: 0}}>
           <VStack gap={0}>
             <HStack gap={2} vAlign="center">
@@ -1093,7 +1093,7 @@ function DetailsPanel({
     <div style={styles.panelScroll}>
       <VStack gap={4}>
         <HStack gap={3} vAlign="center">
-          <Avatar name={contractor.name} size="medium" />
+          <Avatar name={contractor.name} size="lg" />
           <StackItem size="fill" style={{minWidth: 0}}>
             <VStack gap={0}>
               <Heading level={3}>{contractor.name}</Heading>

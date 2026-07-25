@@ -1004,7 +1004,7 @@ function ChainTierRow({
           </StackItem>
           {step.approver !== undefined ? (
             <HStack gap={2} vAlign="center">
-              <Avatar name={step.approver} size="xsmall" />
+              <Avatar name={step.approver} size="sm" />
               <VStack gap={0}>
                 <Text type="supporting" maxLines={1}>
                   {step.approver}
@@ -1157,7 +1157,7 @@ function ViolationRow({
   return (
     <div style={styles.violationRow}>
       <HStack gap={2} vAlign="center">
-        <Avatar name={violation.person} size="small" />
+        <Avatar name={violation.person} size="md" />
         <StackItem size="fill" style={{minWidth: 0}}>
           <VStack gap={0}>
             <Text type="label" maxLines={1}>
@@ -1273,7 +1273,7 @@ function AuditList() {
       <VStack gap={3}>
         {AUDIT_FEED.map(entry => (
           <div key={entry.id} style={styles.auditRow}>
-            <Avatar name={entry.actor} size="xsmall" />
+            <Avatar name={entry.actor} size="sm" />
             <VStack gap={0} style={{minWidth: 0}}>
               <Text type="supporting" maxLines={3}>
                 <strong>{entry.actor}</strong> — {entry.change}
@@ -1472,7 +1472,7 @@ export default function FinSpendPoliciesTemplate() {
         </HStack>
         <StackItem size="fill" />
         <HStack gap={2} vAlign="center">
-          <Avatar name={policy.owner} size="xsmall" />
+          <Avatar name={policy.owner} size="sm" />
           <Text type="supporting" color="secondary" maxLines={1}>
             {policy.owner} · {policy.ownerRole}
           </Text>

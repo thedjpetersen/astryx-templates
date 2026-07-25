@@ -939,7 +939,7 @@ function SuggestionCard({
               aria-hidden
               style={{...styles.authorDot, backgroundColor: author.ink}}
             />
-            <Avatar name={author.name} size="xsmall" />
+            <Avatar name={author.name} size="sm" />
             <StackItem size="fill">
               <Text type="body" weight="bold" maxLines={1}>
                 {author.name}
@@ -1076,7 +1076,7 @@ function ThreadCard({
         onClick={() => onActivate(thread.id)}>
         <VStack gap={2}>
           <HStack gap={2} vAlign="center">
-            <Avatar name={thread.root.author} size="xsmall" />
+            <Avatar name={thread.root.author} size="sm" />
             <StackItem size="fill">
               <HStack gap={2} vAlign="center" wrap="wrap">
                 <Text type="body" weight="bold">
@@ -1101,7 +1101,7 @@ function ThreadCard({
               {replies.map(reply => (
                 <VStack key={reply.id} gap={1}>
                   <HStack gap={2} vAlign="center">
-                    <Avatar name={reply.author} size="xsmall" />
+                    <Avatar name={reply.author} size="sm" />
                     <Text type="supporting" weight="bold">
                       {reply.author}
                     </Text>

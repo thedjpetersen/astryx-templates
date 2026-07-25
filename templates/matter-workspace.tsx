@@ -807,7 +807,7 @@ function MatterHeader() {
                 label="Kestrel Labs"
               />
               <span style={styles.partnerChip}>
-                <Avatar name="Eleanor Marlow" size="tiny" />
+                <Avatar name="Eleanor Marlow" size="xsm" />
                 <Text type="supporting" size="xsm" color="secondary">
                   Eleanor Marlow · Responsible partner
                 </Text>
@@ -935,7 +935,7 @@ function WorkstreamRow({stream}: {stream: Workstream}) {
       </StackItem>
       <Tooltip content={stream.owners.join(' · ')}>
         <span style={styles.noShrink}>
-          <AvatarGroup size="small" aria-label={`Owners: ${stream.owners.join(', ')}`}>
+          <AvatarGroup size="md" aria-label={`Owners: ${stream.owners.join(', ')}`}>
             {stream.owners.map(name => (
               <Avatar key={name} name={name} />
             ))}
@@ -1167,7 +1167,7 @@ function ActivityRow({event, isVerifiedByUser, onVerify}: ActivityRowProps) {
           <Icon icon={GlyphIcon} size="sm" color="inherit" />
         </span>
       ) : (
-        <Avatar name={event.actor} size="xsmall" />
+        <Avatar name={event.actor} size="sm" />
       )}
       <div style={styles.activityBody}>
         <div style={styles.activityMeta}>
@@ -1271,7 +1271,7 @@ function ActivitySection({verifiedIds, onVerify}: ActivitySectionProps) {
 function PersonRow({person}: {person: Person}) {
   return (
     <div style={styles.personRow}>
-      <Avatar name={person.name} size="small" />
+      <Avatar name={person.name} size="md" />
       <StackItem size="fill">
         <VStack gap={0}>
           <Text type="label" size="sm" maxLines={1}>

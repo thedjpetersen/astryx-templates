@@ -2385,7 +2385,7 @@ export default function ClaimsAdjudicationWorkbenchTemplate() {
               />
               <Tooltip content={`${EXAMINER.name} · Examiner`}>
                 <span style={{flexShrink: 0}}>
-                  <Avatar name={EXAMINER.name} size="xsmall" />
+                  <Avatar name={EXAMINER.name} size="sm" />
                 </span>
               </Tooltip>
             </div>

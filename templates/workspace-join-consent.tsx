@@ -332,7 +332,7 @@ function InviteCard({
         <VStack gap={2}>
           <Eyebrow>{`Members (${INVITE.members.length})`}</Eyebrow>
           <HStack gap={3} vAlign="center">
-            <AvatarGroup size="small" aria-label="Workspace members">
+            <AvatarGroup size="md" aria-label="Workspace members">
               {INVITE.members.map(member => (
                 <Avatar key={member.id} name={member.name} />
               ))}

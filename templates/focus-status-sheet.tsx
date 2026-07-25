@@ -795,7 +795,7 @@ function PersonRow({member}: {member: MemberRow}) {
   return (
     <HStack gap={2} vAlign="center" style={styles.personRow}>
       <div style={styles.avatarWrap}>
-        <Avatar name={member.name} size="small" />
+        <Avatar name={member.name} size="md" />
         {member.presence === 'focus' ? (
           <span
             style={styles.focusBadge}

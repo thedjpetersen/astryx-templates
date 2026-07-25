@@ -626,7 +626,7 @@ function TopNav({isCompact}: {isCompact: boolean}) {
           variant="ghost"
           icon={<Icon icon={BellIcon} size="sm" color="inherit" />}
         />
-        <Avatar name="Priya Raman" size="small" />
+        <Avatar name="Priya Raman" size="md" />
       </div>
     </nav>
   );

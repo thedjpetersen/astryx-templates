@@ -1283,7 +1283,7 @@ function HeaderBar({
           icon={<Icon icon={BellIcon} size="sm" />}
         />
         <span style={styles.storeChip}>
-          <Avatar name={STORE_NAME} size="xsmall" />
+          <Avatar name={STORE_NAME} size="sm" />
           {isChipCollapsed ? null : (
             <Text type="label" size="sm">
               {STORE_NAME}

@@ -583,7 +583,7 @@ export default function NotificationCenterTemplate() {
                       label={`Notifications (${unreadCount} unread)`}
                     />
                   </Popover>
-                  <Avatar name={CURRENT_USER} size="xsmall" />
+                  <Avatar name={CURRENT_USER} size="sm" />
                 </HStack>
               }
             />

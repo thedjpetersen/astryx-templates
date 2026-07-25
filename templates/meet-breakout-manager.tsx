@@ -589,7 +589,7 @@ function PersonChip({
         event.dataTransfer.effectAllowed = 'move';
       }}>
       <Icon icon={GripVerticalIcon} size="sm" color="disabled" />
-      <Avatar name={person.name} size="xsmall" />
+      <Avatar name={person.name} size="sm" />
       <Tooltip content={`${person.name} · ${person.role}`}>
         <Text type="supporting" size="sm" style={styles.personChipName}>
           {person.name}

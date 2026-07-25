@@ -983,7 +983,7 @@ function VersionRow({
               </Text>
             </StackItem>
             <AvatarGroup
-              size="xsmall"
+              size="sm"
               aria-label={`Edited by ${version.authorIds
                 .map(id => PERSON_BY_ID[id].name)
                 .join(' and ')}`}>

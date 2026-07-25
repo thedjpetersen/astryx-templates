@@ -420,7 +420,7 @@ function CardHeader() {
         </Text>
       </VStack>
       <div style={styles.metaRow}>
-        <AvatarGroup size="small" aria-label="Attendees">
+        <AvatarGroup size="md" aria-label="Attendees">
           {ATTENDEES.map(name => (
             <Avatar key={name} name={name} />
           ))}
@@ -562,7 +562,7 @@ function ActionItems({
               </div>
               <div style={styles.metaRow}>
                 <HStack gap={1} vAlign="center">
-                  <Avatar name={item.assignee} size="tiny" />
+                  <Avatar name={item.assignee} size="xsm" />
                   <Text type="supporting" size="xsm" color="secondary">
                     {item.assignee}
                   </Text>

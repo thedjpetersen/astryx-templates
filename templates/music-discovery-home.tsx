@@ -1024,7 +1024,7 @@ function FriendActivityRail() {
             <div key={friend.id} style={styles.friendRow}>
               <Avatar
                 name={friend.name}
-                size="small"
+                size="md"
                 // Re-pin initials contrast on the locked dark rail (footgun 14).
                 style={{'--color-text-secondary': PAGE_TEXT_DIM} as CSSProperties}
               />
@@ -1352,7 +1352,7 @@ export default function MusicDiscoveryHomeTemplate() {
           />
           <Avatar
             name={LISTENER_NAME}
-            size="small"
+            size="md"
             style={{'--color-text-secondary': PAGE_TEXT_DIM} as CSSProperties}
           />
         </HStack>

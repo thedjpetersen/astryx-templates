@@ -1724,7 +1724,7 @@ export default function LoanCovenantMonitorTemplate() {
                   {`Waiver desk · ${packageIds.length}`}
                 </button>
               ) : null}
-              <Avatar name={ANALYST.name} size="small" />
+              <Avatar name={ANALYST.name} size="md" />
             </div>
           </LayoutHeader>
         }

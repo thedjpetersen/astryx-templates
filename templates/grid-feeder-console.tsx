@@ -1884,7 +1884,7 @@ export default function GridFeederConsoleTemplate() {
                 <span style={styles.visuallyHidden}>{announcement}</span>
               </div>
               <div style={styles.operatorBadge}>
-                <Avatar name={OPERATORS.ruth.name} size="tiny" />
+                <Avatar name={OPERATORS.ruth.name} size="xsm" />
                 <Text type="supporting" size="xsm" color="secondary">
                   {OPERATORS.ruth.badge}
                 </Text>

@@ -978,7 +978,7 @@ function BandDetail({
               aria-pressed={isActive}
               onClick={() => onSelectEmployee(employee.id)}>
               <HStack gap={2} vAlign="center" style={styles.employeeRow}>
-                <Avatar name={employee.name} size="small" />
+                <Avatar name={employee.name} size="md" />
                 <StackItem size="fill" style={{minWidth: 0}}>
                   <VStack gap={0}>
                     <Text type="body" maxLines={1}>
@@ -1086,7 +1086,7 @@ function AdjustmentRow({
 
   return (
     <div style={styles.queueRow}>
-      <Avatar name={employeeName} size="small" />
+      <Avatar name={employeeName} size="md" />
       <StackItem size="fill" style={{minWidth: 0}}>
         <VStack gap={1}>
           <HStack gap={2} vAlign="center" wrap="wrap">

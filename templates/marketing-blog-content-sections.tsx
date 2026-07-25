@@ -764,7 +764,7 @@ function PostGridCard({
           {post.excerpt}
         </Text>
         <HStack gap={2} vAlign="center">
-          <Avatar name={post.author} size="small" />
+          <Avatar name={post.author} size="md" />
           <StackItem size="fill">
             <Text type="supporting" color="secondary" maxLines={1}>
               {post.author}
@@ -1107,7 +1107,7 @@ export default function MarketingBlogContentSectionsTemplate() {
               {leadPost.excerpt}
             </Text>
             <HStack gap={2} vAlign="center">
-              <Avatar name={leadPost.author} size="small" />
+              <Avatar name={leadPost.author} size="md" />
               <StackItem size="fill">
                 <VStack gap={0.5}>
                   <Text type="label">{leadPost.author}</Text>
@@ -1239,7 +1239,7 @@ export default function MarketingBlogContentSectionsTemplate() {
               </HStack>
               <Heading level={2}>{ARTICLE_POST.title}</Heading>
               <HStack gap={2} vAlign="center">
-                <Avatar name={ARTICLE_POST.author} size="small" />
+                <Avatar name={ARTICLE_POST.author} size="md" />
                 <Text type="supporting" color="secondary" maxLines={1}>
                   {ARTICLE_POST.author}, {ARTICLE_POST.role} ·{' '}
                   {ARTICLE_POST.dateLabel} · {ARTICLE_POST.readMinutes} min

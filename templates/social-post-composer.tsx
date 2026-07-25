@@ -630,7 +630,7 @@ function PlatformPreview({
   const over = used - platform.limit;
   const header = (
     <HStack gap={2} vAlign="center">
-      <Avatar name={ACCOUNT_NAME} size="xsmall" />
+      <Avatar name={ACCOUNT_NAME} size="sm" />
       <StackItem size="fill">
         <VStack gap={0}>
           <Text type="body" weight="semibold" maxLines={1}>

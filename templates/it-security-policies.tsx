@@ -1249,7 +1249,7 @@ function ExceptionsSection({
 function FlaggedDeviceRow({device}: {device: FlaggedDevice}) {
   return (
     <div style={styles.flaggedRow}>
-      <Avatar name={device.owner} size="xsmall" />
+      <Avatar name={device.owner} size="sm" />
       <StackItem size="fill" style={{minWidth: 0}}>
         <VStack gap={0}>
           <Text type="label" size="sm" maxLines={1} style={styles.monoText}>

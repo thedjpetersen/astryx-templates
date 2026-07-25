@@ -552,7 +552,7 @@ export default function TableTreeTemplate() {
         width: proportional(1),
         renderCell: row => (
           <HStack gap={2} vAlign="center">
-            <Avatar name={row.node.owner} size="xsmall" />
+            <Avatar name={row.node.owner} size="sm" />
             <Text type="body" maxLines={1}>
               {row.node.owner}
             </Text>

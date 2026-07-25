@@ -1224,7 +1224,7 @@ function AtAGlanceRail() {
               key={report.name}
               label={report.name}
               description={report.role}
-              startContent={<Avatar name={report.name} size="small" />}
+              startContent={<Avatar name={report.name} size="md" />}
               endContent={
                 report.onboardingLabel ? (
                   <Token size="sm" color="orange" label={report.onboardingLabel} />
@@ -1257,7 +1257,7 @@ function ManagerChain() {
                 ? {...styles.chainChip, ...styles.chainSelf}
                 : styles.chainChip
             }>
-            <Avatar name={person.name} size="xsmall" />
+            <Avatar name={person.name} size="sm" />
             <Text type="supporting" maxLines={1}>
               {person.name}
             </Text>
@@ -1277,7 +1277,7 @@ function IdentityBand({isCompact}: {isCompact: boolean}) {
       gap={4}
       vAlign="start"
       wrap={isCompact ? 'wrap' : 'nowrap'}>
-      <Avatar name={EMPLOYEE.name} size="large" />
+      <Avatar name={EMPLOYEE.name} size="xl" />
       <StackItem size="fill" style={{minWidth: 0}}>
         <VStack gap={2}>
           <HStack gap={2} vAlign="center" wrap="wrap">

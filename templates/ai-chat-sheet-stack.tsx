@@ -383,7 +383,7 @@ function FixtureBubble({message}: {message: FixtureMessage}) {
   return (
     <ChatMessage
       sender="assistant"
-      avatar={<Avatar name={ASSISTANT_NAME} size="small" />}>
+      avatar={<Avatar name={ASSISTANT_NAME} size="md" />}>
       <ChatMessageBubble name={ASSISTANT_NAME} metadata={metadata}>
         {message.text}
       </ChatMessageBubble>

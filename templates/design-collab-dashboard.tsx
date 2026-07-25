@@ -769,7 +769,7 @@ function PresenceFacepile({people}: {people: string[]}) {
             borderColor: PEOPLE[person].ringColor,
             ...(index > 0 ? styles.presenceOverlap : null),
           }}>
-          <Avatar name={person} size="xsmall" />
+          <Avatar name={person} size="sm" />
         </span>
       ))}
     </div>
@@ -922,7 +922,7 @@ function ActivityRow({event}: {event: ActivityEvent}) {
             </Text>
           )}
           <HStack gap={2} vAlign="center">
-            <Avatar name={event.actor} size="xsmall" />
+            <Avatar name={event.actor} size="sm" />
             <Text type="supporting" color="secondary" maxLines={1}>
               {event.fileName} · {event.when}
             </Text>
@@ -1277,7 +1277,7 @@ export default function DesignCollabDashboardTemplate() {
         </StackItem>
         <HStack gap={2} vAlign="center">
           <AvatarGroup
-            size="xsmall"
+            size="sm"
             aria-label={`${ONLINE_NOW.length} teammates online now`}>
             {ONLINE_NOW.slice(0, 4).map(person => (
               <Avatar key={person} name={person} />
@@ -1317,7 +1317,7 @@ export default function DesignCollabDashboardTemplate() {
             onClick={() => setIsEndOpen(open => !open)}
           />
         )}
-        <Avatar name={CURRENT_USER} size="small" />
+        <Avatar name={CURRENT_USER} size="md" />
       </HStack>
     </LayoutHeader>
   );

@@ -270,7 +270,7 @@ export default function ShellLeftSidebarTemplate() {
             icon={<Icon icon={SettingsIcon} size="sm" />}
             variant="ghost"
           />
-          <Avatar name="Dana Whitfield" size="xsmall" />
+          <Avatar name="Dana Whitfield" size="sm" />
         </>
       }>
       {NAV_SECTIONS.map(section => (

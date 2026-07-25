@@ -416,7 +416,7 @@ function CollapsedMessagesList() {
         {COLLAPSED_MESSAGES.map(message => (
           <ListItem
             key={message.id}
-            startContent={<Avatar name={message.author} size="xsmall" />}
+            startContent={<Avatar name={message.author} size="sm" />}
             label={
               <HStack gap={2} vAlign="center">
                 <Text type="body" weight="medium">

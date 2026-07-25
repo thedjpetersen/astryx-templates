@@ -815,7 +815,7 @@ export default function AiChatToolStreamTemplate() {
                 {/* Assistant: diagnosis with a collapsed 5-call tool pile. */}
                 <ChatMessage
                   sender="assistant"
-                  avatar={<Avatar name={ASSISTANT_NAME} size="small" />}>
+                  avatar={<Avatar name={ASSISTANT_NAME} size="md" />}>
                   <ChatMessageBubble name={ASSISTANT_NAME}>
                     The build job dies during dependency install, not in
                     tests. I pulled the failed logs and reproduced the error
@@ -852,7 +852,7 @@ export default function AiChatToolStreamTemplate() {
                     partial ghost bubble. */}
                 <ChatMessage
                   sender="assistant"
-                  avatar={<Avatar name={ASSISTANT_NAME} size="small" />}>
+                  avatar={<Avatar name={ASSISTANT_NAME} size="md" />}>
                   <Collapsible
                     defaultIsOpen
                     trigger={

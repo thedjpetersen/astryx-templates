@@ -485,7 +485,7 @@ function ParticipantChip({person}: {person: Participant}) {
     <div style={styles.hoverProfile}>
       <VStack gap={2}>
         <HStack gap={2} vAlign="center">
-          <Avatar name={person.name} size="medium" />
+          <Avatar name={person.name} size="lg" />
           <VStack gap={0}>
             <Text type="body" weight="semibold">
               {person.name}
@@ -862,7 +862,7 @@ export default function SenderProfileRailTemplate() {
               AvatarGroup drop beneath the address block so the chips and
               email never squeeze to ellipses. */}
           <HStack gap={3} vAlign="start">
-            <Avatar name={SENDER.name} size="medium" />
+            <Avatar name={SENDER.name} size="lg" />
             <StackItem size="fill">
               <VStack gap={1}>
                 <HStack
@@ -900,7 +900,7 @@ export default function SenderProfileRailTemplate() {
                 {isNarrow && (
                   <HStack gap={2} vAlign="center">
                     <Timestamp value={MESSAGE.sentAt} format="date_time" />
-                    <AvatarGroup size="tiny" aria-label="Thread participants">
+                    <AvatarGroup size="xsm" aria-label="Thread participants">
                       {PARTICIPANTS.map(person => (
                         <Avatar key={person.id} name={person.name} />
                       ))}
@@ -912,7 +912,7 @@ export default function SenderProfileRailTemplate() {
             {!isNarrow && (
               <VStack gap={1} hAlign="end">
                 <Timestamp value={MESSAGE.sentAt} format="date_time" />
-                <AvatarGroup size="tiny" aria-label="Thread participants">
+                <AvatarGroup size="xsm" aria-label="Thread participants">
                   {PARTICIPANTS.map(person => (
                     <Avatar key={person.id} name={person.name} />
                   ))}

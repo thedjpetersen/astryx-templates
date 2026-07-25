@@ -383,7 +383,7 @@ export default function ShellBreadcrumbTemplate() {
               icon={<Icon icon={BellIcon} size="sm" />}
               variant="ghost"
             />
-            <Avatar name="Dana Whitfield" size="small" />
+            <Avatar name="Dana Whitfield" size="md" />
           </HStack>
         </LayoutHeader>
       }
@@ -495,7 +495,7 @@ export default function ShellBreadcrumbTemplate() {
                         key={person.name}
                         label={person.name}
                         description={person.title}
-                        startContent={<Avatar name={person.name} size="small" />}
+                        startContent={<Avatar name={person.name} size="md" />}
                         endContent={
                           <Text type="supporting" color="secondary">
                             {person.location}

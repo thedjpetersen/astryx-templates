@@ -1096,7 +1096,7 @@ export default function FinPaystubDetailTemplate() {
             <HStack gap={3} vAlign="center" wrap="wrap" style={styles.headerRow}>
               <StackItem size="fill">
                 <HStack gap={3} vAlign="center">
-                  <Avatar name={STATEMENT.employee} size="small" />
+                  <Avatar name={STATEMENT.employee} size="md" />
                   <VStack gap={0.5}>
                     <HStack gap={2} vAlign="center" wrap="wrap">
                       <Heading level={1}>Pay statement</Heading>

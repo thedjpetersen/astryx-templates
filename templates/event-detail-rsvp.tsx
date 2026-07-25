@@ -790,7 +790,7 @@ function AgendaRow({
         <HStack gap={3} vAlign="center" wrap="wrap">
           {session.speakers.map(speaker => (
             <HStack key={speaker.name} gap={1} vAlign="center">
-              <Avatar name={speaker.name} size="xsmall" />
+              <Avatar name={speaker.name} size="sm" />
               <Text type="supporting" color="secondary">
                 {speaker.name} · {speaker.role}
               </Text>
@@ -972,7 +972,7 @@ export default function EventDetailRsvpTemplate() {
           </div>
         </div>
         <div style={styles.heroHostRow}>
-          <AvatarGroup size="xsmall" aria-label="Event hosts">
+          <AvatarGroup size="sm" aria-label="Event hosts">
             {EVENT.hosts.map(host => (
               <Avatar key={host} name={host} />
             ))}
@@ -1104,7 +1104,7 @@ export default function EventDetailRsvpTemplate() {
         </HStack>
 
         <HStack gap={3} vAlign="center" wrap="wrap">
-          <AvatarGroup size="small" aria-label="Attendees going">
+          <AvatarGroup size="md" aria-label="Attendees going">
             {visibleStack.map(name => (
               <Avatar key={name} name={name} />
             ))}
@@ -1271,7 +1271,7 @@ export default function EventDetailRsvpTemplate() {
         <VStack gap={4}>
           {comments.map(comment => (
             <HStack key={comment.id} gap={3} vAlign="start">
-              <Avatar name={comment.author} size="small" />
+              <Avatar name={comment.author} size="md" />
               <StackItem size="fill">
                 <VStack gap={1}>
                   <HStack gap={2} vAlign="center" wrap="wrap">

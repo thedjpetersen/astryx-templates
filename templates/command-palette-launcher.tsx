@@ -689,7 +689,7 @@ export default function CommandPaletteLauncherPage() {
                     Search
                   </Button>
                 )}
-                <Avatar name="Ana Weiss" size="small" />
+                <Avatar name="Ana Weiss" size="md" />
               </HStack>
             }
           />

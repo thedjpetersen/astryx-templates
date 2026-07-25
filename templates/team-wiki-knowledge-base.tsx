@@ -657,7 +657,7 @@ function PresenceCluster() {
       <HStack gap={1} vAlign="center">
         <Tooltip content={`${EDITOR.name} — editing now`}>
           <span style={styles.editorRing}>
-            <Avatar name={EDITOR.name} size="xsmall" />
+            <Avatar name={EDITOR.name} size="sm" />
           </span>
         </Tooltip>
         {VIEWERS.map(name => (
@@ -665,7 +665,7 @@ function PresenceCluster() {
             key={name}
             content={name === CURRENT_USER ? `${name} (you) — viewing` : `${name} — viewing`}>
             <span style={{display: 'inline-flex'}}>
-              <Avatar name={name} size="xsmall" />
+              <Avatar name={name} size="sm" />
             </span>
           </Tooltip>
         ))}
@@ -682,7 +682,7 @@ function MetadataBar() {
   return (
     <HStack gap={4} vAlign="center" wrap="wrap" style={styles.metaBar}>
       <span style={styles.metaItem}>
-        <Avatar name={PAGE.owner} size="tiny" />
+        <Avatar name={PAGE.owner} size="xsm" />
         <Text type="supporting" color="secondary">
           Owned by <strong>{PAGE.owner}</strong> · {PAGE.ownerRole}
         </Text>
@@ -760,13 +760,13 @@ function RolesTable() {
                 </td>
                 <td style={cell}>
                   <span style={styles.metaItem}>
-                    <Avatar name={row.primary} size="tiny" />
+                    <Avatar name={row.primary} size="xsm" />
                     <Text type="supporting">{row.primary}</Text>
                   </span>
                 </td>
                 <td style={cell}>
                   <span style={styles.metaItem}>
-                    <Avatar name={row.backup} size="tiny" />
+                    <Avatar name={row.backup} size="xsm" />
                     <Text type="supporting">{row.backup}</Text>
                   </span>
                 </td>
@@ -945,7 +945,7 @@ function StaleSiblingTeaser() {
           </Text>
         </StackItem>
         <span style={styles.metaItem}>
-          <Avatar name={STALE_SIBLING.owner} size="tiny" />
+          <Avatar name={STALE_SIBLING.owner} size="xsm" />
           <Text type="supporting" color="secondary">
             {STALE_SIBLING.owner}
           </Text>

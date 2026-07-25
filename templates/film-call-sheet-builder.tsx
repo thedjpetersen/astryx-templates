@@ -1626,7 +1626,7 @@ export default function FilmCallSheetBuilderTemplate() {
               </div>
               <div className="fcs-spring" />
               {headChip}
-              <Avatar name={FIRST_AD} size="small" />
+              <Avatar name={FIRST_AD} size="md" />
             </div>
           </LayoutHeader>
         }

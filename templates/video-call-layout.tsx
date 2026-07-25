@@ -640,7 +640,7 @@ function TileBody({
   const isSelf = participant.id === 'you';
   return (
     <>
-      <Avatar name={participant.name} size={compactChrome ? 'small' : 'medium'} />
+      <Avatar name={participant.name} size={compactChrome ? 'md' : 'lg'} />
 
       {!compactChrome && (
         <div style={styles.tileTopLeft}>
@@ -798,7 +798,7 @@ function ChatTab({
             return (
               <div key={message.id} style={styles.chatRow}>
                 <HStack gap={2} vAlign="start">
-                  <Avatar name={author.name} size="xsmall" />
+                  <Avatar name={author.name} size="sm" />
                   <StackItem size="fill">
                     <VStack gap={0}>
                       <HStack gap={1} vAlign="center">
@@ -945,7 +945,7 @@ function PeopleTab({
                   participant.role === 'host' ? 'Host' : undefined
                 }
                 startContent={
-                  <Avatar name={participant.name} size="xsmall" />
+                  <Avatar name={participant.name} size="sm" />
                 }
                 endContent={
                   <HStack gap={1} vAlign="center">
@@ -1030,7 +1030,7 @@ function RoomsTab({
         event.dataTransfer.effectAllowed = 'move';
       }}>
       <Icon icon={GripVerticalIcon} size="sm" color="disabled" />
-      <Avatar name={participant.name} size="xsmall" />
+      <Avatar name={participant.name} size="sm" />
       <StackItem size="fill">
         <Text type="supporting">
           {participant.id === 'you'

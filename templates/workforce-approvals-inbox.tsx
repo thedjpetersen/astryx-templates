@@ -1332,7 +1332,7 @@ function DetailPane({
         </HStack>
         <Heading level={2}>{item.title}</Heading>
         <HStack gap={3} vAlign="center">
-          <Avatar name={item.requester.name} size="small" />
+          <Avatar name={item.requester.name} size="md" />
           <VStack gap={0}>
             <Text type="label">{item.requester.name}</Text>
             <Text type="supporting" color="secondary">

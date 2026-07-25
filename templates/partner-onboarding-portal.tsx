@@ -1786,7 +1786,7 @@ export default function PartnerOnboardingPortalTemplate() {
               <span style={{flex: 1}} aria-hidden />
               {/* Top-right corner: derived readiness stat + avatar. */}
               <span className="pop-header-stat">{readinessLine}</span>
-              <Avatar name={PEOPLE.noor.name} size="small" />
+              <Avatar name={PEOPLE.noor.name} size="md" />
             </div>
           </LayoutHeader>
         }

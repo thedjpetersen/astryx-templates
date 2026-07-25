@@ -789,7 +789,7 @@ function CandidateCard({
         style={candidate.isStalled ? styles.cardStalled : undefined}>
         <VStack gap={2}>
           <HStack gap={2} vAlign="start">
-            <Avatar name={candidate.name} size="xsmall" />
+            <Avatar name={candidate.name} size="sm" />
             <StackItem size="fill">
               <VStack gap={0}>
                 <Text type="body" maxLines={1}>
@@ -1303,7 +1303,7 @@ export default function HrRecruitingPipelineTemplate() {
               {/* Row 2 — owners, countdown, filters, actions. */}
               <HStack gap={3} vAlign="center" wrap="wrap">
                 <div style={styles.ownerChip}>
-                  <Avatar name={REQ.recruiter} size="xsmall" />
+                  <Avatar name={REQ.recruiter} size="sm" />
                   <VStack gap={0}>
                     <Text type="supporting">{REQ.recruiter}</Text>
                     <Text type="supporting" color="secondary">
@@ -1312,7 +1312,7 @@ export default function HrRecruitingPipelineTemplate() {
                   </VStack>
                 </div>
                 <div style={styles.ownerChip}>
-                  <Avatar name={REQ.hiringManager} size="xsmall" />
+                  <Avatar name={REQ.hiringManager} size="sm" />
                   <VStack gap={0}>
                     <Text type="supporting">{REQ.hiringManager}</Text>
                     <Text type="supporting" color="secondary">
@@ -1321,7 +1321,7 @@ export default function HrRecruitingPipelineTemplate() {
                   </VStack>
                 </div>
                 <AvatarGroup
-                  size="xsmall"
+                  size="sm"
                   aria-label={`Interview panel: ${REQ.panel.join(', ')}`}>
                   {REQ.panel.map(name => (
                     <Avatar key={name} name={name} />

@@ -1121,7 +1121,7 @@ function ResultRow({
             </span>
           </Text>
           <div style={styles.metaRow}>
-            <Avatar name={result.owner} size="xsmall" />
+            <Avatar name={result.owner} size="sm" />
             <Text type="supporting" color="secondary">
               {result.owner === CURRENT_USER ? 'You' : result.owner}
               {' · '}
@@ -1137,10 +1137,10 @@ function ResultRow({
             {showFacepile ? (
               <Tooltip content={facepileNames.join(', ')}>
                 <AvatarGroup
-                  size="xsmall"
+                  size="sm"
                   aria-label={`${result.title} attendees`}>
                   {facepileNames.map(name => (
-                    <Avatar key={name} name={name} size="xsmall" />
+                    <Avatar key={name} name={name} size="sm" />
                   ))}
                 </AvatarGroup>
               </Tooltip>
@@ -1155,10 +1155,10 @@ function ResultRow({
         ) : showFacepile && facepileNames.length > 0 ? (
           <Tooltip content={`Shared with ${facepileNames.join(', ')}`}>
             <AvatarGroup
-              size="xsmall"
+              size="sm"
               aria-label={`${result.title} shared with ${facepileNames.length} people`}>
               {facepileNames.map(name => (
-                <Avatar key={name} name={name} size="xsmall" />
+                <Avatar key={name} name={name} size="sm" />
               ))}
             </AvatarGroup>
           </Tooltip>
@@ -1222,7 +1222,7 @@ function BestMatchHero({
                 <Highlighted text={result.snippet} />
               </Text>
               <div style={styles.heroMetaRow}>
-                <Avatar name={result.owner} size="xsmall" />
+                <Avatar name={result.owner} size="sm" />
                 <Text type="supporting" color="secondary">
                   {result.owner}
                   {' · '}
@@ -1231,10 +1231,10 @@ function BestMatchHero({
                 </Text>
                 {result.sharedWith !== undefined ? (
                   <AvatarGroup
-                    size="xsmall"
+                    size="sm"
                     aria-label={`${result.title} shared with ${result.sharedWith.length} people`}>
                     {result.sharedWith.map(name => (
-                      <Avatar key={name} name={name} size="xsmall" />
+                      <Avatar key={name} name={name} size="sm" />
                     ))}
                   </AvatarGroup>
                 ) : null}
@@ -1639,7 +1639,7 @@ export default function OfficeUniversalSearchTemplate() {
                   </HStack>
                 ) : null}
                 <Tooltip content={`Signed in as ${CURRENT_USER}`}>
-                  <Avatar name={CURRENT_USER} size="small" />
+                  <Avatar name={CURRENT_USER} size="md" />
                 </Tooltip>
               </div>
             </div>

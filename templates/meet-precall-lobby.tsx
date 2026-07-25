@@ -780,7 +780,7 @@ function PreviewStage({
           {/* Footgun 14: re-pin the initials token on the locked surface. */}
           <Avatar
             name={YOU}
-            size="large"
+            size="xl"
             style={{'--color-text-secondary': STAGE_TEXT} as CSSProperties}
           />
           <Text type="supporting" style={{color: STAGE_TEXT_DIM}}>
@@ -1138,7 +1138,7 @@ function MeetingInfoPanel({
                 </Text>
               </StackItem>
             </HStack>
-            <AvatarGroup size="small" aria-label="Invited attendees">
+            <AvatarGroup size="md" aria-label="Invited attendees">
               {INVITEES.slice(0, FACEPILE_VISIBLE).map(name => (
                 <Avatar key={name} name={name} />
               ))}
@@ -1152,7 +1152,7 @@ function MeetingInfoPanel({
             </Text>
             {ALREADY_IN.map(person => (
               <div key={person.name} style={styles.inCallRow}>
-                <Avatar name={person.name} size="xsmall" />
+                <Avatar name={person.name} size="sm" />
                 <StackItem size="fill">
                   <Text type="supporting" size="sm">
                     {person.name}
@@ -1435,7 +1435,7 @@ export default function MeetPrecallLobbyTemplate() {
                     {YOU}
                   </Text>
                 )}
-                <Avatar name={YOU} size="small" />
+                <Avatar name={YOU} size="md" />
               </HStack>
             </HStack>
           </LayoutHeader>

@@ -667,7 +667,7 @@ function OwnerLoad({order}: {order: string[]}) {
       <Text type="label">Owner load · top 5 ranks</Text>
       {rows.map(([owner, load]) => (
         <HStack key={owner} gap={2} vAlign="center">
-          <Avatar name={owner} size="xsmall" />
+          <Avatar name={owner} size="sm" />
           <StackItem size="fill">
             <div style={styles.ownerTrack} aria-hidden>
               <div
@@ -835,7 +835,7 @@ function RankRow({
             {card.name}
           </Text>
           <HStack gap={1} vAlign="center">
-            <Avatar name={card.owner} size="xsmall" />
+            <Avatar name={card.owner} size="sm" />
             <Text type="supporting" color="secondary" maxLines={1} hasTabularNumbers>
               {card.owner}
               {isCompact

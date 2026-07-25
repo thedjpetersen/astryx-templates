@@ -757,7 +757,7 @@ export default function SubAgentMonitorTemplate() {
                       </ChatMessage>
                       <ChatMessage
                         sender="assistant"
-                        avatar={<Avatar name={ORCHESTRATOR_NAME} size="small" />}>
+                        avatar={<Avatar name={ORCHESTRATOR_NAME} size="md" />}>
                         <ChatMessageBubble name={ORCHESTRATOR_NAME}>
                           Spawned the fleet — progress is tracked in the
                           monitor docked below. I will fold results into this

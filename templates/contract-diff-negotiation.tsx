@@ -916,7 +916,7 @@ function TurnBand({
         const body = (
           <>
             <span style={{...styles.turnMarker, backgroundColor: sideColor}} />
-            <Avatar name={actor.name} size="small" />
+            <Avatar name={actor.name} size="md" />
             <div style={styles.turnBody}>
               <HStack gap={1} vAlign="center" wrap="wrap">
                 <span style={styles.chipNoShrink}>
@@ -1107,7 +1107,7 @@ function AnnotationRow({annotation}: {annotation: Annotation}) {
       <span style={{color: PRIV_INK, display: 'inline-flex', flexShrink: 0, paddingTop: 2}}>
         <Icon icon={LockIcon} size="sm" color="inherit" />
       </span>
-      <Avatar name={author.name} size="small" />
+      <Avatar name={author.name} size="md" />
       <div style={styles.annotationBody}>
         <VStack gap={1}>
           <HStack gap={1} vAlign="center" wrap="wrap">

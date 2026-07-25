@@ -599,7 +599,7 @@ function VerifiedProvenanceRow({name, date}: {name: string; date: string}) {
       <span style={{...styles.verifyIcon, color: VERIFIED_GREEN}}>
         <Icon icon={CheckCircle2Icon} size="sm" color="inherit" />
       </span>
-      <Avatar name={name} size="tiny" />
+      <Avatar name={name} size="xsm" />
       <div style={styles.verifyText}>
         <Text type="supporting" size="xsm" color="secondary" hasTabularNumbers>
           Verified · {name} · {date}

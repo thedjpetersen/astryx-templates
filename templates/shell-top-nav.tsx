@@ -287,7 +287,7 @@ export default function ShellTopNavTemplate() {
                   icon={<Icon icon={BellIcon} size="sm" />}
                   variant="ghost"
                 />
-                <Avatar name={CURRENT_USER} size="xsmall" />
+                <Avatar name={CURRENT_USER} size="sm" />
               </HStack>
             }
           />

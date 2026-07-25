@@ -946,7 +946,7 @@ function MarginEntry({
       </button>
       {verified ? (
         <div style={styles.marginProvenance}>
-          <Avatar name={record.checker ?? ''} size="xsmall" />
+          <Avatar name={record.checker ?? ''} size="sm" />
           <span style={{whiteSpace: 'nowrap'}}>
             Verified · {record.checker} · {record.checkedOn}
           </span>
@@ -980,7 +980,7 @@ function ReviewerNoteBlock() {
         <span style={styles.reviewerNoteBody}>{REVIEWER_NOTE.body}</span>
       </Text>
       <div style={styles.marginProvenance}>
-        <Avatar name={REVIEWER_NOTE.author} size="xsmall" />
+        <Avatar name={REVIEWER_NOTE.author} size="sm" />
         <span style={{whiteSpace: 'nowrap'}}>
           {REVIEWER_NOTE.author} · {REVIEWER_NOTE.when}
         </span>

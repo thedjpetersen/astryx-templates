@@ -1052,7 +1052,7 @@ function OverdueRow({
   return (
     <div style={styles.overdueTile}>
       <HStack gap={2} vAlign="center">
-        <Avatar name={row.name} size="small" />
+        <Avatar name={row.name} size="md" />
         <StackItem size="fill" style={{minWidth: 0}}>
           <VStack gap={0}>
             <Text type="label" maxLines={1}>

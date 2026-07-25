@@ -1748,7 +1748,7 @@ export default function TreasuryCashPositionTemplate() {
                   {`Sweeps · ${pendingSweeps.length}`}
                 </button>
               ) : null}
-              <Avatar name={TREASURER.name} size="small" />
+              <Avatar name={TREASURER.name} size="md" />
             </div>
           </LayoutHeader>
         }

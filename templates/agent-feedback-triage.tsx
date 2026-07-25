@@ -547,7 +547,7 @@ function ReportRow({
           label={STATUS_META[status].label}
           variant={STATUS_META[status].variant}
         />
-        {owner != null && <Avatar name={owner} size="small" />}
+        {owner != null && <Avatar name={owner} size="md" />}
       </HStack>
     </SelectableCard>
   );
@@ -634,7 +634,7 @@ function ReportDetail({
           />
           {owner != null && !isMine && (
             <HStack gap={1} vAlign="center">
-              <Avatar name={owner} size="small" />
+              <Avatar name={owner} size="md" />
               <Text type="supporting" color="secondary">
                 {owner} is on it
               </Text>

@@ -1238,7 +1238,7 @@ export default function MarketingHeroShowcaseTemplate() {
             />
           </div>
           <div style={styles.proofRow}>
-            <AvatarGroup size="small" aria-label="Teams shipping on Relay">
+            <AvatarGroup size="md" aria-label="Teams shipping on Relay">
               {PROOF_NAMES.map(name => (
                 <Avatar key={name} name={name} />
               ))}

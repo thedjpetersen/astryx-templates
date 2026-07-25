@@ -364,7 +364,7 @@ function DiscoverCard({
             <VStack gap={1}>
               <Text type="label">{skill.name}</Text>
               <HStack gap={1} vAlign="center">
-                <Avatar name={skill.author} size="xsmall" />
+                <Avatar name={skill.author} size="sm" />
                 <Text type="supporting" color="secondary">
                   {skill.author}
                 </Text>

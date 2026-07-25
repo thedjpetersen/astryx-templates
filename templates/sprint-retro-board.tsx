@@ -728,7 +728,7 @@ function ParticipationStrip() {
         {CONTRIBUTORS.length} of {ROSTER.length} added cards
       </Text>
       <AvatarGroup
-        size="xsmall"
+        size="sm"
         aria-label={`Contributors: ${CONTRIBUTORS.join(', ')}`}>
         {visible.map(name => (
           <Avatar key={name} name={name} />
@@ -800,7 +800,7 @@ function RetroCard({
             </span>
           </Tooltip>
         ) : (
-          <Avatar name={card.author} size="xsmall" />
+          <Avatar name={card.author} size="sm" />
         )}
         <Text type="supporting" color="secondary">
           {authorLabel}
@@ -932,7 +932,7 @@ function ActionItemRow({item}: {item: ActionItemData}) {
       ) : null}
       <Text style={styles.cardText}>{item.title}</Text>
       <HStack gap={2} vAlign="center" wrap="wrap">
-        <Avatar name={item.owner} size="xsmall" />
+        <Avatar name={item.owner} size="sm" />
         <Text type="supporting" color="secondary">
           {item.owner}
         </Text>
@@ -1159,7 +1159,7 @@ export default function SprintRetroBoardTemplate() {
           </Text>
         </VStack>
         <span style={styles.facilitatorChip}>
-          <Avatar name={RETRO.facilitator} size="xsmall" />
+          <Avatar name={RETRO.facilitator} size="sm" />
           <Text type="supporting" color="secondary">
             {RETRO.facilitator} · Facilitator
           </Text>

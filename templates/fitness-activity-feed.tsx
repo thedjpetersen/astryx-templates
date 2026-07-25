@@ -997,7 +997,7 @@ function KudosSummary({
   const overflow = activity.kudosBase - activity.kudosFaces.length;
   return (
     <HStack gap={2} vAlign="center">
-      <AvatarGroup size="xsmall" aria-label={`Athletes who gave kudos`}>
+      <AvatarGroup size="sm" aria-label={`Athletes who gave kudos`}>
         {(social.gaveKudos
           ? [YOU, ...activity.kudosFaces]
           : [...activity.kudosFaces]
@@ -1032,7 +1032,7 @@ function CommentThread({
     <VStack gap={2}>
       {allComments.map(comment => (
         <div key={`${comment.author}-${comment.text}`} style={styles.commentRow}>
-          <Avatar name={comment.author} size="xsmall" />
+          <Avatar name={comment.author} size="sm" />
           <div style={styles.commentBubble}>
             <HStack gap={2} vAlign="center" hAlign="between">
               <Text type="supporting" weight="bold">
@@ -1047,7 +1047,7 @@ function CommentThread({
         </div>
       ))}
       <HStack gap={2} vAlign="center">
-        <Avatar name={YOU} size="xsmall" />
+        <Avatar name={YOU} size="sm" />
         <StackItem size="fill">
           <TextInput
             label={`Add a comment on ${activity.title}`}
@@ -1092,7 +1092,7 @@ function ActivityCard({
     <Card padding={3}>
       <VStack gap={3}>
         <HStack gap={2} vAlign="center">
-          <Avatar name={activity.athlete} size="small" />
+          <Avatar name={activity.athlete} size="md" />
           <StackItem size="fill">
             <VStack gap={0}>
               <HStack gap={2} vAlign="center">
@@ -1229,7 +1229,7 @@ function ProfileCard() {
     <Card padding={3}>
       <VStack gap={3}>
         <HStack gap={2} vAlign="center">
-          <Avatar name={YOU} size="medium" />
+          <Avatar name={YOU} size="lg" />
           <VStack gap={0}>
             <Text type="body" weight="bold">
               {YOU}
@@ -1346,7 +1346,7 @@ function ChallengeCard() {
               <Text type="supporting" color="secondary" hasTabularNumbers>
                 {index + 1}
               </Text>
-              <Avatar name={leader.name} size="xsmall" />
+              <Avatar name={leader.name} size="sm" />
               <StackItem size="fill">
                 <Text type="supporting" maxLines={1}>
                   {leader.name === YOU ? `${leader.name} (you)` : leader.name}
@@ -1390,7 +1390,7 @@ function SuggestedCard({
             const isFollowing = following.has(athlete.name);
             return (
               <HStack key={athlete.name} gap={2} vAlign="center">
-                <Avatar name={athlete.name} size="small" />
+                <Avatar name={athlete.name} size="md" />
                 <StackItem size="fill">
                   <VStack gap={0}>
                     <Text type="body" maxLines={1}>
@@ -1492,7 +1492,7 @@ function TopNav({
         variant="ghost"
         size="sm"
       />
-      <Avatar name={YOU} size="small" />
+      <Avatar name={YOU} size="md" />
     </div>
   );
 }

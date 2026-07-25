@@ -786,7 +786,7 @@ function DayChip({day}: {day: DayEntry}) {
 function EmployeeCell({row}: {row: TimesheetRow}) {
   return (
     <HStack gap={2} vAlign="center">
-      <Avatar name={row.name} size="small" />
+      <Avatar name={row.name} size="md" />
       <StackItem size="fill" style={{minWidth: 0}}>
         <VStack gap={0}>
           <Text type="label" maxLines={1}>
@@ -1077,7 +1077,7 @@ function DetailDrawer({
     <div style={styles.drawerFill}>
       <div style={styles.drawerHeader}>
         <HStack gap={2} vAlign="center">
-          <Avatar name={row.name} size="medium" />
+          <Avatar name={row.name} size="lg" />
           <StackItem size="fill" style={{minWidth: 0}}>
             <VStack gap={0}>
               <Heading level={3}>{row.name}</Heading>

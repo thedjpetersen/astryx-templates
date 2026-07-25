@@ -495,7 +495,7 @@ function MentionRow({
           ? {...styles.mentionRow, ...styles.mentionRowActive}
           : styles.mentionRow
       }>
-      <Avatar name={candidate.name} size="xsmall" />
+      <Avatar name={candidate.name} size="sm" />
       <StackItem size="fill" style={styles.trayText}>
         <VStack gap={0}>
           <Text size="sm" maxLines={1}>

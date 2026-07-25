@@ -1145,7 +1145,7 @@ function PendingHireRow({
         style={styles.queueRowButton}
         aria-expanded={isSelected}
         onClick={() => onSelect(hire.id)}>
-        <Avatar name={hire.name} size="small" />
+        <Avatar name={hire.name} size="md" />
         <StackItem size="fill" style={{minWidth: 0}}>
           <VStack gap={0}>
             <Text type="label" maxLines={1}>
@@ -1228,7 +1228,7 @@ function ReverificationRow({
   return (
     <div style={styles.reverifRow}>
       <HStack gap={3} vAlign="center" style={{flexWrap: 'wrap'}}>
-        <Avatar name={REVERIFICATION.name} size="small" />
+        <Avatar name={REVERIFICATION.name} size="md" />
         <StackItem size="fill" style={{minWidth: 0}}>
           <VStack gap={0}>
             <Text type="label" maxLines={1}>
@@ -1422,7 +1422,7 @@ function AppointmentCard({isCompact}: {isCompact: boolean}) {
   return (
     <div style={styles.appointmentCard}>
       <HStack gap={2} vAlign="center" style={{flexWrap: 'wrap'}}>
-        <Avatar name={APPOINTMENT.hire} size="small" />
+        <Avatar name={APPOINTMENT.hire} size="md" />
         <StackItem size="fill" style={{minWidth: 0}}>
           <VStack gap={0}>
             <Text type="label" maxLines={1}>
@@ -1564,7 +1564,7 @@ function AuditReadiness({
           return (
             <div key={file.id} style={styles.flaggedRow}>
               <HStack gap={2} vAlign="center">
-                <Avatar name={file.name} size="small" />
+                <Avatar name={file.name} size="md" />
                 <StackItem size="fill" style={{minWidth: 0}}>
                   <VStack gap={0}>
                     <Text type="label" maxLines={1}>

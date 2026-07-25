@@ -720,7 +720,7 @@ function ReviewerCell({doc}: {doc: DocRow}) {
   }
   return (
     <HStack gap={2} vAlign="center">
-      <Avatar name={doc.reviewer} size="xsmall" />
+      <Avatar name={doc.reviewer} size="sm" />
       <Text type="body" maxLines={1}>
         {doc.reviewer === CURRENT_REVIEWER ? 'You' : doc.reviewer}
       </Text>
@@ -1330,7 +1330,7 @@ export default function DueDiligenceDataRoomTemplate() {
                 style={{minWidth: 0}}
               />
             </VStack>
-            <AvatarGroup size="xsmall" aria-label="Document reviewers">
+            <AvatarGroup size="sm" aria-label="Document reviewers">
               {REVIEWERS.map(person => (
                 <Avatar key={person} name={person} />
               ))}

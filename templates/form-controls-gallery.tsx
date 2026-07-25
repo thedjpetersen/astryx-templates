@@ -760,7 +760,7 @@ function SelectMenusPanel({
               padding={2}
               width="100%">
               <HStack gap={2} vAlign="center">
-                <Avatar name={option.name} size="xsmall" />
+                <Avatar name={option.name} size="sm" />
                 <VStack gap={0}>
                   <Text type="body" weight="semibold">
                     {option.name}

@@ -776,7 +776,7 @@ function HeaderBar({gems, isNarrow}: {gems: number; isNarrow: boolean}) {
           label="Hearts"
           tooltip="Hearts refill one every 4 hours, or practice to earn one back"
         />
-        <Avatar name={LEARNER.name} size="small" />
+        <Avatar name={LEARNER.name} size="md" />
       </HStack>
     </LayoutHeader>
   );
@@ -1258,7 +1258,7 @@ function LeagueCard() {
                   }}
                 >
                   <span style={styles.leagueRank}>{row.rank}</span>
-                  <Avatar name={row.name} size="xsmall" />
+                  <Avatar name={row.name} size="sm" />
                   <Text size="sm" weight={row.isYou ? 'bold' : 'normal'} maxLines={1}>
                     {row.isYou ? `${row.name} (you)` : row.name}
                   </Text>

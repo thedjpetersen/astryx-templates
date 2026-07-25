@@ -1325,7 +1325,7 @@ export default function LegalAiAssistantWorkspaceTemplate() {
           size="sm"
           onClick={() => {}}
         />
-        <Avatar name={CURRENT_USER} size="small" />
+        <Avatar name={CURRENT_USER} size="md" />
       </HStack>
     </LayoutHeader>
   );
@@ -1345,7 +1345,7 @@ export default function LegalAiAssistantWorkspaceTemplate() {
         {/* Associate's query. */}
         <ChatMessage
           sender="user"
-          avatar={<Avatar name={CURRENT_USER} size="small" />}>
+          avatar={<Avatar name={CURRENT_USER} size="md" />}>
           <ChatMessageBubble
             name={CURRENT_USER}
             metadata={
@@ -1386,7 +1386,7 @@ export default function LegalAiAssistantWorkspaceTemplate() {
           <ChatMessage
             key={`sent-${index}`}
             sender="user"
-            avatar={<Avatar name={CURRENT_USER} size="small" />}>
+            avatar={<Avatar name={CURRENT_USER} size="md" />}>
             <ChatMessageBubble
               name={CURRENT_USER}
               metadata={

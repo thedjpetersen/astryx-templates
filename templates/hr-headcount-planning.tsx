@@ -1073,7 +1073,7 @@ function ReqCard({req}: {req: Req}) {
         </HStack>
       </VStack>
       <HStack gap={2} vAlign="center">
-        <Avatar name={req.recruiter} size="xsmall" />
+        <Avatar name={req.recruiter} size="sm" />
         <StackItem size="fill" style={{minWidth: 0}}>
           <Text type="supporting" color="secondary" maxLines={1}>
             {req.recruiter} · HM {req.hiringManager}

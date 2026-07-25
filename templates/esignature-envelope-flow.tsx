@@ -1371,7 +1371,7 @@ export default function EsignatureEnvelopeFlowTemplate() {
                   </div>
                 )}
                 <div style={styles.recipientIdentity}>
-                  <Avatar name={recipient.name} size="small" />
+                  <Avatar name={recipient.name} size="md" />
                   <VStack gap={0}>
                     <Text type="body" maxLines={1}>
                       {recipient.name}
@@ -1749,7 +1749,7 @@ export default function EsignatureEnvelopeFlowTemplate() {
               {index + 1}
             </div>
             <div style={styles.recipientIdentity}>
-              <Avatar name={recipient.name} size="small" />
+              <Avatar name={recipient.name} size="md" />
               <VStack gap={0}>
                 <Text type="body" maxLines={1}>
                   {recipient.name}
@@ -1831,7 +1831,7 @@ export default function EsignatureEnvelopeFlowTemplate() {
                   <div key={recipient.id} style={styles.recipientRow}>
                     <div style={styles.seqCircleCc}>CC</div>
                     <div style={styles.recipientIdentity}>
-                      <Avatar name={recipient.name} size="small" />
+                      <Avatar name={recipient.name} size="md" />
                       <VStack gap={0}>
                         <Text type="body" maxLines={1}>
                           {recipient.name}

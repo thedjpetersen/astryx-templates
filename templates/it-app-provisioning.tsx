@@ -873,7 +873,7 @@ function SeatUsageBlock({app}: {app: SaasApp}) {
           </Text>
           {app.pending.map(grant => (
             <HStack key={grant.hire} gap={2} vAlign="center">
-              <Avatar name={grant.hire} size="xsmall" />
+              <Avatar name={grant.hire} size="sm" />
               <StackItem size="fill" style={{minWidth: 0}}>
                 <Text type="supporting" maxLines={1}>
                   {grant.hire} · {grant.dept}
@@ -1055,7 +1055,7 @@ function ReclaimSuggestion({
                 ...styles.inactiveRow,
                 ...(index > 0 ? styles.rowDivider : null),
               }}>
-              <Avatar name={seat.person} size="xsmall" />
+              <Avatar name={seat.person} size="sm" />
               <StackItem size="fill" style={{minWidth: 0}}>
                 <Text type="supporting" maxLines={1}>
                   {seat.person} · {seat.group}

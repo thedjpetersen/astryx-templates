@@ -614,10 +614,10 @@ export default function MailThreadReaderTemplate() {
             <Text type="supporting" color="secondary">
               Jun 24 – Jul 2, 2026
             </Text>
-            <AvatarGroup size="small" aria-label="Thread participants">
-              <Avatar name={PARTICIPANTS.dana.name} size="small" />
-              <Avatar name={PARTICIPANTS.alex.name} size="small" />
-              <Avatar name={PARTICIPANTS.marcus.name} size="small" />
+            <AvatarGroup size="md" aria-label="Thread participants">
+              <Avatar name={PARTICIPANTS.dana.name} size="md" />
+              <Avatar name={PARTICIPANTS.alex.name} size="md" />
+              <Avatar name={PARTICIPANTS.marcus.name} size="md" />
               <AvatarGroupOverflow count={1} />
             </AvatarGroup>
           </HStack>

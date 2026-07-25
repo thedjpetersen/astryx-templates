@@ -837,7 +837,7 @@ function TransferSection({
                 <Text type="supporting" maxLines={1}>
                   {task.owner}
                 </Text>
-                <Avatar name={task.owner} size="xsmall" />
+                <Avatar name={task.owner} size="sm" />
               </HStack>
               <Text type="supporting" color="secondary" maxLines={1}>
                 {task.ownerRole}
@@ -1114,7 +1114,7 @@ function PhaseRail({phases}: {phases: PhaseSummary[]}) {
             </Text>
             {STAKEHOLDERS.map(person => (
               <HStack key={person.name} gap={2} vAlign="center">
-                <Avatar name={person.name} size="small" />
+                <Avatar name={person.name} size="md" />
                 <StackItem size="fill" style={{minWidth: 0}}>
                   <VStack gap={0}>
                     <Text type="body" maxLines={1}>
@@ -1267,7 +1267,7 @@ export default function HrOffboardingFlowTemplate() {
         </HStack>
         <StackItem size="fill" />
         <HStack gap={3} vAlign="center">
-          <Avatar name={EMPLOYEE.name} size="medium" />
+          <Avatar name={EMPLOYEE.name} size="lg" />
           <VStack gap={1} style={styles.headerCountdown}>
             <HStack gap={2} vAlign="center" hAlign="end">
               <Icon icon={ClockIcon} size="sm" color="secondary" />

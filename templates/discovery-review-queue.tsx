@@ -1177,7 +1177,7 @@ function ReviewHeader({
             />
           </HStack>
           <Tooltip content="Reviewing as David Chen · QC: Ruth Vega">
-            <Avatar name="David Chen" size="small" />
+            <Avatar name="David Chen" size="md" />
           </Tooltip>
         </HStack>
       </div>

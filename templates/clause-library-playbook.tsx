@@ -1107,7 +1107,7 @@ function ActivityList({extraProposals}: {extraProposals: string[]}) {
                 </Text>
               </VStack>
             }
-            startContent={<Avatar name="Ruth Vega" size="small" />}
+            startContent={<Avatar name="Ruth Vega" size="md" />}
             endContent={<Token size="sm" color="orange" label="Pending review" style={{flexShrink: 0}} />}
           />
         ))}
@@ -1134,7 +1134,7 @@ function ActivityList({extraProposals}: {extraProposals: string[]}) {
                   <Icon icon={SparklesIcon} size="sm" color="inherit" />
                 </span>
               ) : (
-                <Avatar name={entry.actor} size="small" />
+                <Avatar name={entry.actor} size="md" />
               )
             }
             endContent={
@@ -1262,7 +1262,7 @@ function DetailHeader({
       </HStack>
       <HStack gap={2} vAlign="center" wrap="wrap">
         <HStack gap={1} vAlign="center">
-          <Avatar name={PLAYBOOK.owner} size="xsmall" />
+          <Avatar name={PLAYBOOK.owner} size="sm" />
           <Text type="supporting" color="secondary">
             {PLAYBOOK.owner} · {PLAYBOOK.ownerRole}
           </Text>
@@ -1345,7 +1345,7 @@ export default function ClauseLibraryPlaybookTemplate() {
           />
         </StackItem>
         <HStack gap={1} vAlign="center" style={{flexShrink: 0}}>
-          <Avatar name={CURRENT_USER} size="xsmall" />
+          <Avatar name={CURRENT_USER} size="sm" />
           <Text type="supporting" color="secondary">
             {CURRENT_USER} · playbook owner
           </Text>

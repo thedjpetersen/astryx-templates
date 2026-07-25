@@ -475,7 +475,7 @@ function GitHubPrCard({pr}: {pr: PullRequest}) {
     <Card padding={4}>
       <VStack gap={3}>
         <HStack gap={3} vAlign="center">
-          <Avatar name={pr.author} alt={pr.authorLogin} size="medium" />
+          <Avatar name={pr.author} alt={pr.authorLogin} size="lg" />
           <StackItem size="fill" style={styles.prTitleCell}>
             <VStack gap={0}>
               <Heading level={2}>{pr.title}</Heading>

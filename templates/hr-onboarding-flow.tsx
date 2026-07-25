@@ -729,7 +729,7 @@ function HireCard({
       onClick={onSelect}>
       <VStack gap={2}>
         <HStack gap={2} vAlign="center">
-          <Avatar name={hire.name} size="small" />
+          <Avatar name={hire.name} size="md" />
           <StackItem size="fill" style={{minWidth: 0}}>
             <VStack gap={0}>
               <Text type="label" maxLines={1}>
@@ -944,7 +944,7 @@ function AgendaStrip({hire}: {hire: Hire}) {
                 {slot.title}
               </Text>
               <HStack gap={1} vAlign="center">
-                <Avatar name={slot.host} size="xsmall" />
+                <Avatar name={slot.host} size="sm" />
                 <StackItem size="fill" style={{minWidth: 0}}>
                   <Text type="supporting" color="secondary" maxLines={1}>
                     {firstName(slot.host)} · {slot.place}
@@ -1218,7 +1218,7 @@ function HireHeader({view, isCompact}: {view: HireView; isCompact: boolean}) {
   const {hire} = view;
   return (
     <HStack gap={3} vAlign="center" wrap="wrap">
-      <Avatar name={hire.name} size={isCompact ? 'small' : 'medium'} />
+      <Avatar name={hire.name} size={isCompact ? 'md' : 'lg'} />
       <StackItem size="fill" style={{minWidth: 200}}>
         <VStack gap={0}>
           <HStack gap={2} vAlign="center" wrap="wrap">

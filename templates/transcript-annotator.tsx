@@ -577,7 +577,7 @@ function MessageCard({
         <HStack gap={2} vAlign="center">
           <Avatar
             name={message.role === 'assistant' ? 'Sonnet' : 'a8f3k2'}
-            size="small"
+            size="md"
           />
           <StackItem size="fill" style={styles.metaCell}>
             <Text

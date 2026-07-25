@@ -269,7 +269,7 @@ function PostCard({
       <VStack gap={3}>
         {/* Byline row: author identity left, timestamp + overflow right. */}
         <HStack gap={2} vAlign="center">
-          <Avatar name={post.author} size="small" />
+          <Avatar name={post.author} size="md" />
           <StackItem size="fill">
             <VStack gap={0.5}>
               <HStack gap={2} vAlign="center">

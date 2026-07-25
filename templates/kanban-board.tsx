@@ -428,7 +428,7 @@ function TaskCard({
           </HStack>
           <HStack gap={2} vAlign="center">
             <StatusDot variant={dot.variant} label={dot.label} />
-            <Avatar name={task.assignee} size="xsmall" />
+            <Avatar name={task.assignee} size="sm" />
             <StackItem size="fill" />
             <Text type="supporting" color="secondary">
               {task.id}

@@ -299,11 +299,11 @@ const STACK_VISIBLE_COUNT = 5;
 
 // xs–xl ramp mapped onto the Avatar named sizes.
 const AVATAR_RAMP = [
-  {label: 'xs', size: 'tiny', px: 16},
-  {label: 'sm', size: 'xsmall', px: 24},
-  {label: 'md', size: 'small', px: 32},
-  {label: 'lg', size: 'medium', px: 40},
-  {label: 'xl', size: 'large', px: 64},
+  {label: 'xsm', size: 'xsm', px: 20},
+  {label: 'sm', size: 'sm', px: 24},
+  {label: 'md', size: 'md', px: 36},
+  {label: 'lg', size: 'lg', px: 48},
+  {label: 'xl', size: 'xl', px: 128},
 ] as const;
 
 // Badge status row: one badge per semantic variant.
@@ -477,8 +477,8 @@ function AvatarSizeRamp() {
   return (
     <VariantBlock
       title="Size ramp"
-      note="Five steps, xs through xl; initials derive from the name."
-      propsStrip={`<Avatar name="Amara Diallo" size="tiny | xsmall | small | medium | large" />`}>
+      note="Five steps, xsm through xl; initials derive from the name."
+      propsStrip={`<Avatar name="Amara Diallo" size="xsm | sm | md | lg | xl" />`}>
       <HStack gap={4} vAlign="end" wrap="wrap">
         {AVATAR_RAMP.map(step => (
           <VStack key={step.label} gap={1} hAlign="center" style={styles.rampCell}>
@@ -515,13 +515,13 @@ function StatusAvatarRow() {
     <VariantBlock
       title="Status dots"
       note="Presence renders in the Avatar status slot; the dot names its state."
-      propsStrip={`<Avatar name="Dana Reyes" size="medium" status={<StatusDot variant="error" label="Do not disturb" />} />`}>
+      propsStrip={`<Avatar name="Dana Reyes" size="lg" status={<StatusDot variant="error" label="Do not disturb" />} />`}>
       <HStack gap={4} vAlign="center" wrap="wrap">
         {PEOPLE.slice(0, 4).map(person => (
           <VStack key={person.id} gap={1} hAlign="center" style={styles.rampCell}>
             <Avatar
               name={person.name}
-              size="medium"
+              size="lg"
               status={
                 <StatusDot variant={person.presence} label={person.presenceLabel} />
               }
@@ -545,7 +545,7 @@ function StackedAvatarGroup() {
     <VariantBlock
       title="Stacked overlap group"
       note="Tap the stack (or its +N chip) to open the full-roster popover; Escape or outside click closes it."
-      propsStrip={`<AvatarGroup size="small"><Avatar ×${STACK_VISIBLE_COUNT} /><AvatarGroupOverflow count={${overflowCount}} /></AvatarGroup>`}>
+      propsStrip={`<AvatarGroup size="md"><Avatar ×${STACK_VISIBLE_COUNT} /><AvatarGroupOverflow count={${overflowCount}} /></AvatarGroup>`}>
       <HStack gap={3} vAlign="center" wrap="wrap">
         <Popover
           label="Full reviewer roster"
@@ -583,7 +583,7 @@ function StackedAvatarGroup() {
               </VStack>
             </div>
           }>
-          <AvatarGroup size="small" aria-label={`${PEOPLE.length} reviewers`}>
+          <AvatarGroup size="md" aria-label={`${PEOPLE.length} reviewers`}>
             {visible.map(person => (
               <Avatar key={person.id} name={person.name} />
             ))}

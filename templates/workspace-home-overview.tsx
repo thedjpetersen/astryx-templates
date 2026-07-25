@@ -520,7 +520,7 @@ function BriefingCard() {
 function FeedRow({item}: {item: FeedItem}) {
   return (
     <HStack gap={3} vAlign="center" style={styles.feedRow}>
-      <Avatar name={item.actor} size="xsmall" />
+      <Avatar name={item.actor} size="sm" />
       <StackItem size="fill" style={styles.resourceBody}>
         <div style={styles.feedLine}>
           <span style={styles.feedActor}>{item.actor}</span>{' '}
@@ -622,7 +622,7 @@ function SessionRowCard({session}: {session: SessionRow}) {
           <Badge label="Rerun needed" variant="error" />
         )}
         <AvatarGroup
-          size="xsmall"
+          size="sm"
           aria-label={`${session.participants.length} participants`}>
           {session.participants.slice(0, 3).map(name => (
             <Avatar key={name} name={name} />
@@ -745,7 +745,7 @@ export default function WorkspaceHomeOverviewTemplate() {
                 </VStack>
               </StackItem>
               <AvatarGroup
-                size="small"
+                size="md"
                 aria-label={`${MEMBERS.length} workspace members`}>
                 {MEMBERS.slice(0, 4).map(name => (
                   <Avatar key={name} name={name} />

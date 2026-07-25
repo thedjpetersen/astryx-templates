@@ -1166,7 +1166,7 @@ export default function MarketingBentoGridTemplate() {
           <VStack gap={2}>
             <Text type="body">“{TESTIMONIAL.quote}”</Text>
             <HStack gap={2} vAlign="center">
-              <Avatar name={TESTIMONIAL.name} size="xsmall" />
+              <Avatar name={TESTIMONIAL.name} size="sm" />
               <Text type="supporting" color="secondary">
                 {TESTIMONIAL.name} · {TESTIMONIAL.role}
               </Text>

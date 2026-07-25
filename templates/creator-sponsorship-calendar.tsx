@@ -1504,7 +1504,7 @@ export default function CreatorSponsorshipCalendar() {
                 />
               </div>
             ) : null}
-            <Avatar size="small" name={CREATOR.name} alt={`${CREATOR.name}, ${CREATOR.handle}`} />
+            <Avatar size="md" name={CREATOR.name} alt={`${CREATOR.name}, ${CREATOR.handle}`} />
           </div>
         </LayoutHeader>
         <LayoutContent>

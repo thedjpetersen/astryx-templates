@@ -1205,7 +1205,7 @@ function EditorSheet({
               const share = shareFor(t.id);
               return (
                 <HStack key={t.id} gap={2} vAlign="center">
-                  <Avatar name={t.name} size="small" />
+                  <Avatar name={t.name} size="md" />
                   <StackItem size="fill">
                     <Text type="body" maxLines={1}>
                       {t.short}
@@ -1241,7 +1241,7 @@ function EditorSheet({
           <VStack gap={2}>
             {TRAVELERS.map(t => (
               <HStack key={t.id} gap={2} vAlign="center">
-                <Avatar name={t.name} size="small" />
+                <Avatar name={t.name} size="md" />
                 <StackItem size="fill">
                   <Text type="body" maxLines={1}>
                     {t.short}
@@ -1534,7 +1534,7 @@ export default function TripExpenseSplitterTemplate() {
           <Card key={t.id}>
             <VStack gap={2}>
               <HStack gap={2} vAlign="center">
-                <Avatar name={t.name} size="small" />
+                <Avatar name={t.name} size="md" />
                 <StackItem size="fill">
                   <Text type="label" maxLines={1}>
                     {t.short}
@@ -1586,10 +1586,10 @@ export default function TripExpenseSplitterTemplate() {
             <VStack gap={1}>
               {outstanding.map(t => (
                 <HStack key={`${t.fromId}-${t.toId}`} gap={2} vAlign="center">
-                  <Avatar name={traveler(t.fromId).name} size="xsmall" />
+                  <Avatar name={traveler(t.fromId).name} size="sm" />
                   <Text type="supporting">{traveler(t.fromId).short}</Text>
                   <Icon icon={ArrowRightIcon} size="sm" />
-                  <Avatar name={traveler(t.toId).name} size="xsmall" />
+                  <Avatar name={traveler(t.toId).name} size="sm" />
                   <StackItem size="fill">
                     <Text type="supporting">{traveler(t.toId).short}</Text>
                   </StackItem>
@@ -1684,10 +1684,10 @@ export default function TripExpenseSplitterTemplate() {
                         gap={2}
                         vAlign="center"
                         style={item.isPaid ? styles.paidRow : undefined}>
-                        <Avatar name={traveler(item.fromId).name} size="xsmall" />
+                        <Avatar name={traveler(item.fromId).name} size="sm" />
                         <Text type="body">{traveler(item.fromId).short}</Text>
                         <Icon icon={ArrowRightIcon} size="sm" />
-                        <Avatar name={traveler(item.toId).name} size="xsmall" />
+                        <Avatar name={traveler(item.toId).name} size="sm" />
                         <Text type="body">{traveler(item.toId).short}</Text>
                         <Text type="label" style={styles.numeric}>
                           {formatCents(item.amountCents)}

@@ -683,7 +683,7 @@ function StageTile({
     <div style={tileStyle}>
       <Avatar
         name={participant.name}
-        size={variant === 'featured' ? 'large' : isMini ? 'small' : 'medium'}
+        size={variant === 'featured' ? 'xl' : isMini ? 'md' : 'lg'}
         style={avatarStyle}
       />
 
@@ -1036,7 +1036,7 @@ function HandsPanel({
                   Up next
                 </Text>
                 <HStack gap={2} vAlign="center">
-                  <Avatar name={upNextPerson.name} size="small" />
+                  <Avatar name={upNextPerson.name} size="md" />
                   <StackItem size="fill">
                     <VStack gap={0}>
                       <Text type="label" size="sm">
@@ -1128,7 +1128,7 @@ function HandsPanel({
                 {loweredNames.map(name => (
                   <div key={name} style={styles.loweredRow}>
                     <HStack gap={2} vAlign="center">
-                      <Avatar name={name} size="xsmall" />
+                      <Avatar name={name} size="sm" />
                       <Text type="supporting" size="sm" color="secondary">
                         {name}
                       </Text>

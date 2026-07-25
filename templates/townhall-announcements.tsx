@@ -640,7 +640,7 @@ function Byline({
 }: {
   name: string;
   detail: string;
-  avatarSize: 'tiny' | 'small';
+  avatarSize: 'xsm' | 'md';
 }) {
   return (
     <HStack gap={2} vAlign="center" style={{minWidth: 0}}>
@@ -682,7 +682,7 @@ function TownhallRail({
                 {NEXT_TOWNHALL.whenLabel}
               </Text>
               <HStack gap={2} vAlign="center">
-                <AvatarGroup size="xsmall" aria-label="Townhall hosts">
+                <AvatarGroup size="sm" aria-label="Townhall hosts">
                   {NEXT_TOWNHALL.hosts.map(host => (
                     <Avatar key={host} name={host} />
                   ))}
@@ -786,7 +786,7 @@ function HeroPanel({
         <Byline
           name={HERO.author}
           detail={ROLES[HERO.author]}
-          avatarSize="small"
+          avatarSize="md"
         />
 
         <VStack gap={2} style={styles.heroBody}>
@@ -879,7 +879,7 @@ function AnnouncementRow({
           <Byline
             name={post.author}
             detail={ROLES[post.author]}
-            avatarSize="tiny"
+            avatarSize="xsm"
           />
           <StackItem size="fill" />
           <Text type="supporting" color="secondary" hasTabularNumbers>
@@ -918,7 +918,7 @@ function QuestionRow({
             <AnonBadge />
           ) : (
             <HStack gap={1} vAlign="center">
-              <Avatar name={question.author} size="tiny" />
+              <Avatar name={question.author} size="xsm" />
               <Text type="supporting" color="secondary">
                 {question.author}
               </Text>
@@ -953,7 +953,7 @@ function QuestionRow({
               <Byline
                 name={question.answer.by}
                 detail={`${ROLES[question.answer.by]} · ${question.answer.whenLabel}`}
-                avatarSize="tiny"
+                avatarSize="xsm"
               />
               <Text type="supporting" color="secondary">
                 {question.answer.text}
@@ -1366,4 +1366,3 @@ export default function TownhallAnnouncementsTemplate() {
     </div>
   );
 }
-

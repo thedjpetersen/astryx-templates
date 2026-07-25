@@ -795,7 +795,7 @@ function PresenceAvatar({member}: {member: FacepileMember}) {
           ...styles.presenceWrap,
           boxShadow: `0 0 0 2px var(--color-background-surface), 0 0 0 4px ${tone.color}`,
         }}>
-        <Avatar name={member.name} size="small" />
+        <Avatar name={member.name} size="md" />
         <span
           aria-hidden
           style={{...styles.presenceDot, backgroundColor: tone.color}}
@@ -937,7 +937,7 @@ function MeetingRow({
       </StackItem>
       {isCompact ? null : (
         <AvatarGroup
-          size="xsmall"
+          size="sm"
           aria-label={`${meeting.attendees.length} attending`}>
           {meeting.attendees.slice(0, 2).map(person => (
             <Avatar key={person} name={person} />
@@ -992,7 +992,7 @@ function TodayStrip({
           <Icon icon={PlaneIcon} size="xsm" color="inherit" />
         </span>
         <span style={styles.rowLead}>
-          <Avatar name={WHOS_OUT.name} size="tiny" />
+          <Avatar name={WHOS_OUT.name} size="xsm" />
         </span>
         <StackItem size="fill">
           <Text type="supporting" size="xsm" color="secondary">
@@ -1083,7 +1083,7 @@ function ActivityRow({item}: {item: ActivityItem}) {
         title={meta.label}>
         <Icon icon={meta.icon} size="xsm" color="inherit" />
       </span>
-      <Avatar name={item.actor} size="xsmall" />
+      <Avatar name={item.actor} size="sm" />
       <StackItem size="fill">
         <VStack gap={0}>
           <HStack gap={2} vAlign="center">
@@ -1215,7 +1215,7 @@ function GoalBarRow({goal}: {goal: GoalBar}) {
   return (
     <VStack gap={1}>
       <HStack gap={2} vAlign="center">
-        <Avatar name={goal.owner} size="tiny" />
+        <Avatar name={goal.owner} size="xsm" />
         <StackItem size="fill">
           <Text type="body" size="sm" maxLines={2}>
             {goal.title}

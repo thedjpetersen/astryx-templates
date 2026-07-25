@@ -581,7 +581,7 @@ function DeviceCell({device}: {device: DeviceRow}) {
 function AssigneeCell({device}: {device: DeviceRow}) {
   return (
     <HStack gap={2} vAlign="center">
-      <Avatar name={device.assignee} size="xsmall" />
+      <Avatar name={device.assignee} size="sm" />
       <StackItem size="fill" style={{minWidth: 0}}>
         <VStack gap={0}>
           <Text type="body" maxLines={1}>
@@ -857,7 +857,7 @@ function AssigneeSummary({device}: {device: DeviceRow}) {
     <VStack gap={2}>
       <Text type="label">Assigned to</Text>
       <HStack gap={2} vAlign="center">
-        <Avatar name={device.assignee} size="small" />
+        <Avatar name={device.assignee} size="md" />
         <StackItem size="fill" style={{minWidth: 0}}>
           <VStack gap={0}>
             <Text type="body" maxLines={1}>

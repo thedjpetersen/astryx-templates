@@ -802,7 +802,7 @@ export default function ThreadedForumTopicTemplate() {
       <Card padding={3} style={styles.composerCard}>
         <VStack gap={2}>
           <HStack gap={2} vAlign="center">
-            <Avatar name={USERS[CURRENT_USER_ID].name} size="xsmall" />
+            <Avatar name={USERS[CURRENT_USER_ID].name} size="sm" />
             <StackItem size="fill">
               <Text type="label">Replying to {replyingTo}</Text>
             </StackItem>
@@ -905,7 +905,7 @@ export default function ThreadedForumTopicTemplate() {
     const descendants = countDescendants(reply.id, childrenMap);
     return (
       <HStack gap={2} vAlign="center" style={styles.metaWrap}>
-        <Avatar name={author.name} size="xsmall" />
+        <Avatar name={author.name} size="sm" />
         <Text type="body" weight="semibold">
           {author.name}
         </Text>
@@ -1203,7 +1203,7 @@ export default function ThreadedForumTopicTemplate() {
   const topicPost = (
     <VStack gap={2}>
       <HStack gap={2} vAlign="center" style={styles.metaWrap}>
-        <Avatar name={USERS.lena.name} size="xsmall" />
+        <Avatar name={USERS.lena.name} size="sm" />
         <Text type="body" weight="semibold">
           {USERS.lena.name}
         </Text>
@@ -1288,7 +1288,7 @@ export default function ThreadedForumTopicTemplate() {
           const roleBadge = ROLE_BADGE[user.role];
           return (
             <HStack key={userId} gap={2} vAlign="center">
-              <Avatar name={user.name} size="xsmall" />
+              <Avatar name={user.name} size="sm" />
               <StackItem size="fill">
                 <HStack gap={1} vAlign="center" style={styles.metaWrap}>
                   <Text type="supporting" weight="semibold" maxLines={1}>

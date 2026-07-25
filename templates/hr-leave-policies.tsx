@@ -907,7 +907,7 @@ const SCHEDULE_COLUMNS: TableColumn<TenureBand>[] = [
 function AffectedEmployeeRow({employee}: {employee: AffectedEmployee}) {
   return (
     <HStack gap={2} vAlign="center" style={styles.affectedRow}>
-      <Avatar name={employee.name} size="small" />
+      <Avatar name={employee.name} size="md" />
       <StackItem size="fill" style={{minWidth: 0}}>
         <VStack gap={0}>
           <Text type="label" maxLines={1}>
@@ -1604,7 +1604,7 @@ export default function HrLeavePoliciesTemplate() {
           ) : null}
         </HStack>
         <HStack gap={2} vAlign="center">
-          <Avatar name={CURRENT_USER} size="small" />
+          <Avatar name={CURRENT_USER} size="md" />
           {!isCompact && (
             <VStack gap={0}>
               <Text type="label" size="sm">

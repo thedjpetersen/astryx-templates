@@ -926,7 +926,7 @@ function QueuePanel({
                   key={request.id}
                   label={request.subject}
                   description={`${request.id} · ${request.requester} · ${request.team}`}
-                  startContent={<Avatar name={request.requester} size="small" />}
+                  startContent={<Avatar name={request.requester} size="md" />}
                   endContent={
                     <div style={styles.queueEndCol}>
                       <HStack gap={1} vAlign="center">
@@ -1006,7 +1006,7 @@ function DetailHeader({request, status, statusNote, isPhone, onBack}: DetailHead
       </div>
       <div style={styles.detailMetaRow}>
         <HStack gap={1} vAlign="center">
-          <Avatar name={request.requester} size="small" />
+          <Avatar name={request.requester} size="md" />
           <Text size="sm">{request.requester}</Text>
           <Text type="supporting" size="sm" color="secondary">· {request.team}</Text>
         </HStack>

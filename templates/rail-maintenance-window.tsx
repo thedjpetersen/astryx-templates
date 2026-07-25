@@ -1710,7 +1710,7 @@ export default function RailMaintenanceWindowTemplate() {
                   </Text>
                 </HStack>
               )}
-              <Avatar name={PLANNER.name} size="small" />
+              <Avatar name={PLANNER.name} size="md" />
             </div>
           </LayoutHeader>
         }

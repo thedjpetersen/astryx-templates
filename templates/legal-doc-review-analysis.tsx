@@ -1312,7 +1312,7 @@ export default function LegalDocReviewAnalysisTemplate() {
       content={DEAL_TEAM.map(person => `${person.name} — ${person.role}`).join(
         ' · ',
       )}>
-      <AvatarGroup size="xsmall" aria-label="Deal team">
+      <AvatarGroup size="sm" aria-label="Deal team">
         {DEAL_TEAM.map(person => (
           <Avatar key={person.name} name={person.name} />
         ))}

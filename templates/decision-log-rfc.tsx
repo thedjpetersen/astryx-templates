@@ -688,7 +688,7 @@ function DecisionList({
           key={decision.id}
           label={decision.title}
           description={`${decision.id} · ${decision.driver} · ${decision.updatedLabel}`}
-          startContent={<Avatar name={decision.driver} size="small" />}
+          startContent={<Avatar name={decision.driver} size="md" />}
           endContent={
             <VStack gap={1} hAlign="end">
               <Token
@@ -798,7 +798,7 @@ function StanceTile({
   return (
     <div style={styles.stanceTile}>
       <HStack gap={2} vAlign="center">
-        <Avatar name={stance.name} size="small" />
+        <Avatar name={stance.name} size="md" />
         <StackItem size="fill">
           <VStack gap={0}>
             <Text type="label">{stance.name}</Text>
@@ -909,7 +909,7 @@ function CommentThread({
         </HStack>
         {comments.entries.map(entry => (
           <HStack key={entry.id} gap={2} vAlign="start">
-            <Avatar name={entry.author} size="small" />
+            <Avatar name={entry.author} size="md" />
             <StackItem size="fill">
               <VStack gap={1}>
                 <HStack gap={2} vAlign="center" wrap="wrap">

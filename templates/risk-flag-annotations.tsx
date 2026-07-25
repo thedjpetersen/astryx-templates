@@ -724,7 +724,7 @@ function SuppressedAuditChip() {
           </div>
         </div>
         <div style={styles.auditActorRow}>
-          <Avatar name={SUPPRESSION.actor} size="tiny" />
+          <Avatar name={SUPPRESSION.actor} size="xsm" />
           {/* Text renders inline — each line needs its own block wrapper or
               the audit line and reason concatenate ("…Vossreason:"). */}
           <div style={styles.auditBody}>

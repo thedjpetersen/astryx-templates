@@ -1256,7 +1256,7 @@ export default function CrmContactRecordTemplate() {
         size="sm"
         onClick={() => {}}
       />
-      <Avatar name={CONTACT_NAME} size="small" />
+      <Avatar name={CONTACT_NAME} size="md" />
       <VStack gap={0}>
         <HStack gap={2} vAlign="center">
           <Heading level={1}>{CONTACT_NAME}</Heading>
@@ -1287,7 +1287,7 @@ export default function CrmContactRecordTemplate() {
           <Text type="supporting" color="secondary">
             {CONTACT_TITLE} · {COMPANY_NAME}
           </Text>
-          <Avatar name={OWNER_NAME} size="tiny" />
+          <Avatar name={OWNER_NAME} size="xsm" />
           <Text type="supporting" color="secondary">
             Owner: {OWNER_NAME}
           </Text>

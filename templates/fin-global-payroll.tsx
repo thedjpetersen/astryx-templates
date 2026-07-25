@@ -1176,7 +1176,7 @@ function ExpansionCard({onOpenRequest}: {onOpenRequest: () => void}) {
       </VStack>
       <div style={styles.noteQuote}>
         <HStack gap={2} vAlign="start">
-          <Avatar name="Elena Voss" size="xsmall" />
+          <Avatar name="Elena Voss" size="sm" />
           <Text type="supporting" color="secondary">
             {EXPANSION.financeNote}
           </Text>

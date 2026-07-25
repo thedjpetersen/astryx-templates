@@ -557,7 +557,7 @@ function WidgetBody({widget}: {widget: Widget}) {
         <VStack gap={3}>
           {widget.entries.map(entry => (
             <HStack key={entry.id} gap={2} vAlign="start">
-              <Avatar name={entry.actor} size="xsmall" />
+              <Avatar name={entry.actor} size="sm" />
               <StackItem size="fill">
                 <VStack gap={0.5}>
                   <Text type="body" maxLines={2}>

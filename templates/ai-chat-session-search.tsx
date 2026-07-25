@@ -680,7 +680,7 @@ export default function AiChatSessionSearchTemplate() {
               onClick={() => setIsSearchOpen(true)}>
               Search history
             </Button>
-            <Avatar name="Priya Nair" size="small" />
+            <Avatar name="Priya Nair" size="md" />
           </HStack>
         </LayoutHeader>
       }
@@ -711,7 +711,7 @@ export default function AiChatSessionSearchTemplate() {
                 </ChatMessage>
                 <ChatMessage
                   sender="assistant"
-                  avatar={<Avatar name={ASSISTANT_NAME} size="small" />}>
+                  avatar={<Avatar name={ASSISTANT_NAME} size="md" />}>
                   <ChatMessageBubble name={ASSISTANT_NAME}>
                     Paused the canary at 25% and staged a rollback to build
                     4127. Before I pull the trigger — we handled a nearly

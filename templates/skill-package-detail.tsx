@@ -792,7 +792,7 @@ export default function SkillPackageDetailTemplate() {
           </HStack>
           <Text color="secondary">{SKILL_DESCRIPTION}</Text>
           <HStack gap={2} vAlign="center" style={styles.metaWrap}>
-            <Avatar name={SKILL_OWNER} size="tiny" />
+            <Avatar name={SKILL_OWNER} size="xsm" />
             <Text type="supporting" color="secondary">
               {SKILL_OWNER}
             </Text>

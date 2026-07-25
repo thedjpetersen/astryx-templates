@@ -855,7 +855,7 @@ function MessageBlock({message}: {message: ThreadMessage}) {
       gap={2}
       vAlign="end"
       style={isAgent ? styles.bubbleRowAgent : styles.bubbleRowCustomer}>
-      {!isAgent && <Avatar name={message.author} size="small" />}
+      {!isAgent && <Avatar name={message.author} size="md" />}
       <VStack gap={1}>
         <div style={isAgent ? styles.bubbleAgent : styles.bubbleCustomer}>
           <VStack gap={1}>
@@ -879,7 +879,7 @@ function MessageBlock({message}: {message: ThreadMessage}) {
           </VStack>
         </div>
       </VStack>
-      {isAgent && <Avatar name={message.author} size="small" />}
+      {isAgent && <Avatar name={message.author} size="md" />}
     </HStack>
   );
 }
@@ -888,7 +888,7 @@ function MessageBlock({message}: {message: ThreadMessage}) {
 function TypingIndicator({name}: {name: string}) {
   return (
     <HStack gap={2} vAlign="end" style={styles.bubbleRowCustomer}>
-      <Avatar name={name} size="small" />
+      <Avatar name={name} size="md" />
       <div style={styles.typingBubble} aria-label={`${name} is typing`}>
         <StatusDot variant="accent" isPulsing label="Typing" />
         <Text type="supporting" color="secondary">
@@ -1224,7 +1224,7 @@ export default function SupportChatCopilotTemplate() {
               onClick={() => setIsRailShownOnMobile(true)}
             />
           )}
-          <Avatar name={selected.customer} size="medium" />
+          <Avatar name={selected.customer} size="lg" />
           <StackItem size="fill" style={styles.headerTitle}>
             <VStack gap={0}>
               <Heading level={2} maxLines={1}>
@@ -1511,7 +1511,7 @@ export default function SupportChatCopilotTemplate() {
           <Card padding={3}>
             <VStack gap={2}>
               <HStack gap={2} vAlign="center">
-                <Avatar name={selected.customer} size="small" />
+                <Avatar name={selected.customer} size="md" />
                 <StackItem size="fill">
                   <VStack gap={0}>
                     <Text type="supporting" weight="semibold" maxLines={1}>

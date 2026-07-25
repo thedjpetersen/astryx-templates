@@ -1447,7 +1447,7 @@ function ApprovalStepRow({step, isLast}: {step: ApprovalStep; isLast: boolean}) 
       <StackItem size="fill" style={{minWidth: 0, paddingBottom: isLast ? 0 : 12}}>
         <HStack gap={2} vAlign="center">
           {step.name === 'System' ? null : (
-            <Avatar name={step.name} size="xsmall" />
+            <Avatar name={step.name} size="sm" />
           )}
           <StackItem size="fill" style={{minWidth: 0}}>
             <VStack gap={0}>

@@ -2132,7 +2132,7 @@ export default function FeatureAdoptionCohortTemplate() {
               <span style={{flex: 1}} aria-hidden />
               {/* Top-right corner: derived activation stat + PM avatar. */}
               <span className="fac-header-stat">{activationLine}</span>
-              <Avatar name={PEOPLE.mara.name} size="small" />
+              <Avatar name={PEOPLE.mara.name} size="md" />
             </div>
           </LayoutHeader>
         }

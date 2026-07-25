@@ -1078,7 +1078,7 @@ export default function ExpenseApprovalQueueTemplate() {
   // ---- queue pane ----
   const queueRowStart = (report: ExpenseReport) => {
     if (activeTab !== 'pending') {
-      return <Avatar name={report.submitter} size="small" />;
+      return <Avatar name={report.submitter} size="md" />;
     }
     const clean = isClean(report);
     return (
@@ -1109,7 +1109,7 @@ export default function ExpenseApprovalQueueTemplate() {
             onChange={checked => toggleChecked(report.id, checked)}
           />
         </div>
-        <Avatar name={report.submitter} size="small" />
+        <Avatar name={report.submitter} size="md" />
       </HStack>
     );
   };
@@ -1443,7 +1443,7 @@ export default function ExpenseApprovalQueueTemplate() {
                 onClick={() => setIsDetailShownOnMobile(false)}
               />
             )}
-            <Avatar name={selected.submitter} size="small" />
+            <Avatar name={selected.submitter} size="md" />
             <StackItem size="fill" style={styles.headerTitle}>
               <VStack gap={0}>
                 <Heading level={2} maxLines={1}>

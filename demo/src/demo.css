@@ -241,6 +241,13 @@ button:focus-visible,
   margin-top: 20px;
 }
 
+.template-nav section {
+  /* The detail rail contains the complete catalog. Skip layout and paint for
+     offscreen categories while retaining native scrolling and find-in-page. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
+
 .template-nav h2 {
   margin: 0 0 8px;
   color: var(--color-text-secondary);
@@ -285,7 +292,11 @@ button:focus-visible,
 }
 
 .template-nav-item small {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   margin-top: 4px;
+  overflow: hidden;
   color: var(--color-text-secondary);
   font-size: 12px;
   line-height: 1.35;
@@ -323,6 +334,7 @@ button:focus-visible,
 
 .demo-toolbar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
@@ -332,7 +344,15 @@ button:focus-visible,
 }
 
 .template-heading {
+  flex: 1 1 320px;
   min-width: 0;
+}
+
+.template-heading > p:not(.template-note) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }
 
 /* Breadcrumb back to the scoped browse view — same eyebrow type as the old
@@ -413,8 +433,12 @@ button:focus-visible,
 
 .toolbar-controls {
   display: flex;
-  flex-shrink: 0;
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 10px;
+  min-width: 0;
+  margin-left: auto;
 }
 
 /* Prev/next template pager: same pill language as .segmented. */
@@ -785,13 +809,6 @@ iframe.template-stage-mobile {
 
   /* Clamp long registry descriptions behind the More toggle; the requires
      note (.template-note) must stay fully visible. */
-  .template-heading > p:not(.template-note) {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
-  }
-
   .template-heading.is-expanded > p:not(.template-note) {
     -webkit-line-clamp: unset;
     display: block;

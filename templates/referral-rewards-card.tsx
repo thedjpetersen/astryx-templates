@@ -540,7 +540,7 @@ function FriendRow({
   const badge = STATUS_BADGE[friend.status];
   return (
     <HStack gap={3} vAlign="center">
-      <Avatar name={friend.name} size="small" />
+      <Avatar name={friend.name} size="md" />
       <StackItem size="fill" style={styles.friendMeta}>
         <VStack gap={0}>
           <Text size="sm" maxLines={1}>

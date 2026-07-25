@@ -670,7 +670,7 @@ function VerifiedByCell({verifiedBy}: {verifiedBy: Verification | null}) {
   }
   return (
     <HStack gap={2} vAlign="center">
-      <Avatar name={verifiedBy.name} size="xsmall" />
+      <Avatar name={verifiedBy.name} size="sm" />
       <VStack gap={0}>
         <Text type="supporting" size="sm" maxLines={1}>
           {verifiedBy.name}

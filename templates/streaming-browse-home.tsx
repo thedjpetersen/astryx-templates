@@ -880,7 +880,7 @@ export default function StreamingBrowseHomeTemplate() {
                     variant="ghost"
                     size="sm"
                   />
-                  <Avatar name="Dana Whitfield" size="small" />
+                  <Avatar name="Dana Whitfield" size="md" />
                 </HStack>
               </HStack>
             </nav>

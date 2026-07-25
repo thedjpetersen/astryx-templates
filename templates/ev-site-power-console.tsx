@@ -2208,7 +2208,7 @@ export default function EvSitePowerConsoleTemplate() {
                   <TariffChip tariff={tariff} onCycle={cycleTariff} showRate={showTariffRate} />
                   <Tooltip content="Rosa Amaya · shift operator">
                     <span style={{flexShrink: 0}}>
-                      <Avatar name="Rosa Amaya" size="small" />
+                      <Avatar name="Rosa Amaya" size="md" />
                     </span>
                   </Tooltip>
                 </div>

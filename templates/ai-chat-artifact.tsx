@@ -355,7 +355,7 @@ function TranscriptEntry({
     <ChatMessage
       sender={message.sender}
       avatar={
-        isSelf ? undefined : <Avatar name={USERS.assistant.name} size="small" />
+        isSelf ? undefined : <Avatar name={USERS.assistant.name} size="md" />
       }>
       <ChatMessageBubble
         name={isSelf ? undefined : USERS.assistant.name}

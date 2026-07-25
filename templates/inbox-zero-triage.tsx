@@ -620,7 +620,7 @@ function EmailFace({email}: {email: EmailFixture}) {
   return (
     <>
       <div style={styles.senderRow}>
-        <Avatar name={email.sender} size="xsmall" />
+        <Avatar name={email.sender} size="sm" />
         <span style={styles.senderName}>{email.sender}</span>
         <span style={styles.emailTime}>{email.time}</span>
       </div>

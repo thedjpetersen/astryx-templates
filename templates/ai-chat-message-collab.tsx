@@ -610,7 +610,7 @@ function CommentThreadCard({thread}: {thread: CommentThread}) {
         {thread.comments.map(comment => (
           <VStack key={comment.id} gap={1}>
             <HStack gap={2} vAlign="center">
-              <Avatar name={comment.author} size="xsmall" />
+              <Avatar name={comment.author} size="sm" />
               <StackItem size="fill">
                 <Text type="label" size="sm">
                   {comment.author}
@@ -641,7 +641,7 @@ function CommentThreadCard({thread}: {thread: CommentThread}) {
             renderItem={item => (
               <TypeaheadItem
                 item={item}
-                icon={<Avatar name={item.label} size="xsmall" />}
+                icon={<Avatar name={item.label} size="sm" />}
                 description={item.auxiliaryData?.description}
               />
             )}
@@ -743,7 +743,7 @@ export default function AiChatMessageCollabTemplate() {
                 )}
               </HStack>
             </StackItem>
-            <AvatarGroup size="small" aria-label="Session participants">
+            <AvatarGroup size="md" aria-label="Session participants">
               {PARTICIPANTS.map(person => (
                 <Avatar key={person.id} name={person.name} />
               ))}
@@ -810,7 +810,7 @@ export default function AiChatMessageCollabTemplate() {
                             sender={message.sender}
                             avatar={
                               message.sender === 'assistant' ? (
-                                <Avatar name={ASSISTANT_NAME} size="small" />
+                                <Avatar name={ASSISTANT_NAME} size="md" />
                               ) : undefined
                             }>
                             <ChatMessageBubble

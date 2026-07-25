@@ -934,7 +934,7 @@ function EmployeeTile({
         aria-pressed={isSelected}
         aria-label={`${person.name}, ${person.role} — open review packet`}
         onClick={() => onSelect(person.id)}>
-        <Avatar name={person.name} size="xsmall" />
+        <Avatar name={person.name} size="sm" />
         <div style={styles.tileName}>
           <Text type="body" maxLines={1}>
             {person.name}
@@ -1084,7 +1084,7 @@ function RosterRow({
       aria-label={`${person.name}, ${person.role} — review ${status.label}, placed in ${CELLS[cellId].label}`}
       onClick={() => onSelect(person.id)}>
       <HStack gap={2} vAlign="start">
-        <Avatar name={person.name} size="xsmall" />
+        <Avatar name={person.name} size="sm" />
         <StackItem size="fill">
           <VStack gap={1}>
             <HStack gap={2} vAlign="center">
@@ -1241,7 +1241,7 @@ function PacketPane({
             </div>
           ) : null}
           <HStack gap={2} vAlign="center">
-            <Avatar name={person.name} size="small" />
+            <Avatar name={person.name} size="md" />
             <StackItem size="fill">
               <VStack gap={1}>
                 <Heading level={2}>{person.name}</Heading>

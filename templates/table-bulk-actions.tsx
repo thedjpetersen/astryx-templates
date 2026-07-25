@@ -320,7 +320,7 @@ const TICKET_COLUMNS: TableColumn<TicketRow>[] = [
     width: proportional(1),
     renderCell: (item: TicketRow) => (
       <HStack gap={2} vAlign="center">
-        <Avatar name={item.requester} size="xsmall" />
+        <Avatar name={item.requester} size="sm" />
         <VStack gap={0}>
           <Text type="body" maxLines={1}>
             {item.requester}
@@ -368,7 +368,7 @@ const TICKET_COLUMNS: TableColumn<TicketRow>[] = [
         </Text>
       ) : (
         <HStack gap={2} vAlign="center">
-          <Avatar name={item.assignee} size="xsmall" />
+          <Avatar name={item.assignee} size="sm" />
           <Text type="body" maxLines={1}>
             {item.assignee}
           </Text>

@@ -334,7 +334,7 @@ function PollCardHeader({chip}: {chip: ReactNode}) {
 function AuthorLine({context}: {context: string}) {
   return (
     <HStack gap={2} vAlign="center">
-      <Avatar name={AUTHOR_NAME} size="xsmall" />
+      <Avatar name={AUTHOR_NAME} size="sm" />
       <Text type="supporting" color="secondary" maxLines={1}>
         {AUTHOR_NAME} · {context}
       </Text>
@@ -372,7 +372,7 @@ function VoterFacepile({option}: {option: PollOption}) {
   const overflow = option.voterNames.length - visible.length;
   return (
     <AvatarGroup
-      size="xsmall"
+      size="sm"
       aria-label={`Voters: ${option.voterNames.join(', ')}`}>
       {visible.map(name => (
         <Avatar key={name} name={name} />

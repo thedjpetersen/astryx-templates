@@ -1903,7 +1903,7 @@ export default function MuseumExhibitConditionLogTemplate() {
                   {rhNow.toFixed(1)}% RH
                 </span>
               </Tooltip>
-              <Avatar name={CONSERVATOR} size="small" />
+              <Avatar name={CONSERVATOR} size="md" />
             </div>
           </LayoutHeader>
         }

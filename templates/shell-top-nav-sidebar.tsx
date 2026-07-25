@@ -550,7 +550,7 @@ export default function ShellTopNavSidebarTemplate() {
           <DropdownMenu
             button={{
               label: `Account: ${CURRENT_USER.name}`,
-              icon: <Avatar name={CURRENT_USER.name} size="xsmall" />,
+              icon: <Avatar name={CURRENT_USER.name} size="sm" />,
               isIconOnly: true,
               variant: 'ghost',
             }}

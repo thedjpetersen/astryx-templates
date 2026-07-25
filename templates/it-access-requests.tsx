@@ -844,7 +844,7 @@ function RequestCell({request}: {request: AccessRequest}) {
 function RequesterCell({request}: {request: AccessRequest}) {
   return (
     <HStack gap={2} vAlign="center">
-      <Avatar name={request.requester} size="xsmall" />
+      <Avatar name={request.requester} size="sm" />
       <StackItem size="fill" style={{minWidth: 0}}>
         <VStack gap={0}>
           <Text type="body" maxLines={1}>
@@ -1261,7 +1261,7 @@ function RequestPanel({
 
           {/* Requester */}
           <HStack gap={2} vAlign="center">
-            <Avatar name={request.requester} size="small" />
+            <Avatar name={request.requester} size="md" />
             <StackItem size="fill" style={{minWidth: 0}}>
               <VStack gap={0}>
                 <Text type="label" maxLines={1}>

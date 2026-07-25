@@ -1114,7 +1114,7 @@ function InitiativeDetail({
       </Card>
 
       <HStack gap={2} vAlign="center">
-        <Avatar name={initiative.owner} size="xsmall" />
+        <Avatar name={initiative.owner} size="sm" />
         <VStack gap={0}>
           <Text type="body" weight="semibold">
             {initiative.owner}

@@ -645,7 +645,7 @@ function StoryCard({
           </HStack>
           <HStack gap={2} vAlign="center">
             <Token label={`${story.points} pts`} color="gray" size="sm" />
-            <Avatar name={story.assignee} size="xsmall" />
+            <Avatar name={story.assignee} size="sm" />
             <StackItem size="fill" />
             <Text type="supporting" color="secondary" hasTabularNumbers>
               {story.id}
@@ -797,7 +797,7 @@ function BacklogRow({
             </HStack>
             <HStack gap={2} vAlign="center">
               <Token label={`${story.points} pts`} color="gray" size="sm" />
-              <Avatar name={story.assignee} size="xsmall" />
+              <Avatar name={story.assignee} size="sm" />
             </HStack>
           </VStack>
         </StackItem>

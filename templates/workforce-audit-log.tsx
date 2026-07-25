@@ -914,7 +914,7 @@ function EventRow({
         </TableCell>
         <TableCell scope="row">
           <HStack gap={2} vAlign="center">
-            <Avatar name={event.actor} size="xsmall" />
+            <Avatar name={event.actor} size="sm" />
             <StackItem size="fill" style={{minWidth: 0}}>
               <VStack gap={0}>
                 <Text type="body" maxLines={1}>

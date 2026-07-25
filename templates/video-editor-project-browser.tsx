@@ -764,9 +764,9 @@ function ProjectCard({
         </Text>
         <HStack gap={2} vAlign="center">
           <StackItem size="fill">
-            <AvatarGroup size="xsmall">
+            <AvatarGroup size="sm">
               {shown.map(name => (
-                <Avatar key={name} name={name} size="xsmall" />
+                <Avatar key={name} name={name} size="sm" />
               ))}
               {overflow > 0 ? <AvatarGroupOverflow count={overflow} /> : null}
             </AvatarGroup>
@@ -1359,9 +1359,9 @@ export default function VideoEditorProjectBrowserTemplate() {
                 <Tooltip content={openProject.collaborators.join(' · ')}>
                   <HStack gap={2} vAlign="center">
                     <Icon icon={UsersIcon} size="sm" color="secondary" />
-                    <AvatarGroup size="small">
+                    <AvatarGroup size="md">
                       {collaboratorsShown.map(name => (
-                        <Avatar key={name} name={name} size="small" />
+                        <Avatar key={name} name={name} size="md" />
                       ))}
                       {collaboratorsOverflow > 0 ? (
                         <AvatarGroupOverflow count={collaboratorsOverflow} />

@@ -1130,7 +1130,7 @@ export default function AgentToolRendererGalleryTemplate() {
                   {/* (a) bash renderer. */}
                   <ChatMessage
                     sender="assistant"
-                    avatar={<Avatar name={ASSISTANT_NAME} size="small" />}>
+                    avatar={<Avatar name={ASSISTANT_NAME} size="md" />}>
                     <ChatMessageBubble name={ASSISTANT_NAME}>
                       Reproduced it — one API test fails exactly the way
                       support describes: the coupon route throws instead of
@@ -1150,7 +1150,7 @@ export default function AgentToolRendererGalleryTemplate() {
                   {/* (b) edit renderer. */}
                   <ChatMessage
                     sender="assistant"
-                    avatar={<Avatar name={ASSISTANT_NAME} size="small" />}>
+                    avatar={<Avatar name={ASSISTANT_NAME} size="md" />}>
                     <ChatMessageBubble name={ASSISTANT_NAME}>
                       The route treated a missing or expired coupon as an
                       internal error. I replaced the catch-all with explicit
@@ -1188,7 +1188,7 @@ export default function AgentToolRendererGalleryTemplate() {
                   {/* (c) image renderer. */}
                   <ChatMessage
                     sender="assistant"
-                    avatar={<Avatar name={ASSISTANT_NAME} size="small" />}>
+                    avatar={<Avatar name={ASSISTANT_NAME} size="md" />}>
                     <ChatMessageBubble name={ASSISTANT_NAME}>
                       Generating the banner art now — a second variation is
                       still rendering while the first is ready for review.
@@ -1206,7 +1206,7 @@ export default function AgentToolRendererGalleryTemplate() {
                   {/* (d) browser renderer. */}
                   <ChatMessage
                     sender="assistant"
-                    avatar={<Avatar name={ASSISTANT_NAME} size="small" />}>
+                    avatar={<Avatar name={ASSISTANT_NAME} size="md" />}>
                     <ChatMessageBubble name={ASSISTANT_NAME}>
                       Drove the checkout page in the browser: the expired
                       coupon now returns a clean 422 message and the new
@@ -1225,7 +1225,7 @@ export default function AgentToolRendererGalleryTemplate() {
                   {/* (e) background process + (f) sub-agents. */}
                   <ChatMessage
                     sender="assistant"
-                    avatar={<Avatar name={ASSISTANT_NAME} size="small" />}>
+                    avatar={<Avatar name={ASSISTANT_NAME} size="md" />}>
                     <ChatMessageBubble name={ASSISTANT_NAME}>
                       Kicked the production build to the background and fanned
                       out review sub-agents while it ran. Security is clean;
@@ -1245,7 +1245,7 @@ export default function AgentToolRendererGalleryTemplate() {
                   {/* (g) error renderer. */}
                   <ChatMessage
                     sender="assistant"
-                    avatar={<Avatar name={ASSISTANT_NAME} size="small" />}>
+                    avatar={<Avatar name={ASSISTANT_NAME} size="md" />}>
                     <ChatMessageBubble name={ASSISTANT_NAME}>
                       One cleanup step was stopped by a guardrail hook before
                       it ran — details below. Nothing was deleted; everything

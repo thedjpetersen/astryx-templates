@@ -917,7 +917,7 @@ function OutTodayStrip() {
           if (out === undefined) return null;
           return (
             <HStack key={person.id} gap={2} vAlign="center" wrap="wrap">
-              <Avatar name={person.name} size="xsmall" />
+              <Avatar name={person.name} size="sm" />
               <Text type="body" maxLines={1}>
                 {person.name}
               </Text>
@@ -1063,7 +1063,7 @@ function PersonCard({
   return (
     <article aria-label={person.name} style={cardStyle}>
       <HStack gap={2} vAlign="center">
-        <Avatar name={person.name} size="small" />
+        <Avatar name={person.name} size="md" />
         <StackItem size="fill" style={{minWidth: 0}}>
           <VStack gap={0}>
             <HStack gap={2} vAlign="center">
@@ -1168,7 +1168,7 @@ function TrayPersonChip({
   const localNow = NOW_PT + person.tzOffset;
   return (
     <span style={styles.trayPersonRow}>
-      <Avatar name={person.name} size="xsmall" />
+      <Avatar name={person.name} size="sm" />
       <Text type="supporting" maxLines={1}>
         {person.name}
       </Text>

@@ -921,9 +921,9 @@ function MeetingCard({meeting, isJoined, onJoin}: MeetingCardProps): ReactNode {
       <HStack gap={2} vAlign="center">
         <StackItem size="fill">
           <HStack gap={2} vAlign="center">
-            <AvatarGroup size="xsmall" aria-label={`${meeting.title} attendees`}>
+            <AvatarGroup size="sm" aria-label={`${meeting.title} attendees`}>
               {meeting.attendees.map(name => (
-                <Avatar key={name} name={name} size="xsmall" />
+                <Avatar key={name} name={name} size="sm" />
               ))}
             </AvatarGroup>
             {meeting.overflowCount > 0 ? (
@@ -1283,7 +1283,7 @@ export default function OfficeHomeLauncherTemplate(): ReactNode {
             icon={<Icon icon={SettingsIcon} size="sm" color="inherit" />}
             onClick={() => {}}
           />
-          <Avatar name={CURRENT_USER} size="small" />
+          <Avatar name={CURRENT_USER} size="md" />
         </div>
       </div>
     </LayoutHeader>

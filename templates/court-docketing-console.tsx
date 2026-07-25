@@ -2227,7 +2227,7 @@ function TopBar({band, query, onQueryChange, pendingCount, onOpenIntake}: TopBar
           />
         </div>
       ) : null}
-      <Avatar name="Dorothy Whitcomb" size="small" />
+      <Avatar name="Dorothy Whitcomb" size="md" />
     </div>
   );
 }

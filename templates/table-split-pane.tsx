@@ -481,7 +481,7 @@ function TicketList({
 function ThreadMessage({message}: {message: TicketMessage}) {
   return (
     <HStack gap={3} vAlign="start">
-      <Avatar name={message.author} size="small" />
+      <Avatar name={message.author} size="md" />
       <StackItem size="fill">
         <VStack gap={1}>
           <HStack gap={2} vAlign="center">

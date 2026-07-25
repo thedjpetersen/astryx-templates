@@ -938,7 +938,7 @@ function TranscriptPane({
                   ...styles.segmentRow,
                   ...(isActive ? styles.segmentRowActive : undefined),
                 }}>
-                <Avatar name={seg.speaker} size="small" />
+                <Avatar name={seg.speaker} size="md" />
                 <div style={styles.segmentBody}>
                   <div style={styles.segmentSpeakerRow}>
                     <Text type="body" size="sm" weight="bold">
@@ -1117,7 +1117,7 @@ function ActionItemsCard({
                     </Text>
                     <div style={styles.actionItemMetaRow}>
                       <HStack gap={1} vAlign="center">
-                        <Avatar name={item.assignee} size="tiny" />
+                        <Avatar name={item.assignee} size="xsm" />
                         <Text type="supporting" size="xsm" color="secondary">
                           {item.assignee}
                         </Text>
@@ -1199,7 +1199,7 @@ function AnalyticsCard() {
           </StackItem>
         </HStack>
         <HStack gap={2} vAlign="center" wrap="wrap">
-          <AvatarGroup size="small" aria-label="Attendees">
+          <AvatarGroup size="md" aria-label="Attendees">
             {ATTENDEE_NAMES.slice(0, 6).map(name => (
               <Avatar key={name} name={name} />
             ))}
@@ -1218,7 +1218,7 @@ function AnalyticsCard() {
           {SPEAKERS.map(p => (
             <div key={p.name} style={styles.barRow}>
               <HStack gap={1} vAlign="center">
-                <Avatar name={p.name} size="tiny" />
+                <Avatar name={p.name} size="xsm" />
                 <Text type="supporting" size="xsm" color="primary" maxLines={1}>
                   {p.name.split(' ')[0]}
                 </Text>

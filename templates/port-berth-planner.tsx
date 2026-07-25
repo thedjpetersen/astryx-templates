@@ -1795,7 +1795,7 @@ export default function PortBerthPlannerTemplate() {
                   {formatDelta(totalDelayMin)} vs pro-forma
                 </span>
               </Tooltip>
-              <Avatar name={PLANNER.name} size="small" />
+              <Avatar name={PLANNER.name} size="md" />
             </div>
           </LayoutHeader>
         }

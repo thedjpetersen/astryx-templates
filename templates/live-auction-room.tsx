@@ -918,7 +918,7 @@ function PresenceSection({
                   ...styles.presenceRing,
                   border: `2px solid ${bidder.color}`,
                 }}>
-                <Avatar name={bidder.name} size="xsmall" />
+                <Avatar name={bidder.name} size="sm" />
               </span>
             </Tooltip>
           );
@@ -929,7 +929,7 @@ function PresenceSection({
               ...styles.presenceRing,
               border: '2px solid var(--color-accent)',
             }}>
-            <Avatar name="You" size="xsmall" />
+            <Avatar name="You" size="sm" />
           </span>
         </Tooltip>
         {joined.map(name => (
@@ -941,7 +941,7 @@ function PresenceSection({
                   ? undefined
                   : 'lar-join-pop 260ms ease-out',
               }}>
-              <Avatar name={name} size="xsmall" />
+              <Avatar name={name} size="sm" />
             </span>
           </Tooltip>
         ))}

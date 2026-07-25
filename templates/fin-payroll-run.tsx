@@ -744,7 +744,7 @@ function EmployeeCell({
   const chip = rowChip(row, owenWaived, rosaMoved);
   return (
     <HStack gap={2} vAlign="center">
-      <Avatar name={row.name} size="xsmall" />
+      <Avatar name={row.name} size="sm" />
       <StackItem size="fill" style={{minWidth: 0}}>
         <VStack gap={0}>
           <HStack gap={2} vAlign="center">
@@ -980,7 +980,7 @@ function ApproverRow({
 }) {
   return (
     <HStack gap={2} vAlign="center" style={styles.approverCell}>
-      <Avatar name={name} size="small" />
+      <Avatar name={name} size="md" />
       <StackItem size="fill" style={{minWidth: 0}}>
         <VStack gap={0}>
           <Text type="label" size="sm" maxLines={1}>
@@ -1107,7 +1107,7 @@ function OffCycleSection({payments}: {payments: OffCyclePayment[]}) {
           <VStack gap={0} key={payment.id}>
             {index > 0 && <Divider />}
             <div style={styles.offCycleRow}>
-              <Avatar name={payment.payee} size="xsmall" />
+              <Avatar name={payment.payee} size="sm" />
               <StackItem size="fill" style={{minWidth: 200}}>
                 <VStack gap={0}>
                   <HStack gap={2} vAlign="center">

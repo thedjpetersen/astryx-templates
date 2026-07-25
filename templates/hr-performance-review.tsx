@@ -974,7 +974,7 @@ function PeerQuote({item}: {item: PeerFeedback}) {
   return (
     <VStack gap={2}>
       <HStack gap={2} vAlign="center">
-        <Avatar name={item.reviewer} size="small" />
+        <Avatar name={item.reviewer} size="md" />
         <StackItem size="fill" style={{minWidth: 0}}>
           <VStack gap={0}>
             <Text type="label" size="sm" maxLines={1}>
@@ -1002,7 +1002,7 @@ function PeerQuote({item}: {item: PeerFeedback}) {
 function PeerPending({item}: {item: PeerFeedback}) {
   return (
     <div style={styles.pendingBlock}>
-      <Avatar name={item.reviewer} size="small" />
+      <Avatar name={item.reviewer} size="md" />
       <StackItem size="fill" style={{minWidth: 0}}>
         <VStack gap={0}>
           <HStack gap={2} vAlign="center">
@@ -1143,7 +1143,7 @@ function ReportsRail({
       <div style={styles.railScroll}>
         <VStack gap={1}>
           <HStack gap={2} vAlign="center" style={{padding: 'var(--spacing-1) var(--spacing-2)'}}>
-            <Avatar name={MANAGER} size="small" />
+            <Avatar name={MANAGER} size="md" />
             <VStack gap={0}>
               <Text type="label" size="sm">
                 {MANAGER}
@@ -1164,7 +1164,7 @@ function ReportsRail({
                   description={`${report.role} · ${report.office}`}
                   isSelected={report.id === activeId}
                   onClick={() => onSelect(report.id)}
-                  startContent={<Avatar name={report.name} size="small" />}
+                  startContent={<Avatar name={report.name} size="md" />}
                   endContent={<Badge variant={meta.badge} label={meta.label} />}
                 />
               );
@@ -1229,7 +1229,7 @@ function SubjectHeader({
             column wraps the tokens below instead of orphaning the avatar. */}
         <StackItem size="fill" style={{minWidth: 260}}>
           <HStack gap={3} vAlign="center">
-            <Avatar name={report.name} size="medium" />
+            <Avatar name={report.name} size="lg" />
             <StackItem size="fill" style={{minWidth: 0}}>
               <VStack gap={0}>
                 <Heading level={2}>{report.name}</Heading>

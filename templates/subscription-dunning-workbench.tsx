@@ -2019,7 +2019,7 @@ export default function SubscriptionDunningWorkbench() {
                 </Text>
               ) : null}
             </span>
-            <Avatar size="small" name={OPERATOR.name} alt={`${OPERATOR.name}, ${OPERATOR.role}`} />
+            <Avatar size="md" name={OPERATOR.name} alt={`${OPERATOR.name}, ${OPERATOR.role}`} />
           </div>
         </LayoutHeader>
         <LayoutContent>

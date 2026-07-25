@@ -620,7 +620,7 @@ function MessageRow({
     <div style={styles.profileBody}>
       <VStack gap={2}>
         <HStack gap={2} vAlign="center">
-          <Avatar name={displayName(message.author)} size="small" />
+          <Avatar name={displayName(message.author)} size="md" />
           <StackItem size="fill">
             <VStack gap={0}>
               <HStack gap={1} vAlign="center">
@@ -804,7 +804,7 @@ function DetailsPanel({
                 key={userId}
                 label={displayName(userId)}
                 description={USERS[userId].tagline}
-                startContent={<Avatar name={displayName(userId)} size="xsmall" />}
+                startContent={<Avatar name={displayName(userId)} size="sm" />}
                 endContent={
                   USERS[userId].role === 'host' ? (
                     <Token label="Host" size="sm" color="orange" />

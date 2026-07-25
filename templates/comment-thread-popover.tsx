@@ -563,7 +563,7 @@ function CommentRow({
   const author = PEOPLE[comment.author];
   return (
     <HStack gap={2} vAlign="start">
-      <Avatar name={author.name} size="xsmall" />
+      <Avatar name={author.name} size="sm" />
       <StackItem size="fill" style={styles.metaRow}>
         <VStack gap={1}>
           <HStack gap={2} vAlign="center" wrap="wrap">
@@ -614,7 +614,7 @@ function MentionRow({person, isActive}: {person: Person; isActive: boolean}) {
           ? {...styles.mentionRow, ...styles.mentionRowActive}
           : styles.mentionRow
       }>
-      <Avatar name={person.name} size="xsmall" />
+      <Avatar name={person.name} size="sm" />
       <StackItem size="fill" style={styles.mentionText}>
         <VStack gap={0}>
           <Text size="sm" maxLines={1}>
@@ -723,7 +723,7 @@ function OpenThreadSpecimen() {
             </VStack>
           </div>
           <HStack gap={2} vAlign="start">
-            <Avatar name={PEOPLE[CURRENT_USER].name} size="xsmall" />
+            <Avatar name={PEOPLE[CURRENT_USER].name} size="sm" />
             <StackItem size="fill" style={styles.metaRow}>
               <TextArea
                 label="Reply to thread"
@@ -813,7 +813,7 @@ function NewCommentSpecimen() {
       <PopoverShell caretLeft={96}>
         <div style={styles.composer}>
           <HStack gap={2} vAlign="start">
-            <Avatar name={PEOPLE[CURRENT_USER].name} size="xsmall" />
+            <Avatar name={PEOPLE[CURRENT_USER].name} size="sm" />
             <StackItem size="fill" style={styles.metaRow}>
               <TextArea
                 label="New comment"

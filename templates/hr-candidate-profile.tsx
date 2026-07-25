@@ -1008,7 +1008,7 @@ function ResumeCard() {
 function LoopRow({interview, isCompact}: {interview: LoopInterview; isCompact: boolean}) {
   return (
     <HStack gap={3} vAlign="center" wrap={isCompact ? 'wrap' : undefined}>
-      <Avatar name={interview.interviewer} size="small" />
+      <Avatar name={interview.interviewer} size="md" />
       <StackItem size="fill" style={{minWidth: 180}}>
         <VStack gap={0}>
           <Text type="label" maxLines={1}>
@@ -1118,7 +1118,7 @@ function ScorecardDetail({
       }>
       <VStack gap={3}>
         <HStack gap={3} vAlign="center" wrap="wrap">
-          <Avatar name={card.interviewer} size="small" />
+          <Avatar name={card.interviewer} size="md" />
           <StackItem size="fill" style={{minWidth: 200}}>
             <VStack gap={0}>
               <Text type="label" maxLines={1}>
@@ -1265,7 +1265,7 @@ function OfferPrepCard() {
           <Text type="label">Approval chain</Text>
           {APPROVAL_CHAIN.map(step => (
             <HStack key={step.id} gap={2} vAlign="center">
-              <Avatar name={step.approver} size="xsmall" />
+              <Avatar name={step.approver} size="sm" />
               <StackItem size="fill" style={{minWidth: 0}}>
                 <VStack gap={0}>
                   <Text type="supporting" maxLines={1}>
@@ -1340,7 +1340,7 @@ function IdentityBand({isCompact}: {isCompact: boolean}) {
   return (
     <VStack gap={3}>
       <HStack gap={3} vAlign={isCompact ? 'start' : 'center'} wrap="wrap">
-        <Avatar name={CANDIDATE.name} size="large" />
+        <Avatar name={CANDIDATE.name} size="xl" />
         <StackItem size="fill" style={{minWidth: 240}}>
           <VStack gap={1}>
             <HStack gap={2} vAlign="center" wrap="wrap">
@@ -1374,7 +1374,7 @@ function IdentityBand({isCompact}: {isCompact: boolean}) {
           </VStack>
         </StackItem>
         <div style={styles.ownerChip}>
-          <Avatar name={REQ.recruiter} size="xsmall" />
+          <Avatar name={REQ.recruiter} size="sm" />
           <VStack gap={0}>
             <Text type="supporting">{REQ.recruiter}</Text>
             <Text type="supporting" color="secondary">
@@ -1383,7 +1383,7 @@ function IdentityBand({isCompact}: {isCompact: boolean}) {
           </VStack>
         </div>
         <div style={styles.ownerChip}>
-          <Avatar name={REQ.hiringManager} size="xsmall" />
+          <Avatar name={REQ.hiringManager} size="sm" />
           <VStack gap={0}>
             <Text type="supporting">{REQ.hiringManager}</Text>
             <Text type="supporting" color="secondary">

@@ -2599,7 +2599,7 @@ export default function TrialSiteMonitorTemplate() {
               <Text type="supporting" size="xsm" color="secondary" hasTabularNumbers>
                 Verified 28 Jun
               </Text>
-              <Avatar name={PEOPLE.dana.name} size="small" />
+              <Avatar name={PEOPLE.dana.name} size="md" />
             </div>
           </LayoutHeader>
         }

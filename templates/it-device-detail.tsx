@@ -1088,7 +1088,7 @@ function AssigneeCard() {
       <VStack gap={3}>
         <Heading level={2}>Assigned to</Heading>
         <HStack gap={2} vAlign="center">
-          <Avatar name={assignee.name} size="small" />
+          <Avatar name={assignee.name} size="md" />
           <StackItem size="fill" style={{minWidth: 0}}>
             <VStack gap={0}>
               <Text type="label" maxLines={1}>

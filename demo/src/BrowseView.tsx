@@ -426,7 +426,7 @@ export function BrowseView({
                           {t.kind}
                         </em>
                       </div>
-                      <p className="browse-card-desc">
+                      <p className="browse-card-desc" title={t.description}>
                         {highlightTerms(t.description, query)}
                       </p>
                       <div className="browse-card-foot">

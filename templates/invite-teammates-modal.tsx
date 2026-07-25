@@ -546,7 +546,7 @@ function InviteRoleRow({
   return (
     <VStack gap={1}>
       <HStack gap={2} vAlign="center">
-        <Avatar name={chip.name} size="xsmall" />
+        <Avatar name={chip.name} size="sm" />
         <StackItem size="fill" style={styles.roleRowText}>
           <VStack gap={0}>
             <Text size="sm" maxLines={1}>
@@ -712,7 +712,7 @@ function SentRowItem({row}: {row: SentRow}) {
 
   return (
     <HStack gap={2} vAlign="center">
-      <Avatar name={row.name} size="xsmall" />
+      <Avatar name={row.name} size="sm" />
       <StackItem size="fill" style={styles.sentRowText}>
         <VStack gap={0}>
           <Text size="sm" maxLines={1}>

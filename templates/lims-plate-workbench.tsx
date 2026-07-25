@@ -1561,7 +1561,7 @@ export default function LimsPlateWorkbenchTemplate() {
                   released={state.runStatus === 'released'}
                   onRelease={() => store.releaseRun(holdCount)}
                 />
-                <Avatar name={PEOPLE.RIVERA} size="small" />
+                <Avatar name={PEOPLE.RIVERA} size="md" />
               </div>
               {/* Run meta strip (40px filter row) */}
               <div style={styles.metaStrip}>

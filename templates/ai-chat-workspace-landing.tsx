@@ -456,7 +456,7 @@ export default function AiChatWorkspaceLandingTemplate() {
             <Text type="label">{PRODUCT_NAME}</Text>
             <StackItem size="fill" />
             <Button label="New chat" variant="ghost" size="sm" />
-            <Avatar name={USER_NAME} size="small" />
+            <Avatar name={USER_NAME} size="md" />
           </HStack>
         </LayoutHeader>
       }

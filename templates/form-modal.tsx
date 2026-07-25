@@ -237,7 +237,7 @@ const PROJECT_COLUMNS: TableColumn<ProjectRow>[] = [
     width: pixel(160),
     renderCell: (item: ProjectRow) => (
       <HStack gap={2} vAlign="center">
-        <Avatar name={item.lead} size="xsmall" />
+        <Avatar name={item.lead} size="sm" />
         <Text type="body" maxLines={1}>
           {item.lead}
         </Text>
@@ -249,7 +249,7 @@ const PROJECT_COLUMNS: TableColumn<ProjectRow>[] = [
     header: 'Team',
     width: pixel(120),
     renderCell: (item: ProjectRow) => (
-      <AvatarGroup size="xsmall" aria-label={`${item.team.length} teammates`}>
+      <AvatarGroup size="sm" aria-label={`${item.team.length} teammates`}>
         {item.team.slice(0, 3).map(member => (
           <Avatar key={member} name={member} />
         ))}

@@ -1309,7 +1309,7 @@ export default function AiChatComposerSuiteTemplate() {
                   {/* Assistant: checklist drafted. */}
                   <ChatMessage
                     sender="assistant"
-                    avatar={<Avatar name={ASSISTANT_NAME} size="small" />}>
+                    avatar={<Avatar name={ASSISTANT_NAME} size="md" />}>
                     <ChatMessageBubble name={ASSISTANT_NAME}>
                       Checklist drafted — 9 items, 2 blocked on the pending
                       schema migration. I&apos;ll re-check migration status at

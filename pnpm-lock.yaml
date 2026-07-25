@@ -9,11 +9,11 @@ importers:
   .:
     devDependencies:
       '@astryxdesign/cli':
-        specifier: ^0.1.4
-        version: 0.1.4(@astryxdesign/core@0.1.4(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(gpt-tokenizer@2.9.0)
+        specifier: ^0.1.8
+        version: 0.1.8(@astryxdesign/core@0.1.8(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(gpt-tokenizer@3.4.0)
       '@astryxdesign/core':
-        specifier: ^0.1.4
-        version: 0.1.4(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^0.1.8
+        version: 0.1.8(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@stylexjs/stylex':
         specifier: ^0.19.0
         version: 0.19.0
@@ -32,6 +32,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.0.3
         version: 6.0.3(vite@8.1.3(@types/node@25.9.4)(jiti@2.7.0))
+      gpt-tokenizer:
+        specifier: ^3.4.0
+        version: 3.4.0
       lucide-react:
         specifier: ^1.23.0
         version: 1.23.0(react@19.2.7)
@@ -53,15 +56,18 @@ importers:
 
 packages:
 
-  '@astryxdesign/cli@0.1.4':
-    resolution: {integrity: sha512-OIHQEMifssRJnrlOy+bjx22HCKf/SA5XCs6mcGxtRAJj2gjfSkHcO3ctxx7ZeLXW5idpjhYQ0gAG3lRi7Klq2g==}
+  '@astryxdesign/cli@0.1.8':
+    resolution: {integrity: sha512-8q3o415RGZ+UvZ4HVfXJFHB9ehNk6iw3akyvXOe7QFfu3fkKPjRzZZLJaxiiTPUdbxMaf16jOzSjfFaETqEouQ==}
     hasBin: true
     peerDependencies:
+      '@astryxdesign/charts': '*'
       '@astryxdesign/core': '*'
       '@astryxdesign/lab': '*'
       '@astryxdesign/theme-neutral': '*'
-      gpt-tokenizer: ^2.0.0
+      gpt-tokenizer: ^3.4.0
     peerDependenciesMeta:
+      '@astryxdesign/charts':
+        optional: true
       '@astryxdesign/core':
         optional: true
       '@astryxdesign/lab':
@@ -69,10 +75,10 @@ packages:
       '@astryxdesign/theme-neutral':
         optional: true
 
-  '@astryxdesign/core@0.1.4':
-    resolution: {integrity: sha512-pLwdh8Pu4ifgQ3thiaFjzitWzVpGJmyaSgNe2AZnGwGO1E876HY4k7s6m2wDnxbt5kxdSSeu0O6axq1LxUbwEQ==}
+  '@astryxdesign/core@0.1.8':
+    resolution: {integrity: sha512-RviCsKJNPb/mlhn+G9Q+eoFksbTE5Nfay526Kiqjm7I7avxUIsvhNuOmMjybAAseM1o16vZvW1C+hfKAmMd3SA==}
     peerDependencies:
-      '@stylexjs/stylex': ^0.18.3
+      '@stylexjs/stylex': ^0.19.0
       react: '>=19.0.0'
       react-dom: '>=19.0.0'
 
@@ -253,14 +259,6 @@ packages:
     resolution: {integrity: sha512-4zBIxpPzowiZpusoFkyGVwakdRJUyuH5PxQ/PrqghfdFWWasvnCdPfQXHrenDai+gyLARulZjZowCOj6fjT4pA==}
     engines: {node: '>=6.9.0'}
 
-  '@clack/core@1.4.2':
-    resolution: {integrity: sha512-0Ty/1Gfm+Kb07sXcuESjyKfwEhSy4Ns1AgeEisHb/bDY5fWme0tTeTkU14T1Gmcs17YIjB/teiDe4uaCghbYqQ==}
-    engines: {node: '>= 20.12.0'}
-
-  '@clack/prompts@1.6.0':
-    resolution: {integrity: sha512-EYlRokl8szrP9Z25qT5aepMdBjzBvHF9ZEhzIiUBc9guz/T31EqRgvD0QSgZcpE93xiwrr+OkB4nz0BZyF6fSA==}
-    engines: {node: '>= 20.12.0'}
-
   '@dual-bundle/import-meta-resolve@4.2.1':
     resolution: {integrity: sha512-id+7YRUgoUX6CgV0DtuhirQWodeeA7Lf4i2x71JS/vtA5pRb/hIGWlw+G6MeXvsM+MXrz0VAydTGElX1rAfgPg==}
 
@@ -272,6 +270,15 @@ packages:
 
   '@emnapi/wasi-threads@1.2.2':
     resolution: {integrity: sha512-c95qOXkHdydNKhscBTebqEC1CVAZpyqOfVfBzQ1qgzyl3gfeldUjIggDbIZgDKsHLgnsM+igH7TJ/eAasaVuMA==}
+
+  '@formatjs/fast-memoize@3.1.7':
+    resolution: {integrity: sha512-zXfhLpvA6T7+efdt9JLbBwZ00tT7NsBMDVnDu8rpHeNNv8KfRZAMo2gkG0k9lK/Nzc//3kJ9pImsfuJxk3KhUA==}
+
+  '@formatjs/icu-messageformat-parser@3.5.15':
+    resolution: {integrity: sha512-5o4grXKotAB3JqQuisLApHG43g17N+paoRTa92Jiz35Zvfemq0cVf4EDvuxyHAzmsJji7igaEowicLO/VmfJ8Q==}
+
+  '@formatjs/icu-skeleton-parser@2.1.11':
+    resolution: {integrity: sha512-j8cUmOJzVgkHuS0QiQ6ga76UIoLOFSAMWhs7aZJztH3aAdCOAE6vpC8KVvFB4cU10ON0y2/5oOVmPJ43s2lTwA==}
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -573,15 +580,6 @@ packages:
     engines: {node: '>=4'}
     hasBin: true
 
-  fast-string-truncated-width@3.0.3:
-    resolution: {integrity: sha512-0jjjIEL6+0jag3l2XWWizO64/aZVtpiGE3t0Zgqxv0DPuxiMjvB3M24fCyhZUO4KomJQPj3LTSUnDP3GpdwC0g==}
-
-  fast-string-width@3.0.2:
-    resolution: {integrity: sha512-gX8LrtNEI5hq8DVUfRQMbr5lpaS4nMIWV+7XEbXk2b8kiQIizgnlr12B4dA3ZEx3308ze0O4Q1R+cHts8kyUJg==}
-
-  fast-wrap-ansi@0.2.2:
-    resolution: {integrity: sha512-7F2Fl+TjRSenLqlU3UjSH0iyqopqoZIu7eZVpEirP2g1GtWa2G/ecEmBdgz31+Mxr+ELclgg6sokpSFIQiZ02Q==}
-
   fdir@6.5.0:
     resolution: {integrity: sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg==}
     engines: {node: '>=12.0.0'}
@@ -620,8 +618,8 @@ packages:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
     engines: {node: '>=6.9.0'}
 
-  gpt-tokenizer@2.9.0:
-    resolution: {integrity: sha512-YSpexBL/k4bfliAzMrRqn3M6+it02LutVyhVpDeMKrC/O9+pCe/5s8U2hYKa2vFLD5/vHhsKc8sOn/qGqII8Kg==}
+  gpt-tokenizer@3.4.0:
+    resolution: {integrity: sha512-wxFLnhIXTDjYebd9A9pGl3e31ZpSypbpIJSOswbgop5jLte/AsZVDvjlbEuVFlsqZixVKqbcoNmRlFDf6pz/UQ==}
 
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
@@ -638,6 +636,9 @@ packages:
   imurmurhash@0.1.4:
     resolution: {integrity: sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==}
     engines: {node: '>=0.8.19'}
+
+  intl-messageformat@11.2.12:
+    resolution: {integrity: sha512-KW70Xxfcvy7vV3qODfvShWkFDPMqKDAa4N+hSyVBWGNtVhTUFYaqlD/l88DaYPKiVcPP4rPQ3qnH7i5K82Mg7g==}
 
   invariant@2.2.4:
     resolution: {integrity: sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==}
@@ -921,9 +922,6 @@ packages:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
     engines: {node: '>=14'}
 
-  sisteransi@1.0.5:
-    resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
-
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
@@ -1065,23 +1063,23 @@ packages:
 
 snapshots:
 
-  '@astryxdesign/cli@0.1.4(@astryxdesign/core@0.1.4(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(gpt-tokenizer@2.9.0)':
+  '@astryxdesign/cli@0.1.8(@astryxdesign/core@0.1.8(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(gpt-tokenizer@3.4.0)':
     dependencies:
-      '@clack/prompts': 1.6.0
       commander: 12.1.0
-      gpt-tokenizer: 2.9.0
+      gpt-tokenizer: 3.4.0
       jiti: 2.7.0
       jscodeshift: 17.3.0
       zod: 4.4.3
     optionalDependencies:
-      '@astryxdesign/core': 0.1.4(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@astryxdesign/core': 0.1.8(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
     transitivePeerDependencies:
       - '@babel/preset-env'
       - supports-color
 
-  '@astryxdesign/core@0.1.4(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@astryxdesign/core@0.1.8(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@stylexjs/stylex': 0.19.0
+      intl-messageformat: 11.2.12
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
 
@@ -1327,18 +1325,6 @@ snapshots:
       '@babel/helper-string-parser': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
 
-  '@clack/core@1.4.2':
-    dependencies:
-      fast-wrap-ansi: 0.2.2
-      sisteransi: 1.0.5
-
-  '@clack/prompts@1.6.0':
-    dependencies:
-      '@clack/core': 1.4.2
-      fast-string-width: 3.0.2
-      fast-wrap-ansi: 0.2.2
-      sisteransi: 1.0.5
-
   '@dual-bundle/import-meta-resolve@4.2.1': {}
 
   '@emnapi/core@1.11.1':
@@ -1356,6 +1342,14 @@ snapshots:
     dependencies:
       tslib: 2.8.1
     optional: true
+
+  '@formatjs/fast-memoize@3.1.7': {}
+
+  '@formatjs/icu-messageformat-parser@3.5.15':
+    dependencies:
+      '@formatjs/icu-skeleton-parser': 2.1.11
+
+  '@formatjs/icu-skeleton-parser@2.1.11': {}
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
@@ -1610,16 +1604,6 @@ snapshots:
 
   esprima@4.0.1: {}
 
-  fast-string-truncated-width@3.0.3: {}
-
-  fast-string-width@3.0.2:
-    dependencies:
-      fast-string-truncated-width: 3.0.3
-
-  fast-wrap-ansi@0.2.2:
-    dependencies:
-      fast-string-width: 3.0.2
-
   fdir@6.5.0(picomatch@4.0.4):
     optionalDependencies:
       picomatch: 4.0.4
@@ -1649,7 +1633,7 @@ snapshots:
 
   gensync@1.0.0-beta.2: {}
 
-  gpt-tokenizer@2.9.0: {}
+  gpt-tokenizer@3.4.0: {}
 
   graceful-fs@4.2.11: {}
 
@@ -1674,6 +1658,11 @@ snapshots:
   html-void-elements@3.0.0: {}
 
   imurmurhash@0.1.4: {}
+
+  intl-messageformat@11.2.12:
+    dependencies:
+      '@formatjs/fast-memoize': 3.1.7
+      '@formatjs/icu-messageformat-parser': 3.5.15
 
   invariant@2.2.4:
     dependencies:
@@ -1945,8 +1934,6 @@ snapshots:
       '@types/hast': 3.0.4
 
   signal-exit@4.1.0: {}
-
-  sisteransi@1.0.5: {}
 
   source-map-js@1.2.1: {}
 

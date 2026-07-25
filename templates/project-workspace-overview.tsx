@@ -797,7 +797,7 @@ function ProjectHeader({
           <HealthPill />
           <Token size="sm" color="blue" label={PROJECT.phase} />
           <StackItem size="fill" />
-          <AvatarGroup size="xsmall" aria-label="8 project members">
+          <AvatarGroup size="sm" aria-label="8 project members">
             {MEMBERS.map(name => (
               <Avatar key={name} name={name} />
             ))}
@@ -861,7 +861,7 @@ function DescriptionAndGoals() {
                 <HStack gap={2} vAlign="center">
                   <Token size="sm" color="gray" label={goal.due} />
                   <Tooltip content={`Goal owner: ${goal.owner}`}>
-                    <Avatar name={goal.owner} size="xsmall" />
+                    <Avatar name={goal.owner} size="sm" />
                   </Tooltip>
                 </HStack>
               </div>
@@ -1071,7 +1071,7 @@ function WorkstreamCard({stream}: {stream: Workstream}) {
         />
       </HStack>
       <HStack gap={2} vAlign="center">
-        <Avatar name={stream.owner} size="xsmall" />
+        <Avatar name={stream.owner} size="sm" />
         <Text type="supporting" color="secondary">
           {stream.owner}
         </Text>
@@ -1174,7 +1174,7 @@ function RiskRow({risk}: {risk: Risk}) {
       </div>
       <div style={styles.riskOwnerCol}>
         <VStack gap={1} hAlign="center">
-          <Avatar name={risk.mitigationOwner} size="small" />
+          <Avatar name={risk.mitigationOwner} size="md" />
           <Text type="supporting" color="secondary">
             {risk.mitigationOwner}
           </Text>
@@ -1227,7 +1227,7 @@ function DecisionEntry({decision}: {decision: Decision}) {
         {decision.summary}
       </Text>
       <HStack gap={2} vAlign="center">
-        <Avatar name={decision.owner} size="xsmall" />
+        <Avatar name={decision.owner} size="sm" />
         <Text type="supporting" color="secondary" maxLines={1}>
           {decision.owner} · {decision.approvals}
         </Text>

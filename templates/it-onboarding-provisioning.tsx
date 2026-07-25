@@ -1217,7 +1217,7 @@ function RunRow({
       onClick={() => onSelect(run.id)}>
       <VStack gap={1}>
         <HStack gap={2} vAlign="center">
-          <Avatar name={run.hire} size="small" />
+          <Avatar name={run.hire} size="md" />
           <StackItem size="fill">
             <Text type="label" maxLines={1}>
               {run.hire}
@@ -1260,7 +1260,7 @@ function UpcomingRow({
   const body = (
     <VStack gap={1}>
       <HStack gap={2} vAlign="center">
-        <Avatar name={entry.name} size="small" />
+        <Avatar name={entry.name} size="md" />
         <StackItem size="fill">
           <Text type="label" maxLines={1}>
             {entry.name}
@@ -1404,7 +1404,7 @@ function RunHeader({view}: {view: RunView}) {
   const {run, kit} = view;
   return (
     <HStack gap={3} vAlign="center" wrap="wrap">
-      <Avatar name={run.hire} size="medium" />
+      <Avatar name={run.hire} size="lg" />
       <StackItem size="fill">
         <div style={styles.runHeaderMeta}>
           <HStack gap={2} vAlign="center" wrap="wrap">

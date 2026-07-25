@@ -728,13 +728,13 @@ function RailMetadata({isWatching}: {isWatching: boolean}) {
     <MetadataList label={{position: 'start', width: 96}}>
       <MetadataListItem label="Assignee">
         <HStack gap={2} vAlign="center">
-          <Avatar name={ISSUE_ASSIGNEE} size="tiny" />
+          <Avatar name={ISSUE_ASSIGNEE} size="xsm" />
           <Text type="supporting">{ISSUE_ASSIGNEE}</Text>
         </HStack>
       </MetadataListItem>
       <MetadataListItem label="Reporter">
         <HStack gap={2} vAlign="center">
-          <Avatar name={ISSUE_REPORTER} size="tiny" />
+          <Avatar name={ISSUE_REPORTER} size="xsm" />
           <Text type="supporting">{ISSUE_REPORTER}</Text>
         </HStack>
       </MetadataListItem>
@@ -758,9 +758,9 @@ function RailMetadata({isWatching}: {isWatching: boolean}) {
       </MetadataListItem>
       <MetadataListItem label="Watchers">
         <HStack gap={2} vAlign="center">
-          <AvatarGroup size="tiny" aria-label="Watchers">
+          <AvatarGroup size="xsm" aria-label="Watchers">
             {watchers.map(name => (
-              <Avatar key={name} name={name} size="tiny" />
+              <Avatar key={name} name={name} size="xsm" />
             ))}
           </AvatarGroup>
           <Text type="supporting" color="secondary" hasTabularNumbers>
@@ -816,7 +816,7 @@ function CommentCard({
     <Card padding={3}>
       <VStack gap={2}>
         <HStack gap={2} vAlign="center">
-          <Avatar name={comment.author} size="xsmall" />
+          <Avatar name={comment.author} size="sm" />
           <StackItem size="fill">
             <HStack gap={2} vAlign="center" style={styles.metaWrap}>
               <Text type="body" weight="bold">
@@ -843,7 +843,7 @@ function CommentCard({
             {replies.map(reply => (
               <VStack key={reply.id} gap={1}>
                 <HStack gap={2} vAlign="center">
-                  <Avatar name={reply.author} size="xsmall" />
+                  <Avatar name={reply.author} size="sm" />
                   <Text type="supporting" weight="bold">
                     {reply.author}
                   </Text>
@@ -1126,7 +1126,7 @@ export default function IssueDetailTemplate() {
       <Card padding={3}>
         <VStack gap={2}>
           <HStack gap={2} vAlign="center">
-            <Avatar name={CURRENT_USER} size="xsmall" />
+            <Avatar name={CURRENT_USER} size="sm" />
             <Text type="label">Add a comment</Text>
           </HStack>
           <TextArea
@@ -1203,7 +1203,7 @@ export default function IssueDetailTemplate() {
               <VStack gap={2}>
                 <Heading level={1}>{ISSUE_TITLE}</Heading>
                 <HStack gap={2} vAlign="center" style={styles.metaWrap}>
-                  <Avatar name={ISSUE_REPORTER} size="tiny" />
+                  <Avatar name={ISSUE_REPORTER} size="xsm" />
                   <Text type="supporting" color="secondary">
                     Opened by {ISSUE_REPORTER}
                   </Text>

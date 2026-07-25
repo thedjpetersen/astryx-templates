@@ -1050,7 +1050,7 @@ function CommentThreadPin({
               const author = MEMBER[comment.author];
               return (
                 <HStack key={comment.id} gap={2} vAlign="start">
-                  <Avatar name={author.name} size="xsmall" />
+                  <Avatar name={author.name} size="sm" />
                   <StackItem size="fill">
                     <VStack gap={0}>
                       <HStack gap={2} vAlign="center">
@@ -1687,11 +1687,11 @@ export default function BrainstormWhiteboardTemplate() {
   const facepile = isCompact ? (
     <Token size="sm" color="gray" label="6 people" />
   ) : (
-    <AvatarGroup size="small" aria-label="Board contributors">
-      <Avatar name="Sofia Ortiz" size="small" />
-      <Avatar name="Jonah Fields" size="small" />
-      <Avatar name="Marcus Webb" size="small" />
-      <Avatar name="Elena Voss" size="small" />
+    <AvatarGroup size="md" aria-label="Board contributors">
+      <Avatar name="Sofia Ortiz" size="md" />
+      <Avatar name="Jonah Fields" size="md" />
+      <Avatar name="Marcus Webb" size="md" />
+      <Avatar name="Elena Voss" size="md" />
       <AvatarGroupOverflow count={2} />
     </AvatarGroup>
   );

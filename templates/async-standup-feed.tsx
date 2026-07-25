@@ -750,7 +750,7 @@ function BlockerThread({thread}: {thread: ThreadReply[]}) {
         const author = member(reply.memberId);
         return (
           <div key={i} style={styles.threadReply}>
-            <Avatar name={author.name} size="tiny" />
+            <Avatar name={author.name} size="xsm" />
             <VStack gap={0}>
               <HStack gap={2} vAlign="center">
                 <Text type="supporting" weight="semibold">
@@ -789,7 +789,7 @@ function CheckInCard({
   return (
     <article id={anchorId} style={cardStyle} aria-label={`Check-in from ${author.name}`}>
       <div style={styles.cardHeadRow}>
-        <Avatar name={author.name} size="small" />
+        <Avatar name={author.name} size="md" />
         <VStack gap={0}>
           <HStack gap={2} vAlign="center">
             <Text type="body" weight="semibold">
@@ -882,14 +882,14 @@ function BlockerRollupBanner({blockers}: {blockers: ActiveBlocker[]}) {
             </div>
             <div style={styles.rollupPeople}>
               <div style={styles.rollupPersonCell}>
-                <Avatar name={owner.name} size="tiny" />
+                <Avatar name={owner.name} size="xsm" />
                 <Text type="supporting" color="secondary">
                   {owner.name} · owner
                 </Text>
               </div>
               {blocker.helperIds.length > 0 ? (
                 <div style={styles.rollupPersonCell}>
-                  <AvatarGroup size="tiny" aria-label="Helpers">
+                  <AvatarGroup size="xsm" aria-label="Helpers">
                     {blocker.helperIds.map(id => (
                       <Avatar key={id} name={member(id).name} />
                     ))}
@@ -946,7 +946,7 @@ function ComposerCard({
     return (
       <section style={styles.composer} aria-label="Your check-in">
         <div style={styles.cardHeadRow}>
-          <Avatar name={viewer.name} size="small" />
+          <Avatar name={viewer.name} size="md" />
           <VStack gap={0}>
             <Text type="body" weight="semibold">
               Your check-in is posted
@@ -971,7 +971,7 @@ function ComposerCard({
   return (
     <section style={styles.composer} aria-label="Your check-in composer">
       <div style={styles.cardHeadRow}>
-        <Avatar name={viewer.name} size="small" />
+        <Avatar name={viewer.name} size="md" />
         <VStack gap={0}>
           <HStack gap={2} vAlign="center">
             <Text type="body" weight="semibold">
@@ -1046,7 +1046,7 @@ function WaitingRow({waiting}: {waiting: WaitingEntry[]}) {
         const person = member(entry.memberId);
         return (
           <div key={entry.memberId} style={styles.waitingPerson}>
-            <Avatar name={person.name} size="tiny" />
+            <Avatar name={person.name} size="xsm" />
             <Text type="supporting" color="secondary">
               {person.name}
               {person.isViewer ? ' (you)' : ''} · {entry.note}
@@ -1140,7 +1140,7 @@ function StreakLeaderboard() {
         const person = member(id);
         return (
           <div key={id} style={styles.streakRow}>
-            <Avatar name={person.name} size="tiny" />
+            <Avatar name={person.name} size="xsm" />
             <Text type="body">{person.name}</Text>
             <span style={styles.streakCount}>
               <Text type="supporting" weight="semibold" hasTabularNumbers>
@@ -1185,7 +1185,7 @@ function TimezoneRoster({postedIds}: {postedIds: ReadonlySet<string>}) {
                 : 'waiting';
               return (
                 <div key={person.id} style={styles.rosterRow}>
-                  <Avatar name={person.name} size="tiny" />
+                  <Avatar name={person.name} size="xsm" />
                   <Text type="body">
                     {person.name}
                     {person.isViewer ? ' (you)' : ''}

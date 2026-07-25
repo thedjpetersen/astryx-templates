@@ -669,7 +669,9 @@ export function DemoApp() {
                       onClick={() => selectTemplate(template.id)}>
                       <span>
                         <strong>{template.name}</strong>
-                        <small>{template.description}</small>
+                        <small title={template.description}>
+                          {template.description}
+                        </small>
                       </span>
                       <em>{template.kind}</em>
                     </button>
@@ -710,7 +712,7 @@ export function DemoApp() {
               ← {displayCategory(selected.category)}
             </a>
             <h2>{selected.name}</h2>
-            <p>{selected.description}</p>
+            <p title={selected.description}>{selected.description}</p>
             {selected.description.length > 140 ? (
               <button
                 type="button"

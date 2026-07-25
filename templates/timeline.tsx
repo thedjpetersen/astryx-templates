@@ -386,7 +386,7 @@ function EventRow({
       <div style={{...styles.body, ...(isLast ? styles.bodyLast : undefined)}}>
         <VStack gap={2}>
           <HStack gap={2} vAlign="center">
-            <Avatar name={event.actor} size="xsmall" />
+            <Avatar name={event.actor} size="sm" />
             <StackItem size="fill">
               <VStack gap={0.5}>
                 <Text type="body">

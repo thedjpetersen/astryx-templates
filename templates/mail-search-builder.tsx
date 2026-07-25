@@ -606,7 +606,7 @@ function ResultRow({
 }) {
   return (
     <ListItem
-      startContent={<Avatar name={message.from} size="small" />}
+      startContent={<Avatar name={message.from} size="md" />}
       label={
         <HStack gap={2} vAlign="center">
           <StackItem size="fill">

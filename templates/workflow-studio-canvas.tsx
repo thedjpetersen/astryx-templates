@@ -1511,7 +1511,7 @@ function ConfigPanel({
             </MetadataListItem>
             <MetadataListItem label="Last edited">
               <HStack gap={2} vAlign="center">
-                <Avatar name={node.lastEditedBy} size="xsmall" />
+                <Avatar name={node.lastEditedBy} size="sm" />
                 <VStack gap={0}>
                   <Text type="supporting" color="secondary">
                     {node.lastEditedBy}

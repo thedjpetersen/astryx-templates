@@ -931,7 +931,7 @@ function MiniCardChip({card}: {card: CardRow}) {
 function HolderCell({card}: {card: CardRow}) {
   return (
     <HStack gap={2} vAlign="center">
-      <Avatar name={card.holder} size="small" />
+      <Avatar name={card.holder} size="md" />
       <StackItem size="fill" style={{minWidth: 0}}>
         <VStack gap={0}>
           <Text type="label" maxLines={1}>

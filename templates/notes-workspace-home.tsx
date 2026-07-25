@@ -785,7 +785,7 @@ function Sidebar({
       </div>
       <Divider />
       <HStack gap={2} vAlign="center" style={styles.memberStrip}>
-        <AvatarGroup size="xsmall" aria-label={`${MEMBER_COUNT} workspace members`}>
+        <AvatarGroup size="sm" aria-label={`${MEMBER_COUNT} workspace members`}>
           <Avatar name={PEOPLE[0]} />
           <Avatar name={PEOPLE[1]} />
           <Avatar name={PEOPLE[2]} />
@@ -990,7 +990,7 @@ function NameCell({row}: {row: ProjectRow}) {
 function OwnerCell({owner}: {owner: string}) {
   return (
     <HStack gap={2} vAlign="center">
-      <Avatar name={owner} size="xsmall" />
+      <Avatar name={owner} size="sm" />
       <Text type="body" maxLines={1}>
         {owner === CURRENT_USER ? `${owner.split(' ')[0]} (you)` : owner}
       </Text>
@@ -1113,7 +1113,7 @@ function BoardCard({row}: {row: ProjectRow}) {
         ))}
       </div>
       <div style={styles.boardCardMeta}>
-        <Avatar name={row.owner} size="xsmall" />
+        <Avatar name={row.owner} size="sm" />
         <StackItem size="fill">
           <Text type="supporting" color="secondary" hasTabularNumbers>
             {row.dueLabel}
@@ -1301,7 +1301,7 @@ export default function NotesWorkspaceHomeTemplate() {
                   Maintained by
                 </span>
                 <HStack gap={1} vAlign="center">
-                  <Avatar name={PAGE_EDITED_BY} size="xsmall" />
+                  <Avatar name={PAGE_EDITED_BY} size="sm" />
                   <Text type="supporting" color="secondary">
                     {PAGE_EDITED_BY} · Studio ops
                   </Text>

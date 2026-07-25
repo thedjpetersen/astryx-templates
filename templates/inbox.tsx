@@ -804,7 +804,7 @@ export default function InboxTemplate() {
               </Tooltip>
             </HStack>
             <HStack gap={3} vAlign="center">
-              <Avatar name={openMessage.from} size="small" />
+              <Avatar name={openMessage.from} size="md" />
               <StackItem size="fill">
                 <VStack gap={0}>
                   <HStack gap={2} vAlign="center">

@@ -645,7 +645,7 @@ export default function AiChatMinimapRecapTemplate() {
                           sender={message.sender}
                           avatar={
                             message.sender === 'assistant' ? (
-                              <Avatar name={ASSISTANT_NAME} size="small" />
+                              <Avatar name={ASSISTANT_NAME} size="md" />
                             ) : undefined
                           }>
                           <ChatMessageBubble

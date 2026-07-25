@@ -960,7 +960,7 @@ function CommentThread({
         </HStack>
         {comments.map(comment => (
           <HStack key={comment.id} gap={2} vAlign="start">
-            <Avatar name={comment.author} size="small" />
+            <Avatar name={comment.author} size="md" />
             <StackItem size="fill">
               <VStack gap={1}>
                 <HStack gap={2} vAlign="center" wrap="wrap">

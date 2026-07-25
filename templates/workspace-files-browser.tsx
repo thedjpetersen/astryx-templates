@@ -945,7 +945,7 @@ export default function WorkspaceFilesBrowserTemplate() {
                 </ChatMessage>
                 <ChatMessage
                   sender="assistant"
-                  avatar={<Avatar name={ASSISTANT_NAME} size="small" />}>
+                  avatar={<Avatar name={ASSISTANT_NAME} size="md" />}>
                   <ChatMessageBubble name={ASSISTANT_NAME}>
                     The July 10 daily note has the confirmed window: July 15,
                     06:00 UTC, with a dry run on the 14th. Opening the

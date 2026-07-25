@@ -937,7 +937,7 @@ function AttritionChart({
               ) : (
                 selectedExits.map(exit => (
                   <div key={exit.name} style={styles.exitRow}>
-                    <Avatar name={exit.name} size="xsmall" />
+                    <Avatar name={exit.name} size="sm" />
                     <StackItem size="fill" style={{minWidth: 0}}>
                       <Text type="label" size="sm" maxLines={1}>
                         {exit.name}

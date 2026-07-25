@@ -928,7 +928,7 @@ function EmployeeTable({
               <TableRow key={row.id}>
                 <TableCell scope="row">
                   <HStack gap={2} vAlign="center">
-                    <Avatar name={row.name} size="small" />
+                    <Avatar name={row.name} size="md" />
                     <VStack gap={0} style={{minWidth: 0}}>
                       <Text type="label" maxLines={1}>
                         {row.name}
@@ -1021,7 +1021,7 @@ function QleTile({
         />
       </HStack>
       <HStack gap={2} vAlign="center">
-        <Avatar name={qle.employee} size="small" />
+        <Avatar name={qle.employee} size="md" />
         <VStack gap={0} style={{minWidth: 0}}>
           <Text type="label" maxLines={1}>
             {qle.employee}

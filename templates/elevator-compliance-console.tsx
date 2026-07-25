@@ -2680,7 +2680,7 @@ export default function ElevatorComplianceConsoleTemplate() {
                   />
                   {band !== 'tight' && (
                     <span style={styles.inspectorChip}>
-                      <Avatar name="Maya Okafor" size="small" />
+                      <Avatar name="Maya Okafor" size="md" />
                       <Text type="supporting" size="xsm" color="secondary">
                         M. Okafor · QEI-2214
                       </Text>

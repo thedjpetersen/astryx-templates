@@ -1006,7 +1006,7 @@ function ConnectionDetail({
           </MetadataListItem>
           <MetadataListItem label="App owner">
             <HStack gap={2} vAlign="center">
-              <Avatar name={connection.owner} size="xsmall" />
+              <Avatar name={connection.owner} size="sm" />
               <Text type="body" maxLines={1}>
                 {connection.owner}
               </Text>
@@ -1310,7 +1310,7 @@ function UnenrolledList({
       <VStack gap={2}>
         {UNENROLLED.map(person => (
           <HStack key={person.id} gap={2} vAlign="center">
-            <Avatar name={person.name} size="xsmall" />
+            <Avatar name={person.name} size="sm" />
             <StackItem size="fill" style={{minWidth: 0}}>
               <VStack gap={0}>
                 <Text type="body" maxLines={1}>
