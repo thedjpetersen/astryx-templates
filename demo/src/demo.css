@@ -279,6 +279,130 @@ button:focus-visible,
   padding-inline: 12px;
 }
 
+.feedback-dialog {
+  width: min(480px, calc(100vw - 32px));
+  overflow: hidden;
+  border: 1px solid var(--color-border-emphasized, var(--color-border));
+  border-radius: var(--radius-container, 16px);
+  background: var(--color-background-card);
+  color: var(--color-text-primary);
+  box-shadow: 0 18px 60px var(--color-shadow);
+}
+
+.feedback-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--color-border);
+  padding: 14px 16px;
+}
+
+.feedback-header h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--font-weight-semibold, 600);
+}
+
+.feedback-header button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: var(--radius-full, 999px);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.feedback-header button:hover {
+  background: var(--color-accent-muted);
+  color: var(--color-text-primary);
+}
+
+.feedback-form {
+  padding: 16px;
+}
+
+.feedback-form textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 168px;
+  resize: vertical;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-element, 12px);
+  outline: 0;
+  background: var(--color-background-body);
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.5;
+  padding: 12px 14px;
+}
+
+.feedback-form textarea:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-accent-muted);
+}
+
+.feedback-form textarea::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.feedback-error {
+  margin: 8px 0 0;
+  color: var(--color-danger, var(--color-text-primary));
+  font-size: 13px;
+}
+
+.feedback-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.feedback-actions > span {
+  margin-right: auto;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+}
+
+.feedback-actions button {
+  min-height: 38px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-background-card);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  padding: 6px 14px;
+  font-weight: var(--font-weight-medium, 500);
+}
+
+.feedback-actions button:hover:not(:disabled) {
+  background: var(--color-accent-muted);
+}
+
+.feedback-actions button:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.feedback-actions .feedback-submit {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.feedback-actions .feedback-submit:hover:not(:disabled) {
+  background: var(--color-accent);
+  filter: brightness(0.96);
+}
+
 .command-backdrop {
   position: fixed;
   inset: 0;
@@ -930,6 +1054,18 @@ iframe.template-stage-mobile {
   .command-dialog {
     width: calc(100vw - 20px);
     max-height: calc(100dvh - 40px);
+  }
+
+  .feedback-dialog {
+    width: calc(100vw - 20px);
+  }
+
+  .feedback-form textarea {
+    min-height: min(42dvh, 240px);
+  }
+
+  .feedback-actions > span {
+    display: none;
   }
 
   .command-result {
