@@ -30,13 +30,7 @@ function isApplePlatform() {
 }
 
 function openFeedback() {
-  window.dispatchEvent(
-    new KeyboardEvent('keydown', {
-      key: 'f',
-      shiftKey: true,
-      metaKey: true,
-    }),
-  );
+  window.dispatchEvent(new CustomEvent('stitch-feedback:open'));
 }
 
 function templateScore(template: TemplateEntry, query: string) {
