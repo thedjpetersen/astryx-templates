@@ -4,7 +4,7 @@ import {BrowseView} from './BrowseView';
 import {categorySlug, displayCategory, filterTemplates} from './catalog';
 import type {KindFilter} from './catalog';
 import {LandingPage} from './LandingPage';
-import {CommandMenu, FeedbackButton} from './SiteControls';
+import {CommandMenu} from './SiteControls';
 import {templates} from './templateRegistry';
 import type {TemplateEntry} from './templateRegistry';
 
@@ -542,7 +542,6 @@ export function DemoApp() {
           kind={kind}
         />
         <div className="floating-tools">
-          <FeedbackButton />
           <CommandMenu
             templates={templates}
             recentIds={recentIds}
@@ -569,7 +568,6 @@ export function DemoApp() {
           onPrefetch={prefetch}
         />
         <div className="floating-tools">
-          <FeedbackButton />
           <CommandMenu
             templates={templates}
             recentIds={recentIds}
@@ -846,7 +844,6 @@ export function DemoApp() {
               </svg>
               Full screen
             </button>
-            <FeedbackButton compact />
             <CommandMenu
               templates={templates}
               recentIds={recentIds}

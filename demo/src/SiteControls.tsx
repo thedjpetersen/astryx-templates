@@ -25,17 +25,18 @@ interface CommandMenuProps {
   disabled?: boolean;
 }
 
-export const FEEDBACK_BUCKET_ID = 'feedback_bucket_astryx_templates';
-export const FEEDBACK_API_URL =
-  'https://stitchdash.com/api/public/feedback/' + FEEDBACK_BUCKET_ID;
-const FEEDBACK_OPEN_EVENT = 'astryx-templates:open-feedback';
-
 function isApplePlatform() {
   return /Mac|iPhone|iPad|iPod/.test(navigator.platform);
 }
 
 function openFeedback() {
-  window.dispatchEvent(new Event(FEEDBACK_OPEN_EVENT));
+  window.dispatchEvent(
+    new KeyboardEvent('keydown', {
+      key: 'f',
+      shiftKey: true,
+      metaKey: true,
+    }),
+  );
 }
 
 function templateScore(template: TemplateEntry, query: string) {
@@ -51,201 +52,6 @@ function templateScore(template: TemplateEntry, query: string) {
   if (category.includes(query)) return 4;
   if (description.includes(query)) return 5;
   return Number.POSITIVE_INFINITY;
-}
-
-export function FeedbackButton({compact = false}: {compact?: boolean}) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [feedback, setFeedback] = useState('');
-  const [isSending, setIsSending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const dialogRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const returnFocusRef = useRef<HTMLElement | null>(null);
-
-  const open = () => {
-    const active =
-      document.activeElement instanceof HTMLElement
-        ? document.activeElement
-        : null;
-    returnFocusRef.current = active?.closest('.command-dialog')
-      ? triggerRef.current
-      : active ?? triggerRef.current;
-    setError(null);
-    setIsOpen(true);
-  };
-
-  const close = () => {
-    if (!isSending) setIsOpen(false);
-  };
-
-  useEffect(() => {
-    const onOpen = () => open();
-    window.addEventListener(FEEDBACK_OPEN_EVENT, onOpen);
-    return () => window.removeEventListener(FEEDBACK_OPEN_EVENT, onOpen);
-  }, []);
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const root = document.getElementById('root');
-    const rootWasInert = root?.inert ?? false;
-    const previousOverflow = document.body.style.overflow;
-    if (root) root.inert = true;
-    document.body.style.overflow = 'hidden';
-    const frame = requestAnimationFrame(() => textareaRef.current?.focus());
-
-    return () => {
-      cancelAnimationFrame(frame);
-      if (root) root.inert = rootWasInert;
-      document.body.style.overflow = previousOverflow;
-      requestAnimationFrame(() => returnFocusRef.current?.focus());
-    };
-  }, [isOpen]);
-
-  const submit = async () => {
-    const description = feedback.trim();
-    if (!description || isSending) return;
-
-    setIsSending(true);
-    setError(null);
-    try {
-      const response = await fetch(FEEDBACK_API_URL, {
-        method: 'POST',
-        credentials: 'omit',
-        headers: {'content-type': 'application/json'},
-        body: JSON.stringify({
-          description,
-          sourceRefId:
-            window.location.pathname +
-            window.location.search +
-            window.location.hash,
-        }),
-      });
-      const body = (await response.json().catch(() => ({}))) as {
-        error?: string;
-      };
-      if (!response.ok) {
-        throw new Error(body.error ?? 'Feedback could not be sent.');
-      }
-      setFeedback('');
-      setIsOpen(false);
-    } catch (cause) {
-      setError(
-        cause instanceof Error ? cause.message : 'Feedback could not be sent.',
-      );
-    } finally {
-      setIsSending(false);
-    }
-  };
-
-  const handleDialogKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Escape') {
-      event.preventDefault();
-      close();
-      return;
-    }
-    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
-      event.preventDefault();
-      void submit();
-      return;
-    }
-    if (event.key !== 'Tab') return;
-
-    const focusable = Array.from(
-      dialogRef.current?.querySelectorAll<HTMLElement>(
-        'textarea, button:not([disabled])',
-      ) ?? [],
-    );
-    if (focusable.length === 0) return;
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first.focus();
-    }
-  };
-
-  return (
-    <>
-      <button
-        ref={triggerRef}
-        type="button"
-        className={compact ? 'site-action site-action-compact' : 'site-action'}
-        aria-haspopup="dialog"
-        aria-expanded={isOpen}
-        onClick={open}>
-        <span aria-hidden="true">+</span>
-        <span>Feedback</span>
-      </button>
-      {isOpen
-        ? createPortal(
-            <div
-              className="command-backdrop feedback-backdrop"
-              onMouseDown={event => {
-                if (event.target === event.currentTarget) close();
-              }}>
-              <div
-                ref={dialogRef}
-                className="feedback-dialog"
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="feedback-title"
-                onKeyDown={handleDialogKeyDown}>
-                <header className="feedback-header">
-                  <h2 id="feedback-title">Send feedback</h2>
-                  <button
-                    type="button"
-                    aria-label="Close feedback dialog"
-                    disabled={isSending}
-                    onClick={close}>
-                    ×
-                  </button>
-                </header>
-                <form
-                  className="feedback-form"
-                  onSubmit={event => {
-                    event.preventDefault();
-                    void submit();
-                  }}>
-                  <textarea
-                    ref={textareaRef}
-                    value={feedback}
-                    maxLength={4000}
-                    aria-label="Feedback"
-                    aria-describedby={error ? 'feedback-error' : undefined}
-                    placeholder="What should we improve?"
-                    disabled={isSending}
-                    onChange={event => setFeedback(event.target.value)}
-                  />
-                  {error ? (
-                    <p id="feedback-error" className="feedback-error" role="alert">
-                      {error}
-                    </p>
-                  ) : null}
-                  <div className="feedback-actions">
-                    <span aria-hidden="true">⌘↵ to send</span>
-                    <button type="button" disabled={isSending} onClick={close}>
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="feedback-submit"
-                      disabled={feedback.trim() === '' || isSending}>
-                      {isSending ? 'Sending…' : 'Send feedback'}
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>,
-            document.body,
-          )
-        : null}
-    </>
-  );
 }
 
 export function CommandMenu({
