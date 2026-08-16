@@ -789,9 +789,7 @@ function DeptTable({
         density="balanced"
         dividers="rows"
         hasHover
-        tableProps={{
-          'aria-label': `Headcount by department — ${SCENARIO_LABEL[scenario]}`,
-        }}>
+        aria-label={`Headcount by department — ${SCENARIO_LABEL[scenario]}`}>
         <TableHeader>
           <TableRow isHeaderRow>
             <TableHeaderCell scope="col" style={{minWidth: 190}}>

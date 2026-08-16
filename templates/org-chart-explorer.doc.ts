@@ -1,4 +1,4 @@
-import type {AstryxPageTemplate} from '@astryxdesign/cli/template';
+import type {AstryxIntegrationTemplate} from '../types/astryx-cli.js';
 
 const template = {
   type: 'page',
@@ -22,6 +22,6 @@ const template = {
     'TextInput',
     'Toast',
   ],
-} satisfies AstryxPageTemplate;
+} satisfies AstryxIntegrationTemplate;
 
 export default template;

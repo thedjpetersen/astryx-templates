@@ -102,7 +102,7 @@ breakpoints). Mobile-first single-column pages can skip this.
 ## Doc file convention
 
 ```ts
-import type {AstryxPageTemplate} from '@astryxdesign/cli/template';
+import type {AstryxIntegrationTemplate} from '../types/astryx-cli.js';
 
 const template = {
   type: 'page',
@@ -111,7 +111,7 @@ const template = {
     '<2-4 sentences: concrete surface, layout archetype, key components, and when to choose it over sibling templates>',
   category: 'AI Chat - <Gap>',
   componentsUsed: ['<sorted list of Astryx components actually used>'],
-} satisfies AstryxPageTemplate;
+} satisfies AstryxIntegrationTemplate;
 
 export default template;
 ```

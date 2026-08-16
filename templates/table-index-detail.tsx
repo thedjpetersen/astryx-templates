@@ -341,7 +341,7 @@ function JobsTable({
       density="compact"
       dividers="rows"
       hasHover
-      tableProps={{style: styles.table}}>
+      style={styles.table}>
       <TableHeader>
         <TableRow isHeaderRow>
           <TableHeaderCell scope="col">Job</TableHeaderCell>

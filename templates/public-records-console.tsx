@@ -2576,7 +2576,7 @@ export default function PublicRecordsConsoleTemplate() {
                 purpose="info"
                 width={RAIL_W}
                 maxHeight="86vh"
-                position={{top: HEADER_H + GUTTER, right: GUTTER}}>
+                position={{top: HEADER_H + GUTTER, end: GUTTER}}>
                 <Layout
                   header={
                     <DialogHeader

@@ -848,10 +848,7 @@ function HeatTable({
         density="balanced"
         dividers="rows"
         hasHover
-        tableProps={{
-          'aria-label':
-            'Completion by department and course — Jul 20, 2026 snapshot',
-        }}>
+        aria-label='Completion by department and course — Jul 20, 2026 snapshot'>
         <TableHeader>
           <TableRow isHeaderRow>
             <TableHeaderCell scope="col" style={{minWidth: 180}}>

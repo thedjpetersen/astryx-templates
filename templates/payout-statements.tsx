@@ -725,7 +725,7 @@ function StatementsTable({
   };
 
   return (
-    <Table density="compact" dividers="rows" hasHover tableProps={{style: styles.table}}>
+    <Table density="compact" dividers="rows" hasHover style={styles.table}>
       <TableHeader>
         <TableRow isHeaderRow>
           {/* Fixed columns set width AND minWidth (matching the data-driven

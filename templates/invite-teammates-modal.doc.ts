@@ -1,4 +1,4 @@
-import type {AstryxBlockTemplate} from '@astryxdesign/cli/template';
+import type {AstryxIntegrationTemplate} from '../types/astryx-cli.js';
 
 const template = {
   type: 'block',
@@ -25,6 +25,6 @@ const template = {
     'Tooltip',
     'VStack',
   ],
-} satisfies AstryxBlockTemplate;
+} satisfies AstryxIntegrationTemplate;
 
 export default template;

@@ -706,7 +706,7 @@ function SectionTable({
           {caption}
         </Text>
       </HStack>
-      <Table density="compact" dividers="rows" tableProps={{style: styles.table}}>
+      <Table density="compact" dividers="rows" style={styles.table}>
         <TableHeader>
           <TableRow isHeaderRow>
             {/* Fixed columns set width AND minWidth (footgun 4) so the

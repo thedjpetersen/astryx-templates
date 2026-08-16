@@ -1321,9 +1321,7 @@ function EverifyTable({
         density="balanced"
         dividers="rows"
         hasHover
-        tableProps={{
-          'aria-label': 'E-Verify cases — July 2026, employer ID 1339642',
-        }}>
+        aria-label='E-Verify cases — July 2026, employer ID 1339642'>
         <TableHeader>
           <TableRow isHeaderRow>
             <TableHeaderCell scope="col" style={{width: 150, minWidth: 150}}>

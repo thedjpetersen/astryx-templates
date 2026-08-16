@@ -897,9 +897,7 @@ function EmployeeTable({
         density="balanced"
         dividers="rows"
         hasHover
-        tableProps={{
-          'aria-label': `Employees — ${STATUS_LABEL[segment]}`,
-        }}>
+        aria-label={`Employees — ${STATUS_LABEL[segment]}`}>
         <TableHeader>
           <TableRow isHeaderRow>
             <TableHeaderCell scope="col" style={{minWidth: 200}}>

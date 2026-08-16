@@ -1213,7 +1213,7 @@ function QuickviewDialog({
         purpose="info"
         width="min(420px, 100vw)"
         maxHeight="100vh"
-        position={{top: 0, right: 0, bottom: 0}}>
+        position={{top: 0, end: 0, bottom: 0}}>
         <Layout
           height="fill"
           header={header}

@@ -2714,7 +2714,7 @@ export default function FestivalScreeningGridTemplate() {
                 purpose="info"
                 width={ASIDE_W}
                 maxHeight="86vh"
-                position={{top: HEADER_H + TABROW_H, right: GUTTER}}>
+                position={{top: HEADER_H + TABROW_H, end: GUTTER}}>
                 <Layout
                   header={
                     <DialogHeader

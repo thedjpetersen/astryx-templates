@@ -1,4 +1,4 @@
-import type {AstryxBlockTemplate} from '@astryxdesign/cli/template';
+import type {AstryxIntegrationTemplate} from '../types/astryx-cli.js';
 
 const template = {
   type: 'block',
@@ -7,7 +7,7 @@ const template = {
     'Dark terminal-style command block using CodeBlock inside a SyntaxTheme dark preset.',
   category: 'Code',
   componentsUsed: ['CodeBlock', 'SyntaxTheme'],
-} satisfies AstryxBlockTemplate;
+} satisfies AstryxIntegrationTemplate;
 
 export default template;
 

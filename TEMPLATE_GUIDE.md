@@ -28,7 +28,7 @@ Use descriptions that teach selection:
 External integration docs under `templates/` default-export:
 
 ```ts
-import type {AstryxPageTemplate} from '@astryxdesign/cli/template';
+import type {AstryxIntegrationTemplate} from '../types/astryx-cli.js';
 
 const template = {
   type: 'page',
@@ -36,7 +36,7 @@ const template = {
   description: 'Dense operations console with a list/detail frame.',
   category: 'Tools - Example Console',
   componentsUsed: ['Layout', 'List', 'LayoutPanel'],
-} satisfies AstryxPageTemplate;
+} satisfies AstryxIntegrationTemplate;
 
 export default template;
 ```
@@ -64,4 +64,3 @@ For Astryx PRs, the repeated verification pattern is:
 - sandbox/docsite typecheck when a template imports new components
 
 For this package, run `pnpm check`.
-

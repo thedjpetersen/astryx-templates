@@ -1,6 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
-import type {AstryxPageTemplate} from '@astryxdesign/cli/template';
+import type {AstryxIntegrationTemplate} from '../types/astryx-cli.js';
 
 const template = {
   type: 'page',
@@ -16,6 +16,6 @@ const template = {
     'LayoutHeader',
     'LayoutPanel',
   ],
-} satisfies AstryxPageTemplate;
+} satisfies AstryxIntegrationTemplate;
 
 export default template;

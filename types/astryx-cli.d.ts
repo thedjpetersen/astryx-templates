@@ -1,29 +1,17 @@
-declare module '@astryxdesign/cli/integration' {
-  export interface AstryxIntegration {
-    components?: string;
-    templates?: string;
-    codemods?: string;
-    issuesUrl?: string;
-  }
-
-  export function createIntegration<T extends AstryxIntegration>(integration: T): T;
+export interface AstryxTemplatePreview {
+  image?: string;
+  aspectRatio?: string;
 }
 
-declare module '@astryxdesign/cli/template' {
-  export interface AstryxTemplatePreview {
-    image?: string;
-    aspectRatio?: string;
-  }
-
-  export interface AstryxTemplateInput {
-    name: string;
-    description: string;
-    category?: string;
-    componentsUsed?: string[];
-    preview?: AstryxTemplatePreview;
-  }
-
-  export type AstryxPageTemplate = AstryxTemplateInput & {type: 'page'};
-  export type AstryxBlockTemplate = AstryxTemplateInput & {type: 'block'};
+export interface AstryxTemplateInput {
+  name: string;
+  description: string;
+  category?: string;
+  componentsUsed?: string[];
+  preview?: AstryxTemplatePreview;
 }
 
+/** External integration envelope accepted by parseTemplate(). */
+export type AstryxIntegrationTemplate = AstryxTemplateInput & {
+  type: 'page' | 'block';
+};

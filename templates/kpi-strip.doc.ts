@@ -1,4 +1,4 @@
-import type {AstryxBlockTemplate} from '@astryxdesign/cli/template';
+import type {AstryxIntegrationTemplate} from '../types/astryx-cli.js';
 
 const template = {
   type: 'block',
@@ -6,7 +6,7 @@ const template = {
   description: 'Compact metric cards for operational dashboards.',
   category: 'Operations',
   componentsUsed: ['Badge', 'Card', 'Grid', 'Stack', 'Text'],
-} satisfies AstryxBlockTemplate;
+} satisfies AstryxIntegrationTemplate;
 
 export default template;
 
