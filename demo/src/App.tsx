@@ -219,6 +219,19 @@ export function DemoApp() {
   }, []);
 
   useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent(
+        isFullscreen ? 'stitch-feedback:hide' : 'stitch-feedback:show',
+      ),
+    );
+    return () => {
+      if (isFullscreen) {
+        window.dispatchEvent(new CustomEvent('stitch-feedback:show'));
+      }
+    };
+  }, [isFullscreen]);
+
+  useEffect(() => {
     const mql = window.matchMedia('(max-width: 860px)');
     const onChange = (event: MediaQueryListEvent) => setIsMobile(event.matches);
     mql.addEventListener('change', onChange);
